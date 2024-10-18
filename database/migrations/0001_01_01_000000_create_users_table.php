@@ -4,6 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+use App\Enums\User\Theme;
+
 return new class extends Migration
 {
     /**
@@ -17,7 +19,9 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
+            $table->string('photo')->nullable();
             $table->foreignUuid('current_workspace_id')->nullable();
+            $table->string('theme')->default(Theme::SYSTEM);
             $table->rememberToken();
             $table->timestamps();
         });

@@ -38,7 +38,7 @@ const userSize = computed(() => {
 
 <template>
     <img
-        :src="user.avatar_url"
+        :src="user.photo_url"
         :class="userSize"
         :alt="user.name"
         class="rounded-full"

@@ -223,59 +223,44 @@ onMounted(() => {
 });
 </script>
 <template>
-    <div class="flex items-center justify-between mb-4">
-        <div class="min-w-0 flex-1">
-            <div class="-my-px">
-                <div class="text-4xl font-bold text-black dark:text-white">
-                    Analytics
-                </div>
-            </div>
+    <Menu as="div" class="relative inline-block text-left">
+        <div>
+            <MenuButton class="inline-flex w-full btn-dropdown">
+                {{ range.name }}
+                <PhCaretDown class="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />
+            </MenuButton>
         </div>
 
-        <div class="space-x-2 lg:space-x-4 flex items-center">
-            <Menu as="div" class="relative inline-block text-left">
-                <div>
-                    <MenuButton class="inline-flex w-full btn-dropdown">
-                        {{ range.name }}
-                        <PhCaretDown
-                            class="-mr-1 ml-2 h-5 w-5"
-                            aria-hidden="true"
-                        />
-                    </MenuButton>
-                </div>
-
-                <transition
-                    enter-active-class="transition ease-out duration-100"
-                    enter-from-class="transform opacity-0 scale-95"
-                    enter-to-class="transform opacity-100 scale-100"
-                    leave-active-class="transition ease-in duration-75"
-                    leave-from-class="transform opacity-100 scale-100"
-                    leave-to-class="transform opacity-0 scale-95"
+        <transition
+            enter-active-class="transition ease-out duration-100"
+            enter-from-class="transform opacity-0 scale-95"
+            enter-to-class="transform opacity-100 scale-100"
+            leave-active-class="transition ease-in duration-75"
+            leave-from-class="transform opacity-100 scale-100"
+            leave-to-class="transform opacity-0 scale-95"
+        >
+            <MenuItems
+                class="absolute right-0 z-10 mt-1 w-44 origin-top-right border-2 border-gray-200 dark:border-gray-700 divide-y-2 divide-gray-100 dark:divide-zinc-700 rounded-md bg-white dark:bg-[#303030] shadow-lg focus:outline-none"
+            >
+                <div
+                    v-for="periodFilter in periodFilters"
+                    :key="periodFilter"
+                    class="p-1"
                 >
-                    <MenuItems
-                        class="absolute right-0 z-10 mt-1 w-44 origin-top-right border-2 border-gray-200 dark:border-gray-700 divide-y-2 divide-gray-100 dark:divide-zinc-700 rounded-md bg-white dark:bg-[#303030] shadow-lg focus:outline-none"
+                    <MenuItem
+                        v-for="filter in periodFilter"
+                        :key="filter"
+                        @click="setCurrentFilter(filter)"
+                        v-slot="{ active }"
                     >
                         <div
-                            v-for="periodFilter in periodFilters"
-                            :key="periodFilter"
-                            class="p-1"
+                            class="rounded text-gray-700 dark:text-white block px-4 py-2 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-zinc-700"
                         >
-                            <MenuItem
-                                v-for="filter in periodFilter"
-                                :key="filter"
-                                @click="setCurrentFilter(filter)"
-                                v-slot="{ active }"
-                            >
-                                <div
-                                    class="rounded text-gray-700 dark:text-white block px-4 py-2 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-zinc-700"
-                                >
-                                    {{ filter.name }}
-                                </div>
-                            </MenuItem>
+                            {{ filter.name }}
                         </div>
-                    </MenuItems>
-                </transition>
-            </Menu>
-        </div>
-    </div>
+                    </MenuItem>
+                </div>
+            </MenuItems>
+        </transition>
+    </Menu>
 </template>

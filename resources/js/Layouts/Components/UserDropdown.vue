@@ -19,12 +19,11 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
 import UserAvatar from "@/Components/UserAvatar.vue";
 
 const user = usePage().props.auth.user;
-const stores = usePage().props.auth.user.stores;
-const currentStore = usePage().props.auth.user.current_store;
+const workspaces = user.workspaces;
 
-const switchToStore = (store) => {
+const switchToWorkspace = (store) => {
     router.put(
-        route("stores.update-current"),
+        route("workspaces.update-current"),
         {
             store_id: store.id,
         },
@@ -50,7 +49,7 @@ const switchToStore = (store) => {
                 </div>
 
                 <PhCaretUp
-                    v-if="!open"
+                    v-if="open"
                     class="h-5 w-5 text-zinc-400"
                     weight="bold"
                 />
@@ -71,16 +70,16 @@ const switchToStore = (store) => {
             leave-to-class="transform opacity-0 scale-95"
         >
             <MenuItems
-                class="absolute bottom-0 -left-2 z-10 mb-10 w-52 origin-bottom-right divide-y divide-zinc-100 dark:divide-zinc-700 rounded bg-white dark:bg-zinc-800 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none"
+                class="absolute top-0 -left-2 z-10 mt-10 w-52 border border-zinc-700 origin-bottom-right divide-y divide-zinc-100 dark:divide-zinc-700 rounded bg-white dark:bg-zinc-800 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none"
             >
                 <div class="py-1">
                     <MenuItem
-                        v-for="store in stores"
-                        :key="store"
+                        v-for="workspace in workspaces"
+                        :key="workspace"
                         v-slot="{ active }"
                     >
                         <div
-                            @click="switchToStore(store)"
+                            @click="switchToWorkspace(workspace)"
                             :class="[
                                 active
                                     ? 'bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-white'
@@ -92,18 +91,21 @@ const switchToStore = (store) => {
                                 class="flex flex-grow items-center space-x-2 overflow-hidden"
                             >
                                 <img
-                                    :src="store.logo_url"
+                                    :src="workspace.logo_url"
                                     class="w-5 h-5 rounded"
-                                    :alt="store.name"
+                                    :alt="workspace.name"
                                 />
                                 <div
                                     class="flex flex-1 items-center justify-between overflow-hidden space-x-2"
                                 >
                                     <div class="truncate">
-                                        {{ store.name }}
+                                        {{ workspace.name }}
                                     </div>
                                     <PhCheck
-                                        v-if="store.id == user.current_store.id"
+                                        v-if="
+                                            workspace.id ==
+                                            user.current_workspace.id
+                                        "
                                         class="h-4 w-4 text-green-500"
                                     />
                                 </div>
@@ -112,7 +114,7 @@ const switchToStore = (store) => {
                     </MenuItem>
                     <MenuItem v-slot="{ active }">
                         <Link
-                            :href="route('stores.create')"
+                            :href="route('workspaces.create')"
                             :class="[
                                 active
                                     ? 'bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-white'
@@ -121,14 +123,14 @@ const switchToStore = (store) => {
                             ]"
                         >
                             <PhPlus class="w-5 h-5" />
-                            <div>Add New Store</div>
+                            <div>New Workspace</div>
                         </Link>
                     </MenuItem>
                 </div>
                 <div class="py-1">
                     <MenuItem v-slot="{ active }">
                         <a
-                            href="https://help.mercantive.com"
+                            href="https://help.lua.sh"
                             target="_blank"
                             :class="[
                                 active
@@ -143,7 +145,7 @@ const switchToStore = (store) => {
                     </MenuItem>
                     <MenuItem v-slot="{ active }">
                         <a
-                            href="https://docs.mercantive.com"
+                            href="https://developers.lua.sh"
                             target="_blank"
                             :class="[
                                 active
@@ -171,37 +173,6 @@ const switchToStore = (store) => {
                             <PhUser class="w-5 h-5" weight="duotone" />
                             <div>My Account</div>
                         </Link>
-                    </MenuItem>
-
-                    <MenuItem v-slot="{ active }">
-                        <a
-                            :href="route('customer.purchases.index')"
-                            :class="[
-                                active
-                                    ? 'bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-white'
-                                    : 'text-zinc-500 dark:text-zinc-400',
-                                ' px-4 py-1.5 font-13 w-full text-left flex items-center space-x-2',
-                            ]"
-                        >
-                            <PhShoppingBag class="w-5 h-5" weight="duotone" />
-                            <div>My Purchases</div>
-                        </a>
-                    </MenuItem>
-
-                    <MenuItem v-slot="{ active }">
-                        <a
-                            :href="currentStore.primary_domain"
-                            target="_blank"
-                            :class="[
-                                active
-                                    ? 'bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-white'
-                                    : 'text-zinc-500 dark:text-zinc-400',
-                                ' px-4 py-1.5 font-13 w-full text-left flex items-center space-x-2',
-                            ]"
-                        >
-                            <PhStorefront class="w-5 h-5" weight="duotone" />
-                            <div>My Store</div>
-                        </a>
                     </MenuItem>
                 </div>
 

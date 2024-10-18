@@ -9,9 +9,13 @@
         "inertiajs/inertia-laravel": "^1.0",
         "laravel/cashier": "^15.4",
         "laravel/framework": "^11.9",
+        "laravel/horizon": "^5.29",
+        "laravel/pennant": "^1.12",
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.9",
+        "league/flysystem-aws-s3-v3": "^3.0",
+        "spatie/laravel-medialibrary": "^11.9",
         "tightenco/ziggy": "^2.0",
         "torann/geoip": "^3.0"
     },
@@ -21,6 +25,7 @@
         "laravel/pail": "^1.1",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.26",
+        "laravel/telescope": "^5.2",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.1",
         "pestphp/pest": "^3.4",
@@ -61,7 +66,9 @@
     },
     "extra": {
         "laravel": {
-            "dont-discover": []
+            "dont-discover": [
+                 "laravel/telescope"
+            ]
         }
     },
     "config": {

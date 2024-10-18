@@ -15,6 +15,7 @@ use Inertia\Response;
 
 use App\Enums\User\Role;
 
+use App\Models\Plan;
 use App\Models\User;
 use App\Models\Workspace;
 
@@ -49,6 +50,7 @@ class RegisteredUserController extends Controller
 
         $workspace = Workspace::create([
             'name' => $request->name,
+            'plan_id' => Plan::where('internal_id', 'free')->first()->id,
         ]);
 
         // attach user to project

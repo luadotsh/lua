@@ -3,10 +3,16 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\ProfileController;
+
 use App\Http\Controllers\WorkspaceController;
 use App\Http\Controllers\LinkController;
 use App\Http\Controllers\AnalyticsController;
+use App\Http\Controllers\MediaController;
+
+// setting
+use App\Http\Controllers\Setting\AccountController;
+use App\Http\Controllers\Setting\BillingController;
+use App\Http\Controllers\Setting\DomainController;
 
 Route::group(
     [
@@ -39,11 +45,34 @@ Route::group(
         Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
         Route::get('/analytics/statistics', [AnalyticsController::class, 'statistics'])->name('analytics.statistics');
 
+        // medias
+        Route::get('/medias/{id}/download', [MediaController::class, 'download'])->name('medias.download')->withoutMiddleware('*');
+        Route::post('/medias', [MediaController::class, 'store'])->name('medias.store');
+        Route::post('/medias/sort', [MediaController::class, 'sort'])->name('medias.sort');
+        Route::post('/medias/{modelId}/thumbnail/{id}', [MediaController::class, 'thumbnail'])->name('medias.thumbmail');
+        Route::delete('/medias/{modelId}/{id}', [MediaController::class, 'destroy'])->name('medias.destroy');
 
-        // profile
-        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+        // settings
+        Route::prefix('settings')->group(function () {
+
+            // account
+            Route::get('/account', [AccountController::class, 'edit'])->name('setting.account.edit')->withoutMiddleware(['set-store']);
+            Route::post('/account', [AccountController::class, 'update'])->name('setting.account.update')->withoutMiddleware(['set-store']);
+            Route::delete('/account/photo', [AccountController::class, 'deletePhoto'])->name('setting.account.photo.destroy')->withoutMiddleware(['set-store']);
+
+
+            // analytics
+            Route::get('/domains', [DomainController::class, 'index'])->name('setting.domains.index');
+            Route::post('/domains', [DomainController::class, 'statistics'])->name('setting.domains.store');
+
+
+            // billing
+            Route::get('/billing', [BillingController::class, 'index'])->name('setting.billing.index');
+            Route::get('/billing/checkout/{stripeId}', [BillingController::class, 'checkout'])->name('setting.billing.checkout');
+            Route::get('/billing/portal', [BillingController::class, 'billingPortal'])->name('setting.billing.portal');
+            Route::get('/billing/swap-free-plan', [BillingController::class, 'swapFreePlan'])->name('setting.billing.swap-free-plan');
+            Route::inertia('/billing/checkout-success', 'App/Setting/Billing/Success')->name('setting.billing.checkout-success');
+        });
     }
 );
 

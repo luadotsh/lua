@@ -9,6 +9,7 @@ use Carbon\CarbonPeriod;
 
 use App\Enums\User\Role;
 
+use App\Models\Plan;
 use App\Models\User;
 use App\Models\Link;
 use App\Models\LinkStat;
@@ -28,7 +29,9 @@ class LocalDevelopmentSeeder extends Seeder
             'email' => 'admin@lua.sh'
         ])
             ->hasAttached(
-                Workspace::factory(),
+                Workspace::factory([
+                    'plan_id' => Plan::where('internal_id', 'free')->first()->id
+                ]),
                 ['role' => Role::ROLE_ADMIN]
             )
             ->create();

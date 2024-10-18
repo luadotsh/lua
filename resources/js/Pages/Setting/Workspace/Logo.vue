@@ -1,0 +1,103 @@
+<script setup>
+import { ref, computed } from "vue";
+import { router, usePage } from "@inertiajs/vue3";
+import Button from "@/Components/Button.vue";
+import { PhTrash } from "@phosphor-icons/vue";
+import axios from "axios";
+
+const inputRef = ref(null);
+const uploadHasErrors = ref(null);
+const isLoading = ref(false);
+
+const store = computed(() => usePage().props.auth.user.current_store);
+
+const upload = async () => {
+    inputRef.value.click();
+
+    inputRef.value.onchange = async () => {
+        // loading
+        isLoading.value = true;
+
+        const formData = new FormData();
+        formData.append("media", event.target.files[0]);
+        formData.append("model", "Store");
+        formData.append("model_id", store.value.id);
+        formData.append("collection", "logo");
+        formData.append("visibility", "public");
+
+        await axios
+            .post(route("medias.store"), formData)
+            .then((data) => {
+                // reset
+                uploadHasErrors.value = null;
+
+                router.reload();
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+            .finally(() => {
+                // reset
+                isLoading.value = false;
+                inputRef.value.value = null;
+            });
+    };
+};
+
+const destroy = () => {
+    router.delete(
+        route("medias.destroy", {
+            modelId: store.value.media?.[0].model_id,
+            id: store.value.media?.[0].id,
+        }),
+        {
+            onSuccess: () => {
+                router.reload();
+            },
+        }
+    );
+};
+</script>
+
+<template>
+    <input type="file" ref="inputRef" class="hidden" />
+
+    <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+            <div>
+                <img
+                    :src="store.logo_url"
+                    :alt="store.name"
+                    class="h-10 w-10 rounded-full"
+                />
+            </div>
+            <div>
+                <Button
+                    @click="upload"
+                    :class="{
+                        'btn-secondary btn-sm': true,
+                        'opacity-25': isLoading,
+                    }"
+                >
+                    Choose
+                </Button>
+            </div>
+            <div class="text-sm text-zinc-500">
+                JPG, PNG, or JPEG. Max size of 1MB
+            </div>
+        </div>
+
+        <div
+            v-if="store.media?.length >= 1"
+            @click="destroy"
+            class="p-2 hover:bg-zinc-100 rounded-md cursor-pointer"
+        >
+            <PhTrash class="text-zinc-500" weight="duotone" size="20" />
+        </div>
+    </div>
+    <div v-show="uploadHasErrors" class="my-2">
+        <p class="text-sm text-red-600">
+            {{ uploadHasErrors }}
+        </p>
+    </div>
+</template>

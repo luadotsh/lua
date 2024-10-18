@@ -6,14 +6,7 @@ import axios from "axios";
 import {
     PhCaretDown,
     PhCaretUp,
-    PhCreditCard,
-    PhTote,
-    PhArrowsClockwise,
-    PhCube,
-    PhUsers,
-    PhKey,
-    PhSealPercent,
-    PhCurrencyCircleDollar,
+    PhLink,
     PhTrendUp,
     PhGraduationCap,
     PhPalette,
@@ -27,7 +20,7 @@ const navigation = [
     {
         name: "Links",
         href: route("links.index"),
-        icon: PhTrendUp,
+        icon: PhLink,
         current: route().current("links.*"),
     },
     {
@@ -36,41 +29,36 @@ const navigation = [
         icon: PhTrendUp,
         current: route().current("analytics.*"),
     },
-    // {
-    //     name: "Settings",
-    //     href: route("setting.store.edit"),
-    //     icon: PhGear,
-    //     current: route().current("setting.*"),
+    {
+        name: "Settings",
+        href: route("setting.account.edit"),
+        icon: PhGear,
+        current: route().current("setting.*"),
 
-    //     items: [
-    //         {
-    //             name: "Account",
-    //             href: route("setting.account.edit"),
-    //             current: route().current("setting.account.*"),
-    //         },
-    //         {
-    //             name: "Store",
-    //             href: route("setting.store.edit"),
-    //             current: route().current("setting.store.*"),
-    //         },
-    //         {
-    //             name: "Recovery",
-    //             href: route("setting.recovery.edit"),
-    //             current: route().current("setting.recovery.*"),
-    //         },
-    //         {
-    //             name: "API",
-    //             href: route("setting.api.index"),
-    //             current: route().current("setting.api.*"),
-    //         },
+        items: [
+            {
+                name: "Account",
+                href: route("setting.account.edit"),
+                current: route().current("setting.account.*"),
+            },
+            {
+                name: "Domains",
+                href: route("setting.domains.index"),
+                current: route().current("setting.domains.*"),
+            },
+            // {
+            //     name: "API",
+            //     href: route("setting.api.index"),
+            //     current: route().current("setting.api.*"),
+            // },
 
-    //         // {
-    //         //     name: "Team Members",
-    //         //     href: route("setting.team-members.index"),
-    //         //     current: route().current("setting.team-members.*"),
-    //         // },
-    //     ],
-    // },
+            // {
+            //     name: "Team Members",
+            //     href: route("setting.team-members.index"),
+            //     current: route().current("setting.team-members.*"),
+            // },
+        ],
+    },
 ];
 </script>
 

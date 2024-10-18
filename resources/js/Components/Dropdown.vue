@@ -46,6 +46,10 @@ const { modelValue, options, placeholder, multiple } = defineProps({
         type: Boolean,
         default: true,
     },
+    direction: {
+        type: String,
+        default: "down", // Accepts "up" or "down"
+    },
 });
 
 const input = ref(null);
@@ -97,8 +101,8 @@ watch(
             <ListboxButton
                 @click="setFocus(!open)"
                 :class="{
-                    'w-full form-input': button,
-                    'flex items-center cursor-pointer disabled:cursor-not-allowed relative ': true,
+                    'form-input': button,
+                    'flex items-center cursor-pointer disabled:cursor-not-allowed relative w-full': true,
                 }"
             >
                 <div
@@ -125,18 +129,23 @@ watch(
 
                 <div class="block truncate" v-else>{{ placeholder }}</div>
                 <div class="pointer-events-none flex items-center ml-auto">
-                    <PhCaretUp
-                        v-if="open"
-                        class="h-5 w-5 text-zinc-900 dark:text-zinc-400 stroke-2"
-                        aria-hidden="true"
-                        weight="duotone"
-                    />
-                    <PhCaretDown
-                        v-else
-                        class="h-5 w-5 text-zinc-900 dark:text-zinc-400 stroke-2"
-                        aria-hidden="true"
-                        weight="duotone"
-                    />
+                    <div class="pointer-events-none flex items-center ml-auto">
+                        <PhCaretUp
+                            v-if="
+                                (direction === 'down' && open) ||
+                                (direction === 'up' && !open)
+                            "
+                            class="h-5 w-5 text-zinc-900 dark:text-zinc-400 stroke-2"
+                            aria-hidden="true"
+                            weight="fill"
+                        />
+                        <PhCaretDown
+                            v-else
+                            class="h-5 w-5 text-zinc-900 dark:text-zinc-400 stroke-2"
+                            aria-hidden="true"
+                            weight="fill"
+                        />
+                    </div>
                 </div>
             </ListboxButton>
 
@@ -146,7 +155,11 @@ watch(
                 leave-to-class="opacity-0"
             >
                 <ListboxOptions
-                    class="absolute z-50 mt-1 w-full rounded-md bg-white dark:bg-zinc-900 shadow-2xl border border-zinc-300 dark:border-zinc-800 focus:outline-none text-sm"
+                    :class="{
+                        'absolute z-50 w-full rounded-md bg-white dark:bg-zinc-900 shadow-2xl border border-zinc-300 dark:border-zinc-800 focus:outline-none text-sm': true,
+                        'mt-1': direction === 'down',
+                        'bottom-full mb-1': direction === 'up',
+                    }"
                 >
                     <div
                         v-if="search"
@@ -157,7 +170,7 @@ watch(
                                 class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4"
                             >
                                 <PhMagnifyingGlass
-                                    weight="duotone"
+                                    weight="fill"
                                     class="h-5 w-5 text-zinc-900 dark:text-zinc-400 stroke-2"
                                 />
                             </div>
@@ -209,7 +222,7 @@ watch(
                                         </div>
 
                                         <PhCheck
-                                            v-if="selected || active"
+                                            v-if="selected"
                                             weight="bold"
                                             class="h-4 w-4 text-zinc-900 dark:text-green-500 stroke-2"
                                         />

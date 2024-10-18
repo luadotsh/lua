@@ -18,7 +18,7 @@ const setTab = (value) => {
 </script>
 
 <template>
-    <div class="col-span-12 lg:col-span-6 card p-4 min-h-[450px]">
+    <div class="min-h-[450px]">
         <Tab :currentTab="tab" :tabs="tabs" @update="setTab" title="Users" />
         <div class="mt-4">
             <Country

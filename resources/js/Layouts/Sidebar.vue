@@ -11,6 +11,7 @@ import { PhList, PhX } from "@phosphor-icons/vue";
 
 import UserDropdown from "./Components/UserDropdown.vue";
 import Menu from "./Components/Menu.vue";
+import Usage from "./Components/Usage.vue";
 
 const sidebarOpen = ref(false);
 
@@ -114,23 +115,14 @@ defineExpose({
         <div
             class="flex-1 flex flex-col overflow-y-auto bg-zinc-100 dark:bg-zinc-900 px-6 pt-6 pb-4"
         >
-            <div class="flex flex-col items-start mb-8">
-                <img
-                    src="/images/mercantive/logo-full-color-horizontal.png"
-                    class="h-8 flex dark:hidden"
-                    alt="Mercantive"
-                />
-                <img
-                    src="/imagesmercantive/logo-full-white-horizontal.png"
-                    class="h-8 hidden dark:flex"
-                    alt="Mercantive"
-                />
+            <div class="flex items-center justify-between">
+                <UserDropdown class="flex-1" />
             </div>
 
             <Menu />
 
             <div class="flex items-center justify-between">
-                <UserDropdown class="flex-1" />
+                <Usage class="flex-1" />
             </div>
         </div>
     </div>

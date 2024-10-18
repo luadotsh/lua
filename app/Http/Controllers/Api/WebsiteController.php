@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-use Inertia\Inertia;
 
 class WebsiteController extends Controller
 {

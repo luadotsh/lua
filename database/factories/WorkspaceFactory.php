@@ -4,6 +4,8 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+use App\Models\Plan;
+
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Workspace>
  */
@@ -18,6 +20,7 @@ class WorkspaceFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
+            'plan_id' => Plan::factory()
         ];
     }
 }

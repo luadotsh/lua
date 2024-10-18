@@ -41,7 +41,7 @@ trait HasWorkspaces
         });
     }
 
-    public function storeRole($workspace)
+    public function workspaceRole($workspace)
     {
         if (! $this->belongsToWorkspace($workspace)) {
             return;

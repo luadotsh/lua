@@ -4,24 +4,30 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Laravel\Pennant\Feature;
+use Laravel\Pennant\Concerns\HasFeatures;
+
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Laravel\Cashier\Billable;
-
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Laravel\Cashier\Billable;
 
-class Workspace extends Model
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+
+class Workspace extends Model implements HasMedia
 {
     use HasFactory;
     use HasUuids;
     use SoftDeletes;
     use Billable;
+    use HasFeatures;
+    use InteractsWithMedia;
 
     /**
      * The attributes that are mass assignable.
@@ -30,6 +36,8 @@ class Workspace extends Model
      */
     protected $fillable = [
         'name',
+        'plan_id',
+        'logo'
     ];
 
     /**
@@ -38,7 +46,9 @@ class Workspace extends Model
      * @var array<int, string>
      */
     protected $hidden = [
-
+        'pm_last_four',
+        'pm_type',
+        'stripe_id'
     ];
 
     /**
@@ -59,9 +69,33 @@ class Workspace extends Model
      * @var array
      */
     protected $appends = [
+        'features',
+        'logo_url'
     ];
 
+    public function getFeaturesAttribute()
+    {
+        return Feature::all();
+    }
 
+    public function updateFeatureFlags()
+    {
+        foreach ($this->features as $key => $feature) {
+            Feature::for($this)->forget($key);
+        }
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('logos');
+    }
+
+    public function getLogoUrlAttribute()
+    {
+        return $this->hasMedia('logos')
+        ? $this->getFirstMediaUrl('logos')
+        : "https://api.dicebear.com/7.x/initials/svg?backgroundType=gradientLinear&fontFamily=Helvetica&fontSize=40&seed=url". urlencode($this->name);
+    }
 
     public function users(): BelongsToMany
     {
@@ -79,5 +113,10 @@ class Workspace extends Model
     public function linkStats(): HasMany
     {
         return $this->hasMany(LinkStat::class);
+    }
+
+    public function plan(): BelongsTo
+    {
+        return $this->belongsTo(Plan::class);
     }
 }

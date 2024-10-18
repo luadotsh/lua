@@ -2,18 +2,21 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 use App\Models\Traits\HasWorkspaces;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmail, HasMedia
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasWorkspaces, HasUuids;
+    use HasFactory, Notifiable, HasWorkspaces, HasUuids, InteractsWithMedia;
 
     /**
      * The attributes that are mass assignable.
@@ -25,6 +28,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'current_workspace_id',
+        'photo'
     ];
 
     /**
@@ -48,5 +52,26 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array<int, string>
+     */
+    protected $appends = [
+        'photo_url'
+    ];
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('photos');
+    }
+
+    public function getPhotoUrlAttribute()
+    {
+        return $this->hasMedia('photos')
+        ? $this->getFirstMediaUrl('photos')
+        : "https://api.dicebear.com/7.x/initials/svg?backgroundType=gradientLinear&fontFamily=Helvetica&fontSize=40&seed=".urlencode($this->name);
     }
 }

@@ -99,7 +99,7 @@ watch(
 </script>
 
 <template>
-    <div class="col-span-12 card p-4">
+    <div class="">
         <div class="flex items-center justify-between mb-12">
             <div>
                 <div
