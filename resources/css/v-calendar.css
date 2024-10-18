@@ -1,0 +1,116 @@
+.vc-pane-layout {
+    @apply divide-x divide-zinc-200;
+}
+
+.vc-header {
+    @apply mb-2
+}
+
+.vc-title {
+    @apply font-sans text-sm !font-medium text-zinc-800 hover:text-zinc-600 hover:!opacity-100
+}
+
+.vc-arrow {
+    @apply bg-zinc-800 text-white
+}
+
+.vc-arrow:hover>.vc-base-icon {
+    @apply bg-zinc-800;
+}
+
+.vc-arrow>.vc-base-icon {
+    @apply p-[5px] text-zinc-300 w-full h-full rounded hover:bg-black
+}
+
+.vc-weekday {
+    @apply w-8 block text-center text-sm text-zinc-500 font-normal
+}
+
+.vc-week {
+    @apply my-[2px]
+}
+
+.vc-day {
+    @apply h-8 block p-px
+}
+
+.vc-day .vc-day-content {
+    @apply h-full w-full text-sm font-normal  border border-transparent hover:bg-zinc-900 hover:text-violet-600;
+}
+
+.vc-day .vc-day-content.in-month {
+    @apply text-zinc-800 dark:text-zinc-300
+}
+
+.vc-day.is-not-in-month .vc-day-content {
+    @apply text-zinc-300 dark:text-zinc-600 opacity-100
+}
+
+.vc-day.is-not-in-month .vc-day-content {
+    @apply text-zinc-300 dark:text-zinc-600
+}
+
+.vc-day.in-month .vc-day-content.vc-highlight-content-solid {
+    @apply font-medium text-white bg-zinc-900
+}
+
+.vc-day.in-month .vc-day-content.vc-highlight-content-outline {
+    @apply font-medium text-white bg-zinc-900
+}
+
+.vc-day.in-month:has(.vc-highlights) {
+    @apply bg-zinc-800 text-zinc-800;
+}
+
+.vc-day:has(.vc-highlight.vc-highlight-bg-solid) {
+    @apply rounded-full
+}
+
+.vc-day.on-left:has(.vc-highlights) {
+    @apply !rounded-l-full
+}
+
+.vc-day.on-right:has(.vc-highlights) {
+    @apply rounded-r-full
+}
+
+.vc-day:has(.vc-highlight-bg-outline) {
+    @apply rounded-full
+}
+
+.vc-day:has(.vc-highlight-base-start):not(.on-right) {
+    @apply !rounded-none !rounded-l-full
+}
+
+.vc-day:has(.vc-highlight-base-end):not(.on-left) {
+    @apply !rounded-none !rounded-r-full
+}
+
+.vc-day.in-next-month.day-1:has(.vc-highlights) {
+    @apply bg-gradient-to-r from-zinc-800 w-full h-full opacity-100;
+}
+
+.vc-day.in-next-month.day-1:has(.vc-highlights) {}
+
+.vc-day.in-prev-month.day-from-end-1:has(.vc-highlights):has(+ .vc-day.in-month .vc-highlights) {
+    @apply bg-gradient-to-l from-zinc-800 w-full h-full opacity-100;
+}
+
+.vc-focus:focus-within {
+    box-shadow: none !important;
+}
+
+.vc-day>.vc-highlights {
+    @apply invisible;
+}
+.vc-base-select select {
+    border-width: 0px;
+}
+
+.vc-dark {
+    @apply !bg-zinc-900 text-zinc-100 !border-zinc-700;
+}
+
+.vc-pane-layout> :not([hidden])~ :not([hidden]) {
+    @apply !border-zinc-700
+}

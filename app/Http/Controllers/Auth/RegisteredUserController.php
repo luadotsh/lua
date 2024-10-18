@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -12,6 +12,11 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
+
+use App\Enums\User\Role;
+
+use App\Models\User;
+use App\Models\Workspace;
 
 class RegisteredUserController extends Controller
 {
@@ -33,7 +38,7 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
@@ -42,10 +47,23 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        $workspace = Workspace::create([
+            'name' => $request->name,
+        ]);
+
+        // attach user to project
+        $user->workspaces()->attach($workspace->id, [
+            'role' => Role::ROLE_OWNER,
+        ]);
+
+        $user->forceFill([
+            'current_workspace_id' => $workspace->id,
+        ])->save();
+
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('links.index', absolute: false));
     }
 }

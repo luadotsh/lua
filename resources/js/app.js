@@ -8,6 +8,14 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
+// calendar
+import VCalendar from "v-calendar";
+import "v-calendar/style.css";
+
+// Import modules...
+import FloatingVue from "floating-vue";
+import "floating-vue/dist/style.css";
+
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) =>
@@ -17,6 +25,8 @@ createInertiaApp({
         ),
     setup({ el, App, props, plugin }) {
         return createApp({ render: () => h(App, props) })
+            .use(VCalendar)
+            .use(FloatingVue)
             .use(plugin)
             .use(ZiggyVue)
             .mount(el);
