@@ -75,4 +75,9 @@ class Workspace extends Model
     {
         return $this->hasMany(Link::class);
     }
+
+    public function linkStats(): HasMany
+    {
+        return $this->hasMany(LinkStat::class);
+    }
 }

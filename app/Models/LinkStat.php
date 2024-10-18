@@ -27,6 +27,7 @@ class LinkStat extends Model
      */
     protected $fillable = [
         'link_id',
+        'workspace_id',
         'event',
         'country',
         'region',
@@ -35,7 +36,14 @@ class LinkStat extends Model
         'device',
         'browser',
         'ip',
-        'referrer',
+
+        'utm_medium',
+        'utm_source',
+        'utm_campaign',
+        'utm_content',
+        'utm_term',
+
+        'referer',
     ];
 
     /**
@@ -67,5 +75,10 @@ class LinkStat extends Model
     public function link(): BelongsTo
     {
         return $this->belongsTo(Link::class);
+    }
+
+    public function workspace(): BelongsTo
+    {
+        return $this->belongsTo(Workspace::class);
     }
 }

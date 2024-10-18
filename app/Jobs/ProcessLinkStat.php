@@ -25,7 +25,7 @@ class ProcessLinkStat implements ShouldQueue
         public string $userAgent,
         public array $languages,
         public string $ip,
-        public ?string $referrer
+        public ?string $referer
     ) {}
 
     /**
@@ -48,7 +48,7 @@ class ProcessLinkStat implements ShouldQueue
             'os' => $service->getOS($this->userAgent),
             'device' => $service->getDevice($this->userAgent),
             'language' => $service->getLanguage($this->languages),
-            'referrer' => $service->getReferrer($this->referrer),
+            'referer' => $service->getReferer($this->referer),
             'ip' => $this->ip,
         ]);
 

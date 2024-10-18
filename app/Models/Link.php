@@ -71,7 +71,7 @@ class Link extends Model
         return $this->belongsTo(Workspace::class);
     }
 
-    public function stats(): HasMany
+    public function linkStats(): HasMany
     {
         return $this->hasMany(LinkStat::class);
     }

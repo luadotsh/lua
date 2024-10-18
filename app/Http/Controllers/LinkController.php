@@ -22,9 +22,7 @@ class LinkController extends Controller
     {
         $workspace = $request->user()->currentWorkspace;
 
-        $query = Link::where('workspace_id', $workspace->id)
-            ->withCount('stats')
-            ->latest();
+        $query = Link::where('workspace_id', $workspace->id)->latest();
 
         // search
         if ($request->q) {

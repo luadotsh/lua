@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('link_stats', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->foreignUuid('workspace_id')->constrained();
             $table->foreignUuid('link_id')->constrained();
 
             $table->string('event')->nullable();
@@ -28,7 +29,13 @@ return new class extends Migration
 
             $table->ipAddress('ip')->nullable();
 
-            $table->string('referrer', 900)->nullable();
+            $table->string('utm_medium')->nullable();
+            $table->string('utm_source')->nullable();
+            $table->string('utm_campaign')->nullable();
+            $table->string('utm_content')->nullable();
+            $table->string('utm_term')->nullable();
+
+            $table->string('referer', 900)->nullable();
 
             $table->timestamps();
             $table->softDeletes();

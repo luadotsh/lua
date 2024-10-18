@@ -40,7 +40,7 @@ class UserAgentService
     {
         $osArray = [
             'Windows' => 'Windows',
-            'Mac OS' => '(Mac_PowerPC)|(Macintosh)',
+            'MacOS' => '(Mac_PowerPC)|(Macintosh)',
             'Linux' => 'Linux',
             'iOS' => 'iPhone|iPad',
             'Android' => 'Android',
@@ -91,16 +91,16 @@ class UserAgentService
     }
 
     /**
-     * Get the referrer from the request headers.
+     * Get the referers from the request headers.
      *
-     * @param string|null $referrer
+     * @param string|null $referers
      * @return string
      */
-    public function getReferrer(?string $referrer): string
+    public function getReferer(?string $referers): string
     {
-        // Check if referrer is present and not empty
-        if ($referrer && !empty($referrer)) {
-            return $referrer;
+        // Check if referers is present and not empty
+        if ($referers && !empty($referers)) {
+            return $referers;
         }
 
         return 'Direct';

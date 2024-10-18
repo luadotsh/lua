@@ -6,11 +6,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WorkspaceController;
 use App\Http\Controllers\LinkController;
-use App\Http\Controllers\AnalyticController;
+use App\Http\Controllers\AnalyticsController;
 
 Route::group(
     [
         'middleware' => [
+            'auth'
         ],
     ],
     function () {
@@ -35,7 +36,8 @@ Route::group(
         Route::delete('/links/{id}', [LinkController::class, 'destroy'])->name('links.destroy');
 
         // analytics
-        Route::get('/analytics', [AnalyticController::class, 'index'])->name('analytics.index');
+        Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
+        Route::get('/analytics/statistics', [AnalyticsController::class, 'statistics'])->name('analytics.statistics');
 
 
         // profile

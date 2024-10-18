@@ -30,6 +30,12 @@ const navigation = [
         icon: PhTrendUp,
         current: route().current("links.*"),
     },
+    {
+        name: "Analytics",
+        href: route("analytics.index"),
+        icon: PhTrendUp,
+        current: route().current("analytics.*"),
+    },
     // {
     //     name: "Settings",
     //     href: route("setting.store.edit"),
