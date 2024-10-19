@@ -11,10 +11,6 @@ import Logo from "./Logo.vue";
 
 const workspace = usePage().props.auth.user.current_workspace;
 
-defineProps({
-    currencies: Object,
-});
-
 const form = useForm(workspace);
 
 const update = () => {
@@ -63,7 +59,7 @@ const update = () => {
                 <div
                     class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6"
                 >
-                    <Label for="logo" value="Logo" :required="true" />
+                    <Label for="logo" value="Logo" />
                     <div class="mt-2 sm:col-span-2 sm:mt-0">
                         <Logo />
                     </div>
@@ -80,110 +76,6 @@ const update = () => {
                             autocomplete="name"
                         />
                         <InputError :message="form.errors.name" class="mt-2" />
-                    </div>
-                </div>
-
-                <div
-                    class="sm:grid sm:grid-cols-3 sm:items-center sm:gap-4 sm:py-6"
-                >
-                    <div>
-                        <Label
-                            for="subdomain"
-                            value="Store URL"
-                            :required="true"
-                        />
-                        <p class="text-sm text-zinc-500 dark:text-zinc-400">
-                            Your store is live at this link
-                        </p>
-                    </div>
-                    <div class="mt-2 sm:col-span-2 sm:mt-0">
-                        <div class="relative flex items-center">
-                            <Input
-                                id="subdomain"
-                                type="text"
-                                v-model="form.subdomain"
-                                class="pr-36"
-                                pattern="^[a-z0-9-]+$"
-                                placeholder="tesla"
-                                required
-                            />
-                            <div
-                                class="absolute inset-y-0 right-0 flex py-1.5 pr-1.5"
-                            >
-                                <span
-                                    class="inline-flex items-center select-none pr-1 text-zinc-400 dark:text-zinc-300 text-sm"
-                                >
-                                    .mercantive.com
-                                </span>
-                            </div>
-                        </div>
-
-                        <InputError
-                            class="mt-2"
-                            :message="form.errors.subdomain"
-                        />
-                    </div>
-                </div>
-
-                <div
-                    class="sm:grid sm:grid-cols-3 sm:items-center sm:gap-4 sm:py-6"
-                >
-                    <div>
-                        <Label
-                            for="support_email"
-                            value="Support email"
-                            :required="true"
-                        />
-                        <p class="text-sm text-zinc-500 dark:text-zinc-400">
-                            This is where customers can reach you for
-                            assistance, displayed on their receipts and
-                            invoices.
-                        </p>
-                    </div>
-
-                    <div class="mt-2 sm:col-span-2 sm:mt-0">
-                        <Input
-                            id="support_email"
-                            type="text"
-                            v-model="form.support_email"
-                            placeholder=""
-                            required
-                        />
-
-                        <InputError
-                            class="mt-2"
-                            :message="form.errors.support_email"
-                        />
-                    </div>
-                </div>
-
-                <div
-                    class="sm:grid sm:grid-cols-3 sm:items-center sm:gap-4 sm:py-6"
-                >
-                    <Label
-                        for="currency_id"
-                        value="Currency"
-                        :required="true"
-                    />
-                    <div class="mt-2 sm:col-span-2 sm:mt-0">
-                        <Dropdown
-                            id="currency_id"
-                            :options="
-                                currencies.map((currency) => ({
-                                    id: currency.id,
-                                    label: currency.label,
-                                }))
-                            "
-                            class="w-full"
-                            :search="true"
-                            placeholder="Select..."
-                            v-model="form.currency_id"
-                        />
-
-                        <InputError
-                            class="mt-2"
-                            :message="form.errors.currency"
-                        />
                     </div>
                 </div>
             </div>

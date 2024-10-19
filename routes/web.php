@@ -12,11 +12,13 @@ use App\Http\Controllers\MediaController;
 
 // setting
 use App\Http\Controllers\Setting\AccountController;
+use App\Http\Controllers\Setting\WorkspaceController as SettingWorkspaceController;
 use App\Http\Controllers\Setting\UsageController;
 use App\Http\Controllers\Setting\BillingController;
 use App\Http\Controllers\Setting\DomainController;
 use App\Http\Controllers\Setting\InviteController;
 use App\Http\Controllers\Setting\TagController;
+use App\Http\Controllers\Setting\ApiTokenController;
 use App\Http\Controllers\Setting\TeamMemberController;
 
 Route::group(
@@ -69,6 +71,10 @@ Route::group(
             Route::post('/account', [AccountController::class, 'update'])->name('setting.account.update')->withoutMiddleware(['set-store']);
             Route::delete('/account/photo', [AccountController::class, 'deletePhoto'])->name('setting.account.photo.destroy')->withoutMiddleware(['set-store']);
 
+            // workspace
+            Route::get('/workspace', [SettingWorkspaceController::class, 'edit'])->name('setting.workspace.edit');
+            Route::put('/workspace', [SettingWorkspaceController::class, 'update'])->name('setting.workspace.update');
+            Route::delete('/workspace/photo', [SettingWorkspaceController::class, 'deleteLogo'])->name('setting.workspace.logo.destroy');
 
             // analytics
             Route::get('/domains', [DomainController::class, 'index'])->name('setting.domains.index');
@@ -103,6 +109,11 @@ Route::group(
 
             // usage
             Route::get('/usage', [UsageController::class, 'index'])->name('setting.usage.index');
+
+            // api tokens
+            Route::get('/api-tokens', [ApiTokenController::class, 'index'])->name('setting.api-tokens.index');
+            Route::post('/api-tokens', [ApiTokenController::class, 'store'])->name('setting.api-tokens.store');
+            Route::delete('/api-tokens/{id}', [ApiTokenController::class, 'destroy'])->name('setting.api-tokens.destroy');
         });
     }
 );

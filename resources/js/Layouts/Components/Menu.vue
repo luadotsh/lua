@@ -38,26 +38,27 @@ const navigation = [
     },
     {
         name: "Settings",
-        href: route("setting.account.edit"),
+        href: route("setting.workspace.edit"),
         icon: PhGear,
         current: route().current("setting.*"),
 
         items: [
             {
-                name: "Account",
-                href: route("setting.account.edit"),
-                current: route().current("setting.account.*"),
+                name: "Workspace",
+                href: route("setting.workspace.edit"),
+                current: route().current("setting.workspace.*"),
             },
             {
                 name: "Domains",
                 href: route("setting.domains.index"),
                 current: route().current("setting.domains.*"),
             },
-            // {
-            //     name: "API",
-            //     href: route("setting.api.index"),
-            //     current: route().current("setting.api.*"),
-            // },
+
+            {
+                name: "API Tokens",
+                href: route("setting.api-tokens.index"),
+                current: route().current("setting.api-tokens.*"),
+            },
 
             {
                 name: "Tags",

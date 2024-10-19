@@ -9,7 +9,7 @@ const inputRef = ref(null);
 const uploadHasErrors = ref(null);
 const isLoading = ref(false);
 
-const store = computed(() => usePage().props.auth.user.current_store);
+const workspace = computed(() => usePage().props.auth.user.current_workspace);
 
 const upload = async () => {
     inputRef.value.click();
@@ -20,9 +20,9 @@ const upload = async () => {
 
         const formData = new FormData();
         formData.append("media", event.target.files[0]);
-        formData.append("model", "Store");
-        formData.append("model_id", store.value.id);
-        formData.append("collection", "logo");
+        formData.append("model", "Workspace");
+        formData.append("model_id", workspace.value.id);
+        formData.append("collection", "logos");
         formData.append("visibility", "public");
 
         await axios
@@ -47,8 +47,8 @@ const upload = async () => {
 const destroy = () => {
     router.delete(
         route("medias.destroy", {
-            modelId: store.value.media?.[0].model_id,
-            id: store.value.media?.[0].id,
+            modelId: workspace.value.media?.[0].model_id,
+            id: workspace.value.media?.[0].id,
         }),
         {
             onSuccess: () => {
@@ -66,8 +66,8 @@ const destroy = () => {
         <div class="flex items-center space-x-4">
             <div>
                 <img
-                    :src="store.logo_url"
-                    :alt="store.name"
+                    :src="workspace.logo_url"
+                    :alt="workspace.name"
                     class="h-10 w-10 rounded-full"
                 />
             </div>
@@ -88,7 +88,7 @@ const destroy = () => {
         </div>
 
         <div
-            v-if="store.media?.length >= 1"
+            v-if="workspace.media?.length >= 1"
             @click="destroy"
             class="p-2 hover:bg-zinc-100 rounded-md cursor-pointer"
         >

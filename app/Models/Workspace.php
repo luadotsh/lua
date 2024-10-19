@@ -120,4 +120,9 @@ class Workspace extends Model implements HasMedia
     {
         return $this->belongsTo(Plan::class);
     }
+
+    public function apiTokens(): HasMany
+    {
+        return $this->hasMany(ApiToken::class);
+    }
 }
