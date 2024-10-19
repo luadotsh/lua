@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Gate;
 
 use App\Enums\User\Role as UserRole;
 
-use App\Models\Project;
+use App\Models\Workspace;
 use App\Models\User;
 use App\Models\Invite;
 
@@ -20,37 +20,33 @@ class TeamMemberController extends Controller
 {
     public function index(Request $request)
     {
-        $project = Project::where('id', auth()->user()->currentProject->id)
+        $workspace = auth()->user()->currentWorkspace;
+
+        $workspace = Workspace::where('id', $workspace->id)
             ->with('users', function ($query) {
                 $query->orderBy('name', 'asc');
                 $query->where('role', '!=', UserRole::ROLE_USER);
             })->first();
 
-        $invites = Invite::where('project_id', auth()->user()->currentProject->id)->get();
+        $invites = Invite::where('workspace_id', $workspace->id)->get();
 
-        return Inertia::render('App/Setting/TeamMember/Index', [
-            'users' => $project->users,
+        return Inertia::render('Setting/TeamMember/Index', [
+            'users' => $workspace->users,
             'invites' => $invites
         ]);
     }
 
     public function updateUserRole($id, UpdateUserRoleRequest $request)
     {
-        Gate::forUser(auth()->user())->authorize('updateProjectMember', auth()->user()->currentProject);
-
         // validate user
         $user = User::where('id', $id)
-        ->whereHas('projects', function (Builder $query) {
-            $query->where('projects.id', auth()->user()->currentProject->id);
+        ->whereHas('workspaces', function (Builder $query) {
+            $query->where('workspaces.id', auth()->user()->currentWorkspace->id);
         })
-        ->first();
-
-        if (!$user) {
-            abort(404);
-        }
+        ->firstOrFail();
 
         // update user role
-        $user->projects()->syncWithPivotValues([auth()->user()->currentProject->id], ['role' => $request->role], false);
+        $user->workspaces()->syncWithPivotValues([auth()->user()->currentWorkspace->id], ['role' => $request->role], false);
 
         session()->flash('flash.banner', 'User role updated');
         session()->flash('flash.bannerStyle', 'success');
@@ -59,21 +55,19 @@ class TeamMemberController extends Controller
     }
 
     /**
-     * Remove user from project
+     * Remove user from workspace
      */
     public function destroy($id)
     {
-        Gate::forUser(auth()->user())->authorize('removeProjectMember', auth()->user()->currentProject);
-
-        // validate if user exist on project
+        // validate if user exist on workspace
         $user = User::where('id', $id)
-        ->whereHas('projects', function (Builder $query) {
-            $query->where('projects.id', auth()->user()->currentProject->id);
+        ->whereHas('workspaces', function (Builder $query) {
+            $query->where('workspaces.id', auth()->user()->currentWorkspace->id);
         })
         ->firstOrFail();
 
-        // detach user from project
-        $user->projects()->detach(auth()->user()->currentProject->id);
+        // detach user from workspace
+        $user->workspaces()->detach(auth()->user()->currentWorkspace->id);
 
         session()->flash('flash.banner', 'User removed successful');
         session()->flash('flash.bannerStyle', 'success');
@@ -84,36 +78,36 @@ class TeamMemberController extends Controller
     public function leave()
     {
         $user = auth()->user();
-        $project = auth()->user()->currentProject;
+        $workspace = auth()->user()->currentWorkspace;
 
-        if ($project->users()->count() == 1) {
+        if ($workspace->users()->count() == 1) {
             session()->flash('flash.banner', 'The Team cannot stay without a user');
             session()->flash('flash.bannerStyle', 'danger');
 
             return back();
         }
 
-        $user->projects()->detach($project->id);
+        $user->workspaces()->detach($workspace->id);
 
-        $userProjects = auth()->user()->projects();
+        $userWorkspaces = auth()->user()->workspaces();
 
-        if ($userProjects->count() >= 1) {
-            $newProject = Project::findOrFail($userProjects->first()->id);
-            if (!auth()->user()->switchProject($newProject)) {
+        if ($userWorkspaces->count() >= 1) {
+            $newWorkspace = Workspace::findOrFail($userWorkspaces->first()->id);
+            if (!auth()->user()->switchWorkspace($newWorkspace)) {
                 abort(403);
             }
 
             session()->flash('flash.banner', 'You leaved from team.');
             session()->flash('flash.bannerStyle', 'success');
 
-            return redirect(route('changelogs.index'));
+            return redirect(route('links.index'));
         } else {
             auth()->user()->forceFill([
-                'current_project_id' => null,
+                'current_workspace_id' => null,
             ])->save();
 
 
-            return redirect(route('projects.create'));
+            return redirect(route('workspaces.create'));
         }
     }
 }

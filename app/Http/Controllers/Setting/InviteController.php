@@ -10,10 +10,17 @@ use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\Invite;
 
-use App\Mail\SendUserInvitation;
+use App\Mail\Team\SendUserInvite;
+
+use Inertia\Inertia;
 
 class InviteController extends Controller
 {
+    public function create()
+    {
+        return Inertia::render('Setting/TeamMember/Invite/Create');
+    }
+
     public function store(InviteRequest $request)
     {
         $workspace = auth()->user()->currentWorkspace;
@@ -43,10 +50,7 @@ class InviteController extends Controller
         $invite->save();
 
         // send email
-        Mail::to($invite->email)->send(new SendUserInvitation($workspace, $invite));
-
-        // update feature flags
-        $workspace->updateSetupGuide('team');
+        Mail::to($invite->email)->send(new SendUserInvite($workspace, $invite));
 
         session()->flash('flash.banner', 'Invite was sent!');
         session()->flash('flash.bannerStyle', 'success');

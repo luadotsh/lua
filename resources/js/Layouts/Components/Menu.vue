@@ -52,11 +52,11 @@ const navigation = [
             //     current: route().current("setting.api.*"),
             // },
 
-            // {
-            //     name: "Team Members",
-            //     href: route("setting.team-members.index"),
-            //     current: route().current("setting.team-members.*"),
-            // },
+            {
+                name: "Team Members",
+                href: route("setting.team-members.index"),
+                current: route().current("setting.team-members.*"),
+            },
         ],
     },
 ];

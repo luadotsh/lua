@@ -50,7 +50,7 @@ class SendUserInvite extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'mail.user.invite',
+            view: 'mail.invite',
             with: [
                 'title' => "You are invited to join the {$this->workspace->name} team.",
                 'workspace' => $this->workspace,

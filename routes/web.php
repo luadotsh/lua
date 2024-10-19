@@ -82,6 +82,7 @@ Route::group(
             Route::delete('/users/{id}/remove-from-team', [TeamMemberController::class, 'destroy'])->name('setting.team-members.destroy');
 
             // user invites
+            Route::get('/users/invites/create', [InviteController::class, 'create'])->name('setting.invites.create');
             Route::post('/users/invites', [InviteController::class, 'store'])->name('setting.invites.store');
             Route::delete('/users/invites/{id}', [InviteController::class, 'destroy'])->name('setting.invites.destroy');
         });

@@ -2,11 +2,18 @@
 
 namespace App\Providers;
 
-use App\Models\Workspace;
+use Illuminate\Database\Eloquent\Relations\Relation;
+
 use Laravel\Cashier\Cashier;
+
+use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Notifications\Messages\MailMessage;
 
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+
+use App\Models\Workspace;
+use App\Models\User;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -28,5 +35,23 @@ class AppServiceProvider extends ServiceProvider
     {
         Cashier::useCustomerModel(Workspace::class);
         Vite::prefetch(concurrency: 3);
+
+        // Custom email verification template
+        VerifyEmail::toMailUsing(function (User $user, string $url) {
+            return (new MailMessage)
+                ->subject('Verify Email Address')
+                ->view('mail.email-verification', [
+                    'title' => 'Confirm your email address',
+                    'previewText' => 'Please confirm your email address.',
+                    'user' => $user,
+                    'url' => $url
+                ]);
+        });
+
+        // Morph map for polymorphic relationships
+        Relation::enforceMorphMap([
+            'user' => User::class,
+            'workspace' => Workspace::class,
+        ]);
     }
 }
