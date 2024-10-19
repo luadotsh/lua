@@ -8,7 +8,7 @@ import {
     PhCaretUp,
     PhLink,
     PhTrendUp,
-    PhGraduationCap,
+    PhCursorClick,
     PhPalette,
     PhGear,
     PhBell,
@@ -18,16 +18,23 @@ import {
 
 const navigation = [
     {
+        name: "Analytics",
+        href: route("analytics.index"),
+        icon: PhTrendUp,
+        current: route().current("analytics.*"),
+    },
+    {
         name: "Links",
         href: route("links.index"),
         icon: PhLink,
         current: route().current("links.*"),
     },
+
     {
-        name: "Analytics",
-        href: route("analytics.index"),
-        icon: PhTrendUp,
-        current: route().current("analytics.*"),
+        name: "Events",
+        href: route("events.index"),
+        icon: PhCursorClick,
+        current: route().current("events.*"),
     },
     {
         name: "Settings",
@@ -52,6 +59,11 @@ const navigation = [
             //     current: route().current("setting.api.*"),
             // },
 
+            {
+                name: "Tags",
+                href: route("setting.tags.index"),
+                current: route().current("setting.tags.*"),
+            },
             {
                 name: "Team Members",
                 href: route("setting.team-members.index"),

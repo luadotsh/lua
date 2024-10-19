@@ -16,7 +16,7 @@ const { has_subscription } = usePage().props.billing;
 <template>
     <Head title="Pricing - Changelogfy" />
 
-    <AppLayout :fluid="true">
+    <AppLayout>
         <template #header>
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">

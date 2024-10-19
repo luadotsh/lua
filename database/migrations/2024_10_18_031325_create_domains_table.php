@@ -14,10 +14,12 @@ return new class extends Migration
         Schema::create('domains', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('workspace_id')->constrained();
-            $table->string('domain')->unique();
+            $table->string('domain');
             $table->string('status');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unique(['workspace_id', 'domain', 'deleted_at']);
         });
     }
 

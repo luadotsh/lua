@@ -8,6 +8,9 @@ return [
     | The list of reserved subdomains for the application.
     | These subdomains are not allowed to be used by users.
     */
-    'lua.sh',
-    'lua.link'
+
+    'main' => 'lua.sh',
+    'all' => [
+        'lua.sh'
+    ]
 ];

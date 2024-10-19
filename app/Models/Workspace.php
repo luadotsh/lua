@@ -37,7 +37,8 @@ class Workspace extends Model implements HasMedia
     protected $fillable = [
         'name',
         'plan_id',
-        'logo'
+        'logo',
+        'billing_cycle_start'
     ];
 
     /**

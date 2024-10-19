@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Log;
 use App\Jobs\ProcessLinkStat;
 
 use App\Models\Link;
+use App\Models\Domain;
+use App\Models\Tag;
 
 use Inertia\Inertia;
 use Inertia\Response;
@@ -22,7 +24,9 @@ class LinkController extends Controller
     {
         $workspace = $request->user()->currentWorkspace;
 
-        $query = Link::where('workspace_id', $workspace->id)->latest();
+        $query = Link::where('workspace_id', $workspace->id)
+            ->with('tags')
+            ->latest();
 
         // search
         if ($request->q) {
@@ -37,17 +41,19 @@ class LinkController extends Controller
 
         $links = $query->paginate(config('app.pagination.default'));
 
+        // the workspace domains
+        $domains = Domain::where('workspace_id', $workspace->id)->get()->pluck('domain')->toArray();
+
         return Inertia::render('Link/Index', [
             'table' => $links,
             'hasData' => Link::where('workspace_id', $workspace->id)->exists(),
-            'domains' => config('domains'),
+            'domains' => array_merge($domains, config('domains.all')),
+            'tags' => Tag::where('workspace_id', $workspace->id)->get(),
         ]);
     }
 
     public function store(Request $request)
     {
-        $link =
-
         // Create the discount
         $link = Link::create([
             'workspace_id' => $request->user()->currentWorkspace->id,
@@ -61,6 +67,9 @@ class LinkController extends Controller
             'utm_term' => $request->utm_term,
             'utm_content' => $request->utm_content,
         ]);
+
+        // update tags
+        $link->tags()->sync(collect($request->tags)->pluck('id'));
 
         return redirect(route('links.index'));
     }

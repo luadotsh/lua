@@ -85,22 +85,10 @@ defineExpose({
                         <div
                             class="flex grow flex-col gap-y-5 overflow-y-auto bg-zinc-100 dark:bg-zinc-900 px-6 py-4 pb-2 ring-1 ring-white/10"
                         >
-                            <div class="flex flex-col items-start">
-                                <img
-                                    src="/images/mercantive/logo-full-color-horizontal.png"
-                                    class="h-8 flex dark:hidden"
-                                    alt="Mercantive"
-                                />
-                                <img
-                                    src="/images/mercantive/logo-full-white-horizontal.png"
-                                    class="h-8 hidden dark:flex"
-                                    alt="Mercantive"
-                                />
-                            </div>
-                            <Menu />
-                            <div class="flex items-center justify-between">
+                            <div class="flex items-center justify-between mb-4">
                                 <UserDropdown class="flex-1" />
                             </div>
+                            <Menu />
                         </div>
                     </DialogPanel>
                 </TransitionChild>
@@ -115,7 +103,7 @@ defineExpose({
         <div
             class="flex-1 flex flex-col overflow-y-auto bg-zinc-100 dark:bg-zinc-900 px-6 pt-6 pb-4"
         >
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between mb-6">
                 <UserDropdown class="flex-1" />
             </div>
 

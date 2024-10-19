@@ -52,13 +52,21 @@ class LocalDevelopmentSeeder extends Seeder
         $dates = CarbonPeriod::create(now()->subMonths(4), '60 minutes', now());
 
         foreach ($dates as $date) {
+
+            $link = $links->random();
+
+            // create some stats
             LinkStat::factory([
+                'link_id' => $link->id,
                 'workspace_id' => $workspace->id,
                 'created_at' => $date
             ])
                 ->count(rand(1, 2))
-                ->for($links->random())
                 ->create();
+
+            // update the link
+            $link->clicks = LinkStat::where('link_id', $link->id)->count();
+            $link->save();
         }
     }
 }

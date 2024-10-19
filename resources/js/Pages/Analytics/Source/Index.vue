@@ -11,14 +11,21 @@ import Campaign from "./Campaign.vue";
 import Content from "./Content.vue";
 import Term from "./Term.vue";
 
-const { dateRange } = defineProps({
-    dateRange: Object,
+const { range } = defineProps({
+    range: Object,
 });
 
 const tabNames = ["Referer"];
 const tabs = { Referer, Medium, Source, Campaign, Content, Term };
 const tab = ref("Referer");
-const campaigns = ["Medium", "Source", "Campaign", "Content", "Term"];
+const campaigns = [
+    "Referer",
+    "Medium",
+    "Source",
+    "Campaign",
+    "Content",
+    "Term",
+];
 
 const setTab = (value) => {
     tab.value = value;
@@ -31,21 +38,24 @@ const setTab = (value) => {
             :currentTab="tab"
             :tabs="tabNames"
             @update="setTab"
-            title="Sources"
+            title="Referers"
         >
-            <template #right>
-                <Menu as="div" class="relative inline-block text-left">
+            <template #left>
+                <Menu as="div" class="relative inline-block text-left z-20">
                     <div>
                         <MenuButton
                             :class="{
-                                'ml-2 cursor-pointer flex items-center capitalize text-xs font-medium rounded-md px-2 py-1 border': true,
-                                'card ': tab !== 'Referer',
+                                'cursor-pointer flex items-center capitalize text-xs font-medium rounded-md px-2 py-1.5 border': true,
+                                ' ': tab !== 'Referer',
                                 'text-zinc-600 dark:text-zinc-400 border-transparent':
                                     tab === 'Referer',
                             }"
                         >
-                            {{ tab == "Referer" ? "All campaigns" : tab }}
-                            <PhCaretDown class="h-4 w-4" aria-hidden="true" />
+                            {{ tab == "Referer" ? "All " : tab }}
+                            <PhCaretDown
+                                class="h-4 w-4 ml-1"
+                                aria-hidden="true"
+                            />
                         </MenuButton>
                     </div>
 
@@ -80,7 +90,7 @@ const setTab = (value) => {
             </template>
         </Tab>
         <div class="mt-4">
-            <component :is="tabs[tab]" :dateRange="dateRange" />
+            <component :is="tabs[tab]" :range="range" />
         </div>
     </div>
 </template>

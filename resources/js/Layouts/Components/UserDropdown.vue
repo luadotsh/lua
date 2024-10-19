@@ -70,7 +70,7 @@ const switchToWorkspace = (store) => {
             leave-to-class="transform opacity-0 scale-95"
         >
             <MenuItems
-                class="absolute top-0 -left-2 z-10 mt-10 w-52 border border-zinc-700 origin-bottom-right divide-y divide-zinc-100 dark:divide-zinc-700 rounded bg-white dark:bg-zinc-800 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none"
+                class="absolute top-0 -left-2 z-10 mt-10 w-full lg:w-52 border border-zinc-200 dark:border-zinc-700 origin-bottom-right divide-y divide-zinc-100 dark:divide-zinc-700 rounded bg-white dark:bg-zinc-800 shadow-lg focus:outline-none"
             >
                 <div class="py-1">
                     <MenuItem

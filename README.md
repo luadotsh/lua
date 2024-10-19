@@ -24,3 +24,10 @@
 This project is open-source and available under the terms of the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.en.html).
 
 For more details, please see the full license text in the [LICENSE.md](LICENSE.md) file.
+
+## Running Locally
+
+### Reverb
+```bash
+php artisan reverb:start --host="0.0.0.0" --port=8080 --hostname="lua.sh.test"
+```

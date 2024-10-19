@@ -9,8 +9,8 @@ import Device from "./Device.vue";
 const tabs = ["devices", "browsers", "OS", "language"];
 const tab = ref("devices");
 
-const { dateRange } = defineProps({
-    dateRange: Object,
+const { range } = defineProps({
+    range: Object,
 });
 
 const setTab = (value) => {
@@ -23,21 +23,17 @@ const setTab = (value) => {
         <Tab :currentTab="tab" :tabs="tabs" @update="setTab" :title="tab" />
 
         <div class="mt-4">
-            <Device
-                v-if="tab == 'devices'"
-                key="devices"
-                :dateRange="dateRange"
-            />
+            <Device v-if="tab == 'devices'" key="devices" :range="range" />
             <Browser
                 v-else-if="tab == 'browsers'"
                 key="browsers"
-                :dateRange="dateRange"
+                :range="range"
             />
-            <OS v-else-if="tab == 'OS'" key="OS" :dateRange="dateRange" />
+            <OS v-else-if="tab == 'OS'" key="OS" :range="range" />
             <Language
                 v-else-if="tab == 'language'"
                 key="language"
-                :dateRange="dateRange"
+                :range="range"
             />
         </div>
     </div>

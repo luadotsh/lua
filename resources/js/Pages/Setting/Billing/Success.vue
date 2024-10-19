@@ -3,7 +3,7 @@ import { onMounted } from "vue";
 import { Head, router } from "@inertiajs/vue3";
 import AppLayout from "@/Layouts/Master.vue";
 
-import { IconLoader } from "@tabler/icons-vue";
+import { PhSpinnerGap } from "@phosphor-icons/vue";
 
 onMounted(() => {
     setTimeout(() => {
@@ -29,7 +29,7 @@ onMounted(() => {
         <div class="flex min-h-full flex-1 flex-col justify-center">
             <div class="max-w-3xl mx-auto">
                 <div class="flex items-center space-x-2">
-                    <IconLoader class="h-6 w-6 text-gray-500 animate-spin" />
+                    <PhSpinnerGap class="h-6 w-6 text-gray-500 animate-spin" />
                     <div class="font-medium text-black text-lg">
                         Please wait while we process your payment.
                     </div>

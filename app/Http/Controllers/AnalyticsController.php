@@ -22,9 +22,15 @@ class AnalyticsController extends Controller
         public CalculateStat $stat
     ) {}
 
-    public function index()
+    public function index(Request $request)
     {
-        return Inertia::render('Analytics/Index');
+        $start = Carbon::createFromFormat('Y-m-d', $request->start ? $request->start : now()->subDays(30)->format('Y-m-d'))->startOfDay();
+        $end = Carbon::createFromFormat('Y-m-d', $request->end ? $request->end : now()->format('Y-m-d'))->endOfDay();
+
+        return Inertia::render('Analytics/Index',[
+            'start' => $start->format('Y-m-d'),
+            'end' => $end->format('Y-m-d'),
+        ]);
     }
 
     public function statistics(Request $request)
@@ -32,8 +38,6 @@ class AnalyticsController extends Controller
         $request->validate([
             'start' => ['required', 'max:255', 'date_format:Y-m-d'],
             'end' => ['required', 'max:255', 'date_format:Y-m-d'],
-            'start_previous' => ['required', 'max:255', 'date_format:Y-m-d'],
-            'end_previous' => ['required', 'max:255', 'date_format:Y-m-d'],
             'metric' => [
                 'required',
                 'max:255',
@@ -56,7 +60,6 @@ class AnalyticsController extends Controller
                 ])
             ],
             'group' => ['required', 'max:255', 'in:minute,hour,day,month'],
-            'key' => ['required', 'in:today,yesterday,last_7_days,last_30_days,this_month,last_month,this_year,last_12_months'],
             'timezone' => ['required', 'max:255'],
         ]);
 
@@ -67,13 +70,10 @@ class AnalyticsController extends Controller
         $start = Carbon::createFromFormat('Y-m-d', $request->start, $timezone)->startOfDay()->setTimezone('UTC');
         $end = Carbon::createFromFormat('Y-m-d', $request->end, $timezone)->endOfDay()->setTimezone('UTC');
 
-        $startPrevious = Carbon::createFromFormat('Y-m-d', $request->start_previous, $timezone)->startOfDay()->setTimezone('UTC');
-        $endPrevious = Carbon::createFromFormat('Y-m-d', $request->end_previous, $timezone)->endOfDay()->setTimezone('UTC');
-
         switch ($request->metric) {
 
             case 'clicks':
-                $data = $this->stat->clicks($workspace, $timezone, $start, $end, $startPrevious, $endPrevious, $request->group);
+                $data = $this->stat->clicks($workspace, $timezone, $start, $end, $request->group);
                 break;
 
             case 'links':

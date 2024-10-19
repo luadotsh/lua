@@ -6,21 +6,24 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\WorkspaceController;
 use App\Http\Controllers\LinkController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\MediaController;
 
 // setting
 use App\Http\Controllers\Setting\AccountController;
+use App\Http\Controllers\Setting\UsageController;
 use App\Http\Controllers\Setting\BillingController;
 use App\Http\Controllers\Setting\DomainController;
 use App\Http\Controllers\Setting\InviteController;
+use App\Http\Controllers\Setting\TagController;
 use App\Http\Controllers\Setting\TeamMemberController;
 
 Route::group(
     [
         'middleware' => [
             'auth',
-            'subscription-check'
+            'plan-check'
         ],
     ],
     function () {
@@ -48,6 +51,9 @@ Route::group(
         Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
         Route::get('/analytics/statistics', [AnalyticsController::class, 'statistics'])->name('analytics.statistics');
 
+        // events
+        Route::get('/events', [EventController::class, 'index'])->name('events.index');
+
         // medias
         Route::get('/medias/{id}/download', [MediaController::class, 'download'])->name('medias.download')->withoutMiddleware('*');
         Route::post('/medias', [MediaController::class, 'store'])->name('medias.store');
@@ -66,7 +72,9 @@ Route::group(
 
             // analytics
             Route::get('/domains', [DomainController::class, 'index'])->name('setting.domains.index');
-            Route::post('/domains', [DomainController::class, 'statistics'])->name('setting.domains.store');
+            Route::post('/domains', [DomainController::class, 'store'])->name('setting.domains.store');
+            Route::put('/domains/{id}', [DomainController::class, 'update'])->name('setting.domains.update');
+            Route::delete('/domains/{id}', [DomainController::class, 'destroy'])->name('setting.domains.destroy');
 
             // billing
             Route::get('/billing', [BillingController::class, 'index'])->name('setting.billing.index');
@@ -85,6 +93,16 @@ Route::group(
             Route::get('/users/invites/create', [InviteController::class, 'create'])->name('setting.invites.create');
             Route::post('/users/invites', [InviteController::class, 'store'])->name('setting.invites.store');
             Route::delete('/users/invites/{id}', [InviteController::class, 'destroy'])->name('setting.invites.destroy');
+
+            // tags
+            Route::get('/tags', [TagController::class, 'index'])->name('setting.tags.index');
+            Route::post('/tags', [TagController::class, 'store'])->name('setting.tags.store');
+            Route::post('/tags/sort', [TagController::class, 'sort'])->name('setting.tags.sort');
+            Route::put('/tags/{id}', [TagController::class, 'update'])->name('setting.tags.update');
+            Route::delete('/tags/{id}', [TagController::class, 'destroy'])->name('setting.tags.destroy');
+
+            // usage
+            Route::get('/usage', [UsageController::class, 'index'])->name('setting.usage.index');
         });
     }
 );

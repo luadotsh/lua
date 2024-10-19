@@ -6,10 +6,11 @@ import debounce from "@/debounce";
 import { PhSealPercent, PhMagnifyingGlass } from "@phosphor-icons/vue";
 import date from "@/date";
 
-import CreateModal from "./Create.vue";
+import CreateModal from "./Create/Index.vue";
 import EmptyState from "@/Components/EmptyState.vue";
 import AppLayout from "@/Layouts/Master.vue";
 import Pagination from "@/Components/Pagination.vue";
+import Tag from "@/Components/Tag.vue";
 import Input from "@/Components/Input.vue";
 import Button from "@/Components/Button.vue";
 
@@ -105,6 +106,9 @@ onMounted(() => {
                                         <th scope="col" class="table-th">
                                             Clicks
                                         </th>
+                                        <th scope="col" class="table-th">
+                                            Tags
+                                        </th>
 
                                         <th scope="col" class="table-th">
                                             Last Click
@@ -129,11 +133,23 @@ onMounted(() => {
                                         <td class="table-td">
                                             {{ data.clicks }}
                                         </td>
-                                        <td class="table-td">
+                                        <td
+                                            class="table-td flex items-center space-x-1.5"
+                                        >
+                                            <div
+                                                v-for="tag in data.tags"
+                                                :key="tag.id"
+                                            >
+                                                <Tag :tag="tag" />
+                                            </div>
+                                        </td>
+                                        <td class="table-td text-center">
                                             {{
-                                                date.formatDateTime(
-                                                    data.last_click
-                                                )
+                                                data.last_click
+                                                    ? date.formatDateTime(
+                                                          data.last_click
+                                                      )
+                                                    : "-"
                                             }}
                                         </td>
                                     </tr>

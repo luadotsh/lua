@@ -2,6 +2,10 @@ import dayjs from "@/dayjs";
 
 export default {
 
+    getUserTimezone() {
+        return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    },
+
     formatDate(date) {
         return dayjs(date).format("MMM D, YYYY");
     },

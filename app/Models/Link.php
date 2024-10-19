@@ -75,4 +75,9 @@ class Link extends Model
     {
         return $this->hasMany(LinkStat::class);
     }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class);
+    }
 }

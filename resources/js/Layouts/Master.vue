@@ -1,7 +1,4 @@
 <script setup>
-import { computed, watch, onMounted } from "vue";
-import { usePage } from "@inertiajs/vue3";
-
 import Sidebar from "./Sidebar.vue";
 import Banner from "@/Components/Banner.vue";
 import Announcement from "@/Components/Announcement.vue";
@@ -15,14 +12,7 @@ defineProps({
         type: Boolean,
         default: true,
     },
-
-    fluid: {
-        type: Boolean,
-        default: true,
-    },
 });
-
-const user = computed(() => usePage().props.auth.user);
 </script>
 
 <template>
@@ -46,10 +36,12 @@ const user = computed(() => usePage().props.auth.user);
                         'overflow-y-hidden': !overflow,
                     }"
                 >
-                    <div class="h-full flex flex-col justify-between">
+                    <div
+                        class="h-full flex flex-col justify-between max-w-7xl mx-auto"
+                    >
                         <div
                             v-if="$slots.header"
-                            class="px-4 py-2.5 sticky top-0 bg-white dark:bg-zinc-800 z-20 border-b border-zinc-100 dark:border-zinc-700 lg:min-h-[60px] lg:h-[60px] flex items-center w-full"
+                            class="p-4 sticky top-0 bg-white dark:bg-zinc-800 lg:min-h-[60px] lg:h-[60px] flex items-center w-full z-40"
                         >
                             <slot name="header"></slot>
                         </div>
@@ -63,9 +55,7 @@ const user = computed(() => usePage().props.auth.user);
 
                         <div
                             :class="{
-                                'flex flex-col flex-1 w-full': true,
-                                'px-4 py-4 sm:px-0 sm:py-0': fluid,
-                                'max-w-5xl mx-auto p-2 sm:p-12': !fluid,
+                                'flex flex-col flex-1 w-full p-4': true,
                                 'overflow-hidden': !overflow,
                             }"
                         >
@@ -73,7 +63,7 @@ const user = computed(() => usePage().props.auth.user);
                         </div>
                         <div
                             v-if="$slots.pagination"
-                            class="px-4 sticky bottom-0 border-t border-zinc-100 dark:border-zinc-700 bg-white dark:bg-zinc-900"
+                            class="px-4 lg:px-0 sticky bottom-0 bg-white dark:bg-zinc-900"
                         >
                             <slot name="pagination"></slot>
                         </div>

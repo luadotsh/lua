@@ -89,7 +89,7 @@ onMounted(() => {
     <Head title="Team Members" />
     <AppLayout>
         <template #header>
-            <div class="sm:flex sm:items-center">
+            <div class="sm:flex sm:items-center flex-1">
                 <div class="sm:flex-auto">
                     <h1 class="page-title">Team Members</h1>
                 </div>

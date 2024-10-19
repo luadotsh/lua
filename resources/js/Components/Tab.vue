@@ -1,9 +1,10 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { RadioGroup, RadioGroupOption } from "@headlessui/vue";
 
 const emit = defineEmits(["update"]);
 
-const { tabs } = defineProps({
+const props = defineProps({
     tabs: Array,
     title: String,
     currentTab: String,
@@ -12,6 +13,13 @@ const { tabs } = defineProps({
 const setCurrentTab = (tab) => {
     emit("update", tab);
 };
+
+const maxGridClass = computed(() => {
+    return {
+        [`grid-cols-${props.tabs.length}`]:
+            props.tabs.length >= 2 && props.tabs.length <= 6,
+    };
+});
 </script>
 
 <template>
@@ -22,24 +30,38 @@ const setCurrentTab = (tab) => {
             {{ title }}
         </div>
 
-        <div class="flex items-center">
-            <template v-if="tabs.length >= 2">
-                <div
-                    v-for="tab in tabs"
-                    :key="tab"
-                    @click="setCurrentTab(tab)"
-                    :class="{
-                        'cursor-pointer capitalize text-xs font-medium rounded-md px-2 py-1 border': true,
-                        'text-black dark:text-white card': currentTab == tab,
-                        'text-zinc-600 dark:text-zinc-400 border-transparent':
-                            currentTab != tab,
-                    }"
-                >
-                    {{ tab }}
-                </div>
-            </template>
-
-            <slot name="right" />
+        <div class="flex-none">
+            <div class="flex items-center space-x-2">
+                <slot v-if="$slots.left" name="left" />
+                <template v-if="props.tabs.length >= 2">
+                    <fieldset class="w-full">
+                        <RadioGroup
+                            v-model="props.currentTab"
+                            class="flex space-x-1 rounded-md p-1 text-center text-xs font-semibold ring-1 ring-inset ring-zinc-200"
+                            :class="maxGridClass"
+                        >
+                            <RadioGroupOption
+                                as="template"
+                                v-for="tab in props.tabs"
+                                :key="tab.value"
+                                :value="tab"
+                            >
+                                <div
+                                    @click="setCurrentTab(tab)"
+                                    :class="[
+                                        currentTab == tab
+                                            ? 'bg-zinc-800 text-white'
+                                            : 'text-zinc-500',
+                                        'cursor-pointer rounded px-2.5 py-1',
+                                    ]"
+                                >
+                                    {{ tab }}
+                                </div>
+                            </RadioGroupOption>
+                        </RadioGroup>
+                    </fieldset>
+                </template>
+            </div>
         </div>
     </div>
 </template>

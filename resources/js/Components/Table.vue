@@ -54,7 +54,7 @@ watch(
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
                         <div
-                            :class="`absolute top-0 left-0 h-full dark:bg-opacity-20 rounded-r-md bg-gray-100 dark:bg-gray-500`"
+                            :class="`absolute top-0 left-0 h-full dark:bg-opacity-20 rounded-r-md bg-zinc-100 dark:bg-zinc-500`"
                             :style="`max-width: 85%; width: ${helper.calcPercentage(
                                 total,
                                 value.y
@@ -78,7 +78,7 @@ watch(
 
                             <div
                                 :class="{
-                                    'text-gray-800 dark:text-white text-sm font-semibold': true,
+                                    'text-zinc-800 dark:text-white text-sm font-medium': true,
                                     capitalize: prop.capitalize,
                                     uppercase: prop.uppercase,
                                 }"
@@ -89,12 +89,12 @@ watch(
                     </div>
                     <div class="flex items-center justify-between min-w-[3rem]">
                         <div
-                            class="invisible group-hover:visible flex text-xs font-semibold text-gray-500 dark:hover:text-gray-300 mr-2"
+                            class="invisible group-hover:visible flex text-xs font-semibold text-zinc-500 dark:hover:text-zinc-300 mr-2"
                         >
                             {{ helper.calcPercentage(total, value.y) }}%
                         </div>
                         <div
-                            class="text-sm font-semibold text-gray-800 dark:text-white"
+                            class="text-sm font-semibold text-zinc-800 dark:text-white"
                         >
                             {{ helper.kFormatter(value.y) }}
                         </div>

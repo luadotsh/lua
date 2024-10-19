@@ -20,7 +20,7 @@ class LinkFactory extends Factory
     {
         return [
             'workspace_id' => Workspace::factory(),
-            'domain' => $this->faker->domainName,
+            'domain' => "https://lua.sh",
             'key' => $this->faker->slug,
             'url' => $this->faker->url,
             'link' => $this->faker->url,

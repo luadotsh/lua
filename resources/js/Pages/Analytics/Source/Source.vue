@@ -3,7 +3,7 @@ import Table from "@/Components/Table.vue";
 import { ref, watch } from "vue";
 
 const props = defineProps({
-    dateRange: Object,
+    range: Object,
 });
 
 const data = ref(null);
@@ -12,7 +12,7 @@ const loadData = () => {
     axios
         .get(route("analytics.statistics"), {
             params: {
-                ...props.dateRange,
+                ...props.range,
                 metric: "utm-sources",
             },
         })
@@ -22,7 +22,7 @@ const loadData = () => {
 };
 
 watch(
-    props.dateRange,
+    props,
     () => {
         loadData();
     },

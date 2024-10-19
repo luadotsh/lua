@@ -8,6 +8,9 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
+// locales
+import { i18nVue } from "laravel-vue-i18n";
+
 // calendar
 import VCalendar from "v-calendar";
 import "v-calendar/style.css";
@@ -26,6 +29,12 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         return createApp({ render: () => h(App, props) })
             .use(VCalendar)
+            .use(i18nVue, {
+                resolve: async (lang) => {
+                    const langs = import.meta.glob("../../lang/*.json");
+                    return await langs[`../../lang/php_${lang}.json`]();
+                },
+            })
             .use(FloatingVue)
             .use(plugin)
             .use(ZiggyVue)

@@ -51,6 +51,7 @@ class RegisteredUserController extends Controller
         $workspace = Workspace::create([
             'name' => $request->name,
             'plan_id' => Plan::where('internal_id', 'free')->first()->id,
+            'billing_cycle_start' => now()->day,
         ]);
 
         // attach user to project

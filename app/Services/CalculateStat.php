@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\DB;
 
 use Carbon\Carbon;
 
-use App\Models\Link;
 use App\Models\LinkStat;
 
 class CalculateStat
@@ -24,7 +23,7 @@ class CalculateStat
         ];
     }
 
-    public function clicks($workspace, $timezone, $start, $end, $startPrevious, $endPrevious, $group)
+    public function clicks($workspace, $timezone, $start, $end, $group)
     {
         // Fetch clicks data with Eloquent using groupBy and date formatting
         $clicks = LinkStat::selectRaw("DATE_FORMAT(created_at, '{$this->format[$group]}') as formatted_date, COUNT(*) as value")
@@ -37,11 +36,6 @@ class CalculateStat
         // Total clicks for the current period
         $total = LinkStat::where('workspace_id', $workspace->id)
             ->whereBetween('created_at', [$start, $end])
-            ->count();
-
-        // Total clicks for the previous period
-        $totalPrevious = LinkStat::where('workspace_id', $workspace->id)
-            ->whereBetween('created_at', [$startPrevious, $endPrevious])
             ->count();
 
         // Formatting labels based on the grouping
@@ -63,7 +57,6 @@ class CalculateStat
         // Prepare the data for response
         $data = [
             'total' => $total,
-            'totalPrevious' => $total == 0 || $totalPrevious == 0 ? 0 : round(((1 - $total / $totalPrevious) * 100), 2),
             'chart' => [
                 'data' => $clicks->pluck('value')->toArray(),
                 'label' => 'Page Views',

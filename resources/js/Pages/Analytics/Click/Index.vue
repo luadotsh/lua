@@ -1,14 +1,26 @@
 <script setup>
+import colorLib from "@kurkle/color";
 import helper from "@/helper";
 import Chart from "chart.js/auto";
-import { ref, watch, reactive } from "vue";
+import { RadioGroup, RadioGroupOption } from "@headlessui/vue";
+
+import { ref, reactive, watch } from "vue";
+
+import { useDarkTheme } from "@/theme";
+const { isDarkTheme } = useDarkTheme();
+
+const types = reactive([
+    { value: "bar", label: "Bar" },
+    { value: "line", label: "Line" },
+]);
+
+const chartType = ref(types[0]);
 
 const chartElementRef = ref(null);
 let chartElement;
 
 const data = reactive({
     total: 0,
-    totalPrevious: 0,
     chart: {
         label: "",
         data: [],
@@ -17,29 +29,37 @@ const data = reactive({
 });
 
 const props = defineProps({
-    dateRange: Object,
+    range: Object,
+    event: {
+        type: String,
+        required: true,
+    },
 });
 
 const loadChartData = () => {
     axios
         .get(route("analytics.statistics"), {
             params: {
-                ...props.dateRange,
+                ...props.range,
                 metric: "clicks",
             },
         })
         .then((response) => {
             data.total = response.data.total;
-            data.totalPrevious = response.data.totalPrevious;
             data.chart = response.data.chart;
 
             renderChart();
         });
 };
 
-const renderChart = () => {
+const transparentize = (value, opacity) => {
+    var alpha = opacity === undefined ? 0.5 : 1 - opacity;
+    return colorLib(value).alpha(alpha).rgbString();
+};
+
+const renderChart = (force = false) => {
     // clear canva
-    if (chartElement) {
+    if (chartElement && !force) {
         chartElement.data.labels = data.chart.labels;
         chartElement.data.datasets[0].data = data.chart.data;
         chartElement.data.datasets[0].label = data.chart.label;
@@ -47,8 +67,12 @@ const renderChart = () => {
         return;
     }
 
+    if (force) {
+        chartElement.destroy();
+    }
+
     chartElement = new Chart(chartElementRef.value, {
-        type: "bar",
+        type: chartType.value.value,
         data: {
             labels: data.chart.labels,
             datasets: [
@@ -56,86 +80,192 @@ const renderChart = () => {
                     label: data.chart.label,
                     data: data.chart.data,
                     fill: true,
-                    backgroundColor: helper.transparentize("#7100fd", 0.2),
-                    borderColor: "#7100fd",
-                    borderRadius: 4,
-                    borderSkipped: false,
+                    backgroundColor: transparentize("#A78BFA", 0.97),
+                    borderColor: "#A78BFA",
+                    borderRadius: 8,
+                    borderWidth: 1.5,
+                    tension: 0.3,
+                    pointStyle: "circle",
+                    pointRadius: 0,
+                    pointHoverRadius: 4,
+                    pointHoverBackgroundColor: "#ffffff",
+                    pointHoverBorderColor: "#A78BFA",
+                    pointHoverBorderWidth: 2,
+                    spanGaps: true,
                 },
             ],
         },
         options: {
+            clip: false,
             responsive: true,
             maintainAspectRatio: false,
+            aspectRatio: 4,
+            layout: {
+                padding: {
+                    top: 10,
+                },
+            },
             plugins: {
                 legend: {
                     display: false,
                 },
-
                 tooltip: {
-                    displayColors: false,
+                    usePointStyle: true,
+                    boxWidth: 10,
+                    boxHeight: 10,
+                    boxPadding: 4,
+                    backgroundColor: "#ffffff",
+                    titleFont: {
+                        weight: "500",
+                        size: 14,
+                    },
+                    titleColor: "#000000",
+                    bodyColor: "#000000",
+                    bodyFont: {
+                        weight: "500",
+                        size: 12,
+                    },
+
+                    padding: {
+                        left: 10,
+                        right: 10,
+                        top: 5,
+                        bottom: 5,
+                    },
+
+                    borderColor: "rgba(0,0,0,0.1)",
+                    borderWidth: 1,
+                    displayColors: true,
+
+                    callbacks: {
+                        label: (context) => {
+                            return `${context.formattedValue} clicks`;
+                        },
+                        title: (context) => {
+                            return event;
+                        },
+                        labelColor: function (context) {
+                            return {
+                                borderColor: context.dataset.borderColor,
+                                backgroundColor: "#ffffff",
+                            };
+                        },
+
+                        labelTextColor: function (context) {
+                            return context.dataset.pointHoverBorderColor;
+                        },
+                    },
                 },
             },
+
+            interaction: {
+                mode: "index",
+                intersect: false,
+            },
+
             scales: {
                 x: {
-                    grid: {
-                        display: false,
+                    ticks: {
+                        autoSkip: false,
+                        maxRotation: 0,
+                        minRotation: 0,
+                        align: "inner",
+                        color: "#9ca3af",
+                        callback: (value, index, values) => {
+                            if (index == 0 || index == values.length - 1) {
+                                return data.chart.labels[index];
+                            } else {
+                                return "";
+                            }
+                        },
                     },
+
+                    grid: {
+                        display: true,
+                        drawTicks: false,
+                        color: isDarkTheme ? "#374151" : "#ddd", // for the grid lines
+                        tickBorderDash: [6, 7], // also for the tick, if long enough
+                        tickLength: 10, // just to see the dotted line
+                        tickWidth: 2,
+                        drawOnChartArea: false,
+                    },
+                    border: {
+                        dash: [4, 4],
+                        color: "transparent",
+                    },
+                    beginAtZero: true,
                 },
                 y: {
                     display: false,
+                    beginAtZero: true,
                 },
             },
         },
     });
 };
 
+watch(chartType, () => {
+    renderChart(true);
+});
+
 watch(
-    props.dateRange,
+    props,
     () => {
         loadChartData();
     },
-    { immediate: true }
+    {
+        immediate: true,
+    }
 );
 </script>
 
 <template>
-    <div class="">
-        <div class="flex items-center justify-between mb-12">
+    <div
+        class="border border-zinc-200 dark:border-zinc-700 rounded-lg overflow-hidden"
+    >
+        <div class="w-full flex justify-between">
             <div>
+                <div class="text-base font-medium text-zinc-600 mb-1">
+                    {{ props.event }}
+                </div>
                 <div
-                    class="capitalize text-base font-semibold text-black dark:text-white"
+                    class="text-2xl font-semibold text-zinc-800 dark:text-zinc-300"
                 >
-                    Clicks
+                    {{ helper.kFormatter(data.total) }}
                 </div>
             </div>
-
-            <div class="flex items-end">
-                <div class="flex flex-row items-center">
-                    <div
-                        class="text-3xl font-extrabold leading-none text-zinc-800 dark:text-zinc-100"
+            <div class="flex justify-center">
+                <fieldset>
+                    <RadioGroup
+                        v-model="chartType"
+                        class="grid grid-cols-2 gap-x-1 rounded-md p-1 text-center text-xs font-semibold leading-5 ring-1 ring-inset ring-zinc-200"
                     >
-                        {{ helper.kFormatter(data.total) }}
-                    </div>
-                    <div
-                        :class="{
-                            'font-bold ml-2  text-sm': true,
-                            'text-zinc-400': data.totalPrevious == 0,
-                            'text-green-400': data.totalPrevious > 0,
-                            'text-red-400': data.totalPrevious < 0,
-                        }"
-                    >
-                        <span v-if="data.totalPrevious > 0" class="font-bold">
-                            +
-                        </span>
-                        {{ data.totalPrevious }}%
-                    </div>
-                </div>
+                        <RadioGroupOption
+                            as="template"
+                            v-for="option in types"
+                            :key="option.value"
+                            :value="option"
+                            v-slot="{ checked }"
+                        >
+                            <div
+                                :class="[
+                                    checked
+                                        ? 'bg-zinc-800 text-white'
+                                        : 'text-zinc-500',
+                                    'cursor-pointer rounded px-2.5 py-1',
+                                ]"
+                            >
+                                {{ option.label }}
+                            </div>
+                        </RadioGroupOption>
+                    </RadioGroup>
+                </fieldset>
             </div>
         </div>
 
         <div
             class="w-full"
-            style="position: relative; height: 40vh; width: 80vw"
+            style="position: relative; height: 260px; width: 100%"
         >
             <canvas
                 ref="chartElementRef"

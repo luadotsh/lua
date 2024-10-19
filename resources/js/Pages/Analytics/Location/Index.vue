@@ -5,8 +5,8 @@ import City from "./City.vue";
 import Country from "./Country.vue";
 import Region from "./Region.vue";
 
-const { dateRange } = defineProps({
-    dateRange: Object,
+const { range } = defineProps({
+    range: Object,
 });
 
 const tab = ref("countries");
@@ -21,21 +21,9 @@ const setTab = (value) => {
     <div class="min-h-[450px]">
         <Tab :currentTab="tab" :tabs="tabs" @update="setTab" title="Users" />
         <div class="mt-4">
-            <Country
-                v-if="tab == 'countries'"
-                key="countries"
-                :dateRange="dateRange"
-            />
-            <Region
-                v-else-if="tab == 'regions'"
-                key="regions"
-                :dateRange="dateRange"
-            />
-            <City
-                v-else-if="tab == 'cities'"
-                key="cities"
-                :dateRange="dateRange"
-            />
+            <Country v-if="tab == 'countries'" key="countries" :range="range" />
+            <Region v-else-if="tab == 'regions'" key="regions" :range="range" />
+            <City v-else-if="tab == 'cities'" key="cities" :range="range" />
         </div>
     </div>
 </template>

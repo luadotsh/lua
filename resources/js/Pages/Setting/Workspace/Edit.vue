@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { Head, useForm, usePage } from "@inertiajs/vue3";
-import AppLayout from "@/Layouts/App/Master.vue";
+import AppLayout from "@/Layouts/Master.vue";
 import Button from "@/Components/Button.vue";
 import Input from "@/Components/Input.vue";
 import InputError from "@/Components/InputError.vue";

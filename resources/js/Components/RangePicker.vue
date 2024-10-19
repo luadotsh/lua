@@ -24,6 +24,7 @@ const range = ref(props.range);
 
 const setToday = () => {
     range.value = {
+        group: "hour",
         start: dayjs().startOf("day").utc().format("YYYY-MM-DD"),
         end: dayjs().endOf("day").utc().format("YYYY-MM-DD"),
     };
@@ -31,6 +32,7 @@ const setToday = () => {
 
 const set7days = () => {
     range.value = {
+        group: "day",
         start: dayjs()
             .subtract(7, "days")
             .startOf("day")
@@ -42,6 +44,7 @@ const set7days = () => {
 
 const set14days = () => {
     range.value = {
+        group: "day",
         start: dayjs()
             .subtract(14, "days")
             .startOf("day")
@@ -53,6 +56,7 @@ const set14days = () => {
 
 const set30days = () => {
     range.value = {
+        group: "day",
         start: dayjs()
             .subtract(30, "days")
             .startOf("day")
@@ -64,6 +68,7 @@ const set30days = () => {
 
 const set3months = () => {
     range.value = {
+        group: "month",
         start: dayjs()
             .subtract(3, "months")
             .startOf("day")
@@ -75,6 +80,7 @@ const set3months = () => {
 
 const set12months = () => {
     range.value = {
+        group: "month",
         start: dayjs()
             .subtract(12, "months")
             .startOf("day")
@@ -86,6 +92,7 @@ const set12months = () => {
 
 const setMonthToDate = () => {
     range.value = {
+        group: "day",
         start: dayjs()
             .startOf("month")
             .startOf("day")
@@ -97,6 +104,7 @@ const setMonthToDate = () => {
 
 const setQuarterToDate = () => {
     range.value = {
+        group: "day",
         start: dayjs()
             .startOf("quarter")
             .startOf("day")
@@ -108,6 +116,7 @@ const setQuarterToDate = () => {
 
 const setYearToDate = () => {
     range.value = {
+        group: "month",
         start: dayjs()
             .startOf("year")
             .startOf("day")
@@ -119,6 +128,7 @@ const setYearToDate = () => {
 
 const setAllTime = () => {
     range.value = {
+        group: "month",
         start: dayjs("2024-01-10").startOf("day").utc().format("YYYY-MM-DD"),
         end: dayjs().endOf("day").utc().format("YYYY-MM-DD"),
     };
@@ -127,10 +137,14 @@ const setAllTime = () => {
 watch(
     () => range.value,
     (value) => {
-        emit("update:range", {
-            start: dayjs(value.start).utc().format("YYYY-MM-DD"),
-            end: dayjs(value.end).utc().format("YYYY-MM-DD"),
-        });
+        if(value.group) {
+            const updatedRange = {
+                start: dayjs(value.start).utc().format("YYYY-MM-DD"),
+                end: dayjs(value.end).utc().format("YYYY-MM-DD"),
+                group: value.group,
+            };
+            emit("update:range", updatedRange);
+        }
     },
     { deep: true }
 );
@@ -145,10 +159,11 @@ watch(
             color="gray"
             :columns="2"
             timezone="utc"
+            @dayclick="(_, event) => {event.target.blur()}"
         >
             <template #default="{ togglePopover, inputValue }">
                 <div
-                    class="flex items-center space-x-2 bg-gray-100 dark:bg-zinc-900 px-3 py-2 rounded text-sm text-gray-900 dark:text-zinc-300 dark:hover:text-zinc-100 hover:bg-gray-50 dark:hover:bg-zinc-900 cursor-pointer border border-zinc-200 dark:border-zinc-700"
+                    class="flex items-center space-x-2 bg-gray-100 dark:bg-zinc-900 px-3 py-2 rounded-lg text-sm text-gray-900 dark:text-zinc-300 dark:hover:text-zinc-100 hover:bg-gray-50 dark:hover:bg-zinc-900 cursor-pointer border border-zinc-200 dark:border-zinc-700"
                     @click="() => togglePopover()"
                 >
                     <div class="flex justify-center items-center">
@@ -162,7 +177,7 @@ watch(
                 </div>
             </template>
 
-            <template #footer="{}">
+            <template #footer=>
                 <div
                     class="w-full p-3 border-t border-zinc-700 flex items-center flex-nowrap space-x-1.5"
                 >

@@ -23,6 +23,7 @@ return new class() extends Migration
             $table->string('pm_type')->nullable();
             $table->string('pm_last_four', 4)->nullable();
             $table->timestamp('trial_ends_at')->nullable();
+            $table->integer('billing_cycle_start')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
