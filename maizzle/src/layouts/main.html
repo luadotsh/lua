@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v="urn:schemas-microsoft-com:vml">
+<head>
+  <meta charset="utf-8">
+  <meta name="x-apple-disable-message-reformatting">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
+  <meta name="color-scheme" content="light">
+  <meta name="supported-color-schemes" content="light">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet">
+
+  <!--[if mso]>
+  <noscript>
+    <xml>
+      <o:OfficeDocumentSettings xmlns:o="urn:schemas-microsoft-com:office:office">
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+      </o:OfficeDocumentSettings>
+    </xml>
+  </noscript>
+  <style>
+    td,th,div,p,a,h1,h2,h3,h4,h5,h6 {font-family:  "Inter", "Segoe UI", sans-serif; mso-line-height-rule: exactly;}
+  </style>
+  <![endif]-->
+  <title>@{{ $title }}</title>
+  <style>
+    {!! page.css !!}
+  </style>
+  <stack name="head" />
+</head>
+<body class="m-0 p-0 w-full [word-break:break-word] [-webkit-font-smoothing:antialiased]">
+  <div role="article" aria-roledescription="email" aria-label="@{{ $title || '' }}">
+    <content />
+  </div>
+</body>
+</html>

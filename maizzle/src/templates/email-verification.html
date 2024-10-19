@@ -1,0 +1,47 @@
+<x-main>
+  <div class="hidden max-h-0 overflow-hidden">
+    @{{ $previewText }}
+  </div>
+  <div class="bg-zinc-50 sm:px-4 font-sans">
+    <table align="center">
+      <tr>
+        <td class="w-[552px] max-w-full">
+          <x-header />
+          <table class="w-full">
+            <tr>
+              <td class="p-12 sm:px-6 text-base text-zinc-800 bg-white rounded shadow-sm">
+                <p class="leading-6 mt-0">
+                  Hi @{{$user->name}},
+                </p>
+
+                <p class="leading-6">
+                  Please confirm your email address by clicking the button below:
+                </p>
+
+                <x-spacer height="24px" />
+
+                <div class="text-center">
+                  <x-button href="@{{ $url }}">
+                    Confirm Email Address &rarr;
+                  </x-button>
+                </div>
+
+                <x-spacer height="24px" />
+
+                <p class="leading-6">
+                  If you didn’t create this account, you can safely ignore this email.
+                </p>
+                <p class="leading-6 mb-0">
+                  Best regards,
+                  <br/>
+                  The Mercantive Team
+                </p>
+              </td>
+            </tr>
+            <x-footer />
+          </table>
+        </td>
+      </tr>
+    </table>
+  </div>
+</x-main>

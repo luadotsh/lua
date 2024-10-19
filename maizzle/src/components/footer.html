@@ -1,0 +1,35 @@
+<script props>
+module.exports = {
+  unsubscribe_url: props.unsubscribe_url
+}
+</script>
+
+<tr>
+  <td class="text-center text-zinc-600 text-xs p-6">
+    <p class="m-0 mb-2">
+      © 2024 Lua.sh LLC.
+    </p>
+
+    <p class="m-0">
+    651 N Broad St, Suite 201, Middletown, DE 19709, USA
+    </p>
+
+    <p class="cursor-default">
+      <a href="https://linkedin.com/company/luash"
+      target="_blank"
+        class="text-zinc-600 [text-decoration:none] hover:![text-decoration:underline]">LinkedIn</a>
+      &bull;
+      <a href="https://x.com/luash"
+        target="_blank"
+        class="text-zinc-600 [text-decoration:none] hover:![text-decoration:underline]">Twitter</a>
+    </p>
+
+    @if(isset($unsubscribe_url))
+    <p>
+      <a href="{{ unsubscribe_url }}" target="_blank" class="text-zinc-600 [text-decoration:none] hover:![text-decoration:underline]">
+        Unsubscribe
+      </a>
+    </p>
+    @endif
+  </td>
+</tr>

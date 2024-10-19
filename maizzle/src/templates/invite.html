@@ -1,0 +1,37 @@
+<x-main>
+  <div class="bg-zinc-50 sm:px-4 font-sans">
+    <table align="center">
+      <tr>
+        <td class="w-[552px] max-w-full">
+          <x-header />
+
+          <table class="w-full">
+            <tr>
+              <td class="p-12 sm:px-6 text-base text-zinc-800 bg-white rounded shadow-sm">
+                <h1 class="m-0 mb-6 text-2xl sm:leading-8 text-black font-semibold">
+                  Hello 👋
+                </h1>
+
+                <p class="m-0 leading-6">
+                  You have been invited to join the @{{ $workspace->name }} team.
+                  <br />
+                  <br />
+                  To accept the invitation and be part of this team, please click on the button below.
+                </p>
+
+                <x-spacer height="24px" />
+
+                <div class="flex items-center justify-center">
+                  <x-button href="@{{ $url }}">
+                    Accept invite &rarr;
+                  </x-button>
+                </div>
+              </td>
+            </tr>
+            <x-footer />
+          </table>
+        </td>
+      </tr>
+    </table>
+  </div>
+</x-main>

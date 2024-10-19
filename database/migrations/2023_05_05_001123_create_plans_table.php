@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('stripe_id')->nullable();
             $table->integer('access_level');
             $table->boolean('is_private');
+            $table->integer('max_links');
+            $table->integer('max_events');
             $table->timestamps();
             $table->softDeletes();
         });

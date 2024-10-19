@@ -13,11 +13,14 @@ use App\Http\Controllers\MediaController;
 use App\Http\Controllers\Setting\AccountController;
 use App\Http\Controllers\Setting\BillingController;
 use App\Http\Controllers\Setting\DomainController;
+use App\Http\Controllers\Setting\InviteController;
+use App\Http\Controllers\Setting\TeamMemberController;
 
 Route::group(
     [
         'middleware' => [
-            'auth'
+            'auth',
+            'subscription-check'
         ],
     ],
     function () {
@@ -65,13 +68,22 @@ Route::group(
             Route::get('/domains', [DomainController::class, 'index'])->name('setting.domains.index');
             Route::post('/domains', [DomainController::class, 'statistics'])->name('setting.domains.store');
 
-
             // billing
             Route::get('/billing', [BillingController::class, 'index'])->name('setting.billing.index');
             Route::get('/billing/checkout/{stripeId}', [BillingController::class, 'checkout'])->name('setting.billing.checkout');
             Route::get('/billing/portal', [BillingController::class, 'billingPortal'])->name('setting.billing.portal');
             Route::get('/billing/swap-free-plan', [BillingController::class, 'swapFreePlan'])->name('setting.billing.swap-free-plan');
             Route::inertia('/billing/checkout-success', 'App/Setting/Billing/Success')->name('setting.billing.checkout-success');
+
+            // users
+            Route::get('/users', [TeamMemberController::class, 'index'])->name('setting.team-members.index');
+            Route::put('/users/{id}/role', [TeamMemberController::class, 'updateUserRole'])->name('setting.team-members.role');
+            Route::delete('/users/leave', [TeamMemberController::class, 'leave'])->name('setting.team-members.leave');
+            Route::delete('/users/{id}/remove-from-team', [TeamMemberController::class, 'destroy'])->name('setting.team-members.destroy');
+
+            // user invites
+            Route::post('/users/invites', [InviteController::class, 'store'])->name('setting.invites.store');
+            Route::delete('/users/invites/{id}', [InviteController::class, 'destroy'])->name('setting.invites.destroy');
         });
     }
 );

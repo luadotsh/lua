@@ -11,7 +11,14 @@ class BillingController extends Controller
 {
     public function index(Request $request)
     {
-        return Inertia::render('Billing/Index');
+        $plans = Plan::
+            where('internal_id', '!=', 'free')
+            ->where('is_private', false)
+            ->get();
+
+        return Inertia::render('Setting/Billing/Index', [
+            'plans' => $plans,
+        ]);
     }
 
     public function checkout($stripeId, Request $request)
