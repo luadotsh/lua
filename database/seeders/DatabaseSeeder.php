@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
         // Only run these seeders in local environment
         if (app()->environment('local')) {
             $this->call([
-                LocalDevelopmentSeeder::class,
+                // LocalDevelopmentSeeder::class,
             ]);
         }
     }

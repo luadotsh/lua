@@ -31,11 +31,11 @@ const submit = () => {
             <h1
                 class="mt-10 text-center text-2xl font-medium leading-9 text-zinc-800 dark:text-zinc-300"
             >
-                Sign up to Mercantive
+                Sign up to Lua.sh
             </h1>
         </div>
 
-        <Social />
+        <!-- <Social /> -->
 
         <div>
             <form @submit.prevent="submit" class="space-y-6">
@@ -81,7 +81,7 @@ const submit = () => {
                         name="password"
                         v-model="form.password"
                         required
-                        placeholder="Password "
+                        placeholder="Min. 8 characters"
                         autocomplete="new-password"
                     />
 
@@ -90,8 +90,8 @@ const submit = () => {
 
                 <div class="flex items-center justify-between">
                     <p class="text-xs text-zinc-500">
-                        Signing up for a Mercantive you agree to the Privacy
-                        Policy and Terms of Service.
+                        Signing up for a Lua.sh you agree to the Privacy Policy
+                        and Terms of Service.
                     </p>
                 </div>
 

@@ -52,7 +52,6 @@ const setRange = (data) => {
         <div v-if="range">
             <Click
                 :range="range"
-                event="Clicks"
                 class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-4 bg-white dark:bg-zinc-800 p-4 mb-4"
             />
 

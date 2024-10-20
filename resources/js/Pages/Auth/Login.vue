@@ -40,11 +40,11 @@ const submit = () => {
             <h1
                 class="mt-10 text-center text-2xl font-medium leading-9 text-zinc-800 dark:text-zinc-300"
             >
-                Sign in to Mercantive
+                Sign in to Lua.sh
             </h1>
         </div>
 
-        <Social />
+        <!-- <Social /> -->
 
         <form @submit.prevent="submit">
             <div>

@@ -101,9 +101,9 @@ const colors = [
     },
 
     {
-        name: "gray",
-        bgColor: "bg-gray-400",
-        selectedColor: "ring-gray-400",
+        name: "zinc",
+        bgColor: "bg-zinc-400",
+        selectedColor: "ring-zinc-400",
     },
 ];
 

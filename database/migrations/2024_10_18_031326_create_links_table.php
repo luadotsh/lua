@@ -17,20 +17,26 @@ return new class extends Migration
 
             $table->string('domain'); // domain of the link (e.g. lua.sh)
             $table->string('key'); // key of the link (e.g. /github)
-            $table->string('url'); // target url (e.g. https://github.com/lua-inc/lua-repo)
+            $table->string('url'); // target url (e.g. https://github.com/luainc/lua)
             $table->string('link', 600)->unique(); // full link (e.g. https://lua.sh/github)
 
+            // utm parameters
             $table->string('utm_source')->nullable();
             $table->string('utm_medium')->nullable();
             $table->string('utm_campaign')->nullable();
             $table->string('utm_term')->nullable();
             $table->string('utm_content')->nullable();
+            $table->string('utm_name')->nullable();
+
             $table->unsignedBigInteger('clicks')->default(0);
             $table->dateTime('last_click')->nullable();
+
+            $table->string('external_id')->nullable();
+            $table->string('password')->nullable();
             $table->timestamps();
-            $table->softDeletes();
 
             $table->unique(['domain', 'key']);
+            $table->unique(['workspace_id', 'external_id']);
         });
     }
 

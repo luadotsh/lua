@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 
 use Carbon\Carbon;
 
+use App\Enums\LinkStat\Event;
 use App\Models\LinkStat;
 
 class CalculateStat
@@ -28,6 +29,7 @@ class CalculateStat
         // Fetch clicks data with Eloquent using groupBy and date formatting
         $clicks = LinkStat::selectRaw("DATE_FORMAT(created_at, '{$this->format[$group]}') as formatted_date, COUNT(*) as value")
             ->where('workspace_id', $workspace->id)
+            ->where('event', Event::CLICK)
             ->whereBetween('created_at', [$start, $end])
             ->groupByRaw("DATE_FORMAT(created_at, '{$this->format[$group]}')")
             ->orderByRaw("DATE_FORMAT(created_at, '{$this->format[$group]}') asc")
@@ -59,7 +61,7 @@ class CalculateStat
             'total' => $total,
             'chart' => [
                 'data' => $clicks->pluck('value')->toArray(),
-                'label' => 'Page Views',
+                'label' => 'Clicks',
                 'labels' => $labels,
             ],
         ];
@@ -67,6 +69,50 @@ class CalculateStat
         return $data;
     }
 
+    public function qrScans($workspace, $timezone, $start, $end, $group)
+    {
+        // Fetch clicks data with Eloquent using groupBy and date formatting
+        $clicks = LinkStat::selectRaw("DATE_FORMAT(created_at, '{$this->format[$group]}') as formatted_date, COUNT(*) as value")
+        ->where('workspace_id', $workspace->id)
+            ->where('event', Event::QR_SCAN)
+            ->whereBetween('created_at', [$start, $end])
+            ->groupByRaw("DATE_FORMAT(created_at, '{$this->format[$group]}')")
+            ->orderByRaw("DATE_FORMAT(created_at, '{$this->format[$group]}') asc")
+            ->get();
+
+        // Total clicks for the current period
+        $total = LinkStat::where('workspace_id', $workspace->id)
+            ->whereBetween('created_at', [$start, $end])
+            ->count();
+
+        // Formatting labels based on the grouping
+        $labels = $clicks->pluck('formatted_date')->map(function ($label) use ($group, $timezone) {
+            switch ($group) {
+                case 'hour':
+                    return Carbon::createFromFormat('Y-m-d H:i:s', $label)->tz($timezone)->format('ga');
+                case 'day':
+                    return Carbon::createFromFormat('Y-m-d', $label)->tz($timezone)->format('d M');
+                case 'month':
+                    return Carbon::createFromFormat('Y-m', $label)->tz($timezone)->format('F Y'); // Handle 'Y-m' format
+                case 'year':
+                    return Carbon::createFromFormat('Y', $label)->tz($timezone)->format('Y'); // Handle 'Y' format
+                default:
+                    return $label;
+            }
+        });
+
+        // Prepare the data for response
+        $data = [
+            'total' => $total,
+            'chart' => [
+                'data' => $clicks->pluck('value')->toArray(),
+                'label' => 'Clicks',
+                'labels' => $labels,
+            ],
+        ];
+
+        return $data;
+    }
 
     public function linkStats($workspaceId, $start, $end, $limit = 10)
     {

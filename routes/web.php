@@ -25,6 +25,7 @@ Route::group(
     [
         'middleware' => [
             'auth',
+            'verified',
             'plan-check'
         ],
     ],
@@ -36,16 +37,13 @@ Route::group(
         });
 
         // workspaces
-        Route::get('/workspaces/create', [WorkspaceController::class, 'create'])->name('workspaces.create');
-        Route::post('/workspaces', [WorkspaceController::class, 'store'])->name('workspaces.store');
+        Route::get('/workspaces/create', [WorkspaceController::class, 'create'])->name('workspaces.create')->withoutMiddleware(['plan-check']);
+        Route::post('/workspaces', [WorkspaceController::class, 'store'])->name('workspaces.store')->withoutMiddleware(['plan-check']);
         Route::put('/workspaces/update-current', [WorkspaceController::class, 'setCurrentStore'])->name('workspaces.update-current');
 
         // links
-        Route::get('/links', [LinkController::class, 'index'])->name('links.index');
+        Route::get('/links/{id?}', [LinkController::class, 'index'])->name('links.index');
         Route::post('/links', [LinkController::class, 'store'])->name('links.store');
-        Route::post('/links/{id}/duplicate', [LinkController::class, 'duplicate'])->name('links.duplicate');
-        Route::post('/links', [LinkController::class, 'store'])->name('links.store');
-        Route::get('/links/{id}', [LinkController::class, 'edit'])->name('links.edit');
         Route::put('/links/{id}', [LinkController::class, 'update'])->name('links.update');
         Route::delete('/links/{id}', [LinkController::class, 'destroy'])->name('links.destroy');
 
@@ -84,10 +82,11 @@ Route::group(
 
             // billing
             Route::get('/billing', [BillingController::class, 'index'])->name('setting.billing.index');
-            Route::get('/billing/checkout/{stripeId}', [BillingController::class, 'checkout'])->name('setting.billing.checkout');
+            Route::get('/billing/upgrade', [BillingController::class, 'upgrade'])->name('setting.billing.upgrade');
+            Route::get('/billing/checkout/{planId}', [BillingController::class, 'checkout'])->name('setting.billing.checkout');
             Route::get('/billing/portal', [BillingController::class, 'billingPortal'])->name('setting.billing.portal');
             Route::get('/billing/swap-free-plan', [BillingController::class, 'swapFreePlan'])->name('setting.billing.swap-free-plan');
-            Route::inertia('/billing/checkout-success', 'App/Setting/Billing/Success')->name('setting.billing.checkout-success');
+            Route::inertia('/billing/checkout-success', 'Setting/Billing/Success')->name('setting.billing.checkout-success');
 
             // users
             Route::get('/users', [TeamMemberController::class, 'index'])->name('setting.team-members.index');

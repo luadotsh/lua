@@ -17,7 +17,8 @@ class ApiTokenController extends Controller
         $tokens = ApiToken::where('workspace_id', auth()->user()->current_workspace_id)->get();
 
         return Inertia::render('Setting/ApiToken/Index', [
-            'tokens' => $tokens
+            'tokens' => $tokens,
+            'hasData' => $tokens->count() === 0 ? false : true
         ]);
     }
 

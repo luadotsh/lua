@@ -15,9 +15,10 @@ export default {
     },
 
     diffForHumans(date) {
-        let localDate = dayjs
-            .utc(date)
-            .format("YYYY-MM-DD HH:mm:ss");
-        return dayjs().to(dayjs(localDate));
+        // Convert UTC date to local timezone
+        const localDate = dayjs.utc(date).local();
+
+        // Return the human-readable difference
+        return dayjs().to(localDate);
     }
 };

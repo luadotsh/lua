@@ -16,6 +16,7 @@ use Inertia\Response;
 use App\Enums\User\Role;
 
 use App\Models\Workspace;
+use App\Models\Plan;
 
 class WorkspaceController extends Controller
 {
@@ -35,9 +36,10 @@ class WorkspaceController extends Controller
         try {
             $user = auth()->user();
 
-            // create store
             $workspace = Workspace::create([
                 'name' => $request->name,
+                'plan_id' => Plan::where('internal_id', 'free')->first()->id,
+                'billing_cycle_start' => now()->day,
             ]);
 
             // attach user to project

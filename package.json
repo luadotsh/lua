@@ -30,6 +30,7 @@
         "dayjs": "^1.11.13",
         "floating-vue": "^5.2.2",
         "laravel-vue-i18n": "^2.7.7",
+        "qrcode": "^1.5.4",
         "v-calendar": "^3.1.2",
         "vuedraggable": "^4.1.0"
     }

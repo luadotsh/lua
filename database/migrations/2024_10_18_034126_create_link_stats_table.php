@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('link_stats', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('workspace_id')->constrained();
-            $table->foreignUuid('link_id')->constrained();
+            $table->foreignUuid('link_id')->constrained()->onDelete('cascade');
 
             $table->string('event')->nullable();
 
@@ -38,7 +38,6 @@ return new class extends Migration
             $table->string('referer', 900)->nullable();
 
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

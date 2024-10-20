@@ -21,6 +21,7 @@ class EventController extends Controller
 
         $query = LinkStat::where('workspace_id', $workspace->id)
             ->with('link:id,link')
+            ->whereBetween('created_at', [$start, $end])
             ->latest();
 
         // search
@@ -34,8 +35,7 @@ class EventController extends Controller
             });
         }
 
-        $links = $query->paginate(config('app.pagination.default'));
-
+        $links = $query->paginate(config('app.pagination.default'))->withQueryString();
 
         return Inertia::render('Event/Index', [
             'table' => $links,

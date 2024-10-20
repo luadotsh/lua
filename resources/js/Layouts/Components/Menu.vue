@@ -66,9 +66,14 @@ const navigation = [
                 current: route().current("setting.tags.*"),
             },
             {
-                name: "Team Members",
+                name: "Users",
                 href: route("setting.team-members.index"),
                 current: route().current("setting.team-members.*"),
+            },
+            {
+                name: "Billing",
+                href: route("setting.billing.index"),
+                current: route().current("setting.billing.*"),
             },
         ],
     },

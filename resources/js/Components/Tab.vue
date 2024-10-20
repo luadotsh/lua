@@ -37,7 +37,7 @@ const maxGridClass = computed(() => {
                     <fieldset class="w-full">
                         <RadioGroup
                             v-model="props.currentTab"
-                            class="flex space-x-1 rounded-md p-1 text-center text-xs font-semibold ring-1 ring-inset ring-zinc-200"
+                            class="flex space-x-1 rounded-md p-1 text-center text-xs font-semibold ring-1 ring-inset ring-zinc-200 dark:ring-zinc-700"
                             :class="maxGridClass"
                         >
                             <RadioGroupOption
@@ -50,8 +50,8 @@ const maxGridClass = computed(() => {
                                     @click="setCurrentTab(tab)"
                                     :class="[
                                         currentTab == tab
-                                            ? 'bg-zinc-800 text-white'
-                                            : 'text-zinc-500',
+                                            ? 'bg-zinc-800 dark:bg-zinc-900 text-white'
+                                            : 'text-zinc-500 dark:text-zinc-300',
                                         'cursor-pointer rounded px-2.5 py-1',
                                     ]"
                                 >

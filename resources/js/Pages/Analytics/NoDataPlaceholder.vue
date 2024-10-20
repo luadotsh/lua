@@ -12,7 +12,7 @@
                     ></span>
                 </div>
                 <div
-                    class="ml-7 flex items-center space-x-1 text-gray-800 dark:text-white text-sm font-medium"
+                    class="ml-7 flex items-center space-x-1 text-zinc-800 dark:text-white text-sm font-medium"
                 >
                     <div>No data available</div>
                 </div>

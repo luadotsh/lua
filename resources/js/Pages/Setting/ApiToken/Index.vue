@@ -5,16 +5,18 @@ import draggable from "vuedraggable";
 import Button from "@/Components/Button.vue";
 import ConfirmDeleteModal from "@/Components/ConfirmDeleteModal.vue";
 
-import { PhX, PhGear, PhDotsSixVertical } from "@phosphor-icons/vue";
+import { PhX, PhKey } from "@phosphor-icons/vue";
 
 import AppLayout from "@/Layouts/Master.vue";
 import CreateModal from "./Create.vue";
+import EmptyState from "@/Components/EmptyState.vue";
 
 const confirmDeleteModal = ref(null);
 const createModal = ref(null);
 
-const { tokens } = defineProps({
+const { tokens, hasData } = defineProps({
     tokens: Object,
+    hasData: Boolean,
 });
 </script>
 
@@ -49,12 +51,12 @@ const { tokens } = defineProps({
                 <template v-for="token in tokens" :key="token.id">
                     <div class="flex flex-1 items-center space-x-1">
                         <div
-                            class="flex flex-1 items-center justify-between rounded-md px-4 py-2 border border-gray-100 dark:border-gray-700"
+                            class="flex flex-1 items-center justify-between rounded-md px-4 py-2 border border-zinc-100 dark:border-zinc-700"
                         >
                             <div class="flex flex-1 items-center space-x-4">
                                 <div class="flex items-center space-x-2">
                                     <div
-                                        class="font-medium text-sm text-gray-600 dark:text-white"
+                                        class="font-medium text-sm text-zinc-600 dark:text-white"
                                     >
                                         {{ token.name }}
                                     </div>
@@ -83,5 +85,12 @@ const { tokens } = defineProps({
                 </template>
             </div>
         </div>
+        <EmptyState
+            v-if="!hasData"
+            :icon="PhKey"
+            title="You don't have any API Tokens yet."
+            description="API Tokens are required to use the API, so you can manage your links, tags, and domains programmatically."
+        >
+        </EmptyState>
     </AppLayout>
 </template>

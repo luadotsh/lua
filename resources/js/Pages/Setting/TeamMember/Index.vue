@@ -54,7 +54,7 @@ const confirmLeaveTeam = () => {
 };
 
 const leaveTeam = () => {
-    leaveTeamForm.delete(route("team-members.leave"), {
+    leaveTeamForm.delete(route("setting.team-members.leave"), {
         preserveScroll: true,
         preserveState: true,
         onSuccess: () => (beingLeaving.value = null),
@@ -91,7 +91,7 @@ onMounted(() => {
         <template #header>
             <div class="sm:flex sm:items-center flex-1">
                 <div class="sm:flex-auto">
-                    <h1 class="page-title">Team Members</h1>
+                    <h1 class="page-title">Users</h1>
                 </div>
                 <div class="mt-4 sm:mt-0 sm:ml-16 flex space-x-2 sm:flex-none">
                     <div class="relative flex-1">
@@ -112,11 +112,10 @@ onMounted(() => {
                     </div>
 
                     <Button
-                        v-if="user.current_workspace.role !== 'USER'"
                         :href="route('setting.invites.create')"
                         class="btn-primary"
                     >
-                        Invite New Member
+                        Invite
                     </Button>
                 </div>
             </div>

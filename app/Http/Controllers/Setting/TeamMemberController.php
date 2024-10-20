@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Gate;
 
-use App\Enums\User\Role as UserRole;
+use App\Enums\User\Role;
 
 use App\Models\Workspace;
 use App\Models\User;
@@ -23,12 +23,16 @@ class TeamMemberController extends Controller
         $workspace = auth()->user()->currentWorkspace;
 
         $workspace = Workspace::where('id', $workspace->id)
-            ->with('users', function ($query) {
+            ->with('users', function ($query) use ($request) {
                 $query->orderBy('name', 'asc');
-                $query->where('role', '!=', UserRole::ROLE_USER);
+                if($request->q) {
+                    $query->where('name', 'like', '%'.$request->q.'%');
+                    $query->orWhere('email', 'like', '%'.$request->q.'%');
+                }
             })->first();
 
-        $invites = Invite::where('workspace_id', $workspace->id)->get();
+        $invites = Invite::where('workspace_id', $workspace->id)
+        ->get();
 
         return Inertia::render('Setting/TeamMember/Index', [
             'users' => $workspace->users,

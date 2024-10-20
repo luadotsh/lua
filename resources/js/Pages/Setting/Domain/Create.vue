@@ -34,7 +34,7 @@ const store = () => {
 </script>
 
 <template>
-    <DialogModal max-width="xl" :show="show" @close="show = null">
+    <DialogModal max-width="md" :show="show" @close="show = null">
         <template #title>New Domain</template>
 
         <template #content>

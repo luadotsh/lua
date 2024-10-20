@@ -4,46 +4,52 @@ import { usePage, Link } from "@inertiajs/vue3";
 import { PhLink, PhCaretRight, PhCursorClick } from "@phosphor-icons/vue";
 import Button from "@/Components/Button.vue";
 
-const billing = computed(() => usePage().props.billing);
+const usage = computed(() => usePage().props.usage);
 
 const links = computed(() => {
-    return `${billing.value.usage.links.used} of ${billing.value.usage.links.limit}`;
+    return `${usage.value.links.used} of ${usage.value.links.limit}`;
 });
 
 const events = computed(() => {
-    return `${billing.value.usage.events.used} of ${billing.value.usage.events.limit}`;
+    return `${usage.value.events.used} of ${usage.value.events.limit}`;
 });
 </script>
 <template>
     <div>
         <Link
-            class="group flex items-center gap-x-0.5 text-sm text-zinc-500 hover:text-zinc-700"
+            class="flex items-center gap-x-0.5 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-300"
             :href="route('setting.billing.index')"
         >
             <div>Usage</div>
-            <PhCaretRight class="text-zinc-400 5 group-hover:text-zinc-500" />
+            <PhCaretRight />
         </Link>
         <div class="mt-4 flex flex-col gap-4">
             <div>
                 <div class="flex items-center justify-between gap-2">
                     <div class="flex items-center gap-2">
                         <PhLink
-                            class="text-zinc-600 w-4 h-4"
+                            class="text-zinc-600 dark:text-zinc-400 w-4 h-4"
                             weight="duotone"
                         />
-                        <div class="text-xs font-medium text-zinc-700">
+                        <div
+                            class="text-xs font-medium text-zinc-600 dark:text-zinc-400"
+                        >
                             Links
                         </div>
                     </div>
-                    <div class="text-xs font-medium text-zinc-600">
+                    <div
+                        class="text-xs font-medium text-zinc-600 dark:text-zinc-400"
+                    >
                         {{ links }}
                     </div>
                 </div>
                 <div class="mt-2">
-                    <div class="overflow-hidden rounded-full bg-zinc-200">
+                    <div
+                        class="overflow-hidden rounded-full bg-zinc-300 dark:bg-zinc-700"
+                    >
                         <div
                             class="h-1 rounded-full bg-gradient-to-r from-violet-400 to-violet-600"
-                            :style="`width: ${billing.usage.links.percent}%`"
+                            :style="`width: ${usage.links.percent}%`"
                         />
                     </div>
                 </div>
@@ -52,22 +58,28 @@ const events = computed(() => {
                 <div class="flex items-center justify-between gap-2">
                     <div class="flex items-center gap-2">
                         <PhCursorClick
-                            class="text-zinc-600 w-4 h-4"
+                            class="text-zinc-600 dark:text-zinc-400 w-4 h-4"
                             weight="duotone"
                         />
-                        <div class="text-xs font-medium text-zinc-700">
+                        <div
+                            class="text-xs font-medium text-zinc-600 dark:text-zinc-400"
+                        >
                             Events
                         </div>
                     </div>
-                    <div class="text-xs font-medium text-zinc-600">
+                    <div
+                        class="text-xs font-medium text-zinc-600 dark:text-zinc-400"
+                    >
                         {{ events }}
                     </div>
                 </div>
                 <div class="mt-1.5">
-                    <div class="overflow-hidden rounded-full bg-zinc-200">
+                    <div
+                        class="overflow-hidden rounded-full bg-zinc-300 dark:bg-zinc-700"
+                    >
                         <div
                             class="h-1 rounded-full bg-gradient-to-r from-violet-400 to-violet-600"
-                            :style="`width: ${billing.usage.events.percent}%`"
+                            :style="`width: ${usage.events.percent}%`"
                         />
                     </div>
                 </div>
@@ -75,14 +87,14 @@ const events = computed(() => {
         </div>
         <div class="my-4">
             <div class="text-xs dark:text-zinc-400 text-zinc-600 text-center">
-                {{ `Usage will reset ${billing.usage.next_reset}` }}
+                {{ `Usage will reset ${usage.next_reset}` }}
             </div>
         </div>
         <Button
             class="w-full btn btn-primary"
-            :href="route('setting.billing.index')"
+            :href="route('setting.billing.upgrade')"
         >
-            Upgrade to Pro
+            Upgrade
         </Button>
     </div>
 </template>

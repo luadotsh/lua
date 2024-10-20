@@ -37,7 +37,7 @@ const setColumn = (status) => {
                 <div>
                     <MenuButton class="btn btn-secondary">
                         <PhGear
-                            class="h-5 w-5 text-gray-500 dark:text-gray-300"
+                            class="h-5 w-5 text-zinc-500 dark:text-zinc-300"
                             aria-hidden="true"
                         />
                     </MenuButton>
@@ -52,12 +52,12 @@ const setColumn = (status) => {
                     leave-to-class="transform opacity-0 scale-95"
                 >
                     <MenuItems
-                        class="absolute right-0 z-10 mt-2 w-64 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                        class="absolute right-0 z-10 mt-2 w-52 origin-top-right divide-y divide-zinc-100 dark:divide-zinc-700 rounded-md bg-white dark:bg-zinc-900 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                     >
                         <div class="py-1">
                             <div>
                                 <div
-                                    class="px-4 pt-2 text-[13px] font-medium text-black"
+                                    class="px-4 pt-2 text-[13px] font-medium text-black dark:text-white"
                                 >
                                     Columns
                                 </div>
@@ -71,20 +71,20 @@ const setColumn = (status) => {
                                     @click.prevent="setColumn(column)"
                                     :class="[
                                         active
-                                            ? 'bg-gray-100 text-gray-900'
-                                            : 'text-gray-700',
+                                            ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-300'
+                                            : 'text-zinc-800 dark:text-zinc-300',
                                         ' px-4 py-1.5 text-sm cursor-pointer flex flex-1 items-center space-x-2',
                                     ]"
                                 >
                                     <div>
                                         <PhCheckCircle
                                             v-if="column.show"
-                                            class="h-5 w-5 text-zinc-800"
+                                            class="h-5 w-5 text-zinc-800 dark:text-zinc-300"
                                             weight="fill"
                                         />
                                         <PhCircle
                                             v-else
-                                            class="h-5 w-5 text-zinc-800"
+                                            class="h-5 w-5 text-zinc-800 dark:text-zinc-300"
                                         />
                                     </div>
                                     <div class="truncate">

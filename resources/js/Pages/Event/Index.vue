@@ -2,10 +2,12 @@
 import { reactive, ref } from "vue";
 import { router } from "@inertiajs/vue3";
 import Layout from "@/Layouts/Master.vue";
+import date from "@/date";
 
 import Pagination from "@/Components/Pagination.vue";
 import Header from "./Header.vue";
-import Chart from "./Chart.vue";
+import ChartClick from "./ChartClick.vue";
+import ChartQR from "./ChartQR.vue";
 
 const props = defineProps({
     start: String,
@@ -17,6 +19,8 @@ const props = defineProps({
 const range = ref({
     start: props.start,
     end: props.end,
+    timezone: date.getUserTimezone(),
+    group: "day",
 });
 
 const columns = reactive([
@@ -106,7 +110,7 @@ const refresh = (value) => {
         }),
         {
             method: "get",
-            replace: true,
+            preserveState: true,
         }
     );
 };
@@ -123,17 +127,13 @@ const refresh = (value) => {
             />
         </template>
         <div class="space-y-4">
-            <div
-                class="mx-auto grid grid-cols-1 gap-px bg-zinc-100 dark:bg-zinc-700 sm:grid-cols-2 border border-zinc-200 dark:border-zinc-700 rounded-lg overflow-hidden"
-            >
-                <Chart
+            <div class="mx-auto grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <ChartClick
                     :range="range"
-                    event="Clicks"
                     class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 bg-white dark:bg-zinc-800 px-4 py-4"
                 />
-                <Chart
+                <ChartQR
                     :range="range"
-                    event="QR Scans"
                     class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 bg-white dark:bg-zinc-800 px-4 py-4"
                 />
             </div>

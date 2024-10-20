@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a55a36978396578bc58033077d739f5c",
+    "content-hash": "e1b3b2172a18c7bfd270bc016fc8607e",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -286,6 +286,73 @@
                 }
             ],
             "time": "2024-02-09T16:56:22+00:00"
+        },
+        {
+            "name": "cknow/laravel-money",
+            "version": "v8.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cknow/laravel-money.git",
+                "reference": "783b08a9b5eae97617e66d56375260cb3caa8e96"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cknow/laravel-money/zipball/783b08a9b5eae97617e66d56375260cb3caa8e96",
+                "reference": "783b08a9b5eae97617e66d56375260cb3caa8e96",
+                "shasum": ""
+            },
+            "require": {
+                "ext-intl": "*",
+                "ext-json": "*",
+                "illuminate/support": "^9.0|^10.0|^11.0",
+                "illuminate/view": "^9.0|^10.0|^11.0",
+                "moneyphp/money": "^4.5",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "graham-campbell/testbench": "^6.1",
+                "illuminate/filesystem": "^9.0|^10.0|^11.0",
+                "mockery/mockery": "^1.6",
+                "phpunit/phpunit": "^10.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Cknow\\Money\\MoneyServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ],
+                "psr-4": {
+                    "Cknow\\Money\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ricardo Gobbo de Souza",
+                    "email": "ricardogobbosouza@yahoo.com.br"
+                }
+            ],
+            "description": "Laravel Money",
+            "homepage": "https://github.com/cknow/laravel-money",
+            "keywords": [
+                "currency",
+                "laravel",
+                "money"
+            ],
+            "support": {
+                "issues": "https://github.com/cknow/laravel-money/issues",
+                "source": "https://github.com/cknow/laravel-money/tree/v8.1.0"
+            },
+            "time": "2024-04-24T19:54:44+00:00"
         },
         {
             "name": "clue/redis-protocol",
@@ -1978,83 +2045,6 @@
                 "source": "https://github.com/laravel/horizon/tree/v5.29.1"
             },
             "time": "2024-10-08T18:23:02+00:00"
-        },
-        {
-            "name": "laravel/pennant",
-            "version": "v1.12.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laravel/pennant.git",
-                "reference": "7d669662519af4502e369723db4b49644f44aefe"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel/pennant/zipball/7d669662519af4502e369723db4b49644f44aefe",
-                "reference": "7d669662519af4502e369723db4b49644f44aefe",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/console": "^10.0|^11.0",
-                "illuminate/container": "^10.0|^11.0",
-                "illuminate/contracts": "^10.0|^11.0",
-                "illuminate/database": "^10.0|^11.0",
-                "illuminate/queue": "^10.0|^11.0",
-                "illuminate/support": "^10.0|^11.0",
-                "php": "^8.1",
-                "symfony/console": "^6.0|^7.0",
-                "symfony/finder": "^6.0|^7.0"
-            },
-            "require-dev": {
-                "laravel/octane": "^1.4|^2.0",
-                "orchestra/testbench": "^8.0|^9.0",
-                "phpstan/phpstan": "^1.10",
-                "phpunit/phpunit": "^9.0|^10.4"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.x-dev"
-                },
-                "laravel": {
-                    "providers": [
-                        "Laravel\\Pennant\\PennantServiceProvider"
-                    ],
-                    "aliases": {
-                        "Feature": "Laravel\\Pennant\\Feature"
-                    }
-                }
-            },
-            "autoload": {
-                "files": [
-                    "src/helpers.php"
-                ],
-                "psr-4": {
-                    "Laravel\\Pennant\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Taylor Otwell",
-                    "email": "taylor@laravel.com"
-                }
-            ],
-            "description": "A simple, lightweight library for managing feature flags.",
-            "homepage": "https://github.com/laravel/pennant",
-            "keywords": [
-                "feature",
-                "flags",
-                "laravel",
-                "pennant"
-            ],
-            "support": {
-                "issues": "https://github.com/laravel/pennant/issues",
-                "source": "https://github.com/laravel/pennant"
-            },
-            "time": "2024-09-30T14:40:37+00:00"
         },
         {
             "name": "laravel/prompts",

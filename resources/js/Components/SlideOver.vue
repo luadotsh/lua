@@ -56,7 +56,7 @@ const close = () => {
             <div class="fixed inset-0 overflow-hidden">
                 <div class="absolute inset-0 bg-opacity-40 bg-zinc-800">
                     <div
-                        class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full p-2"
+                        class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full"
                     >
                         <TransitionChild
                             as="template"
@@ -68,7 +68,7 @@ const close = () => {
                             leave-to="translate-x-full"
                         >
                             <DialogPanel
-                                class="pointer-events-auto flex flex-col w-screen overflow-hidden border border-zinc-200 dark:border-zinc-700 rounded-lg"
+                                class="pointer-events-auto flex flex-col w-screen overflow-hidden border border-zinc-200 dark:border-zinc-700"
                                 :class="maxWidthClass"
                             >
                                 <!-- Header -->

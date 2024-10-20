@@ -20,6 +20,9 @@ class PlanSeeder extends Seeder
             'is_private' => false,
             'max_links' => 100,
             'max_events' => 1000,
+            'max_users' => 1,
+            'max_tags' => 5,
+            'max_domains' => 3,
         ]);
 
         // Starter Monthly
@@ -33,6 +36,9 @@ class PlanSeeder extends Seeder
             'is_private' => false,
             'max_links' => 1000,
             'max_events' => 50000,
+            'max_users' => 2,
+            'max_tags' => 25,
+            'max_domains' => 10,
         ]);
 
         // Starter Yearly
@@ -46,6 +52,9 @@ class PlanSeeder extends Seeder
             'is_private' => false,
             'max_links' => 1000,
             'max_events' => 50000,
+            'max_users' => 2,
+            'max_tags' => 25,
+            'max_domains' => 10,
         ]);
 
         // Pro Monthly
@@ -59,6 +68,9 @@ class PlanSeeder extends Seeder
             'is_private' => false,
             'max_links' => 5000,
             'max_events' => 150000,
+            'max_users' => 5,
+            'max_tags' => 100,
+            'max_domains' => 50,
         ]);
 
         // Pro Yearly
@@ -72,6 +84,9 @@ class PlanSeeder extends Seeder
             'is_private' => false,
             'max_links' => 5000,
             'max_events' => 150000,
+            'max_users' => 5,
+            'max_tags' => 100,
+            'max_domains' => 50,
         ]);
 
         // Growth Monthly
@@ -85,6 +100,9 @@ class PlanSeeder extends Seeder
             'is_private' => false,
             'max_links' => 20000,
             'max_events' => 500000,
+            'max_users' => 10,
+            'max_tags' => 400,
+            'max_domains' => 200,
         ]);
 
         // Growth Yearly
@@ -98,6 +116,9 @@ class PlanSeeder extends Seeder
             'is_private' => false,
             'max_links' => 20000,
             'max_events' => 500000,
+            'max_users' => 10,
+            'max_tags' => 400,
+            'max_domains' => 200,
         ]);
 
         // Scale Monthly
@@ -111,6 +132,9 @@ class PlanSeeder extends Seeder
             'is_private' => false,
             'max_links' => 100000,
             'max_events' => 2000000,
+            'max_users' => 20,
+            'max_tags' => 1000,
+            'max_domains' => 500,
         ]);
 
         // Scale Yearly
@@ -124,6 +148,9 @@ class PlanSeeder extends Seeder
             'is_private' => false,
             'max_links' => 100000,
             'max_events' => 2000000,
+            'max_users' => 20,
+            'max_tags' => 1000,
+            'max_domains' => 500,
         ]);
 
     }

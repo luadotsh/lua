@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Laravel\Pennant\Feature;
-use Laravel\Pennant\Concerns\HasFeatures;
+use App\Enums\User\Role;
+
+use function Illuminate\Events\queueable;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,19 +15,21 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Laravel\Cashier\Billable;
 
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
+use App\Observers\WorkspaceObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+
+#[ObservedBy(WorkspaceObserver::class)]
 class Workspace extends Model implements HasMedia
 {
     use HasFactory;
     use HasUuids;
     use SoftDeletes;
     use Billable;
-    use HasFeatures;
     use InteractsWithMedia;
 
     /**
@@ -70,20 +73,27 @@ class Workspace extends Model implements HasMedia
      * @var array
      */
     protected $appends = [
-        'features',
         'logo_url'
     ];
 
-    public function getFeaturesAttribute()
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
     {
-        return Feature::all();
+        static::updated(queueable(function (Workspace $workspace) {
+            if ($workspace->hasStripeId()) {
+                $workspace->syncStripeCustomerDetails();
+            }
+        }));
     }
 
-    public function updateFeatureFlags()
+    /**
+     * Get the customer name that should be synced to Stripe.
+     */
+    public function stripeEmail(): string|null
     {
-        foreach ($this->features as $key => $feature) {
-            Feature::for($this)->forget($key);
-        }
+        return $this->users()->where('role', Role::ROLE_OWNER)->first()->email;
     }
 
     public function registerMediaCollections(): void
@@ -114,6 +124,16 @@ class Workspace extends Model implements HasMedia
     public function linkStats(): HasMany
     {
         return $this->hasMany(LinkStat::class);
+    }
+
+    public function domains(): HasMany
+    {
+        return $this->hasMany(Domain::class);
+    }
+
+    public function tags(): HasMany
+    {
+        return $this->hasMany(Tag::class);
     }
 
     public function plan(): BelongsTo

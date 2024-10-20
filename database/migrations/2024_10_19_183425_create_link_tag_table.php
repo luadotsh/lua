@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('link_tag', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('link_id')->constrained();
-            $table->foreignUuid('tag_id')->constrained();
+            $table->foreignUuid('link_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('tag_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

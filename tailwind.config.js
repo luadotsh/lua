@@ -71,11 +71,11 @@ export default {
         "bg-yellow-500",
         "ring-yellow-300",
 
-        "text-gray-500",
-        "bg-gray-100",
-        "bg-gray-50",
-        "bg-gray-500",
-        "ring-gray-300",
+        "text-zinc-500",
+        "bg-zinc-100",
+        "bg-zinc-50",
+        "bg-zinc-500",
+        "ring-zinc-300",
 
         "text-pink-500",
         "bg-pink-100",

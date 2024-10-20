@@ -4,6 +4,8 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+use Illuminate\Support\Str;
+
 use \App\Models\Workspace;
 
 /**
@@ -18,12 +20,14 @@ class LinkFactory extends Factory
      */
     public function definition(): array
     {
+        $slug = Str::random(7);
+
         return [
             'workspace_id' => Workspace::factory(),
-            'domain' => "https://lua.sh",
-            'key' => $this->faker->slug,
+            'domain' => config('domains.main'),
+            'key' => $slug,
             'url' => $this->faker->url,
-            'link' => $this->faker->url,
+            'link' => config('domains.main').$slug,
             'utm_source' => $this->faker->word,
             'utm_medium' => $this->faker->word,
             'utm_campaign' => $this->faker->word,

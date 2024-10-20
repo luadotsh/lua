@@ -12,10 +12,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
         api: __DIR__ . '/../routes/api.php',
-        apiPrefix: 'v1',
+        apiPrefix: '/api/v1',
         commands: __DIR__.'/../routes/console.php',
         channels: __DIR__.'/../routes/channels.php',
-        health: '/up',
+        health: '/api/v1/health',
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->trustProxies(at: '*');
@@ -30,6 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'plan-check' => \App\Http\Middleware\PlanCheck::class,
+            'api.auth' => \App\Http\Middleware\Api\Auth::class,
         ]);
 
         //

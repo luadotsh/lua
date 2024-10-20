@@ -23,6 +23,9 @@ class Plan extends Model
         'is_private',
         'max_links',
         'max_events',
+        'max_users',
+        'max_tags',
+        'max_domains',
     ];
 
     public function workspace()

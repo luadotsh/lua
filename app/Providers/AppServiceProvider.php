@@ -14,6 +14,15 @@ use Illuminate\Support\ServiceProvider;
 
 use App\Models\Workspace;
 use App\Models\User;
+use App\Models\ApiToken;
+use App\Models\Domain;
+use App\Models\Invite;
+use App\Models\Link;
+use App\Models\LinkStat;
+use App\Models\Media;
+use App\Models\Plan;
+use App\Models\Tag;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -33,7 +42,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Cashier configuration
         Cashier::useCustomerModel(Workspace::class);
+
+        // Vite configuration
         Vite::prefetch(concurrency: 3);
 
         // Custom email verification template
@@ -50,6 +62,14 @@ class AppServiceProvider extends ServiceProvider
 
         // Morph map for polymorphic relationships
         Relation::enforceMorphMap([
+            'apiToken' => ApiToken::class,
+            'domain' => Domain::class,
+            'invite' => Invite::class,
+            'link' => Link::class,
+            'linkStat' => LinkStat::class,
+            'media' => Media::class,
+            'plan' => Plan::class,
+            'tag' => Tag::class,
             'user' => User::class,
             'workspace' => Workspace::class,
         ]);

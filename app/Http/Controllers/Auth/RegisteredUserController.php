@@ -13,11 +13,7 @@ use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
 
-use App\Enums\User\Role;
-
-use App\Models\Plan;
 use App\Models\User;
-use App\Models\Workspace;
 
 class RegisteredUserController extends Controller
 {
@@ -48,25 +44,10 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $workspace = Workspace::create([
-            'name' => $request->name,
-            'plan_id' => Plan::where('internal_id', 'free')->first()->id,
-            'billing_cycle_start' => now()->day,
-        ]);
-
-        // attach user to project
-        $user->workspaces()->attach($workspace->id, [
-            'role' => Role::ROLE_OWNER,
-        ]);
-
-        $user->forceFill([
-            'current_workspace_id' => $workspace->id,
-        ])->save();
-
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('links.index', absolute: false));
+        return redirect(route('workspaces.create', absolute: false));
     }
 }

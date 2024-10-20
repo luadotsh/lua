@@ -19,6 +19,7 @@ class DomainController extends Controller
 
         return Inertia::render('Setting/Domain/Index', [
             'domains' => $domains,
+            'hasData' => $domains->count() === 0 ? false : true,
         ]);
     }
 

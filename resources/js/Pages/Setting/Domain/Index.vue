@@ -1,12 +1,12 @@
 <script setup>
-import { ref, onMounted, watch } from "vue";
-import { Head, useForm, usePage } from "@inertiajs/vue3";
-import draggable from "vuedraggable";
+import { ref } from "vue";
+import { Head } from "@inertiajs/vue3";
 import Button from "@/Components/Button.vue";
 import ConfirmDeleteModal from "@/Components/ConfirmDeleteModal.vue";
 
-import { PhX, PhGear } from "@phosphor-icons/vue";
+import { PhX, PhGear, PhGlobe } from "@phosphor-icons/vue";
 
+import EmptyState from "@/Components/EmptyState.vue";
 import AppLayout from "@/Layouts/Master.vue";
 import CreateModal from "./Create.vue";
 import EditModal from "./Edit.vue";
@@ -15,8 +15,9 @@ const confirmDeleteModal = ref(null);
 const createModal = ref(null);
 const editModal = ref(null);
 
-const { domains } = defineProps({
+const { domains, hasData } = defineProps({
     domains: Object,
+    hasData: Boolean,
 });
 </script>
 
@@ -52,12 +53,12 @@ const { domains } = defineProps({
                 <template v-for="domain in domains" :key="domain.id">
                     <div class="flex flex-1 items-center space-x-1">
                         <div
-                            class="flex flex-1 items-center justify-between rounded-md px-4 py-2 border border-gray-100 dark:border-gray-700"
+                            class="flex flex-1 items-center justify-between rounded-md px-4 py-2 border border-zinc-100 dark:border-zinc-700"
                         >
                             <div class="flex flex-1 items-center space-x-4">
                                 <div class="flex items-center space-x-2">
                                     <div
-                                        class="font-medium text-sm text-gray-600 dark:text-white"
+                                        class="font-medium text-sm text-zinc-600 dark:text-white"
                                     >
                                         {{ domain.domain }}
                                     </div>
@@ -93,5 +94,14 @@ const { domains } = defineProps({
                 </template>
             </div>
         </div>
+
+        <EmptyState
+            v-if="!hasData"
+            :icon="PhGlobe"
+            title="You don't have any domains yet."
+            description="Domains are used to create branded short links. e.g. link.yourdomain.com/short-link"
+            buttonTitle="Add Domain"
+        >
+        </EmptyState>
     </AppLayout>
 </template>

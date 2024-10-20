@@ -37,7 +37,8 @@ const update = () => {
                 <div>
                     <h2 class="setting-page-title">Workspace Settings</h2>
                     <p class="setting-page-subtitle">
-                        Update your workspace's.
+                        Here you can update your workspace settings like name,
+                        logo, etc.
                     </p>
                 </div>
                 <div>

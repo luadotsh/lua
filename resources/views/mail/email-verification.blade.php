@@ -94,7 +94,7 @@
                                     <p style="margin-bottom: 0; line-height: 24px">
                                         Best regards,
                                         <br>
-                                        The Mercantive Team
+                                        The Lua.sh Team
                                     </p>
                                 </td>
                             </tr>

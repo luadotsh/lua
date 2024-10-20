@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch } from "vue";
 import dayjs from "@/dayjs";
+import date from "@/date";
 
 import { PhCaretDown } from "@phosphor-icons/vue";
 
@@ -27,6 +28,7 @@ const setToday = () => {
         group: "hour",
         start: dayjs().startOf("day").utc().format("YYYY-MM-DD"),
         end: dayjs().endOf("day").utc().format("YYYY-MM-DD"),
+        timezone: date.getUserTimezone(),
     };
 };
 
@@ -39,6 +41,7 @@ const set7days = () => {
             .utc()
             .format("YYYY-MM-DD"),
         end: dayjs().endOf("day").utc().format("YYYY-MM-DD"),
+        timezone: date.getUserTimezone(),
     };
 };
 
@@ -51,6 +54,7 @@ const set14days = () => {
             .utc()
             .format("YYYY-MM-DD"),
         end: dayjs().endOf("day").utc().format("YYYY-MM-DD"),
+        timezone: date.getUserTimezone(),
     };
 };
 
@@ -63,6 +67,7 @@ const set30days = () => {
             .utc()
             .format("YYYY-MM-DD"),
         end: dayjs().endOf("day").utc().format("YYYY-MM-DD"),
+        timezone: date.getUserTimezone(),
     };
 };
 
@@ -75,6 +80,7 @@ const set3months = () => {
             .utc()
             .format("YYYY-MM-DD"),
         end: dayjs().endOf("day").utc().format("YYYY-MM-DD"),
+        timezone: date.getUserTimezone(),
     };
 };
 
@@ -87,6 +93,7 @@ const set12months = () => {
             .utc()
             .format("YYYY-MM-DD"),
         end: dayjs().endOf("day").utc().format("YYYY-MM-DD"),
+        timezone: date.getUserTimezone(),
     };
 };
 
@@ -99,6 +106,7 @@ const setMonthToDate = () => {
             .utc()
             .format("YYYY-MM-DD"),
         end: dayjs().endOf("day").utc().format("YYYY-MM-DD"),
+        timezone: date.getUserTimezone(),
     };
 };
 
@@ -111,6 +119,7 @@ const setQuarterToDate = () => {
             .utc()
             .format("YYYY-MM-DD"),
         end: dayjs().endOf("day").utc().format("YYYY-MM-DD"),
+        timezone: date.getUserTimezone(),
     };
 };
 
@@ -123,6 +132,7 @@ const setYearToDate = () => {
             .utc()
             .format("YYYY-MM-DD"),
         end: dayjs().endOf("day").utc().format("YYYY-MM-DD"),
+        timezone: date.getUserTimezone(),
     };
 };
 
@@ -131,6 +141,7 @@ const setAllTime = () => {
         group: "month",
         start: dayjs("2024-01-10").startOf("day").utc().format("YYYY-MM-DD"),
         end: dayjs().endOf("day").utc().format("YYYY-MM-DD"),
+        timezone: date.getUserTimezone(),
     };
 };
 
@@ -142,6 +153,7 @@ watch(
                 start: dayjs(value.start).utc().format("YYYY-MM-DD"),
                 end: dayjs(value.end).utc().format("YYYY-MM-DD"),
                 group: value.group,
+                timezone: date.getUserTimezone(),
             };
             emit("update:range", updatedRange);
         }
@@ -156,14 +168,14 @@ watch(
             v-model.range="range"
             :popover="{ visibility: 'click', placement: props.placement }"
             :isDark="true"
-            color="gray"
+            color="zinc"
             :columns="2"
             timezone="utc"
             @dayclick="(_, event) => {event.target.blur()}"
         >
             <template #default="{ togglePopover, inputValue }">
                 <div
-                    class="flex items-center space-x-2 bg-gray-100 dark:bg-zinc-900 px-3 py-2 rounded-lg text-sm text-gray-900 dark:text-zinc-300 dark:hover:text-zinc-100 hover:bg-gray-50 dark:hover:bg-zinc-900 cursor-pointer border border-zinc-200 dark:border-zinc-700"
+                    class="flex items-center space-x-2 bg-zinc-100 dark:bg-zinc-900 px-3 py-2 rounded-lg text-sm text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-900 cursor-pointer border border-zinc-200 dark:border-zinc-700"
                     @click="() => togglePopover()"
                 >
                     <div class="flex justify-center items-center">
@@ -171,7 +183,7 @@ watch(
                         {{ inputValue.end }}
                     </div>
                     <PhCaretDown
-                        class="h-5 w-5 text-gray-400"
+                        class="h-5 w-5 text-zinc-400"
                         aria-hidden="true"
                     />
                 </div>

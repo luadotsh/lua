@@ -26,7 +26,7 @@ const roles = [
         name: "user",
         value: "USER",
         description:
-            "Access to dashboard and team inbox (without billing or organization wide settings).",
+            "Access to analytics, links, events, but no access to settings.",
     },
 ];
 
@@ -53,11 +53,13 @@ defineExpose({
 <template>
     <AppLayout>
         <FormSection @submitted="store">
-            <template #title>Invite New Member</template>
+            <template #title> New Team Member </template>
 
             <template #description>
-                Ensure your account is using a long, random password to stay
-                secure.
+                <p>
+                    Invite a new team member to your workspace. They will
+                    receive an email with instructions on how to join.
+                </p>
             </template>
 
             <template #form>

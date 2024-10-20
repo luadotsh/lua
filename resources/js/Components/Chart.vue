@@ -2,103 +2,78 @@
 import colorLib from "@kurkle/color";
 import helper from "@/helper";
 import Chart from "chart.js/auto";
-import { ref, reactive, onMounted } from "vue";
+import { RadioGroup, RadioGroupOption } from "@headlessui/vue";
+
+import { ref, reactive, watch } from "vue";
 
 import { useDarkTheme } from "@/theme";
 const { isDarkTheme } = useDarkTheme();
 
-const chartElementRef = ref(null);
-let chartElement;
+const types = reactive([
+    { value: "bar", label: "Bar" },
+    { value: "line", label: "Line" },
+]);
 
-const data = reactive({
-    total: 159222,
-    chart: {
-        currentData: [
-            0, 8, 12, 0, 0, 0, 14, 6, 14, 8, 14, 0, 0, 4, 18, 10, 7, 0, 8, 12,
-            0, 0, 0, 14, 6, 14, 8, 14, 0, 0, 4, 18, 10, 7,
-        ],
-        currentLabel: "Current Revenue",
-        labels: [
-            "18 may",
-            "19 may",
-            "21 may",
-            "22 may",
-            "23 may",
-            "24 may",
-            "25 may",
-            "26 may",
-            "27 may",
-            "28 may",
-            "29 may",
-            "30 may",
-            "31 may",
-            "06 jul",
-            "08 jul",
-            "11 jul",
-            "13 jul",
-            "18 may",
-            "19 may",
-            "21 may",
-            "22 may",
-            "23 may",
-            "24 may",
-            "25 may",
-            "26 may",
-            "27 may",
-            "28 may",
-            "29 may",
-            "30 may",
-            "31 may",
-            "06 jul",
-            "08 jul",
-            "11 jul",
-            "13 jul",
-        ],
-    },
-});
-
-const { range, event } = defineProps({
-    range: Object,
-    event: {
+const props = defineProps({
+    type: {
         type: String,
+        default: "bar",
+        required: false,
+    },
+
+    title: {
+        type: String,
+        required: true,
+    },
+
+    data: {
+        type: Object,
         required: true,
     },
 });
 
-const loadChartData = () => {
-    setTimeout(() => {
-        renderChart();
-    }, 50);
-};
+const chartType = ref(types.find((type) => type.value === props.type));
+const chartElementRef = ref(null);
+let chartElement;
+
+const data = reactive({
+    total: props.data.total,
+    chart: props.data.chart,
+});
 
 const transparentize = (value, opacity) => {
     var alpha = opacity === undefined ? 0.5 : 1 - opacity;
     return colorLib(value).alpha(alpha).rgbString();
 };
 
-const renderChart = () => {
+const renderChart = (force = false) => {
     // clear canva
-    if (chartElement) {
+    if (chartElement && !force) {
         chartElement.data.labels = data.chart.labels;
-        chartElement.data.datasets[0].data = data.chart.currentData;
+        chartElement.data.datasets[0].data = data.chart.data;
+        chartElement.data.datasets[0].label = data.chart.label;
         chartElement.update();
         return;
     }
 
+    if (force) {
+        chartElement.destroy();
+    }
+
     chartElement = new Chart(chartElementRef.value, {
-        type: "line",
+        type: chartType.value.value,
         data: {
             labels: data.chart.labels,
             datasets: [
                 {
-                    label: data.chart.currentLabel,
-                    data: data.chart.currentData,
+                    label: data.chart.label,
+                    data: data.chart.data,
                     fill: true,
                     backgroundColor: transparentize("#A78BFA", 0.97),
                     borderColor: "#A78BFA",
-                    borderRadius: 8,
+                    borderRadius: 4,
                     borderWidth: 1.5,
-                    tension: 0.1,
+                    tension: 0.3,
                     pointStyle: "circle",
                     pointRadius: 0,
                     pointHoverRadius: 4,
@@ -112,8 +87,13 @@ const renderChart = () => {
         options: {
             clip: false,
             responsive: true,
-            maintainAspectRatio: true,
+            maintainAspectRatio: false,
             aspectRatio: 4,
+            layout: {
+                padding: {
+                    top: 10,
+                },
+            },
             plugins: {
                 legend: {
                     display: false,
@@ -148,10 +128,7 @@ const renderChart = () => {
 
                     callbacks: {
                         label: (context) => {
-                            return `$${context.formattedValue} - ${context.label}`;
-                        },
-                        title: (context) => {
-                            return event;
+                            return `${context.formattedValue} ${props.title}`;
                         },
                         labelColor: function (context) {
                             return {
@@ -213,24 +190,77 @@ const renderChart = () => {
     });
 };
 
-onMounted(() => {
-    loadChartData();
+watch(chartType, () => {
+    renderChart(true);
 });
+
+watch(
+    props,
+    () => {
+        data.total = props.data.total;
+        data.chart = props.data.chart;
+        renderChart();
+    },
+    {
+        deep: true,
+    }
+);
 </script>
 
 <template>
-    <div>
-        <div>
-            <div class="text-base font-medium text-zinc-600 mb-1">
-                {{ event }}
+    <div
+        class="border border-zinc-200 dark:border-zinc-700 rounded-lg overflow-hidden"
+    >
+        <div class="w-full flex justify-between">
+            <div>
+                <div
+                    class="text-base font-medium text-zinc-800 dark:text-zinc-300 mb-1"
+                >
+                    {{ props.title }}
+                </div>
+                <div
+                    class="text-2xl font-semibold text-zinc-800 dark:text-white"
+                >
+                    {{ helper.kFormatter(data.total) }}
+                </div>
             </div>
-            <div
-                class="text-2xl font-semibold text-zinc-800 dark:text-zinc-300"
-            >
-                {{ helper.kFormatter(data.total) }}
+            <div class="flex justify-center">
+                <fieldset>
+                    <RadioGroup
+                        v-model="chartType"
+                        class="grid grid-cols-2 gap-x-1 rounded-md p-1 text-center text-xs font-semibold leading-5 ring-1 ring-inset ring-zinc-200 dark:ring-zinc-700"
+                    >
+                        <RadioGroupOption
+                            as="template"
+                            v-for="option in types"
+                            :key="option.value"
+                            :value="option"
+                            v-slot="{ checked }"
+                        >
+                            <div
+                                :class="[
+                                    checked
+                                        ? 'bg-zinc-800 dark:bg-zinc-900 text-white'
+                                        : 'text-zinc-500 dark:text-zinc-300',
+                                    'cursor-pointer rounded px-2.5 py-1',
+                                ]"
+                            >
+                                {{ option.label }}
+                            </div>
+                        </RadioGroupOption>
+                    </RadioGroup>
+                </fieldset>
             </div>
         </div>
 
-        <canvas ref="chartElementRef"></canvas>
+        <div
+            class="w-full"
+            style="position: relative; height: 260px; width: 100%"
+        >
+            <canvas
+                ref="chartElementRef"
+                style="width: 100%; height: 100%"
+            ></canvas>
+        </div>
     </div>
 </template>

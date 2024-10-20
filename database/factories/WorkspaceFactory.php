@@ -20,7 +20,8 @@ class WorkspaceFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
-            'plan_id' => Plan::factory()
+            'plan_id' => Plan::factory(),
+            'billing_cycle_start' => now()->day,
         ];
     }
 }

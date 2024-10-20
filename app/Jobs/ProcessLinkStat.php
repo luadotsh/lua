@@ -39,6 +39,7 @@ class ProcessLinkStat implements ShouldQueue
         $geo = geoip($this->ip);
 
         $linkStat = LinkStat::create([
+            'workspace_id' => $this->link->workspace_id,
             'link_id' => $this->link->id,
             'event' => Event::CLICK,
             'country' => $geo->iso_code,

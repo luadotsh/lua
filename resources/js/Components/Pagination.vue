@@ -16,7 +16,7 @@ defineProps({
             class="py-2 flex items-center justify-between"
         >
             <div class="hidden sm:block">
-                <p class="text-sm text-zinc-700">
+                <p class="text-sm text-zinc-800 dark:text-zinc-300">
                     {{ $t("pagination.showing") }}
                     <span class="font-medium">{{ data.from }}</span>
                     {{ $t("pagination.to") }}
@@ -30,33 +30,27 @@ defineProps({
                 <Link
                     v-if="data.prev_page_url"
                     :href="data.prev_page_url"
-                    class="relative inline-flex items-center px-3 py-1.5 border border-zinc-300 text-sm font-medium rounded-md text-zinc-700 bg-white 0 hover:bg-zinc-50"
+                    class="btn btn-secondary"
                     preserve-scroll
                     preserve-state
                 >
                     {{ $t("pagination.previous") }}
                 </Link>
 
-                <div
-                    v-else
-                    class="relative cursor-not-allowed inline-flex items-center px-3 py-1.5 border border-zinc-300 text-sm font-medium rounded-md text-zinc-700 bg-white hover:bg-zinc-50"
-                >
+                <div v-else class="btn btn-secondary cursor-not-allowed">
                     {{ $t("pagination.previous") }}
                 </div>
 
                 <Link
                     v-if="data.next_page_url"
                     :href="data.next_page_url"
-                    class="ml-2 relative inline-flex items-center px-3 py-1.5 border border-zinc-300 text-sm font-medium rounded-md text-zinc-700 bg-white hover:bg-zinc-50"
+                    class="ml-2 btn btn-secondary"
                     preserve-scroll
                     preserve-state
                 >
                     {{ $t("pagination.next") }}
                 </Link>
-                <div
-                    v-else
-                    class="ml-2 relative cursor-not-allowed inline-flex items-center px-3 py-1.5 border border-zinc-300 text-sm font-medium rounded-md text-zinc-700 bg-white hover:bg-zinc-50"
-                >
+                <div v-else class="ml-2 cursor-not-allowed btn btn-secondary">
                     {{ $t("pagination.next") }}
                 </div>
             </div>

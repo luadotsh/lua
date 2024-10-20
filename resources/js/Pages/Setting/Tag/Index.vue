@@ -77,11 +77,11 @@ watch(
                     <div class="flex flex-1 items-center space-x-1">
                         <div class="flex-none">
                             <PhDotsSixVertical
-                                class="text-gray-800 dark:text-gray-500 cursor-move h-5 w-5"
+                                class="text-zinc-800 dark:text-zinc-300 cursor-move h-5 w-5"
                             />
                         </div>
                         <div
-                            class="flex flex-1 items-center justify-between rounded-md px-4 py-2 border border-gray-100 dark:border-gray-700"
+                            class="flex flex-1 items-center justify-between rounded-md px-4 py-2 border border-zinc-100 dark:border-zinc-700"
                         >
                             <div class="flex flex-1 items-center space-x-4">
                                 <div class="flex items-center space-x-2">
@@ -89,7 +89,7 @@ watch(
                                         :class="`h-2 w-2 rounded-full bg-${element.color}-400`"
                                     ></div>
                                     <div
-                                        class="font-medium text-sm text-gray-600 dark:text-white"
+                                        class="font-medium text-sm text-zinc-600 dark:text-white"
                                     >
                                         {{ element.name }}
                                     </div>

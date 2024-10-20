@@ -23,17 +23,18 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="New Store" />
+    <Head title="New Workspace" />
     <Banner />
     <div class="min-h-screen flex">
         <div
-            class="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24"
+            class="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24 dark:bg-zinc-800"
         >
             <div class="mx-auto w-full max-w-sm lg:w-96">
                 <div>
-                    <h1 class="page-title mb-1">New Workspace</h1>
-                    <div class="page-subtitle">
-                        Create a new workspace to start manage your links.
+                    <h1 class="page-title mb-4">New Workspace</h1>
+                    <div class="page-description">
+                        Workspaces are where you manage your links, domains,
+                        tags and more.
                     </div>
                 </div>
 
@@ -49,11 +50,6 @@ const submit = () => {
                                 required
                                 autofocus
                                 class="mt-1"
-                            />
-
-                            <InputHelp
-                                class="mt-2"
-                                text="Displayed on receipts, invoices, and all other communications."
                             />
 
                             <InputError
@@ -77,7 +73,7 @@ const submit = () => {
                             <div v-if="user.workspaces.length >= 1">
                                 <a
                                     :href="route('links.index')"
-                                    class="cursor-pointer text-zinc-900 hover:text-zinc-500 font-semibold text-sm w-full flex items-center justify-center"
+                                    class="cursor-pointer text-zinc-800 dark:text-zinc-300 hover:text-zinc-500 font-semibold text-sm w-full flex items-center justify-center"
                                 >
                                     Cancel
                                 </a>

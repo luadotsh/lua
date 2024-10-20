@@ -13,7 +13,7 @@ class WebsiteController extends Controller
         ]);
 
         try {
-            $favicon = file_get_contents("https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://{$request->url}&size=128");
+            $favicon = file_get_contents("https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url={$request->url}&size=128");
         } catch (\Throwable $th) {
             $favicon = file_get_contents(public_path('/images/websites/favicon.png'));
         }

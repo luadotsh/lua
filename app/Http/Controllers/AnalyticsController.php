@@ -43,6 +43,7 @@ class AnalyticsController extends Controller
                 'max:255',
                 Rule::in([
                     'clicks',
+                    'qrScans',
                     'links',
                     'referers',
                     'utm-sources',
@@ -74,6 +75,10 @@ class AnalyticsController extends Controller
 
             case 'clicks':
                 $data = $this->stat->clicks($workspace, $timezone, $start, $end, $request->group);
+                break;
+
+            case  'qrScans':
+                $data = $this->stat->qrScans($workspace, $timezone, $start, $end, $request->group);
                 break;
 
             case 'links':

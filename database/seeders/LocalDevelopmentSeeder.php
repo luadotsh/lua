@@ -44,7 +44,7 @@ class LocalDevelopmentSeeder extends Seeder
 
         // create some links
         $links = Link::factory()
-            ->count(10)
+            ->count(100)
             ->create([
                 'workspace_id' => $workspace->id
             ]);
@@ -61,7 +61,7 @@ class LocalDevelopmentSeeder extends Seeder
                 'workspace_id' => $workspace->id,
                 'created_at' => $date
             ])
-                ->count(rand(1, 2))
+                ->count(1)
                 ->create();
 
             // update the link

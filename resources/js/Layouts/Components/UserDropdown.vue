@@ -21,11 +21,11 @@ import UserAvatar from "@/Components/UserAvatar.vue";
 const user = usePage().props.auth.user;
 const workspaces = user.workspaces;
 
-const switchToWorkspace = (store) => {
+const switchToWorkspace = (workspace) => {
     router.put(
         route("workspaces.update-current"),
         {
-            store_id: store.id,
+            workspace_id: workspace.id,
         },
         {
             preserveState: false,
