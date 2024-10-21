@@ -130,7 +130,7 @@ const switchToWorkspace = (workspace) => {
                 <div class="py-1">
                     <MenuItem v-slot="{ active }">
                         <a
-                            href="https://help.lua.sh"
+                            href="https://docs.lua.sh"
                             target="_blank"
                             :class="[
                                 active
@@ -145,7 +145,7 @@ const switchToWorkspace = (workspace) => {
                     </MenuItem>
                     <MenuItem v-slot="{ active }">
                         <a
-                            href="https://developers.lua.sh"
+                            href="https://docs.lua.sh"
                             target="_blank"
                             :class="[
                                 active
