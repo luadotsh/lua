@@ -10,6 +10,9 @@ import FormSection from "@/Components/FormSection.vue";
 
 import { Head, Link, useForm, usePage } from "@inertiajs/vue3";
 
+import { useDarkTheme } from "@/theme";
+const { isDarkTheme } = useDarkTheme();
+
 const user = usePage().props.auth.user;
 
 const form = useForm({
