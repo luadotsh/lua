@@ -20,6 +20,6 @@ Route::group(['middleware' => ['api.auth']], function () {
         Route::delete('/links/{link}', [LinkController::class, 'destroy'])->name('api.links.destroy');
 
         // domains
-        Route::post('/domains/validate', [DomainController::class, 'validate'])->name('api.domains.validate');
+        Route::post('/domains/validate', [DomainController::class, 'validate'])->name('api.domains.validate')->withoutMiddleware('api.auth');
     }
 );
