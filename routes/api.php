@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\WebsiteController;
 use App\Http\Controllers\Api\LinkController;
+use App\Http\Controllers\Api\DomainController;
 
 Route::group(['middleware' => ['api.auth']], function () {
 
@@ -17,5 +18,8 @@ Route::group(['middleware' => ['api.auth']], function () {
         Route::post('/links', [LinkController::class, 'store'])->name('api.links.store');
         Route::put('/links/{link}', [LinkController::class, 'update'])->name('api.links.update');
         Route::delete('/links/{link}', [LinkController::class, 'destroy'])->name('api.links.destroy');
+
+        // domains
+        Route::post('/domains/validate', [DomainController::class, 'validate'])->name('api.domains.validate');
     }
 );

@@ -10,6 +10,7 @@ return [
     */
 
     'main' => 'lua.sh',
+    'cname' => 'cname.lua.sh',
     'all' => [
         'lua.sh'
     ]

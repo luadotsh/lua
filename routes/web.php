@@ -31,11 +31,6 @@ Route::group(
     ],
     function () {
 
-        // default route
-        Route::get('/', function () {
-            return redirect(route('links.index'));
-        });
-
         // workspaces
         Route::get('/workspaces/create', [WorkspaceController::class, 'create'])->name('workspaces.create')->withoutMiddleware(['plan-check']);
         Route::post('/workspaces', [WorkspaceController::class, 'store'])->name('workspaces.store')->withoutMiddleware(['plan-check']);
