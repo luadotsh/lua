@@ -12,7 +12,7 @@ class DomainController extends Controller
     {
         $request->validate([
             'domain' => ['required', 'max:255'],
-        ]);
+        ], $request->query());
 
         $domain = Domain::where('domain', $request->domain)->first();
         if(!$domain) {
