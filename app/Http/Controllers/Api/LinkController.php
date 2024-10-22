@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 use App\Http\Requests\Link\CreateRequest;
 use App\Http\Requests\Link\UpdateRequest;
 
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use SimpleSoftwareIO\QrCode\Generator;
+
+use Spatie\Color\Hex;
+
 use App\Models\Link;
 
 class LinkController extends Controller
@@ -77,5 +82,45 @@ class LinkController extends Controller
         $link->delete();
 
         return response()->json(['message' => 'Link deleted']);
+    }
+
+    public function qrCode(Request $request, $id)
+    {
+        $request->validate([
+            'download' => ['nullable', 'boolean'],
+            'color' => ['nullable', 'regex:/^#([a-f0-9]{6}|[a-f0-9]{3})$/i'],
+        ]);
+
+        $link = Link::findOrFail($id);
+
+        $qrCodeGenerator = QrCode::getFacadeRoot();
+
+        $rgb =  Hex::fromString($request->query('color') ? $request->query('color') : '#000000')->toRgb();
+        $bgColor = [$rgb->red(), $rgb->green(), $rgb->blue(), 100];
+
+        $qrCode = $qrCodeGenerator
+            ->size(256)
+            ->format('png')
+            ->backgroundColor(...$bgColor)
+            ->color(255, 255, 255, 100)
+            // ->merge('/public/images/user/avatar.jpg')
+            ->errorCorrection('M')
+            ->generate($link->link);
+
+        // download qr code
+        if ($request->query('download') == true) {
+            return response()->streamDownload(
+                function () use ($qrCode): void {
+                    /** @var string $qrCode */
+                    echo $qrCode;
+                },
+                'qr-code.png',
+                ['Content-Type' => 'image/png']
+            );
+        }
+
+        // render qr code
+        return response($qrCode)
+            ->header('Content-Type', 'image/png');
     }
 }

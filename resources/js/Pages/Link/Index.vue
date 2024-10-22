@@ -268,9 +268,7 @@ onMounted(() => {
                                             <MenuItem v-slot="{ active }">
                                                 <div
                                                     @click="
-                                                        qrcodeModal.open(
-                                                            data.link
-                                                        )
+                                                        qrcodeModal.open(data)
                                                     "
                                                     :class="[
                                                         active

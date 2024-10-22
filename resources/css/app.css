@@ -202,3 +202,16 @@
 p:empty:not(:last-child)::after {
     content: "\00A0";
 }
+
+/**
+ * vue3-colorpicker
+ */
+.vc-input-toggle {
+    display: none !important;
+}
+.vc-color-wrap {
+    border-radius: 4px !important;
+}
+.vc-color-wrap {
+    width: 32px !important;
+}

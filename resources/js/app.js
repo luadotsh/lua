@@ -19,6 +19,10 @@ import "v-calendar/style.css";
 import FloatingVue from "floating-vue";
 import "floating-vue/dist/style.css";
 
+// color picker
+import Vue3ColorPicker from "vue3-colorpicker";
+import "vue3-colorpicker/style.css";
+
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) =>
@@ -35,6 +39,7 @@ createInertiaApp({
                     return await langs[`../../lang/php_${lang}.json`]();
                 },
             })
+            .use(Vue3ColorPicker)
             .use(FloatingVue)
             .use(plugin)
             .use(ZiggyVue)

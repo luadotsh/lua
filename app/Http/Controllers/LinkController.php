@@ -123,6 +123,8 @@ class LinkController extends Controller
         return redirect(route('links.index'));
     }
 
+
+
     public function show($key, Request $request)
     {
         // procura o link

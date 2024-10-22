@@ -18,6 +18,7 @@ Route::group(['middleware' => ['api.auth']], function () {
         Route::post('/links', [LinkController::class, 'store'])->name('api.links.store');
         Route::put('/links/{link}', [LinkController::class, 'update'])->name('api.links.update');
         Route::delete('/links/{link}', [LinkController::class, 'destroy'])->name('api.links.destroy');
+        Route::get('/links/{id}/qr-code', [LinkController::class, 'qrCode'])->name('api.qr-code')->withoutMiddleware('api.auth');
 
         // domains
         Route::get('/domains/validate', [DomainController::class, 'validate'])->name('api.domains.validate')->withoutMiddleware('api.auth');
