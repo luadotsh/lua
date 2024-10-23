@@ -56,15 +56,15 @@ const selected = ref(
         : options.find((o) => o.id === modelValue)
 );
 
-const filtered = computed(() =>
-    query.value === ""
-        ? options
-        : options.filter((option) => {
-              return option.label
-                  .toLowerCase()
-                  .includes(query.value.toLowerCase());
-          })
-);
+const o = [...options];
+
+const filtered = computed(() => {
+    return query.value === ""
+        ? o
+        : o.filter((op) => {
+              return op.label.toLowerCase().includes(query.value.toLowerCase());
+          });
+});
 
 const setFocus = (open) => {
     if (open) {
@@ -114,7 +114,7 @@ watch(
                 >
                     <img
                         v-if="selected.image"
-                        :src="selected.image"
+                        :src="asset(selected.image)"
                         :alt="selected.label"
                         class="h-5 w-5 rounded-full"
                     />
@@ -199,7 +199,7 @@ watch(
                                         >
                                             <img
                                                 v-if="option.image"
-                                                :src="option.image"
+                                                :src="asset(option.image)"
                                                 :alt="option.label"
                                                 class="h-5 w-5 rounded-full"
                                             />

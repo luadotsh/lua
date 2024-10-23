@@ -9,9 +9,15 @@ return [
     | These subdomains are not allowed to be used by users.
     */
 
-    'main' => 'lua.sh',
-    'cname' => 'cname.lua.sh',
-    'all' => [
-        'lua.sh'
+    'main' => env('DOMAIN_MAIN', 'lua.sh'),
+
+    'cname' => env('DOMAIN_CNAME', 'cname.lua.sh'),
+
+    'available' => [
+        'lua.sh',
+        'git.now',
+        'cal.now',
+        'fig.now',
+        'spoti.now'
     ]
 ];

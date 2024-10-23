@@ -52,7 +52,7 @@ class LinkController extends Controller
         return Inertia::render('Link/Index', [
             'table' => $links,
             'hasData' => Link::where('workspace_id', $workspace->id)->exists(),
-            'domains' => array_merge($domains, config('domains.all')),
+            'domains' => array_merge($domains, config('domains.available')),
             'tags' => Tag::where('workspace_id', $workspace->id)->get(),
 
             'link' => $id ? Link::where('workspace_id', $workspace->id)->where('id', $id)->with('tags')->firstOrFail() : null,

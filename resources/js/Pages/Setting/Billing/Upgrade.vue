@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import { usePage } from "@inertiajs/vue3";
 import { RadioGroup, RadioGroupOption } from "@headlessui/vue";
-import { PhCheck, PhCheckCircle } from "@phosphor-icons/vue";
+import { PhCheckCircle } from "@phosphor-icons/vue";
 
 import AppLayout from "@/Layouts/Master.vue";
 

@@ -26,9 +26,8 @@ const form = useForm({
 
 const update = () => {
     form.post(route("setting.account.update"), {
-        preserveScroll: true,
         onSuccess: () => {
-            form.reset("password", "current_password", "password_confirmation");
+            form.reset();
         },
     });
 };
@@ -172,6 +171,7 @@ const update = () => {
                     <div class="mt-2 sm:col-span-2 sm:mt-0">
                         <Dropdown
                             id="theme"
+                            :search="true"
                             :options="[
                                 {
                                     id: 'LIGHT',

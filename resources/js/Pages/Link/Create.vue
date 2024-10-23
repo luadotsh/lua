@@ -49,12 +49,12 @@ const store = () => {
 </script>
 
 <template>
-    <SlideOver max-width="xl" :show="show" @close="close()">
+    <SlideOver max-width="2xl" :show="show" @close="close()">
         <template #title> New Link </template>
 
         <template #content>
             <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-                <div class="col-span-6 lg:col-span-2">
+                <div class="col-span-6 lg:col-span-3">
                     <Label for="domain" value="Short Link" :required="true" />
                     <Dropdown
                         id="domain"
@@ -73,7 +73,7 @@ const store = () => {
                     <InputError :message="form.errors.domain" class="mt-2" />
                 </div>
 
-                <div class="col-span-6 lg:col-span-4">
+                <div class="col-span-6 lg:col-span-3">
                     <Label for="key" value="Custom back-half (optional)" />
                     <Input
                         id="key"

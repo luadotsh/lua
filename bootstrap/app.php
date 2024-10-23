@@ -23,6 +23,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'stripe/*'
         ]);
 
+        $middleware->redirectGuestsTo('/login');
+        $middleware->redirectUsersTo('/links');
+
+
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
