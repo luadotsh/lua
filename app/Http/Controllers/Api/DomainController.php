@@ -14,20 +14,13 @@ class DomainController extends Controller
             'domain' => ['required', 'max:255'],
         ], $request->query());
 
+        $defaults = in_array($request->input('domain'), config('domains.available'));
+        $db = Domain::where('domain', $request->input('domain'))->exists();
 
-
-        // Check if the domain is either in the available domains list or in the database
-        $isInConfig = in_array($request->input('domain'), config('domains.available'));
-
-        dd($isInConfig);
-        $isInDatabase = Domain::where('domain', $request->input('domain'))->exists();
-
-        // If the domain is found in either config or database, return valid: true
-        if ($isInConfig || $isInDatabase) {
+        if ($defaults || $db) {
             return response()->json(['valid' => true]);
         }
 
-        // If not found, return valid: false
         return response()->json(['valid' => false], 404);
     }
 }
