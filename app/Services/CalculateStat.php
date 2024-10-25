@@ -37,6 +37,7 @@ class CalculateStat
 
         // Total clicks for the current period
         $total = LinkStat::where('workspace_id', $workspace->id)
+            ->where('event', Event::CLICK)
             ->whereBetween('created_at', [$start, $end])
             ->count();
 
@@ -82,6 +83,7 @@ class CalculateStat
 
         // Total clicks for the current period
         $total = LinkStat::where('workspace_id', $workspace->id)
+            ->where('event', Event::QR_SCAN)
             ->whereBetween('created_at', [$start, $end])
             ->count();
 
