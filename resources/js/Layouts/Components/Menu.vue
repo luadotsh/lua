@@ -9,11 +9,7 @@ import {
     PhLink,
     PhTrendUp,
     PhCursorClick,
-    PhPalette,
     PhGear,
-    PhBell,
-    PhPaperPlaneTilt,
-    PhSparkle,
 } from "@phosphor-icons/vue";
 
 const navigation = [

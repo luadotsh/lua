@@ -105,7 +105,7 @@ class LinkController extends Controller
             ->color(255, 255, 255, 100)
             // ->merge('/public/images/user/avatar.jpg')
             ->errorCorrection('M')
-            ->generate($link->link);
+            ->generate("{$link->link}?qr=1");
 
         // download qr code
         if ($request->query('download') == true) {

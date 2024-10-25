@@ -123,13 +123,18 @@ class LinkController extends Controller
         return redirect(route('links.index'));
     }
 
-
-
     public function show($key, Request $request)
     {
         // procura o link
         $link = Link::where('key', $key)->firstOrFail();
-        ProcessLinkStat::dispatch($link, $request->userAgent(), $request->getLanguages(), $request->ip(), $request->header('Referer'));
+
+        ProcessLinkStat::dispatch(
+            $link, $request->userAgent(),
+            $request->getLanguages(),
+            $request->ip(),
+            $request->input('qr') ? true : false,
+            $request->header('Referer')
+        );
         return redirect($link->url, 302);
     }
 }

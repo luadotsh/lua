@@ -7,7 +7,6 @@ use Illuminate\Foundation\Queue\Queueable;
 
 use App\Services\UserAgentService;
 
-
 use App\Enums\LinkStat\Event;
 
 use App\Models\Link;
@@ -25,6 +24,7 @@ class ProcessLinkStat implements ShouldQueue
         public string $userAgent,
         public array $languages,
         public string $ip,
+        public bool $qr,
         public ?string $referer
     ) {}
 
@@ -41,7 +41,7 @@ class ProcessLinkStat implements ShouldQueue
         $linkStat = LinkStat::create([
             'workspace_id' => $this->link->workspace_id,
             'link_id' => $this->link->id,
-            'event' => Event::CLICK,
+            'event' => $this->qr ? Event::QR_SCAN : Event::CLICK,
             'country' => $geo->iso_code,
             'region' => $geo->state_name,
             'city' => $geo->city,
