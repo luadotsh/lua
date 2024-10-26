@@ -10,7 +10,7 @@ class WorkspacePolicy
     /**
      * Determine whether the user can create models.
      */
-    public function createLink(?User $user, Workspace $workspace): bool
+    public function reachedLinkLimit(?User $user, Workspace $workspace): bool
     {
         return !$workspace->usage()['links']['reached_limit'];
     }

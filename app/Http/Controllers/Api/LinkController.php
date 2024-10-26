@@ -29,7 +29,10 @@ class LinkController extends Controller
 
     public function store(CreateRequest $request)
     {
-        Gate::authorize('create-link', $request->workspace);
+        $response = Gate::inspect('reached-link-limit', $request->workspace);
+        if (!$response->allowed()) {
+            return response()->json(['message' => $response->message()], 403);
+        }
 
         $link = Link::create([
             'workspace_id' => $request->workspace->id,

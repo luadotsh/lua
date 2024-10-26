@@ -65,7 +65,12 @@ class LinkController extends Controller
         $user = auth()->user();
         $workspace = $user->currentWorkspace;
 
-        Gate::authorize('create-link', $workspace);
+        $response = Gate::inspect('reached-link-limit', $workspace);
+        if (!$response->allowed()) {
+            session()->flash('flash.banner', 'You have reached the limit of links, please upgrade your plan.');
+            session()->flash('flash.bannerStyle', 'danger');
+            return back();
+        }
 
         $link = Link::create([
             'workspace_id' => $workspace->id,
