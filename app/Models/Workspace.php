@@ -8,6 +8,8 @@ use App\Enums\User\Role;
 
 use function Illuminate\Events\queueable;
 
+use App\Models\Traits\WorkspaceUsage;
+
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -31,6 +33,7 @@ class Workspace extends Model implements HasMedia
     use SoftDeletes;
     use Billable;
     use InteractsWithMedia;
+    use WorkspaceUsage;
 
     /**
      * The attributes that are mass assignable.

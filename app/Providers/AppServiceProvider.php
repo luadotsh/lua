@@ -9,8 +9,11 @@ use Laravel\Cashier\Cashier;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Notifications\Messages\MailMessage;
 
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+
+use App\Policies\WorkspacePolicy;
 
 use App\Models\Workspace;
 use App\Models\User;
@@ -47,6 +50,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Vite configuration
         Vite::prefetch(concurrency: 3);
+
+        // Gate policies
+        Gate::policy(Workspace::class, WorkspacePolicy::class);
 
         // Custom email verification template
         VerifyEmail::toMailUsing(function (User $user, string $url) {

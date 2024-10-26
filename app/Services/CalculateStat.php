@@ -19,9 +19,53 @@ class CalculateStat
             'minute' => '%Y-%m-%d %H:%i:00',
             'hour' => '%Y-%m-%d %H:00:00',
             'day' => '%Y-%m-%d',
-            'month' => '%Y-%m', // Changed this format for month
-            'year' => '%Y',     // Added a year format as well
+            'month' => '%Y-%m',
+            'year' => '%Y',
         ];
+    }
+
+    public function events($workspace, $timezone, $start, $end, $group)
+    {
+        // Fetch clicks data with Eloquent using groupBy and date formatting
+        $clicks = LinkStat::selectRaw("DATE_FORMAT(created_at, '{$this->format[$group]}') as formatted_date, COUNT(*) as value")
+        ->where('workspace_id', $workspace->id)
+            ->whereBetween('created_at', [$start, $end])
+            ->groupByRaw("DATE_FORMAT(created_at, '{$this->format[$group]}')")
+            ->orderByRaw("DATE_FORMAT(created_at, '{$this->format[$group]}') asc")
+            ->get();
+
+        // Total clicks for the current period
+        $total = LinkStat::where('workspace_id', $workspace->id)
+            ->whereBetween('created_at', [$start, $end])
+            ->count();
+
+        // Formatting labels based on the grouping
+        $labels = $clicks->pluck('formatted_date')->map(function ($label) use ($group, $timezone) {
+            switch ($group) {
+                case 'hour':
+                    return Carbon::createFromFormat('Y-m-d H:i:s', $label)->tz($timezone)->format('ga');
+                case 'day':
+                    return Carbon::createFromFormat('Y-m-d', $label)->tz($timezone)->format('d M');
+                case 'month':
+                    return Carbon::createFromFormat('Y-m', $label)->tz($timezone)->format('F Y'); // Handle 'Y-m' format
+                case 'year':
+                    return Carbon::createFromFormat('Y', $label)->tz($timezone)->format('Y'); // Handle 'Y' format
+                default:
+                    return $label;
+            }
+        });
+
+        // Prepare the data for response
+        $data = [
+            'total' => $total,
+            'chart' => [
+                'data' => $clicks->pluck('value')->toArray(),
+                'label' => 'Clicks',
+                'labels' => $labels,
+            ],
+        ];
+
+        return $data;
     }
 
     public function clicks($workspace, $timezone, $start, $end, $group)
@@ -118,10 +162,14 @@ class CalculateStat
 
     public function linkStats($workspaceId, $start, $end, $limit = 10)
     {
-        return LinkStat::where('workspace_id', $workspaceId)
-            ->select(DB::raw("count(*) as y, CASE WHEN referer IS NULL THEN 'Direct' ELSE referer END AS x"))
-            ->whereBetween('created_at', [$start, $end])
-            ->groupBy('x')
+        return LinkStat::where('links.workspace_id', $workspaceId)
+            ->join('links', 'link_stats.link_id', '=', 'links.id')
+            ->select([
+                DB::raw('COUNT(*) as y'),
+                DB::raw('links.link as x')
+            ])
+            ->whereBetween('link_stats.created_at', [$start, $end])
+            ->groupBy('links.link')
             ->orderBy('y', 'desc')
             ->take($limit)
             ->get();

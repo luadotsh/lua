@@ -33,7 +33,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
-            'plan-check' => \App\Http\Middleware\PlanCheck::class,
+            'billing' => \App\Http\Middleware\Billing::class,
             'api.auth' => \App\Http\Middleware\Api\Auth::class,
         ]);
 

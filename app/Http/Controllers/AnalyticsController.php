@@ -42,6 +42,7 @@ class AnalyticsController extends Controller
                 'required',
                 'max:255',
                 Rule::in([
+                    'events',
                     'clicks',
                     'qrScans',
                     'links',
@@ -72,6 +73,10 @@ class AnalyticsController extends Controller
         $end = Carbon::createFromFormat('Y-m-d', $request->end, $timezone)->endOfDay()->setTimezone('UTC');
 
         switch ($request->metric) {
+
+            case 'events':
+                $data = $this->stat->events($workspace, $timezone, $start, $end, $request->group);
+                break;
 
             case 'clicks':
                 $data = $this->stat->clicks($workspace, $timezone, $start, $end, $request->group);

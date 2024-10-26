@@ -65,6 +65,11 @@ const columns = reactive([
         show: true,
     },
     {
+        key: "date",
+        label: "Date",
+        show: true,
+    },
+    {
         key: "language",
         label: "Language",
         show: false,
@@ -278,6 +283,23 @@ const refresh = (value) => {
                                                     class="table-td"
                                                 >
                                                     {{ event.os }}
+                                                </td>
+                                                <td
+                                                    v-if="
+                                                        columns.find(
+                                                            (c) =>
+                                                                c.key ===
+                                                                    'date' &&
+                                                                c.show
+                                                        )
+                                                    "
+                                                    class="table-td"
+                                                >
+                                                    {{
+                                                        date.formatDateTime(
+                                                            event.created_at
+                                                        )
+                                                    }}
                                                 </td>
                                                 <td
                                                     v-if="

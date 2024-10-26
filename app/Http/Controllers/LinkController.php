@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Gate;
 
 use App\Http\Requests\Link\CreateRequest;
 use App\Http\Requests\Link\UpdateRequest;
@@ -61,8 +62,13 @@ class LinkController extends Controller
 
     public function store(CreateRequest $request)
     {
+        $user = auth()->user();
+        $workspace = $user->currentWorkspace;
+
+        Gate::authorize('create-link', $workspace);
+
         $link = Link::create([
-            'workspace_id' => $request->user()->currentWorkspace->id,
+            'workspace_id' => $workspace->id,
             'domain' => $request->domain,
             'key' => $request->key,
             'url' => $request->url,

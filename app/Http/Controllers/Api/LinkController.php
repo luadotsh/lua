@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 use App\Http\Requests\Link\CreateRequest;
 use App\Http\Requests\Link\UpdateRequest;
@@ -28,6 +29,8 @@ class LinkController extends Controller
 
     public function store(CreateRequest $request)
     {
+        Gate::authorize('create-link', $request->workspace);
+
         $link = Link::create([
             'workspace_id' => $request->workspace->id,
             'domain' => $request->domain,

@@ -20,7 +20,7 @@ const refresh = () => {
         .get(route("analytics.statistics"), {
             params: {
                 ...props.range,
-                metric: "clicks",
+                metric: "events",
             },
         })
         .then((response) => {
