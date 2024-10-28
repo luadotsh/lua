@@ -1,7 +1,8 @@
 <script setup>
-import { Link } from "@inertiajs/vue3";
-// import Layout from "@/Layouts/Error.vue";
 import { computed } from "vue";
+
+import { useDarkTheme } from "@/theme";
+const { isDarkTheme } = useDarkTheme();
 
 const props = defineProps({ status: Number });
 

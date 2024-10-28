@@ -14,7 +14,7 @@ return [
     'cname' => env('DOMAIN_CNAME', 'cname.lua.sh'),
 
     'available' => [
-        'lua.sh',
+        env('DOMAIN_MAIN', 'lua.sh'),
         'git.now',
         'cal.now',
         'fig.now',

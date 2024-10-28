@@ -136,9 +136,10 @@ class LinkController extends Controller
 
     public function show($key, Request $request)
     {
-        // procura o link
-        $link = Link::where('key', $key)->firstOrFail();
+        // find the link
+        $link = Link::where('link', $request->url())->firstOrFail();
 
+        // dispatch job
         ProcessLinkStat::dispatch(
             $link, $request->userAgent(),
             $request->getLanguages(),
