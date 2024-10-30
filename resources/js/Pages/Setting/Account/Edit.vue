@@ -45,7 +45,7 @@ const update = () => {
             </div>
         </template>
 
-        <div class="mx-auto w-full max-w-7xl px-4 py-12">
+        <div class="mx-auto w-full max-w-7xl lg:px-4 lg:py-12">
             <div class="flex items-center justify-between">
                 <div>
                     <h2 class="setting-page-title">Account Information</h2>
