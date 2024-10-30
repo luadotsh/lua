@@ -29,7 +29,6 @@ const events = computed(() => {
                     <div class="flex items-center gap-2">
                         <PhLink
                             class="text-zinc-600 dark:text-zinc-400 w-4 h-4"
-                            weight="duotone"
                         />
                         <div
                             class="text-xs font-medium text-zinc-600 dark:text-zinc-400"
@@ -59,7 +58,6 @@ const events = computed(() => {
                     <div class="flex items-center gap-2">
                         <PhCursorClick
                             class="text-zinc-600 dark:text-zinc-400 w-4 h-4"
-                            weight="duotone"
                         />
                         <div
                             class="text-xs font-medium text-zinc-600 dark:text-zinc-400"

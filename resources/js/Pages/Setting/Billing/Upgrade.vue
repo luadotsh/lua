@@ -213,7 +213,6 @@ const frequency = ref(frequencies[0]);
                         >
                             <PhCheckCircle
                                 class="h-6 w-5 flex-none text-violet-500"
-                                weight="duotone"
                             />
                             {{ feature }}
                         </li>

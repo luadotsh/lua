@@ -174,7 +174,6 @@ onMounted(() => {
                                             <MenuButton class="">
                                                 <PhDotsThreeOutline
                                                     class="h-4 w-4 stroke-2 text-black"
-                                                    weight="duotone"
                                                 />
                                             </MenuButton>
 

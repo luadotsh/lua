@@ -4,7 +4,6 @@ import InputError from "@/Components/InputError.vue";
 import Label from "@/Components/Label.vue";
 import Button from "@/Components/Button.vue";
 import Input from "@/Components/Input.vue";
-import Social from "./Partial/Social.vue";
 import { Head, Link, useForm } from "@inertiajs/vue3";
 
 const form = useForm({
@@ -24,18 +23,8 @@ const submit = () => {
     <Head title="Register" />
     <AuthLayout>
         <div class="mb-6">
-            <div class="flex justify-center">
-                <img src="/images/mercantive/color.png" class="h-10" />
-            </div>
-
-            <h1
-                class="mt-10 text-center text-2xl font-medium leading-9 text-zinc-800 dark:text-zinc-300"
-            >
-                Sign up to Lua.sh
-            </h1>
+            <h1 class="page-title text-center">Sign up</h1>
         </div>
-
-        <!-- <Social /> -->
 
         <div>
             <form @submit.prevent="submit" class="space-y-6">
@@ -90,8 +79,20 @@ const submit = () => {
 
                 <div class="flex items-center justify-between">
                     <p class="text-xs text-zinc-500">
-                        Signing up for a Lua.sh you agree to the Privacy Policy
-                        and Terms of Service.
+                        Signing up for a Lua.sh you agree to the
+                        <a
+                            href="https://www.lua.sh/privacy"
+                            target="_blank"
+                            class="hover:text-zinc-800 dark:hover:text-zinc-300"
+                            >Privacy Policy</a
+                        >
+                        and
+                        <a
+                            href="https://www.lua.sh/terms"
+                            target="_blank"
+                            class="hover:text-zinc-800 dark:hover:text-zinc-300"
+                            >Terms of Service</a
+                        >.
                     </p>
                 </div>
 

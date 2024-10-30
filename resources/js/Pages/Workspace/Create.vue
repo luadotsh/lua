@@ -34,14 +34,20 @@ const submit = () => {
         class="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 bg-white dark:bg-zinc-800"
     >
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+            <div class="flex justify-center mb-8">
+                <img
+                    src="/images/lua/full-color.svg"
+                    class="h-16 hidden dark:block"
+                />
+                <img
+                    src="/images/lua/full-black.svg"
+                    class="h-16 block dark:hidden"
+                />
+            </div>
             <div class="text-center">
-                <h2
-                    class="text-lg font-medium text-zinc-800 dark:text-zinc-300"
-                >
-                    Create a new workspace
-                </h2>
+                <h1 class="page-title">New workspace</h1>
                 <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-                    Workspace is a place where you can organize your links.
+                    Workspace is a place where you can organize your links
                 </p>
             </div>
 

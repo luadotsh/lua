@@ -86,6 +86,10 @@ export default {
 
     theme: {
         extend: {
+            backgroundImage: {
+                "lua-gradient":
+                    "linear-gradient(102.01deg, #FCF0BE 8.77%, #EC9EC3 46.4%, #6F388D 98.37%)",
+            },
             fontFamily: {
                 sans: ["Inter", ...defaultTheme.fontFamily.sans],
             },

@@ -53,7 +53,6 @@ const toggle = () => {
                             '-rotate-0': !open,
                             'rotate-180 transform': open,
                         }"
-                        weight="duotone"
                     />
                 </div>
             </DisclosureButton>

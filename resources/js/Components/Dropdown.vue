@@ -129,13 +129,11 @@ watch(
                         v-if="open"
                         class="h-5 w-5 text-zinc-900 dark:text-zinc-400 stroke-2"
                         aria-hidden="true"
-                        weight="duotone"
                     />
                     <PhCaretDown
                         v-else
                         class="h-5 w-5 text-zinc-900 dark:text-zinc-400 stroke-2"
                         aria-hidden="true"
-                        weight="duotone"
                     />
                 </div>
             </ListboxButton>
@@ -157,7 +155,6 @@ watch(
                                 class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4"
                             >
                                 <PhMagnifyingGlass
-                                    weight="duotone"
                                     class="h-5 w-5 text-zinc-900 dark:text-zinc-400 stroke-2"
                                 />
                             </div>

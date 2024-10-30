@@ -31,7 +31,6 @@ defineProps({
                     >
                         <component
                             :is="icon"
-                            weight="duotone"
                             class="w-6 h-6 text-zinc-600 dark:text-white stroke-2"
                         />
                     </div>

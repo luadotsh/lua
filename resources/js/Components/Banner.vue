@@ -46,22 +46,18 @@ watch(message, async () => {
                                 <PhCheckCircle
                                     v-if="style == 'success'"
                                     class="h-5 w-5 text-green-400 stroke-2"
-                                    weight="duotone"
                                 />
                                 <PhXCircle
                                     v-if="style == 'danger'"
                                     class="h-5 w-5 text-red-400 stroke-2"
-                                    weight="duotone"
                                 />
                                 <PhInfo
                                     v-if="style == 'info'"
                                     class="h-5 w-5 text-blue-400 stroke-2"
-                                    weight="duotone"
                                 />
                                 <PhWarningCircle
                                     v-if="style == 'warning'"
                                     class="h-5 w-5 text-yellow-400 stroke-2"
-                                    weight="duotone"
                                 />
                             </div>
                             <div

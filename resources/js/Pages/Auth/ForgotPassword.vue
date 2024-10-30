@@ -26,15 +26,7 @@ const submit = () => {
         <Head title="Forgot Password" />
 
         <div class="mb-6">
-            <div class="flex justify-center">
-                <img src="/images/mercantive/color.png" class="h-10" />
-            </div>
-
-            <h1
-                class="mt-10 text-center text-2xl font-medium leading-9 text-zinc-800 dark:text-zinc-300"
-            >
-                Reset your password
-            </h1>
+            <h1 class="page-title text-center">Reset your password</h1>
         </div>
 
         <div class="mb-4 text-sm text-zinc-600 dark:text-zinc-400">

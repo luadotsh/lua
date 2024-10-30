@@ -7,7 +7,7 @@ import {
     PhCaretDown,
     PhCaretUp,
     PhLink,
-    PhTrendUp,
+    PhChartLineUp,
     PhCursorClick,
     PhGear,
 } from "@phosphor-icons/vue";
@@ -16,7 +16,7 @@ const navigation = [
     {
         name: "Analytics",
         href: route("analytics.index"),
-        icon: PhTrendUp,
+        icon: PhChartLineUp,
         current: route().current("analytics.*"),
     },
     {
@@ -92,11 +92,7 @@ const navigation = [
                                 'group flex gap-x-3 rounded py-1.5 px-3 text-sm font-medium cursor-pointer',
                             ]"
                         >
-                            <component
-                                :is="item.icon"
-                                weight="duotone"
-                                class="h-5 w-5"
-                            />
+                            <component :is="item.icon" class="h-5 w-5" />
                             <div
                                 class="flex flex-1 items-center justify-between"
                             >

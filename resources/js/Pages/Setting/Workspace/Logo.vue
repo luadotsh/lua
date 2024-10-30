@@ -92,7 +92,7 @@ const destroy = () => {
             @click="destroy"
             class="p-2 hover:bg-zinc-100 rounded-md cursor-pointer"
         >
-            <PhTrash class="text-zinc-500" weight="duotone" size="20" />
+            <PhTrash class="text-zinc-500" size="20" />
         </div>
     </div>
     <div v-show="uploadHasErrors" class="my-2">

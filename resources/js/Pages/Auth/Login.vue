@@ -4,7 +4,6 @@ import InputError from "@/Components/InputError.vue";
 import Label from "@/Components/Label.vue";
 import Button from "@/Components/Button.vue";
 import Input from "@/Components/Input.vue";
-import Social from "./Partial/Social.vue";
 import { Head, Link, useForm } from "@inertiajs/vue3";
 
 defineProps({
@@ -33,18 +32,8 @@ const submit = () => {
     <AuthLayout>
         <Head title="Log in" />
         <div class="mb-6">
-            <div class="flex justify-center">
-                <img src="/images/mercantive/color.png" class="h-10" />
-            </div>
-
-            <h1
-                class="mt-10 text-center text-2xl font-medium leading-9 text-zinc-800 dark:text-zinc-300"
-            >
-                Sign in to Lua.sh
-            </h1>
+            <h1 class="page-title text-center">Sign in</h1>
         </div>
-
-        <!-- <Social /> -->
 
         <form @submit.prevent="submit">
             <div>

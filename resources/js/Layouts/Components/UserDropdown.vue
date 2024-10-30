@@ -139,7 +139,7 @@ const switchToWorkspace = (workspace) => {
                                 ' px-4 py-1.5 font-13 w-full text-left flex items-center space-x-2',
                             ]"
                         >
-                            <PhQuestion class="w-5 h-5" weight="duotone" />
+                            <PhQuestion class="w-5 h-5" />
                             <div>Help Center</div>
                         </a>
                     </MenuItem>
@@ -154,7 +154,7 @@ const switchToWorkspace = (workspace) => {
                                 ' px-4 py-1.5 font-13 w-full text-left flex items-center space-x-2',
                             ]"
                         >
-                            <PhBookOpen class="w-5 h-5" weight="duotone" />
+                            <PhBookOpen class="w-5 h-5" />
                             <div>API Reference</div>
                         </a>
                     </MenuItem>
@@ -170,7 +170,7 @@ const switchToWorkspace = (workspace) => {
                                 ' px-4 py-1.5 font-13 w-full text-left flex items-center space-x-2',
                             ]"
                         >
-                            <PhUser class="w-5 h-5" weight="duotone" />
+                            <PhUser class="w-5 h-5" />
                             <div>My Account</div>
                         </Link>
                     </MenuItem>
@@ -189,7 +189,7 @@ const switchToWorkspace = (workspace) => {
                                 ' px-4 py-1.5 font-13 w-full text-left flex items-center space-x-2',
                             ]"
                         >
-                            <PhPower class="w-5 h-5" weight="duotone" />
+                            <PhPower class="w-5 h-5" />
                             <div>Sign Out</div>
                         </Link>
                     </MenuItem>

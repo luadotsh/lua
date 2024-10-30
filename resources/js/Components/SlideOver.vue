@@ -99,10 +99,7 @@ const close = () => {
                                                 class="rounded text-zinc-400 hover:text-zinc-500 hover:dark:text-zinc-200 outline-none"
                                                 @click="close"
                                             >
-                                                <PhX
-                                                    class="h-6 w-6 stroke-2"
-                                                    weight="duotone"
-                                                />
+                                                <PhX class="h-6 w-6 stroke-2" />
                                             </button>
                                         </div>
                                     </div>
