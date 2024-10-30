@@ -171,7 +171,7 @@ onMounted(() => {
                             />
                         </div>
                         <div>
-                            <div class="flex items-center space-x-2 mb-0.5">
+                            <div class="flex items-center space-x-2 mb-1">
                                 <div class="text-zinc-800 dark:text-zinc-300">
                                     {{ data.link }}
                                 </div>
@@ -185,13 +185,13 @@ onMounted(() => {
                                     "
                                 />
                             </div>
-                            <div class="flex items-center space-x-2">
+                            <div class="ml-0.5 flex items-center space-x-2">
                                 <PhArrowBendDownRight
                                     weight="bold"
-                                    class="text-zinc-400"
+                                    class="text-zinc-400 w-4 h-4"
                                 />
                                 <div
-                                    class="text-sm text-zinc-600 dark:text-zinc-400"
+                                    class="text-[13px] text-zinc-600 dark:text-zinc-400"
                                 >
                                     {{ data.url }}
                                 </div>
