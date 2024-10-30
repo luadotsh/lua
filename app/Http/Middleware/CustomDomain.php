@@ -15,6 +15,16 @@ class CustomDomain
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // dd($request->url());
+
+        // if($request->getHost() === config('domains.main')) {
+
+        /**
+         * When key is not present in the request, we will redirect to root domain.
+         */
+        if(!$request->key) {
+
+        }
         return $next($request);
     }
 }

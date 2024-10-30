@@ -74,6 +74,7 @@ Route::group(
             Route::post('/domains', [DomainController::class, 'store'])->name('setting.domains.store');
             Route::put('/domains/{id}', [DomainController::class, 'update'])->name('setting.domains.update');
             Route::delete('/domains/{id}', [DomainController::class, 'destroy'])->name('setting.domains.destroy');
+            Route::get('/domains/{id}/validate-dns', [DomainController::class, 'validateDns'])->name('setting.domains.validate-dns');
 
             // billing
             Route::get('/billing', [BillingController::class, 'index'])->name('setting.billing.index');
@@ -114,4 +115,4 @@ Route::group(
 
 require __DIR__.'/auth.php';
 
-Route::get('/{key}', [LinkController::class, 'show'])->name('links.show');
+Route::get('/{key?}', [LinkController::class, 'show'])->name('links.show')->middleware(['custom-domain']);

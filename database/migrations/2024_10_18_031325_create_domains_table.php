@@ -16,10 +16,12 @@ return new class extends Migration
             $table->foreignUuid('workspace_id')->constrained();
             $table->string('domain');
             $table->string('status');
+            $table->string('not_found_url')->nullable();
+            $table->string('expired_url')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unique(['workspace_id', 'domain', 'deleted_at']);
+            $table->unique(['domain', 'deleted_at']);
         });
     }
 

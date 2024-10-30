@@ -17,7 +17,6 @@ import "v-calendar/style.css";
 
 // Import modules...
 import FloatingVue from "floating-vue";
-import "floating-vue/dist/style.css";
 
 // color picker
 import Vue3ColorPicker from "vue3-colorpicker";

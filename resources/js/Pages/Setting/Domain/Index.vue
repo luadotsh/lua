@@ -6,6 +6,7 @@ import ConfirmDeleteModal from "@/Components/ConfirmDeleteModal.vue";
 
 import { PhX, PhGear, PhGlobe } from "@phosphor-icons/vue";
 
+import DomainStatus from "@/Components/DomainStatus.vue";
 import EmptyState from "@/Components/EmptyState.vue";
 import AppLayout from "@/Layouts/Master.vue";
 import CreateModal from "./Create.vue";
@@ -62,6 +63,7 @@ const { domains, hasData } = defineProps({
                                     >
                                         {{ domain.domain }}
                                     </div>
+                                    <DomainStatus :domain="domain" />
                                 </div>
                             </div>
                             <div class="flex items-center space-x-2">

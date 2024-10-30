@@ -10,6 +10,8 @@ import Label from "@/Components/Label.vue";
 
 const form = useForm({
     domain: "",
+    not_found_url: "",
+    expired_url: "",
 });
 const show = ref(false);
 
@@ -45,9 +47,45 @@ const store = () => {
                         id="domain"
                         type="text"
                         v-model="form.domain"
-                        placeholder=""
+                        placeholder="go.example.com"
                     />
                     <InputError :message="form.errors.domain" class="mt-2" />
+                </div>
+
+                <div class="sm:col-span-6">
+                    <Label
+                        for="not_found_url"
+                        value="Not Found URL"
+                        tooltip="Automatically redirect users to a designated URL if a link under this domain doesn’t exist."
+                    />
+                    <Input
+                        id="not_found_url"
+                        type="text"
+                        v-model="form.not_found_url"
+                        placeholder="https://example.com"
+                    />
+                    <InputError
+                        :message="form.errors.not_found_url"
+                        class="mt-2"
+                    />
+                </div>
+
+                <div class="sm:col-span-6">
+                    <Label
+                        for="expired_url"
+                        value="Expired URL"
+                        tooltip="Redirect users whenever any link under this domain expires."
+                    />
+                    <Input
+                        id="expired_url"
+                        type="text"
+                        v-model="form.expired_url"
+                        placeholder="https://example.com"
+                    />
+                    <InputError
+                        :message="form.errors.expired_url"
+                        class="mt-2"
+                    />
                 </div>
             </div>
         </template>
@@ -57,7 +95,7 @@ const store = () => {
                 @click="store"
                 :class="{
                     'opacity-25': form.processing,
-                    'btn-primary': true,
+                    'btn-primary w-full': true,
                 }"
                 :disabled="form.processing"
             >

@@ -3,6 +3,7 @@
 @import "tailwindcss/utilities";
 
 @import "v-calendar.css";
+@import "floating.css";
 
 #app {
     height: 100%;
@@ -129,7 +130,7 @@
 }
 
 .label {
-    @apply block font-normal text-sm text-zinc-900 dark:text-zinc-300 mb-1;
+    @apply flex items-center font-normal text-sm text-zinc-900 dark:text-zinc-300 mb-1;
 }
 
 .badge {
@@ -155,41 +156,6 @@
 .badge-zinc {
     @apply bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 ring-zinc-300 dark:ring-zinc-700;
 }
-
-/**
- * Tooltip
- */
-.v-popper__inner {
-    word-break: break-all !important;
-    font-size: 12px !important;
-    padding: 8px 12px !important;
-    border-radius: 8px !important;
-    font-weight: 500 !important;
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1) !important;
-    background: #121926 !important;
-    border: 1px solid #121926 !important;
-    color: #fff !important;
-    opacity: 1 !important;
-    max-width: 300px !important;
-}
-
-.tooltip-inner {
-    word-break: break-all !important;
-
-    width: max-content !important;
-    text-align: left;
-}
-
-.v-popper__arrow-outer {
-    /* visibility: hidden; */
-    border-color: #121926 !important;
-}
-
-.v-popper__arrow-inner {
-    /* visibility: hidden; */
-    border-color: #121926 !important;
-}
-
 
 .prose-formatter {
     @apply prose prose-sm dark:prose-invert prose-img:rounded-lg max-w-full text-zinc-800 dark:text-zinc-200 p-4 focus:outline-none overflow-auto min-w-full;

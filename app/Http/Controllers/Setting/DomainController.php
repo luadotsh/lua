@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Setting;
 
+use App\Http\Requests\Domain\CreateRequest;
+use App\Http\Requests\Domain\UpdateRequest;
+
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -23,19 +26,14 @@ class DomainController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(CreateRequest $request)
     {
-
-        $workspace = auth()->user()->currentWorkspace;
-
-        $request->validate([
-            'domain' => ['required', 'max:255', 'unique:domains,domain,NULL,id,workspace_id,' . $workspace->id],
-        ]);
-
         Domain::create([
             'workspace_id' => auth()->user()->currentWorkspace->id,
             'domain' => $request->domain,
-            'status' => Status::PENDING
+            'status' => Status::PENDING,
+            'not_found_url' => $request->not_found_url,
+            'expired_url' => $request->expired_url,
         ]);
 
         session()->flash('flash.banner', 'Domain added successful.');
@@ -44,16 +42,18 @@ class DomainController extends Controller
         return back();
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateRequest $request, $id)
     {
-        $request->validate([
-            'domain' => ['required', 'max:255'],
-        ]);
-
         $domain = Domain::where('id', $id)->where('workspace_id', auth()->user()->currentWorkspace->id)->firstOrFail();
         $domain->domain = $request->domain;
-        $domain->status = Status::PENDING;
+        $domain->not_found_url = $request->not_found_url;
+        $domain->expired_url = $request->expired_url;
         $domain->save();
+
+        if($domain->wasChanged('domain')) {
+            $domain->status = Status::PENDING;
+            $domain->save();
+        }
 
         session()->flash('flash.banner', 'Domain updated successful.');
         session()->flash('flash.bannerStyle', 'success');
@@ -69,6 +69,49 @@ class DomainController extends Controller
         session()->flash('flash.banner', 'Domain deleted successful.');
         session()->flash('flash.bannerStyle', 'success');
 
+        return back();
+    }
+
+    public function validateDns($id, Request $request)
+    {
+        $workspace = auth()->user()->currentWorkspace;
+
+        $domain = Domain::where('workspace_id', $workspace->id)->where('id', $id)->firstOrFail();
+
+        // Use dns_get_record to fetch CNAME records
+        $dnsRecords = dns_get_record($domain->domain, DNS_CNAME);
+
+        // Check if dns_get_record returned false (an error occurred)
+        if ($dnsRecords === false) {
+            session()->flash('flash.banner', 'Unable to fetch DNS records for the domain.');
+            session()->flash('flash.bannerStyle', 'danger');
+            return back();
+        }
+
+        // Check if any CNAME record points to 'cname.lua.sh'
+        $valid = false;
+        foreach ($dnsRecords as $record) {
+            if (
+                isset($record['host'], $record['target']) && // Check if 'host' and 'target' keys exist
+                $record['host'] === $domain->domain && // Check if 'host' matches the domain
+                $record['target'] === config('domains.cname') // Check if 'target' matches the CNAME
+            ) {
+                $valid = true;
+                break;
+            }
+        }
+
+        if(!$valid) {
+            session()->flash('flash.banner', 'The domain does not have a CNAME record pointing to cname.lua.sh.');
+            session()->flash('flash.bannerStyle', 'danger');
+            return back();
+        }
+
+        $domain->status = Status::ACTIVE;
+        $domain->save();
+
+        session()->flash('flash.banner', 'Domain validated successful.');
+        session()->flash('flash.bannerStyle', 'success');
         return back();
     }
 }

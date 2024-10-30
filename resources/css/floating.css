@@ -1,0 +1,14 @@
+.v-popper__popper {
+    z-index: 10000;
+    top: 0;
+    left: 0;
+    outline: none;
+}
+
+.v-popper__arrow-container {
+    @apply hidden;
+}
+
+.v-popper--theme-tooltip .v-popper__inner {
+    @apply text-center max-w-[280px] px-6 py-3 rounded-lg text-[13px] bg-white border border-zinc-300 dark:bg-zinc-800 dark:border-zinc-700  text-zinc-800 dark:text-zinc-300 shadow;
+}

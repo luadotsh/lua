@@ -32,7 +32,9 @@ class Domain extends Model
     protected $fillable = [
         'workspace_id',
         'domain',
-        'status'
+        'status',
+        'not_found_url',
+        'expired_url',
     ];
 
     /**
@@ -58,8 +60,6 @@ class Domain extends Model
      * @var array
      */
     protected $appends = [];
-
-
 
 
 }

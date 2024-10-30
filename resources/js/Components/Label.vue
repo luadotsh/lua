@@ -24,7 +24,7 @@ defineProps({
 <template>
     <label class="label" :for="for">
         <span>{{ value }}</span>
-        <span v-if="required" class="text-red-500 ml-0.5">*</span>
+        <span v-if="required" class="text-red-500 ml-1">*</span>
         <PhInfo
             v-if="tooltip"
             class="h-4 w-4 ml-1"
