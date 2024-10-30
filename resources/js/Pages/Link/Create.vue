@@ -84,7 +84,7 @@ const store = () => {
 
                     <InputError :message="form.errors.key" class="mt-2" />
                 </div>
-                <div class="sm:col-span-6">
+                <div class="col-span-6">
                     <Label for="url" value="Destination URL" :required="true" />
                     <Input
                         id="url"
@@ -95,7 +95,7 @@ const store = () => {
                     <InputError :message="form.errors.url" class="mt-2" />
                 </div>
 
-                <div class="sm:col-span-6">
+                <div class="col-span-6">
                     <Label for="tags" value="Tags" />
 
                     <Dropdown

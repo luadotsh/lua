@@ -43,7 +43,7 @@ const { domains, hasData } = defineProps({
 
         <template #header>
             <div class="w-full">
-                <div class="sm:flex sm:items-center">
+                <div class="flex items-center justify-between">
                     <div class="sm:flex-auto">
                         <h1 class="page-title">Domains</h1>
                     </div>
@@ -56,54 +56,6 @@ const { domains, hasData } = defineProps({
             </div>
         </template>
 
-        <!-- <div>
-            <div class="px-4 sm:px-0 space-y-2">
-                <template v-for="domain in domains" :key="domain.id">
-                    <div class="flex flex-1 items-center space-x-1">
-                        <div
-                            class="flex flex-1 items-center justify-between rounded-md px-4 py-2 border border-zinc-100 dark:border-zinc-700"
-                        >
-                            <div class="flex flex-1 items-center space-x-4">
-                                <div class="flex items-center space-x-2">
-                                    <div
-                                        class="font-medium text-sm text-zinc-600 dark:text-white"
-                                    >
-                                        {{ domain.domain }}
-                                    </div>
-                                    <DomainStatus :domain="domain" />
-                                </div>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <Button
-                                    class="btn-secondary btn-xs space-x-1"
-                                    @click="editModal.open(domain)"
-                                >
-                                    <PhGear class="h-3 w-3 stroke-2" />
-                                    <div>Edit</div>
-                                </Button>
-                                <Button
-                                    class="btn-secondary btn-xs space-x-1"
-                                    @click="
-                                        confirmDeleteModal.open({
-                                            url: route(
-                                                'setting.domains.destroy',
-                                                {
-                                                    id: domain.id,
-                                                }
-                                            ),
-                                        })
-                                    "
-                                >
-                                    <PhX class="h-3 w-3 stroke-2" />
-                                    <div>Delete</div>
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-                </template>
-            </div>
-        </div> -->
-
         <div>
             <div
                 class="w-full flex flex-col transition-[gap,opacity] min-w-0 gap-4"
@@ -111,11 +63,11 @@ const { domains, hasData } = defineProps({
                 <div
                     v-for="domain in domains"
                     :key="domain.id"
-                    class="flex items-center justify-between group border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 border rounded-lg p-4"
+                    class="flex items-center justify-between group border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 border rounded-lg p-2 lg:p-4"
                 >
-                    <div class="flex items-center justify-center space-x-4">
+                    <div class="flex items-center justify-center lg:space-x-4">
                         <div
-                            class="rounded-full border border-zinc-200 dark:border-zinc-700 dark:bg-white/5 p-0.5"
+                            class="rounded-full hidden lg:flex border border-zinc-200 dark:border-zinc-700 dark:bg-white/5 p-0.5"
                         >
                             <img
                                 :src="

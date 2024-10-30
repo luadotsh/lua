@@ -35,7 +35,9 @@ const setRange = (data) => {
     <Layout>
         <template #header>
             <div class="w-full">
-                <div class="sm:flex sm:items-center">
+                <div
+                    class="flex flex-col lg:flex-row space-y-4 lg:space-y-0 sm:items-center"
+                >
                     <div class="sm:flex-auto">
                         <h1 class="page-title">Analytics</h1>
                     </div>

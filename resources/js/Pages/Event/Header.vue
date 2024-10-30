@@ -23,15 +23,18 @@ const setColumn = (status) => {
 </script>
 
 <template>
-    <div class="w-full flex items-center justify-between">
+    <div
+        class="w-full flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0"
+    >
         <div>
             <h1 class="page-title">Events</h1>
         </div>
-        <div class="flex items-center space-x-2">
+        <div class="flex items-center justify-between space-x-2">
             <RangePicker
                 v-model:range="range"
                 @update:range="$emit('update:range', $event)"
                 placement="bottom-end"
+                class="w-full"
             />
             <Menu as="div" class="relative inline-block text-left">
                 <div>

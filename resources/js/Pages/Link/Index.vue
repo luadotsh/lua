@@ -149,57 +149,63 @@ onMounted(() => {
 
         <div>
             <div
-                class="w-full flex flex-col transition-[gap,opacity] min-w-0 gap-4"
+                class="w-full flex flex-col transition-[gap,opacity] min-w-0 space-y-4"
             >
                 <div
                     v-for="data in table.data"
                     :key="data.id"
-                    class="flex items-center justify-between group border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 border rounded-lg p-4"
+                    class="flex items-center lg:justify-between group border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 border rounded-lg p-2.5 lg:p-4"
                 >
-                    <div class="flex items-center justify-center space-x-4">
+                    <div class="min-w-0 grow">
                         <div
-                            class="rounded-full border border-zinc-200 dark:border-zinc-700 dark:bg-white/5 p-0.5"
+                            class="flex items-start lg:items-center lg:space-x-4"
                         >
-                            <img
-                                :src="
-                                    route('websites.favicon', {
-                                        url: data.url,
-                                    })
-                                "
-                                alt="favicon"
-                                class="h-8 w-8 rounded-full"
-                            />
-                        </div>
-                        <div>
-                            <div class="flex items-center space-x-2 mb-1">
-                                <div class="text-zinc-800 dark:text-zinc-300">
-                                    {{ data.link }}
-                                </div>
-                                <PhCopy
-                                    class="h-5 w-5 text-gray-400 cursor-pointer"
-                                    @click="
-                                        helper.copyToClipboard(
-                                            data.link,
-                                            'Link copied'
-                                        )
+                            <div
+                                class="hidden lg:flex flex-none rounded-full border border-zinc-200 dark:border-zinc-700 dark:bg-white/5 p-0.5"
+                            >
+                                <img
+                                    :src="
+                                        route('websites.favicon', {
+                                            url: data.url,
+                                        })
                                     "
+                                    alt="favicon"
+                                    class="h-6 w-6 lg:h-8 lg:w-8 rounded-full"
                                 />
                             </div>
-                            <div class="ml-0.5 flex items-center space-x-2">
-                                <PhArrowBendDownRight
-                                    weight="bold"
-                                    class="text-zinc-400 w-4 h-4"
-                                />
-                                <div
-                                    class="text-[13px] text-zinc-600 dark:text-zinc-400"
-                                >
-                                    {{ data.url }}
+                            <div class="overflow-hidden">
+                                <div class="flex items-center space-x-2 mb-1">
+                                    <div
+                                        class="text-zinc-800 dark:text-zinc-300 text-sm lg:text-base truncate"
+                                    >
+                                        {{ data.link }}
+                                    </div>
+                                    <PhCopy
+                                        class="h-4 lg:h-5 w-4 lg:w-5 text-gray-400 cursor-pointer"
+                                        @click="
+                                            helper.copyToClipboard(
+                                                data.link,
+                                                'Link copied'
+                                            )
+                                        "
+                                    />
+                                </div>
+                                <div class="ml-0.5 flex items-center space-x-2">
+                                    <PhArrowBendDownRight
+                                        weight="bold"
+                                        class="text-zinc-400 w-4 h-4"
+                                    />
+                                    <div
+                                        class="text-[13px] text-zinc-600 dark:text-zinc-400 truncate"
+                                    >
+                                        {{ data.url }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-4">
-                        <div class="table-td flex items-center space-x-1.5">
+                    <div class="flex-none flex items-center space-x-4">
+                        <div class="hidden lg:flex items-center space-x-1.5">
                             <div v-for="tag in data.tags" :key="tag.id">
                                 <Tag :tag="tag" />
                             </div>
@@ -210,11 +216,12 @@ onMounted(() => {
                                 placement: 'top',
                                 html: true,
                             }"
-                            class="inline-flex items-center ring-1 ring-inset ring-opacity-40 text-sm truncate font-medium px-2 py-1 rounded bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 ring-zinc-300 dark:ring-zinc-700 space-x-2 p-4"
+                            class="inline-flex items-center ring-1 ring-inset ring-opacity-40 text-sm truncate font-medium px-2 py-1 rounded bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 ring-zinc-300 dark:ring-zinc-700 space-x-1 p-4"
                         >
-                            <PhCursorClick />
-                            <div>
-                                {{ `${data.clicks} clicks` }}
+                            <PhCursorClick class="h-3 lg:h-4 w-3 lg:w-4" />
+                            <div class="flex items-center space-x-1">
+                                <span>{{ data.clicks }}</span>
+                                <span class="hidden lg:block">clicks</span>
                             </div>
                         </div>
                         <div>

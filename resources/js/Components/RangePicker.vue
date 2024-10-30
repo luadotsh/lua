@@ -175,10 +175,10 @@ watch(
         >
             <template #default="{ togglePopover, inputValue }">
                 <div
-                    class="flex items-center space-x-2 bg-zinc-100 dark:bg-zinc-900 px-3 py-2 rounded-lg text-sm text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-900 cursor-pointer border border-zinc-200 dark:border-zinc-700"
+                    class="flex items-center justify-between space-x-2 bg-zinc-100 dark:bg-zinc-900 px-3 py-2 rounded-lg text-sm text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-900 cursor-pointer border border-zinc-200 dark:border-zinc-700"
                     @click="() => togglePopover()"
                 >
-                    <div class="flex justify-center items-center">
+                    <div class="flex items-center">
                         {{ inputValue.start }} -
                         {{ inputValue.end }}
                     </div>

@@ -41,14 +41,14 @@ defineProps({
                     >
                         <div
                             v-if="$slots.header"
-                            class="p-8 bg-white dark:bg-zinc-800 flex items-center w-full z-40"
+                            class="p-4 lg:p-8 bg-white dark:bg-zinc-800 flex items-center w-full z-40"
                         >
                             <slot name="header"></slot>
                         </div>
 
                         <div
                             :class="{
-                                'flex flex-col flex-1 w-full p-8': true,
+                                'flex flex-col flex-1 w-full p-4 lg:p-8': true,
                                 'overflow-hidden': !overflow,
                             }"
                         >
@@ -56,7 +56,7 @@ defineProps({
                         </div>
                         <div
                             v-if="$slots.pagination"
-                            class="px-8 bg-white dark:bg-zinc-800"
+                            class="px-4 lg:px-8 bg-white dark:bg-zinc-800"
                         >
                             <slot name="pagination"></slot>
                         </div>
