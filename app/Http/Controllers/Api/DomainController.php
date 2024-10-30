@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 
 use App\Models\Domain;
+use App\Enums\Domain\Status;
 
 class DomainController extends Controller
 {
@@ -15,7 +16,9 @@ class DomainController extends Controller
         ], $request->query());
 
         $defaults = in_array($request->input('domain'), config('domains.available'));
-        $db = Domain::where('domain', $request->input('domain'))->exists();
+        $db = Domain::where('domain', $request->input('domain'))
+            ->where('status', Status::ACTIVE)
+            ->exists();
 
         if ($defaults || $db) {
             return response()->json(['valid' => true]);
