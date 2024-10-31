@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\Currency;
+declare(strict_types=1);
+
 use App\Models\User;
-use App\Models\Country;
 
 use function Pest\Laravel\actingAs;
 

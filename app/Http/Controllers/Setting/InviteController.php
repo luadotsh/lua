@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Setting;
 
 use App\Http\Requests\Invite\InviteRequest;
 
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
 
 use App\Models\User;
 use App\Models\Invite;

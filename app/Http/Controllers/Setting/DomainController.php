@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Setting;
 
 use App\Http\Requests\Domain\CreateRequest;

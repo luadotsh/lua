@@ -33,6 +33,11 @@ class Auth
             return response()->json(['status' => 'error', 'message' => 'Invalid token'], 401);
         }
 
+        // update the last used time
+        $token->update([
+            'last_used_at' => now(),
+        ]);
+
         $request->merge([
             'workspace' => $token->workspace,
         ]);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Setting;
 
 use App\Http\Requests\TeamMember\UpdateUserRoleRequest;
@@ -8,9 +10,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Gate;
-
-use App\Enums\User\Role;
 
 use App\Models\Workspace;
 use App\Models\User;

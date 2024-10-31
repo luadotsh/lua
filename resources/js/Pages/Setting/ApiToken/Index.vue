@@ -1,11 +1,10 @@
 <script setup>
-import { ref, onMounted, watch } from "vue";
-import { Head, useForm, usePage } from "@inertiajs/vue3";
-import draggable from "vuedraggable";
+import { ref } from "vue";
+import { Head } from "@inertiajs/vue3";
 import Button from "@/Components/Button.vue";
 import ConfirmDeleteModal from "@/Components/ConfirmDeleteModal.vue";
-
 import { PhX, PhKey } from "@phosphor-icons/vue";
+import date from "@/date";
 
 import AppLayout from "@/Layouts/Master.vue";
 import CreateModal from "./Create.vue";
@@ -62,9 +61,20 @@ const { tokens, hasData } = defineProps({
                                     </div>
                                 </div>
                             </div>
-                            <div class="flex items-center space-x-2">
+                            <div class="flex items-center space-x-4">
+                                <div
+                                    class="text-sm text-zinc-800 dark:text-zinc-300"
+                                >
+                                    {{
+                                        token.last_used_at
+                                            ? `Last used ${date.diffForHumans(
+                                                  token.last_used_at
+                                              )}`
+                                            : "Never used"
+                                    }}
+                                </div>
                                 <Button
-                                    class="btn-secondary btn-xs space-x-1"
+                                    class="btn-secondary btn-sm space-x-1"
                                     @click="
                                         confirmDeleteModal.open({
                                             url: route(

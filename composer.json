@@ -1,12 +1,11 @@
 {
-    "name": "laravel/laravel",
+    "name": "luadotsh/lua",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
-    "license": "MIT",
+    "description": "Open source, scalable URL shortener for modern teams",
+    "keywords": ["laravel", "php", "url-shortener", "short-url", "shortener", "short-links"],
+    "license": "GPL-3.0",
     "require": {
         "php": "^8.2",
-        "cknow/laravel-money": "^8.1",
         "inertiajs/inertia-laravel": "^1.0",
         "laravel/cashier": "^15.4",
         "laravel/framework": "^11.9",

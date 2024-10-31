@@ -81,7 +81,7 @@ const store = () => {
         <template #title> API Token </template>
 
         <template #content>
-            <div>
+            <div class="text-zinc-800 dark:text-zinc-300">
                 Please copy your new API token. For your security, it won't be
                 shown again.
             </div>
