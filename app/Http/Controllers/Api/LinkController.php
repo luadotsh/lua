@@ -26,6 +26,16 @@ class LinkController extends Controller
         return LinkResource::collection($links);
     }
 
+    public function show($id, Request $request)
+    {
+        $link = Link::where('workspace_id', $request->workspace->id)->where('id', $id)->with('tags')->first();
+        if (!$link) {
+            return response()->json(['message' => 'Link not found'], 404);
+        }
+
+        return response()->json(new LinkResource($link), 200);
+    }
+
     public function store(CreateRequest $request)
     {
         $response = Gate::inspect('reached-link-limit', $request->workspace);

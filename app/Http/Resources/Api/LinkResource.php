@@ -31,6 +31,8 @@ class LinkResource extends JsonResource
             'last_click' => $this->last_click,
             'external_id' => $this->external_id,
             'tags' => TagResource::collection($this->tags),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }
