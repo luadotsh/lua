@@ -21,13 +21,14 @@ class LinkFactory extends Factory
     public function definition(): array
     {
         $slug = Str::random(7);
+        $domain = config('domains.main');
 
         return [
             'workspace_id' => Workspace::factory(),
-            'domain' => config('domains.main'),
+            'domain' => $domain,
             'key' => $slug,
             'url' => $this->faker->url,
-            'link' => config('domains.main').$slug,
+            'link' => "https://{$domain}/{$slug}",
             'utm_source' => $this->faker->word,
             'utm_medium' => $this->faker->word,
             'utm_campaign' => $this->faker->word,

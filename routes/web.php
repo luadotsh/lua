@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
 
-
 use App\Http\Controllers\WorkspaceController;
 use App\Http\Controllers\LinkController;
+use App\Http\Controllers\RedirectController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\MediaController;
@@ -116,4 +116,4 @@ Route::group(
 
 require __DIR__.'/auth.php';
 
-Route::get('/{key?}', [LinkController::class, 'show'])->name('links.show')->middleware(['custom-domain']);
+Route::get('/{key?}', RedirectController::class)->name('links.redirect')->middleware(['custom-domain']);
