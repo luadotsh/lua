@@ -6,13 +6,14 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-use App\Enums\Domain\Status;
-use \App\Models\Workspace;
+use App\Enums\Tag\Color;
+
+use App\Models\Workspace;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Domain>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Tag>
  */
-class DomainFactory extends Factory
+class TagFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -23,8 +24,9 @@ class DomainFactory extends Factory
     {
         return [
             'workspace_id' => Workspace::factory(),
-            'domain' => $this->faker->domainName,
-            'status' => Status::ACTIVE,
+            'name' => $this->faker->word,
+            'color' => Color::GREEN,
+            'sort' => $this->faker->randomNumber(),
         ];
     }
 }

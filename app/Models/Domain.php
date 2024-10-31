@@ -4,18 +4,16 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
 use App\Observers\DomainObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+
+use App\Enums\Domain\Status;
 
 #[ObservedBy([DomainObserver::class])]
 class Domain extends Model
@@ -51,15 +49,13 @@ class Domain extends Model
      */
     protected function casts(): array
     {
-        return [];
+        return [
+            'status' => Status::class,
+        ];
     }
 
-    /**
-     * The accessors to append to the model's array form.
-     *
-     * @var array
-     */
-    protected $appends = [];
-
-
+    public function workspace(): BelongsTo
+    {
+        return $this->belongsTo(Workspace::class);
+    }
 }

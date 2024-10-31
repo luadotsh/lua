@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class WebsiteController extends Controller
 {
-    public function favicon(Request $request)
+    public function __invoke(Request $request)
     {
         try {
             $favicon = file_get_contents("https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url={$request->url}&size=128");

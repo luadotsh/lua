@@ -8,8 +8,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
+use App\Enums\Tag\Color;
 
 use App\Models\Scopes\TagScope;
+
 
 class Tag extends Model
 {
@@ -27,17 +32,29 @@ class Tag extends Model
         'color'
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'color' => Color::class,
+        ];
+    }
+
     protected static function booted()
     {
         static::addGlobalScope(new TagScope);
     }
 
-    public function workspace()
+    public function workspace(): BelongsTo
     {
         return $this->belongsTo(Workspace::class);
     }
 
-    public function links()
+    public function links(): BelongsToMany
     {
         return $this->belongsToMany(Link::class)->withTimestamps();
     }

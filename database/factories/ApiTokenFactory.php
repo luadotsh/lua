@@ -6,13 +6,12 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-use App\Enums\Domain\Status;
 use \App\Models\Workspace;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Domain>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ApiToken>
  */
-class DomainFactory extends Factory
+class ApiTokenFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -23,8 +22,9 @@ class DomainFactory extends Factory
     {
         return [
             'workspace_id' => Workspace::factory(),
-            'domain' => $this->faker->domainName,
-            'status' => Status::ACTIVE,
+            'name' => $this->faker->name,
+            'token' => $this->faker->uuid,
+            'last_used_at' => now(),
         ];
     }
 }
