@@ -3,7 +3,7 @@
     "type": "project",
     "description": "Open source, scalable URL shortener for modern teams",
     "keywords": ["laravel", "php", "url-shortener", "short-url", "shortener", "short-links"],
-    "license": "GPL-3.0",
+    "license": "AGPL-3.0-or-later",
     "require": {
         "php": "^8.2",
         "inertiajs/inertia-laravel": "^1.0",

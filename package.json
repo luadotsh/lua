@@ -1,38 +1,42 @@
 {
-    "private": true,
-    "type": "module",
-    "scripts": {
-        "build": "vite build",
-        "dev": "vite"
-    },
-    "devDependencies": {
-        "@inertiajs/vue3": "^1.0.0",
-        "@tailwindcss/forms": "^0.5.3",
-        "@vitejs/plugin-vue": "^5.0.0",
-        "autoprefixer": "^10.4.12",
-        "axios": "^1.7.4",
-        "concurrently": "^9.0.1",
-        "laravel-echo": "^1.16.1",
-        "laravel-vite-plugin": "^1.0",
-        "postcss": "^8.4.31",
-        "pusher-js": "^8.4.0-rc2",
-        "tailwindcss": "^3.2.1",
-        "vite": "^5.0",
-        "vue": "^3.4.0"
-    },
-    "dependencies": {
-        "@headlessui/vue": "^1.7.23",
-        "@kurkle/color": "^0.3.2",
-        "@phosphor-icons/vue": "^2.2.1",
-        "@tailwindcss/aspect-ratio": "^0.4.2",
-        "@tailwindcss/typography": "^0.5.15",
-        "chart.js": "^4.4.5",
-        "dayjs": "^1.11.13",
-        "floating-vue": "^5.2.2",
-        "laravel-vue-i18n": "^2.7.7",
-        "qrcode": "^1.5.4",
-        "v-calendar": "^3.1.2",
-        "vue3-colorpicker": "^2.3.0",
-        "vuedraggable": "^4.1.0"
-    }
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.5.0",
+    "@commitlint/config-conventional": "^19.5.0",
+    "@inertiajs/vue3": "^1.0.0",
+    "@tailwindcss/forms": "^0.5.3",
+    "@vitejs/plugin-vue": "^5.0.0",
+    "autoprefixer": "^10.4.12",
+    "axios": "^1.7.4",
+    "concurrently": "^9.0.1",
+    "husky": "^9.1.6",
+    "laravel-echo": "^1.16.1",
+    "laravel-vite-plugin": "^1.0",
+    "postcss": "^8.4.31",
+    "pusher-js": "^8.4.0-rc2",
+    "tailwindcss": "^3.2.1",
+    "vite": "^5.0",
+    "vue": "^3.4.0"
+  },
+  "dependencies": {
+    "@headlessui/vue": "^1.7.23",
+    "@kurkle/color": "^0.3.2",
+    "@phosphor-icons/vue": "^2.2.1",
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/typography": "^0.5.15",
+    "chart.js": "^4.4.5",
+    "dayjs": "^1.11.13",
+    "floating-vue": "^5.2.2",
+    "laravel-vue-i18n": "^2.7.7",
+    "qrcode": "^1.5.4",
+    "v-calendar": "^3.1.2",
+    "vue3-colorpicker": "^2.3.0",
+    "vuedraggable": "^4.1.0"
+  }
 }
