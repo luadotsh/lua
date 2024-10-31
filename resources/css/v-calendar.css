@@ -35,7 +35,7 @@
 }
 
 .vc-day .vc-day-content {
-    @apply h-full w-full text-sm font-normal  border border-transparent hover:bg-zinc-900 hover:text-violet-600;
+    @apply h-full w-full text-sm font-normal border border-transparent hover:bg-zinc-900 hover:text-violet-600;
 }
 
 .vc-day .vc-day-content.in-month {
@@ -59,7 +59,7 @@
 }
 
 .vc-day.in-month:has(.vc-highlights) {
-    @apply bg-zinc-800 text-zinc-800;
+    @apply bg-zinc-800 text-zinc-300;
 }
 
 .vc-day:has(.vc-highlight.vc-highlight-bg-solid) {
@@ -103,6 +103,7 @@
 .vc-day>.vc-highlights {
     @apply invisible;
 }
+
 .vc-base-select select {
     border-width: 0px;
 }
