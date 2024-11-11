@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Resources\Api\DomainResource;
 
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 
 use App\Http\Requests\Domain\CreateRequest;
@@ -45,10 +46,10 @@ class DomainController extends Controller
 
     public function store(CreateRequest $request)
     {
-        // $response = Gate::inspect('reached-link-limit', $request->workspace);
-        // if (!$response->allowed()) {
-        //     return response()->json(['message' => $response->message()], 403);
-        // }
+        $response = Gate::inspect('reached-domain-limit', $request->workspace);
+        if (!$response->allowed()) {
+            return response()->json(['message' => 'You have reached the domain limit'], 403);
+        }
 
         $domain = Domain::create([
             'workspace_id' => $request->workspace->id,

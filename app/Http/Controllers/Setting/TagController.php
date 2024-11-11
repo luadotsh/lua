@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Setting;
 
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -24,6 +25,13 @@ class TagController extends Controller
 
     public function store(Request $request)
     {
+        $response = Gate::inspect('reached-tag-limit', $request->workspace);
+        if (!$response->allowed()) {
+            session()->flash('flash.banner', 'You have reached the limit of tags, please upgrade your plan.');
+            session()->flash('flash.bannerStyle', 'danger');
+            return back();
+        }
+
         $request->validate([
             'name' => ['required', 'max:255'],
             'color' => ['required', 'max:255'],

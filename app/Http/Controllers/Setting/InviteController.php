@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Setting;
 use App\Http\Requests\Invite\InviteRequest;
 
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Gate;
 
 use App\Models\User;
 use App\Models\Invite;
@@ -24,6 +25,13 @@ class InviteController extends Controller
 
     public function store(InviteRequest $request)
     {
+        $response = Gate::inspect('reached-user-limit', $request->workspace);
+        if (!$response->allowed()) {
+            session()->flash('flash.banner', 'You have reached the limit of team members, please upgrade your plan.');
+            session()->flash('flash.bannerStyle', 'danger');
+            return redirect()->route('setting.team-members.index');
+        }
+
         $workspace = auth()->user()->currentWorkspace;
 
         // check if email already exist

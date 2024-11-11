@@ -40,7 +40,7 @@ class LinkController extends Controller
     {
         $response = Gate::inspect('reached-link-limit', $request->workspace);
         if (!$response->allowed()) {
-            return response()->json(['message' => $response->message()], 403);
+            return response()->json(['message' => 'You have reached the link limit'], 403);
         }
 
         $link = Link::create([
@@ -54,6 +54,7 @@ class LinkController extends Controller
             'utm_campaign' => $request->utm_campaign,
             'utm_term' => $request->utm_term,
             'utm_content' => $request->utm_content,
+            'external_id' => $request->external_id
         ]);
 
         // update tags
@@ -79,6 +80,7 @@ class LinkController extends Controller
             'utm_campaign' => $request->utm_campaign,
             'utm_term' => $request->utm_term,
             'utm_content' => $request->utm_content,
+            'external_id' => $request->external_id
         ]);
 
         // update tags

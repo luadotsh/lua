@@ -7,8 +7,7 @@ namespace App\Http\Controllers\Setting;
 use App\Http\Requests\Domain\CreateRequest;
 use App\Http\Requests\Domain\UpdateRequest;
 
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -30,6 +29,13 @@ class DomainController extends Controller
 
     public function store(CreateRequest $request)
     {
+        $response = Gate::inspect('reached-domain-limit', $request->workspace);
+        if (!$response->allowed()) {
+            session()->flash('flash.banner', 'You have reached the limit of domains, please upgrade your plan.');
+            session()->flash('flash.bannerStyle', 'danger');
+            return back();
+        }
+
         Domain::create([
             'workspace_id' => auth()->user()->currentWorkspace->id,
             'domain' => $request->domain,

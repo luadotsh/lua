@@ -19,7 +19,6 @@ class TagResource extends JsonResource
             'workspace_id' => $this->workspace_id,
             'name' => $this->name,
             'color' => $this->color,
-            'sort' => $this->sort,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

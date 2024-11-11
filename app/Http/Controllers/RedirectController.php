@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -16,11 +16,15 @@ class RedirectController extends Controller
 {
     public function __invoke($key, Request $request): RedirectResponse
     {
-        // find the link
-        $link = Link::where('link', $request->url())->firstOrFail();
+        $link = Link::where('link', $request->url())
+            ->with('workspace')
+            ->firstOrFail();
 
-        // dispatch job
-        ProcessLinkStat::dispatch(
+
+        $reachEventLimit = Gate::inspect('reached-event-limit', $link->workspace);
+
+        ProcessLinkStat::dispatchIf(
+            $reachEventLimit->allowed(),
             $link,
             $request->userAgent(),
             $request->getLanguages(),

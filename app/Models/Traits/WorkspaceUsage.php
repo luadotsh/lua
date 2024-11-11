@@ -84,6 +84,7 @@ trait WorkspaceUsage
                 'limit' => number_format($this->plan->max_events),
                 'percent' => $usedEvents === 0 ? 0 : round(($usedEvents / $this->plan->max_events) * 100),
                 'remaining' => number_format($this->plan->max_events - $usedEvents),
+                'reached_limit' => $usedEvents >= $this->plan->max_events,
                 'chart' => [
                     "total" => number_format($eventsChartData->sum('count')),
                     "chart" => [
@@ -101,18 +102,21 @@ trait WorkspaceUsage
                 'limit' => number_format($this->plan->max_domains),
                 'percent' => $this->plan->max_domains === 0 ? 0 : round(($this->domains->count() / $this->plan->max_domains) * 100),
                 'remaining' => number_format($this->plan->max_domains - $this->domains->count()),
+                'reached_limit' => $this->domains->count() >= $this->plan->max_domains,
             ],
             'tags' => [
                 'used' => number_format($this->tags->count()),
                 'limit' => number_format($this->plan->max_tags),
                 'percent' => $this->plan->max_tags === 0 ? 0 : round(($this->tags->count() / $this->plan->max_tags) * 100),
                 'remaining' => number_format($this->plan->max_tags - $this->tags->count()),
+                'reached_limit' => $this->tags->count() >= $this->plan->max_tags,
             ],
             'users' => [
                 'used' => number_format($this->users->count()),
                 'limit' => number_format($this->plan->max_users),
                 'percent' => $this->plan->max_users === 0 ? 0 : round(($this->users->count() / $this->plan->max_users) * 100),
                 'remaining' => number_format($this->plan->max_users - $this->users->count()),
+                'reached_limit' => $this->users->count() >= $this->plan->max_users,
             ]
         ];
     }

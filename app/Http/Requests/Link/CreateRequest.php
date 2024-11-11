@@ -59,15 +59,18 @@ class CreateRequest extends FormRequest
                 ['required', 'string', 'max:255', 'min:2']
             ),
             'tags' => ['array'],
-            'external_id' => [
-                'nullable',
-                'string',
-                'max:255',
-                'min:2',
-                Rule::unique('links')->where('workspace_id', $this->workspace_id)->ignore($this->route('id')),
-            ],
+            'external_id' => Rule::when(
+                fn() => $this->external_id,
+                [
+                    'nullable',
+                    'string',
+                    'max:255',
+                    'min:2',
+                    Rule::unique('links')->where('workspace_id', $this->workspace_id)->ignore($this->route('id')),
+                ]
+            ),
             'password' => Rule::when(
-                fn() => $this->utm_source,
+                fn() => $this->password,
                 ['required', 'string', 'max:255', 'min:6']
             ),
         ];

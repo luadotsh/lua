@@ -27,6 +27,11 @@ class TagController extends Controller
 
     public function store(CreateRequest $request)
     {
+        $response = Gate::inspect('reached-tag-limit', $request->workspace);
+        if (!$response->allowed()) {
+            return response()->json(['message' => 'You have reached the tag limit'], 403);
+        }
+
         $tag = Tag::create([
             'workspace_id' => $request->workspace->id,
             'name' => $request->name,

@@ -22,14 +22,14 @@ Route::group(['middleware' => ['api.auth']], function () {
         Route::put('/links/{id}', [LinkController::class, 'update'])->name('api.links.update');
         Route::delete('/links/{id}', [LinkController::class, 'destroy'])->name('api.links.destroy');
 
+        // qr-code
+        Route::get('/links/{id}/qr-code', QrcodeController::class)->name('api.qr-code')->withoutMiddleware('api.auth');
+
         // tags
         Route::get('/tags', [TagController::class, 'index'])->name('api.tags.index');
         Route::post('/tags', [TagController::class, 'store'])->name('api.tags.store');
         Route::put('/tags/{id}', [TagController::class, 'update'])->name('api.tags.update');
         Route::delete('/tags/{id}', [TagController::class, 'destroy'])->name('api.tags.destroy');
-
-        // qr-code
-        Route::get('/links/{id}/qr-code', QrcodeController::class)->name('api.qr-code')->withoutMiddleware('api.auth');
 
         // domains
         Route::get('/domains/validate', [DomainController::class, 'validate'])->name('api.domains.validate')->withoutMiddleware('api.auth');
