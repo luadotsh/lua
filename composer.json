@@ -48,7 +48,7 @@
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi",
-            "git config core.hooksPath .husky"
+            "@php -r \"if (shell_exec('command -v git')) { shell_exec('git config core.hooksPath .husky'); }\""
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
