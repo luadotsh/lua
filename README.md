@@ -1,6 +1,8 @@
-# lua.sh - Open Source URL Shortener
+# lua.sh - Scalable & Open-Source URL Shortener
 
-**lua.sh** is a modern, open-source URL shortener built with the powerful combination of Laravel, Vue 3, and Inertia.js. It is designed to provide a seamless, customizable, and developer-friendly solution for running your own URL shortening service. Whether you're an individual looking for a branded solution or a business in need of robust link tracking, **lua.sh** has you covered.
+**lua.sh** is a next-generation, scalable, and open-source URL shortener built with the modern stack of Laravel, Vue 3, and Inertia.js. Designed to be fast, flexible, and developer-friendly, **lua.sh** empowers you to create and manage your own professional URL shortening service with ease.
+
+Whether you're an individual looking for branded, trackable links or a business aiming to scale with advanced analytics and custom domains, **lua.sh** is your perfect solution. It’s lightweight, fully customizable, and ready to grow with your needs.
 
 ## 🌟 Features
 
