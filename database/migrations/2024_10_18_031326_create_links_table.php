@@ -17,7 +17,7 @@ return new class extends Migration
 
             $table->string('domain'); // domain of the link (e.g. lua.sh)
             $table->string('key'); // key of the link (e.g. /github)
-            $table->string('url'); // target url (e.g. https://github.com/luainc/lua)
+            $table->string('url'); // target url (e.g. https://github.com/luadotsh)
             $table->string('link', 600)->unique(); // full link (e.g. https://lua.sh/github)
 
             // utm parameters

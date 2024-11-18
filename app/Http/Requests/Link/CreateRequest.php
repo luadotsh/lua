@@ -26,7 +26,6 @@ class CreateRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                'min:2',
                 Rule::unique('links')->where('domain', $this->domain)->ignore($this->route('id')),
             ],
             'domain' => [

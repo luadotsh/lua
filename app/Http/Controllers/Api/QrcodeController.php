@@ -35,7 +35,7 @@ class QrcodeController extends Controller
             ->format('png')
             ->backgroundColor(...$bgColor)
             ->color(255, 255, 255, 100)
-            // ->merge('/public/images/user/avatar.jpg')
+            // ->merge('/public/images/links/qr-base.png')
             ->errorCorrection('M')
             ->generate("{$link->link}?qr=1");
 
