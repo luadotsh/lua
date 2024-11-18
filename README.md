@@ -32,6 +32,21 @@ Whether you're an individual looking for branded, trackable links or a business 
 - [Inertia.js](https://inertiajs.com/): Combines Laravel and Vue into a smooth SPA-like experience.
 
 ---
+### Images
+![Analytics](.github/screenshot/analytics.png)
+![Events](.github/screenshot/events.png)
+
+**Dark Mode is also available**
+![Dark Mode](.github/screenshot/events-dark.png)
+
+## 🌟 Premium Domains - Cloud Only
+**lua.sh** provide you access to an array of sleek and memorable domains for your shortened URLs:
+
+- 🔗 **lua.sh**: The default, clean, and professional option.
+- 🔗 **git.now**: Perfect for developers and teams sharing repositories.
+- 🔗 **cal.now**: Ideal for sharing meeting links or scheduling tools.
+- 🔗 **fig.now**: A unique and versatile option for creatives.
+- 🔗 **spoti.now**: Great for sharing music playlists and podcasts.
 
 ## 🚀 Getting Started
 
