@@ -27,6 +27,7 @@ Route::group(
         'middleware' => [
             'auth',
             'verified',
+            'set-workspace',
             'billing'
         ],
     ],
@@ -35,7 +36,7 @@ Route::group(
         // workspaces
         Route::get('/workspaces/create', [WorkspaceController::class, 'create'])->name('workspaces.create')->withoutMiddleware(['billing']);
         Route::post('/workspaces', [WorkspaceController::class, 'store'])->name('workspaces.store')->withoutMiddleware(['billing']);
-        Route::put('/workspaces/update-current', [WorkspaceController::class, 'setCurrentStore'])->name('workspaces.update-current');
+        Route::put('/workspaces/update-current', [WorkspaceController::class, 'setCurrentStore'])->name('workspaces.update-current')->withoutMiddleware(['billing']);
 
         // links
         Route::get('/links/{id?}', [LinkController::class, 'index'])->name('links.index');
