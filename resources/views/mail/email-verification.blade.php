@@ -102,9 +102,9 @@
                     651 N Broad St, Suite 201, Middletown, DE 19709, USA
                   </p>
                   <p style="cursor: default">
-                    <a href="https://linkedin.com/company/luash" target="_blank" class="hover-important-text-decoration-underline" style="color: #52525b; text-decoration: none;">LinkedIn</a>
+                    <a href="https://lua.sh/github" target="_blank" class="hover-important-text-decoration-underline" style="color: #52525b; text-decoration: none;">Github</a>
                     &bull;
-                    <a href="https://x.com/luash" target="_blank" class="hover-important-text-decoration-underline" style="color: #52525b; text-decoration: none;">Twitter</a>
+                    <a href="https://lua.sh/x" target="_blank" class="hover-important-text-decoration-underline" style="color: #52525b; text-decoration: none;">Twitter</a>
                   </p>
                   @if(isset($unsubscribe_url))
                   <p>

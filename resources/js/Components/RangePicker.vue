@@ -148,7 +148,7 @@ const setAllTime = () => {
 watch(
     () => range.value,
     (value) => {
-        if(value.group) {
+        if (value.group) {
             const updatedRange = {
                 start: dayjs(value.start).utc().format("YYYY-MM-DD"),
                 end: dayjs(value.end).utc().format("YYYY-MM-DD"),
@@ -171,7 +171,11 @@ watch(
             color="zinc"
             :columns="2"
             timezone="utc"
-            @dayclick="(_, event) => {event.target.blur()}"
+            @dayclick="
+                (_, event) => {
+                    event.target.blur();
+                }
+            "
         >
             <template #default="{ togglePopover, inputValue }">
                 <div
@@ -189,7 +193,7 @@ watch(
                 </div>
             </template>
 
-            <template #footer=>
+            <template #footer>
                 <div
                     class="w-full p-3 border-t border-zinc-700 flex items-center flex-nowrap space-x-1.5"
                 >
