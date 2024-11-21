@@ -22,12 +22,16 @@ class UpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'key' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('links')->where('domain', $this->domain)->ignore($this->route('id')),
-            ],
+            'key' => Rule::when(
+                fn() => $this->key,
+                [
+                    'required',
+                    'string',
+                    'max:255',
+                    Rule::unique('links')->where('domain', $this->domain)->ignore($this->route('id')),
+                ]
+            ),
+
             'domain' => [
                 'required',
                 'string',

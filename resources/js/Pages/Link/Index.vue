@@ -247,7 +247,7 @@ onMounted(() => {
                                     leave-to-class="transform opacity-0 scale-95"
                                 >
                                     <MenuItems
-                                        class="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                        class="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 dark:divide-gray-700 rounded-md bg-white dark:bg-zinc-900 shadow-lg ring-1 ring-black dark:ring-zinc-700 ring-opacity-5 focus:outline-none"
                                     >
                                         <div class="py-1">
                                             <MenuItem v-slot="{ active }">
@@ -260,13 +260,13 @@ onMounted(() => {
                                                     "
                                                     :class="[
                                                         active
-                                                            ? 'bg-gray-100 text-gray-900'
-                                                            : 'text-gray-700',
-                                                        'group flex items-center px-4 py-2 text-sm',
+                                                            ? 'bg-gray-100 dark:bg-zinc-800 text-gray-900 dark:text-zinc-300'
+                                                            : 'text-gray-700 dark:text-zinc-300',
+                                                        'flex items-center px-4 py-2 text-sm cursor-pointer',
                                                     ]"
                                                 >
                                                     <PhPencil
-                                                        class="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                                                        class="mr-3 h-5 w-5 text-gray-400 dark:text-zinc-300"
                                                         aria-hidden="true"
                                                     />
                                                     Edit
@@ -279,13 +279,13 @@ onMounted(() => {
                                                     "
                                                     :class="[
                                                         active
-                                                            ? 'bg-gray-100 text-gray-900'
-                                                            : 'text-gray-700',
-                                                        'group flex items-center px-4 py-2 text-sm cursor-pointer',
+                                                            ? 'bg-gray-100 dark:bg-zinc-800 text-gray-900 dark:text-zinc-300'
+                                                            : 'text-gray-700 dark:text-zinc-300',
+                                                        'flex items-center px-4 py-2 text-sm cursor-pointer',
                                                     ]"
                                                 >
                                                     <PhQrCode
-                                                        class="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                                                        class="mr-3 h-5 w-5 text-gray-400 dark:text-zinc-300"
                                                         aria-hidden="true"
                                                     />
                                                     QR Code
@@ -303,13 +303,13 @@ onMounted(() => {
                                                     "
                                                     :class="[
                                                         active
-                                                            ? 'bg-gray-100 text-gray-900'
-                                                            : 'text-gray-700',
-                                                        'group flex items-center px-4 py-2 text-sm cursor-pointer',
+                                                            ? 'bg-gray-100 dark:bg-zinc-800 text-gray-900 dark:text-zinc-300'
+                                                            : 'text-gray-700 dark:text-zinc-300',
+                                                        'flex items-center px-4 py-2 text-sm cursor-pointer',
                                                     ]"
                                                 >
                                                     <PhCopy
-                                                        class="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                                                        class="mr-3 h-5 w-5 text-gray-400 dark:text-zinc-300"
                                                         aria-hidden="true"
                                                     />
                                                     Copy Link ID
@@ -334,9 +334,9 @@ onMounted(() => {
                                                     "
                                                     :class="[
                                                         active
-                                                            ? 'bg-red-50 text-red-600'
+                                                            ? 'bg-zinc-100 dark:bg-zinc-800 text-red-600'
                                                             : 'text-red-500',
-                                                        'group flex items-center px-4 py-2 text-sm cursor-pointer',
+                                                        'flex items-center px-4 py-2 text-sm cursor-pointer',
                                                     ]"
                                                 >
                                                     <PhTrash

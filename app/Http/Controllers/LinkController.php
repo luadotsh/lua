@@ -71,12 +71,14 @@ class LinkController extends Controller
             return back();
         }
 
+        $key = $request->key ? $request->key : Str::random(6);
+
         $link = Link::create([
             'workspace_id' => $workspace->id,
             'domain' => $request->domain,
-            'key' => $request->key,
+            'key' => $key,
             'url' => $request->url,
-            'link' => "https://{$request->domain}/{$request->key}",
+            'link' => "https://{$request->domain}/{$key}",
             'utm_source' => $request->utm_source,
             'utm_medium' => $request->utm_medium,
             'utm_campaign' => $request->utm_campaign,
@@ -99,11 +101,13 @@ class LinkController extends Controller
 
         $link = Link::where('workspace_id', $workspace->id)->where('id', $id)->firstOrFail();
 
+        $key = $request->key ? $request->key : Str::random(6);
+
         $link->update([
             'domain' => $request->domain,
-            'key' => $request->key,
+            'key' => $key,
             'url' => $request->url,
-            'link' => "https://{$request->domain}/{$request->key}",
+            'link' => "https://{$request->domain}/{$key}",
             'utm_source' => $request->utm_source,
             'utm_medium' => $request->utm_medium,
             'utm_campaign' => $request->utm_campaign,
