@@ -49,3 +49,8 @@ Whether you're an individual looking for branded, trackable links or a business 
 - 🔗 **spoti.now**: Great for sharing music playlists and podcasts.
 
 For self-hosting or local development, please check the [Self Hosting](https://developers.lua.sh/self-hosting) or [Local Development](https://developers.lua.sh/local-development) guides.
+
+## 💎 Sponsors
+A big thanks to our sponsors and partners who make Lua possible. If you're interested in sponsoring Lua and supporting the project, please check out our profile on [GitHub sponsors](https://github.com/sponsors/luadotsh) ❤️
+
+[mercantive.com](https://mercantive.com) • [changelogfy.com](https://changelogfy.com)
