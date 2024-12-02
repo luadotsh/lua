@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Sentry\Laravel\Integration;
 use Illuminate\Http\Request;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -42,6 +43,8 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
+        Integration::handles($exceptions);
+
         // Handle 500 Internal Server Error, 503 Service Unavailable, etc.
         $exceptions->render(function (NotFoundHttpException $e, Request $request) {
             if (in_array($e->getStatusCode(), [500, 503, 403, 404])) {

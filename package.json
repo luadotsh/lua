@@ -30,7 +30,7 @@
     "@phosphor-icons/vue": "^2.2.1",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/typography": "^0.5.15",
-    "chart.js": "^4.4.5",
+    "chart.js": "^4.4.7",
     "dayjs": "^1.11.13",
     "floating-vue": "^5.2.2",
     "laravel-vue-i18n": "^2.7.7",
