@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+use App\Enums\Link\Os;
+
 class Link extends Model
 {
     use HasFactory;
@@ -27,6 +29,8 @@ class Link extends Model
         'key',
         'url',
         'link',
+        'ios',
+        'android',
         'utm_source',
         'utm_medium',
         'utm_campaign',
@@ -54,6 +58,7 @@ class Link extends Model
     {
         return [
             'last_click' => 'datetime',
+            'os' => Os::class,
         ];
     }
 
