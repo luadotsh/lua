@@ -40,7 +40,7 @@ class ProcessLinkStat implements ShouldQueue
         // user geo
         $geo = geoip($this->ip);
 
-        $linkStat = LinkStat::create([
+        LinkStat::create([
             'workspace_id' => $this->link->workspace_id,
             'link_id' => $this->link->id,
             'event' => $this->qr ? Event::QR_SCAN : Event::CLICK,

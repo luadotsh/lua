@@ -20,6 +20,8 @@ class LinkResource extends JsonResource
             'domain' => $this->domain,
             'key' => $this->key,
             'url' => $this->url,
+            'ios' => $this->ios,
+            'android' => $this->android,
             'link' => $this->link,
             'utm_source' => $this->utm_source,
             'utm_medium' => $this->utm_medium,
