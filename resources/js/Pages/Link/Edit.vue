@@ -1,7 +1,7 @@
 <script setup>
 import { useForm, usePage, router } from "@inertiajs/vue3";
-import { ref } from "vue";
 
+import Accordion from "@/Components/Accordion.vue";
 import SlideOver from "@/Components/SlideOver.vue";
 import Button from "@/Components/Button.vue";
 import Input from "@/Components/Input.vue";
@@ -41,69 +41,117 @@ const store = () => {
         <template #title> Edit Link </template>
 
         <template #content>
-            <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-                <div class="col-span-6 lg:col-span-3">
-                    <Label for="domain" value="Short Link" :required="true" />
-                    <Dropdown
-                        id="domain"
-                        :options="
-                            domains.map((d) => ({
-                                id: d,
-                                label: d,
-                            }))
-                        "
-                        class="w-full"
-                        :search="true"
-                        placeholder="Select..."
-                        v-model="form.domain"
-                    />
+            <Accordion :is-open="true">
+                <template #title> General </template>
+                <template #content>
+                    <div class="col-span-6 lg:col-span-3">
+                        <Label
+                            for="domain"
+                            value="Short Link"
+                            :required="true"
+                        />
+                        <Dropdown
+                            id="domain"
+                            :options="
+                                domains.map((d) => ({
+                                    id: d,
+                                    label: d,
+                                }))
+                            "
+                            class="w-full"
+                            :search="true"
+                            placeholder="Select..."
+                            v-model="form.domain"
+                        />
 
-                    <InputError :message="form.errors.domain" class="mt-2" />
-                </div>
+                        <InputError
+                            :message="form.errors.domain"
+                            class="mt-2"
+                        />
+                    </div>
 
-                <div class="col-span-6 lg:col-span-3">
-                    <Label for="key" value="Custom back-half (optional)" />
-                    <Input
-                        id="key"
-                        type="text"
-                        v-model="form.key"
-                        placeholder="e.g. super-link"
-                    />
+                    <div class="col-span-6 lg:col-span-3">
+                        <Label for="key" value="Custom back-half (optional)" />
+                        <Input
+                            id="key"
+                            type="text"
+                            v-model="form.key"
+                            placeholder="e.g. super-link"
+                        />
 
-                    <InputError :message="form.errors.key" class="mt-2" />
-                </div>
-                <div class="col-span-6">
-                    <Label for="url" value="Destination URL" :required="true" />
-                    <Input
-                        id="url"
-                        type="text"
-                        v-model="form.url"
-                        placeholder="e.g. https://example.com"
-                    />
-                    <InputError :message="form.errors.url" class="mt-2" />
-                </div>
+                        <InputError :message="form.errors.key" class="mt-2" />
+                    </div>
+                    <div class="col-span-6">
+                        <Label
+                            for="url"
+                            value="Destination URL"
+                            :required="true"
+                        />
+                        <Input
+                            id="url"
+                            type="text"
+                            v-model="form.url"
+                            placeholder="e.g. https://example.com"
+                        />
+                        <InputError :message="form.errors.url" class="mt-2" />
+                    </div>
 
-                <div class="col-span-6">
-                    <Label for="tags" value="Tags" />
+                    <div class="col-span-6">
+                        <Label for="tags" value="Tags" />
 
-                    <Dropdown
-                        id="tags"
-                        :options="
-                            tags.map((t) => ({
-                                id: t.id,
-                                label: t.name,
-                            }))
-                        "
-                        class="w-full"
-                        :search="true"
-                        :multiple="true"
-                        placeholder="Select..."
-                        v-model="form.tags"
-                    />
+                        <Dropdown
+                            id="tags"
+                            :options="
+                                tags.map((t) => ({
+                                    id: t.id,
+                                    label: t.name,
+                                }))
+                            "
+                            class="w-full"
+                            :search="true"
+                            :multiple="true"
+                            placeholder="Select..."
+                            v-model="form.tags"
+                        />
 
-                    <InputError :message="form.errors.tags" class="mt-2" />
-                </div>
-            </div>
+                        <InputError :message="form.errors.tags" class="mt-2" />
+                    </div>
+                </template>
+            </Accordion>
+
+            <Accordion :is-open="true">
+                <template #title> Targeted Traffic </template>
+                <template #content>
+                    <div class="col-span-6">
+                        <Label for="ios" value="iOS URL" :required="false" />
+                        <Input
+                            id="ios"
+                            type="text"
+                            v-model="form.ios"
+                            placeholder="e.g. https://apps.apple.com/app/333903271"
+                        />
+                        <InputError :message="form.errors.ios" class="mt-2" />
+                    </div>
+
+                    <div class="col-span-6">
+                        <Label
+                            for="android"
+                            value="Android URL"
+                            :required="false"
+                        />
+                        <Input
+                            id="android"
+                            type="text"
+                            v-model="form.android"
+                            placeholder="e.g. https://play.google.com/store/apps/details?id=com.twitter.android"
+                        />
+                        <InputError
+                            :message="form.errors.android"
+                            class="mt-2"
+                        />
+                    </div>
+                </template>
+            </Accordion>
         </template>
 
         <template #footer>

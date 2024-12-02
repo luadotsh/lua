@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Enums\Link\Os;
+
 class UserAgentService
 {
     /**
@@ -41,11 +43,11 @@ class UserAgentService
     public function getOS(string $userAgent): string
     {
         $osArray = [
-            'Windows' => 'Windows',
-            'MacOS' => '(Mac_PowerPC)|(Macintosh)',
-            'Linux' => 'Linux',
-            'iOS' => 'iPhone|iPad',
-            'Android' => 'Android',
+            Os::ANDROID->value => 'Android',
+            Os::IOS->value => 'iPhone|iPad',
+            Os::WINDOWS->value => 'Windows',
+            Os::MACOS->value => '(Mac_PowerPC)|(Macintosh)',
+            Os::LINUX->value => 'Linux',
         ];
 
         foreach ($osArray as $key => $pattern) {
@@ -54,7 +56,7 @@ class UserAgentService
             }
         }
 
-        return 'Unknown OS';
+        return Os::UNKNOWN->value;
     }
 
     /**

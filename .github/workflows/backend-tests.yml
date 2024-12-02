@@ -69,13 +69,13 @@ jobs:
         run: php artisan config:clear
 
       - name: Run Migration
-        run: php artisan migrate -v
+        run: php artisan migrate:fresh --seed -v
         env:
           DB_PORT: ${{ job.services.mysql.ports['3306'] }}
           REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
 
       - name: Run PHP Unit Tests
-        run: vendor/bin/phpunit
+        run: vendor/bin/pest
         env:
           DB_PORT: ${{ job.services.mysql.ports['3306'] }}
           REDIS_PORT: ${{ job.services.redis.ports['6379'] }}

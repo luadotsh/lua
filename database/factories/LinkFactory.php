@@ -31,6 +31,8 @@ class LinkFactory extends Factory
             'key' => $slug,
             'url' => $this->faker->url,
             'link' => "https://{$domain}/{$slug}",
+            'ios' => $this->faker->url,
+            'android' => $this->faker->url,
             'utm_source' => $this->faker->word,
             'utm_medium' => $this->faker->word,
             'utm_campaign' => $this->faker->word,

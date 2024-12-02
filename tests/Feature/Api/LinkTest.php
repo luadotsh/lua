@@ -42,6 +42,24 @@ it('can create a new link', function () {
     $response->assertStatus(201);
 });
 
+it('can create a new link with ios and android', function () {
+    $response = $this
+        ->withToken($this->token->token)
+        ->post(route('api.links.store'), [
+            'key' => 'new-link',
+            'domain' => 'lua.sh',
+            'url' => 'https://lua.sh',
+            'ios' => 'https://apps.apple.com/app/333903271',
+            'android' => 'https://play.google.com/store/apps/details?id=com.twitter.android',
+        ]);
+
+    $response->assertStatus(201)
+        ->assertJsonFragment([
+            'ios' => 'https://apps.apple.com/app/333903271',
+            'android' => 'https://play.google.com/store/apps/details?id=com.twitter.android',
+        ]);
+});
+
 it('can update a link', function () {
     $link = Link::factory()->create([
         'workspace_id' => $this->user->current_workspace_id,

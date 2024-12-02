@@ -40,7 +40,8 @@ class CreateRequest extends FormRequest
                 Rule::unique('links')->where('key', $this->key)->ignore($this->route('id')),
             ],
             'url' => ['required', 'url', 'max:255', 'min:2'],
-
+            'ios' => ['nullable', 'url', 'max:255', 'min:2'],
+            'android' => ['nullable', 'url', 'max:255', 'min:2'],
             'utm_source' => Rule::when(
                 fn() => $this->utm_source,
                 ['required', 'string', 'max:255', 'min:2']
