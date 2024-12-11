@@ -3,14 +3,33 @@
   "projectOwner": "luadotsh",
   "repoType": "github",
   "repoHost": "https://github.com",
-  "files": ["README.md"],
+  "files": [
+    "README.md"
+  ],
   "imageSize": 100,
   "contributorsPerLine": 7,
   "contributorsSortAlphabetically": false,
-  "badgeTemplate": "[![All Contributors](https://img.shields.io/github/all-contributors/<%= projectOwner %>/<%= projectName %>?color=ee8449&style=flat-square)](#contributors)",
-  "contributorTemplate": "<a href=\"<%= contributor.profile %>\"><img src=\"<%= contributor.avatar_url %>\" width=\"<%= options.imageSize %>px;\" alt=\"\"/><br /><sub><b><%= contributor.name %></b></sub></a>",
-  "wrapperTemplate": "\n<table>\n  <tbody><%= bodyContent %>  </tbody>\n<%= tableFooterContent %></table>\n\n",
   "linkToUsage": true,
   "skipCi": true,
-  "contributors": []
+  "contributors": [
+    {
+      "login": "paulocastellano",
+      "name": "Paulo Castellano",
+      "avatar_url": "https://avatars.githubusercontent.com/u/265964?v=4",
+      "profile": "https://github.com/paulocastellano",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Arkanius",
+      "name": "Victor Gazotti",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6404401?v=4",
+      "profile": "https://conferencias.dev/",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "commitConvention": "angular"
 }
