@@ -26,17 +26,6 @@ class EventController extends Controller
             ->whereBetween('created_at', [$start, $end])
             ->latest();
 
-        // search
-        if ($request->q) {
-            $query->where(function ($query) use ($request) {
-                // $query->where('name', 'LIKE', '%' . $request->q . '%');
-                // $query->orWhere('code', 'LIKE', '%' . $request->q . '%');
-                // $query->orWhereHas('products', function ($query) use ($request) {
-                //     $query->where('name', 'LIKE', '%' . $request->q . '%');
-                // });
-            });
-        }
-
         $links = $query->paginate(config('app.pagination.default'))->withQueryString();
 
         return Inertia::render('Event/Index', [

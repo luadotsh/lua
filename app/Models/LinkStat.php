@@ -32,7 +32,7 @@ class LinkStat extends Model
         'device',
         'browser',
         'ip',
-
+        'language',
         'utm_medium',
         'utm_source',
         'utm_campaign',

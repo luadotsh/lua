@@ -26,6 +26,14 @@ class RedirectController extends Controller
 
         $reachEventLimit = Gate::inspect('reached-event-limit', $link->workspace);
 
+        $utms = [
+            'utm_source' => $request->input('utm_source'),
+            'utm_medium' => $request->input('utm_medium'),
+            'utm_campaign' => $request->input('utm_campaign'),
+            'utm_term' => $request->input('utm_term'),
+            'utm_content' => $request->input('utm_content')
+        ];
+
         ProcessLinkStat::dispatchIf(
             $reachEventLimit->allowed(),
             $link,
@@ -33,6 +41,7 @@ class RedirectController extends Controller
             $request->getLanguages(),
             $request->ip(),
             $request->input('qr') ? true : false,
+            $utms,
             $request->header('Referer')
         );
 

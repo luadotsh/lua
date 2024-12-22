@@ -27,6 +27,7 @@ class ProcessLinkStat implements ShouldQueue
         public array $languages,
         public string $ip,
         public bool $qr,
+        public array $utms,
         public ?string $referer
     ) {}
 
@@ -52,6 +53,11 @@ class ProcessLinkStat implements ShouldQueue
             'device' => $service->getDevice($this->userAgent),
             'language' => $service->getLanguage($this->languages),
             'referer' => $service->getReferer($this->referer),
+            'utm_medium' => $this->utms['utm_medium'],
+            'utm_source' => $this->utms['utm_source'],
+            'utm_campaign' => $this->utms['utm_campaign'],
+            'utm_content' => $this->utms['utm_content'],
+            'utm_term' => $this->utms['utm_term'],
             'ip' => $this->ip,
         ]);
 

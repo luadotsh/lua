@@ -6,17 +6,10 @@ namespace App\Http\Controllers;
 
 use App\Services\CalculateStat;
 
-use Illuminate\Support\Facades\Gate;
-
-use App\Enums\UserRole;
-
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
-
-use App\Models\User;
-use App\Models\Website;
 
 class AnalyticsController extends Controller
 {

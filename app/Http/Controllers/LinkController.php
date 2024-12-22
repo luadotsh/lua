@@ -6,14 +6,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
 
 use App\Http\Requests\Link\CreateRequest;
 use App\Http\Requests\Link\UpdateRequest;
-
-use App\Jobs\ProcessLinkStat;
 
 use App\Models\Link;
 use App\Models\Domain;
@@ -139,21 +135,5 @@ class LinkController extends Controller
         session()->flash('flash.bannerStyle', 'success');
 
         return redirect(route('links.index'));
-    }
-
-    public function show($key, Request $request)
-    {
-        // find the link
-        $link = Link::where('link', $request->url())->firstOrFail();
-
-        // dispatch job
-        ProcessLinkStat::dispatch(
-            $link, $request->userAgent(),
-            $request->getLanguages(),
-            $request->ip(),
-            $request->input('qr') ? true : false,
-            $request->header('Referer')
-        );
-        return redirect($link->url, 302);
     }
 }
