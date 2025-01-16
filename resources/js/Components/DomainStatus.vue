@@ -1,6 +1,5 @@
 <script setup>
 import { router } from "@inertiajs/vue3";
-import { PhSpinnerGap } from "@phosphor-icons/vue";
 
 const { domain } = defineProps({
     domain: {
