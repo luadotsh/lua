@@ -1,11 +1,11 @@
 <script setup>
-import { onMounted, ref, computed } from 'vue';
-import { Link, useForm, Head } from '@inertiajs/vue3';
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
-import helper from '@/helper';
-import date from '@/date';
+import { onMounted, ref, computed } from "vue";
+import { Link, useForm, Head } from "@inertiajs/vue3";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
+import helper from "@/helper";
+import date from "@/date";
 
-import debounce from '@/debounce';
+import debounce from "@/debounce";
 
 import {
     PhSealPercent,
@@ -17,26 +17,26 @@ import {
     PhArrowBendDownRight,
     PhTrash,
     PhQrCode,
-} from '@phosphor-icons/vue';
+} from "@phosphor-icons/vue";
 
-import ConfirmDeleteModal from '@/Components/ConfirmDeleteModal.vue';
-import EmptyState from '@/Components/EmptyState.vue';
-import AppLayout from '@/Layouts/Master.vue';
-import Pagination from '@/Components/Pagination.vue';
-import Tag from '@/Components/Tag.vue';
-import Input from '@/Components/Input.vue';
-import Button from '@/Components/Button.vue';
-import Qrcode from '@/Components/Qrcode.vue';
+import ConfirmDeleteModal from "@/Components/ConfirmDeleteModal.vue";
+import EmptyState from "@/Components/EmptyState.vue";
+import AppLayout from "@/Layouts/Master.vue";
+import Pagination from "@/Components/Pagination.vue";
+import Tag from "@/Components/Tag.vue";
+import Input from "@/Components/Input.vue";
+import Button from "@/Components/Button.vue";
+import Qrcode from "@/Components/Qrcode.vue";
 
-import CreateModal from './Create.vue';
-import Edit from './Edit.vue';
+import CreateModal from "./Create.vue";
+import Edit from "./Edit.vue";
 
 const qrcodeModal = ref(null);
 const createModal = ref(null);
 const confirmDeleteModal = ref(null);
 
 const searchForm = useForm({
-    q: '',
+    q: "",
 });
 
 const { table, hasData, link } = defineProps({
@@ -50,7 +50,7 @@ const { table, hasData, link } = defineProps({
 
 const searchDebounce = debounce(function () {
     // faz o post
-    searchForm.get(route('links.index'), {
+    searchForm.get(route("links.index"), {
         preserveScroll: true,
         preserveState: true,
     });
@@ -70,7 +70,7 @@ const title = computed(() => {
 
 const formatLastClick = (data) => {
     if (!data.last_click) {
-        return 'No clicks yet';
+        return "No clicks yet";
     }
 
     return `
@@ -87,11 +87,11 @@ const formatLastClick = (data) => {
 
 // return number in human readable form like 1K, 1M etc
 const humanizeNumber = (num, showPlus = false) => {
-    if (typeof num !== 'number' || isNaN(num)) {
-        throw new Error('Input must be a valid number');
+    if (typeof num !== "number" || isNaN(num)) {
+        throw new Error("Input must be a valid number");
     }
 
-    const suffixes = ['', 'K', 'M', 'B', 'T']; // Kilo, Million, Billion, Trillion
+    const suffixes = ["", "K", "M", "B", "T"]; // Kilo, Million, Billion, Trillion
     const threshold = 1000;
 
     let suffixIndex = 0;

@@ -1,25 +1,25 @@
 <script setup>
-import { useForm, usePage } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { useForm, usePage } from "@inertiajs/vue3";
+import { ref } from "vue";
 
-import Accordion from '@/Components/Accordion.vue';
-import SlideOver from '@/Components/SlideOver.vue';
-import Button from '@/Components/Button.vue';
-import Input from '@/Components/Input.vue';
-import InputError from '@/Components/InputError.vue';
-import Label from '@/Components/Label.vue';
-import Dropdown from '@/Components/Dropdown.vue';
+import Accordion from "@/Components/Accordion.vue";
+import SlideOver from "@/Components/SlideOver.vue";
+import Button from "@/Components/Button.vue";
+import Input from "@/Components/Input.vue";
+import InputError from "@/Components/InputError.vue";
+import Label from "@/Components/Label.vue";
+import Dropdown from "@/Components/Dropdown.vue";
 
 const domains = usePage().props.domains;
 const tags = usePage().props.tags;
 
 const form = useForm({
-    url: '',
+    url: "",
     domain: domains[0],
-    key: '',
+    key: "",
     tags: [],
-    ios: '',
-    android: '',
+    ios: "",
+    android: "",
 });
 const show = ref(false);
 
@@ -40,7 +40,7 @@ defineExpose({
 });
 
 const store = () => {
-    form.post(route('links.store'), {
+    form.post(route("links.store"), {
         preserveScroll: true,
         onSuccess: () => {
             form.reset();
