@@ -18,7 +18,7 @@ use App\Models\Link;
 
 class RedirectController extends Controller
 {
-    public function __invoke($key, Request $request): RedirectResponse
+    public function __invoke(Request $request, $key = null): RedirectResponse
     {
         $link = Link::where('link', $request->url())
             ->with('workspace')
