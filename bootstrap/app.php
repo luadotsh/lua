@@ -23,7 +23,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->trustProxies(at: '*');
         $middleware->validateCsrfTokens(except: [
-            'stripe/*'
+            'stripe/*',
+            'resend/*',
         ]);
 
         $middleware->redirectGuestsTo('/login');
