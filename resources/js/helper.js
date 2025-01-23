@@ -3,9 +3,19 @@ import colorLib from "@kurkle/color";
 
 export default {
     kFormatter(num) {
-        return Math.abs(num) > 999
-            ? Math.sign(num) * (Math.abs(num) / 1000).toFixed(1) + "k"
-            : Math.sign(num) * Math.abs(num);
+        const absNum = Math.abs(num);
+        const sign = Math.sign(num);
+
+        if (absNum >= 1000000000) {
+            return sign * (absNum / 1000000000).toFixed(1) + "B";
+        }
+        if (absNum >= 1000000) {
+            return sign * (absNum / 1000000).toFixed(1) + "M";
+        }
+        if (absNum >= 1000) {
+            return sign * (absNum / 1000).toFixed(1) + "k";
+        }
+        return sign * absNum;
     },
 
     transparentize(value, opacity) {
@@ -62,14 +72,14 @@ export default {
             // Check if the favicon URL is valid by trying to fetch it
             const response = await fetch(faviconUrl);
             if (!response.ok) {
-                throw new Error('Favicon not found');
+                throw new Error("Favicon not found");
             }
 
             // If the favicon loads successfully, return the favicon URL
             return faviconUrl;
         } catch (error) {
             // If there's an error (e.g., favicon not found), return the fallback image URL
-            return '/images/websites/favicon.png';
+            return "/images/websites/favicon.png";
         }
     },
 

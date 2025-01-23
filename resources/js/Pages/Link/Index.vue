@@ -74,13 +74,8 @@ const formatLastClick = (data) => {
     }
 
     return `
-        <div class="space-y-2">
-            <div class="text-sm text-white">
-                ${data.clicks} clicks
-            </div>
-            <div class="text-xs text-white">
-                Last Click was ${date.diffForHumans(data.last_click)}
-            </div>
+        <div class="text-xs text-white">
+            Last Click was ${date.diffForHumans(data.last_click)}
         </div>
     `;
 };
@@ -220,7 +215,9 @@ onMounted(() => {
                         >
                             <PhCursorClick class="h-3 lg:h-4 w-3 lg:w-4" />
                             <div class="flex items-center space-x-1">
-                                <span>{{ data.clicks }}</span>
+                                <span>{{
+                                    helper.kFormatter(data.clicks)
+                                }}</span>
                                 <span class="hidden lg:block">clicks</span>
                             </div>
                         </div>
