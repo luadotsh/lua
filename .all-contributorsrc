@@ -29,7 +29,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "MuhammadSaim",
+      "name": "Muhammad Saim",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19898499?v=4",
+      "profile": "https://muhammadsaim.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
-  "commitConvention": "angular"
+  "commitConvention": "angular",
+  "commitType": "docs"
 }
