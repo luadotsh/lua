@@ -56,7 +56,7 @@ const store = () => {
         <template #title> New Link </template>
 
         <template #content>
-            <Accordion :is-open="true">
+            <Accordion :is-open="true" class="mb-3">
                 <template #title> General </template>
                 <template #content>
                     <div class="col-span-6 lg:col-span-3">
