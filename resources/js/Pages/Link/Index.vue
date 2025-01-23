@@ -74,39 +74,10 @@ const formatLastClick = (data) => {
     }
 
     return `
-        <div class="space-y-2">
-            <div class="text-sm text-white">
-                ${data.clicks.toLocaleString()} clicks
-            </div>
-            <div class="text-xs text-white">
-                Last Click was ${date.diffForHumans(data.last_click)}
-            </div>
+        <div class="text-xs text-white">
+            Last Click was ${date.diffForHumans(data.last_click)}
         </div>
     `;
-};
-
-// return number in human readable form like 1K, 1M etc
-const humanizeNumber = (num, showPlus = false) => {
-    if (typeof num !== "number" || isNaN(num)) {
-        throw new Error("Input must be a valid number");
-    }
-
-    const suffixes = ["", "K", "M", "B", "T"]; // Kilo, Million, Billion, Trillion
-    const threshold = 1000;
-
-    let suffixIndex = 0;
-    let compactNum = num;
-
-    while (compactNum >= threshold && suffixIndex < suffixes.length - 1) {
-        compactNum /= threshold;
-        suffixIndex++;
-    }
-
-    // Keep one decimal place for compact representation
-    const roundedCompactNum = Math.round(compactNum * 10) / 10;
-    const suffix = suffixes[suffixIndex];
-
-    return `${roundedCompactNum}${suffix}`;
 };
 
 onMounted(() => {
@@ -244,7 +215,9 @@ onMounted(() => {
                         >
                             <PhCursorClick class="h-3 lg:h-4 w-3 lg:w-4" />
                             <div class="flex items-center space-x-1">
-                                <span>{{ humanizeNumber(data.clicks) }}</span>
+                                <span>{{
+                                    helper.kFormatter(data.clicks)
+                                }}</span>
                                 <span class="hidden lg:block">clicks</span>
                             </div>
                         </div>
