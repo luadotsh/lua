@@ -8,6 +8,7 @@ import Input from "@/Components/Input.vue";
 import InputError from "@/Components/InputError.vue";
 import Label from "@/Components/Label.vue";
 import Dropdown from "@/Components/Dropdown.vue";
+import DatePicker from "@/Components/DatePicker.vue";
 
 const domains = usePage().props.domains;
 const tags = usePage().props.tags;
@@ -132,7 +133,7 @@ const store = () => {
                     </template>
                 </Accordion>
 
-                <Accordion :is-open="true">
+                <Accordion :is-open="false">
                     <template #title> Targeted Traffic </template>
                     <template #content>
                         <div class="col-span-6">
@@ -167,6 +168,45 @@ const store = () => {
                             />
                             <InputError
                                 :message="form.errors.android"
+                                class="mt-2"
+                            />
+                        </div>
+                    </template>
+                </Accordion>
+
+                <Accordion :is-open="false">
+                    <template #title> Expiration </template>
+                    <template #content>
+                        <div class="col-span-6">
+                            <Label
+                                for="expires_at"
+                                value="Date and Time"
+                                :required="false"
+                            />
+                            <DatePicker
+                                v-model="form.expires_at"
+                                mode="dateTime"
+                            />
+                            <InputError
+                                :message="form.errors.expires_at"
+                                class="mt-2"
+                            />
+                        </div>
+
+                        <div class="col-span-6">
+                            <Label
+                                for="expired_redirect_url"
+                                value="Redirect users to a specific URL"
+                                :required="false"
+                            />
+                            <Input
+                                id="expired_redirect_url"
+                                type="text"
+                                v-model="form.expired_redirect_url"
+                                placeholder="e.g. https://example.com"
+                            />
+                            <InputError
+                                :message="form.errors.expired_redirect_url"
                                 class="mt-2"
                             />
                         </div>

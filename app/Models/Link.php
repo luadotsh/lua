@@ -39,7 +39,9 @@ class Link extends Model
         'clicks',
         'last_click',
         'external_id',
-        'password'
+        'password',
+        'expires_at',
+        'expired_redirect_url'
     ];
 
     /**
@@ -58,16 +60,15 @@ class Link extends Model
     {
         return [
             'last_click' => 'datetime',
+            'expires_at' => 'datetime',
             'os' => Os::class,
         ];
     }
 
-    /**
-     * The accessors to append to the model's array form.
-     *
-     * @var array
-     */
-    protected $appends = [];
+    public function isExpired(): bool
+    {
+        return $this->expires_at && $this->expires_at->isBefore(now());
+    }
 
     public function workspace(): BelongsTo
     {

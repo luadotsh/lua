@@ -60,6 +60,26 @@ it('can create a new link with ios and android', function () {
         ]);
 });
 
+it('can create a new link with expires_at', function () {
+
+    $expiresAt = now()->addDay()->format('Y-m-d H:i:s');
+
+    $response = $this
+        ->withToken($this->token->token)
+        ->post(route('api.links.store'), [
+            'key' => 'new-link',
+            'domain' => 'lua.sh',
+            'url' => 'https://lua.sh',
+            'expires_at' => $expiresAt,
+        ]);
+
+    $response->assertStatus(201)
+        ->assertJsonFragment([
+            'url' => 'https://lua.sh',
+            'expires_at' => $expiresAt,
+        ]);
+});
+
 it('can update a link', function () {
     $link = Link::factory()->create([
         'workspace_id' => $this->user->current_workspace_id,

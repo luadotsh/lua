@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 use App\Http\Requests\Link\CreateRequest;
@@ -22,7 +23,7 @@ class LinkController extends Controller
 {
     public function index(Request $request, $id = null): Response
     {
-        $workspace = $request->user()->currentWorkspace;
+        $workspace = Auth::user()->currentWorkspace;
 
         $query = Link::where('workspace_id', $workspace->id)
             ->with('tags')
@@ -57,8 +58,7 @@ class LinkController extends Controller
 
     public function store(CreateRequest $request)
     {
-        $user = auth()->user();
-        $workspace = $user->currentWorkspace;
+        $workspace = Auth::user()->currentWorkspace;
 
         $response = Gate::inspect('reached-link-limit', $workspace);
         if (!$response->allowed()) {
@@ -82,6 +82,8 @@ class LinkController extends Controller
             'utm_campaign' => $request->utm_campaign,
             'utm_term' => $request->utm_term,
             'utm_content' => $request->utm_content,
+            'expires_at' => $request->expires_at,
+            'expired_redirect_url' => $request->expired_redirect_url,
         ]);
 
         // update tags
@@ -95,7 +97,7 @@ class LinkController extends Controller
 
     public function update($id, UpdateRequest $request)
     {
-        $workspace = $request->user()->currentWorkspace;
+        $workspace = Auth::user()->currentWorkspace;
 
         $link = Link::where('workspace_id', $workspace->id)->where('id', $id)->firstOrFail();
 
@@ -113,6 +115,8 @@ class LinkController extends Controller
             'utm_campaign' => $request->utm_campaign,
             'utm_term' => $request->utm_term,
             'utm_content' => $request->utm_content,
+            'expires_at' => $request->expires_at,
+            'expired_redirect_url' => $request->expired_redirect_url,
         ]);
 
         // update tags
@@ -126,7 +130,7 @@ class LinkController extends Controller
 
     public function destroy($id, Request $request)
     {
-        $workspace = $request->user()->currentWorkspace;
+        $workspace = Auth::user()->currentWorkspace;
 
         $link = Link::where('workspace_id', $workspace->id)->where('id', $id)->firstOrFail();
         $link->delete();

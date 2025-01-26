@@ -144,3 +144,26 @@ it('redirects to the Android URL if the user is on Android', function () {
     $response->assertStatus(302);
     $response->assertRedirect($link->android);
 });
+
+it('expired links without url will return 404', function () {
+    $link = Link::factory()->create([
+        'expires_at' => now()->subDay(),
+        'expired_redirect_url' => null,
+    ]);
+
+    $response = $this->get($link->link);
+
+    $response->assertNotFound();
+});
+
+it('redirects to the expired redirect URL if the link is expired', function () {
+    $link = Link::factory()->create([
+        'expires_at' => now()->subDay(),
+        'expired_redirect_url' => 'https://example.com',
+    ]);
+
+    $response = $this->get($link->link);
+
+    $response->assertStatus(302);
+    $response->assertRedirect($link->expired_redirect_url);
+});

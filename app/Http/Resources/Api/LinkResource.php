@@ -33,6 +33,8 @@ class LinkResource extends JsonResource
             'last_click' => $this->last_click,
             'external_id' => $this->external_id,
             'password' => $this->password,
+            'expires_at' => $this->expires_at ? $this->expires_at->format('Y-m-d H:i:s') : null,
+            'expired_redirect_url' => $this->expired_redirect_url,
             'tags' => TagResource::collection($this->tags),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

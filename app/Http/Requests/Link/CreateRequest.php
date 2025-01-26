@@ -77,6 +77,14 @@ class CreateRequest extends FormRequest
                 fn() => $this->password,
                 ['required', 'string', 'max:255', 'min:6']
             ),
+            'expires_at' => Rule::when(
+                fn() => $this->expires_at || $this->expired_redirect_url,
+                ['required', 'date_format:Y-m-d H:i:s']
+            ),
+            'expired_redirect_url' => Rule::when(
+                fn() => $this->expired_redirect_url,
+                ['nullable', 'url', 'max:255', 'min:2']
+            ),
         ];
     }
 }
