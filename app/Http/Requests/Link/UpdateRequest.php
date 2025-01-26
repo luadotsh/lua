@@ -28,6 +28,7 @@ class UpdateRequest extends FormRequest
                     'required',
                     'string',
                     'max:255',
+                    'regex:/^[a-z0-9-]+$/', // Only lowercase letters, numbers and hyphens
                     Rule::unique('links')->where('domain', $this->domain)->ignore($this->route('id')),
                 ]
             ),
