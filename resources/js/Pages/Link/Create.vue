@@ -23,6 +23,7 @@ const form = useForm({
     android: "",
     expires_at: "",
     expired_redirect_url: "",
+    password: "",
 });
 const show = ref(false);
 
@@ -185,6 +186,29 @@ const store = () => {
                             />
                             <InputError
                                 :message="form.errors.android"
+                                class="mt-2"
+                            />
+                        </div>
+                    </template>
+                </Accordion>
+
+                <Accordion :is-open="false">
+                    <template #title> Link Password </template>
+                    <template #content>
+                        <div class="col-span-6">
+                            <Label
+                                for="password"
+                                value="Password"
+                                :required="false"
+                            />
+                            <Input
+                                id="password"
+                                type="text"
+                                v-model="form.password"
+                                placeholder="Create a password"
+                            />
+                            <InputError
+                                :message="form.errors.password"
                                 class="mt-2"
                             />
                         </div>

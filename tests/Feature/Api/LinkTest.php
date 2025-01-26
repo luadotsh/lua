@@ -107,3 +107,49 @@ it('can delete a link', function () {
 
     $response->assertStatus(200);
 });
+
+it('can create a new link with password', function () {
+    $response = $this
+        ->withToken($this->token->token)
+        ->post(route('api.links.store'), [
+            'key' => 'new-link',
+            'domain' => 'lua.sh',
+            'url' => 'https://lua.sh',
+            'password' => 'password',
+        ]);
+
+    $response->assertStatus(201);
+});
+
+it('can validate password', function () {
+    $link = Link::factory()->create([
+        'workspace_id' => $this->user->current_workspace_id,
+        'password' => 'password',
+    ]);
+
+    $response = $this
+        ->withToken($this->token->token)
+        ->post(route('links.password.validate', $link->key), [
+            'password' => 'password',
+        ]);
+
+    $response->assertRedirect($link->url);
+});
+
+it('can not validate password', function () {
+    $link = Link::factory()->create([
+        'workspace_id' => $this->user->current_workspace_id,
+        'password' => 'password',
+    ]);
+
+    $response = $this
+        ->withToken($this->token->token)
+        ->from(route('links.password', $link->key))
+        ->post(route('links.password.validate', $link->key), [
+            'password' => 'wrong-password',
+        ]);
+
+    $response
+        ->assertSessionHasErrors('password')
+        ->assertRedirect(route('links.password', $link->key));
+});
