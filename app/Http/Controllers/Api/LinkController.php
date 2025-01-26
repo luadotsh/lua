@@ -56,7 +56,9 @@ class LinkController extends Controller
             'utm_campaign' => $request->utm_campaign,
             'utm_term' => $request->utm_term,
             'utm_content' => $request->utm_content,
-            'external_id' => $request->external_id
+            'external_id' => $request->external_id,
+            'expires_at' => $request->expires_at,
+            'expired_redirect_url' => $request->expired_redirect_url,
         ]);
 
         // update tags
@@ -84,7 +86,9 @@ class LinkController extends Controller
             'utm_campaign' => $request->utm_campaign,
             'utm_term' => $request->utm_term,
             'utm_content' => $request->utm_content,
-            'external_id' => $request->external_id
+            'external_id' => $request->external_id,
+            'expires_at' => $request->expires_at,
+            'expired_redirect_url' => $request->expired_redirect_url,
         ]);
 
         // update tags

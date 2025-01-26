@@ -45,9 +45,22 @@ class RedirectController extends Controller
             $request->header('Referer')
         );
 
+
         /**
-         * If the link has an iOS or Android redirect URL, we need to check the user's OS
-         * and redirect to the appropriate URL.
+         * Expired Links
+         */
+        if ($link->isExpired()) {
+
+            // If has expired redirect URL, redirect to it.
+            if ($link->expired_redirect_url) {
+                return redirect($link->expired_redirect_url, 302);
+            }
+
+            return abort(404);
+        }
+
+        /**
+         * If has iOS or Android redirect URL, check the user's OS and redirect to the appropriate URL.
          */
         if ($link->ios || $link->android) {
             $service = new UserAgentService();
