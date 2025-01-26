@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-
 use App\Http\Requests\Link\CreateRequest;
 use App\Http\Requests\Link\UpdateRequest;
 
@@ -52,7 +51,12 @@ class LinkController extends Controller
             'hasData' => Link::where('workspace_id', $workspace->id)->exists(),
             'domains' => array_merge($domains, config('domains.available')),
             'tags' => Tag::where('workspace_id', $workspace->id)->get(),
-            'link' => $id ? Link::where('workspace_id', $workspace->id)->where('id', $id)->with('tags')->firstOrFail() : null,
+            'link' => $id ? Link::where('workspace_id', $workspace->id)
+                ->where('id', $id)
+                ->with('tags')
+                ->firstOrFail()
+                ->makeVisible('password')
+                : null,
         ]);
     }
 
@@ -82,6 +86,7 @@ class LinkController extends Controller
             'utm_campaign' => $request->utm_campaign,
             'utm_term' => $request->utm_term,
             'utm_content' => $request->utm_content,
+            'password' => $request->password,
             'expires_at' => $request->expires_at,
             'expired_redirect_url' => $request->expired_redirect_url,
         ]);
@@ -115,6 +120,7 @@ class LinkController extends Controller
             'utm_campaign' => $request->utm_campaign,
             'utm_term' => $request->utm_term,
             'utm_content' => $request->utm_content,
+            'password' => $request->password,
             'expires_at' => $request->expires_at,
             'expired_redirect_url' => $request->expired_redirect_url,
         ]);

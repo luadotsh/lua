@@ -12,13 +12,15 @@ use Illuminate\Http\Request;
 
 use App\Enums\Link\Os;
 
+use Inertia\Inertia;
+
 use App\Jobs\ProcessLinkStat;
 
 use App\Models\Link;
 
 class RedirectController extends Controller
 {
-    public function __invoke(Request $request, $key = null): RedirectResponse
+    public function redirect(Request $request, $key = null): RedirectResponse
     {
         $link = Link::where('link', $request->url())
             ->with('workspace')
@@ -44,6 +46,13 @@ class RedirectController extends Controller
             $utms,
             $request->header('Referer')
         );
+
+        /**
+         * Link Password
+         */
+        if ($link->password) {
+            return redirect(route('links.password', $link->key));
+        }
 
 
         /**
@@ -76,5 +85,28 @@ class RedirectController extends Controller
         }
 
         return redirect($link->url, 302);
+    }
+
+    public function password(Request $request, $key)
+    {
+        $link = Link::where('key', $key)
+            ->firstOrFail();
+
+        return Inertia::render('Link/Password', [
+            'link' => $link,
+        ]);
+    }
+
+    public function validatePassword(Request $request, $key)
+    {
+        $link = Link::where('key', $key)->firstOrFail();
+
+        if ($request->password === $link->password) {
+            return Inertia::location($link->url);
+        }
+
+        return back()->withErrors([
+            'password' => 'The password is incorrect.'
+        ]);
     }
 }

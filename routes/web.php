@@ -117,4 +117,7 @@ Route::group(
 
 require __DIR__.'/auth.php';
 
-Route::get('/{key?}', RedirectController::class)->name('links.redirect')->middleware(['custom-domain']);
+// links
+Route::get('/{key}/password', [RedirectController::class, 'password'])->name('links.password')->middleware(['custom-domain']);
+Route::post('/{key}/password', [RedirectController::class, 'validatePassword'])->name('links.password.validate')->middleware(['custom-domain']);
+Route::get('/{key?}', [RedirectController::class, 'redirect'])->name('links.redirect')->middleware(['custom-domain']);
