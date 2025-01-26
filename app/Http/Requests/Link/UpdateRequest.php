@@ -80,7 +80,7 @@ class UpdateRequest extends FormRequest
             ),
             'expires_at' => Rule::when(
                 fn() => $this->expires_at || $this->expired_redirect_url,
-                ['required', 'date_format:Y-m-d H:i:s']
+                ['required', 'date']
             ),
             'expired_redirect_url' => Rule::when(
                 fn() => $this->expired_redirect_url,
