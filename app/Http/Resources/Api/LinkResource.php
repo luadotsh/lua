@@ -36,8 +36,8 @@ class LinkResource extends JsonResource
             'expires_at' => $this->expires_at ? $this->expires_at->format('Y-m-d H:i:s') : null,
             'expired_redirect_url' => $this->expired_redirect_url,
             'tags' => TagResource::collection($this->tags),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
+            'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
         ];
     }
 }
