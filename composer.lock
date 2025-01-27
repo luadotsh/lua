@@ -1026,16 +1026,16 @@
         },
         {
             "name": "firebase/php-jwt",
-            "version": "v6.10.2",
+            "version": "v6.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/firebase/php-jwt.git",
-                "reference": "30c19ed0f3264cb660ea496895cfb6ef7ee3653b"
+                "reference": "8f718f4dfc9c5d5f0c994cdfd103921b43592712"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/30c19ed0f3264cb660ea496895cfb6ef7ee3653b",
-                "reference": "30c19ed0f3264cb660ea496895cfb6ef7ee3653b",
+                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/8f718f4dfc9c5d5f0c994cdfd103921b43592712",
+                "reference": "8f718f4dfc9c5d5f0c994cdfd103921b43592712",
                 "shasum": ""
             },
             "require": {
@@ -1083,9 +1083,9 @@
             ],
             "support": {
                 "issues": "https://github.com/firebase/php-jwt/issues",
-                "source": "https://github.com/firebase/php-jwt/tree/v6.10.2"
+                "source": "https://github.com/firebase/php-jwt/tree/v6.11.0"
             },
-            "time": "2024-11-24T11:22:49+00:00"
+            "time": "2025-01-23T05:11:06+00:00"
         },
         {
             "name": "fruitcake/php-cors",
@@ -2351,16 +2351,16 @@
         },
         {
             "name": "laravel/socialite",
-            "version": "v5.16.1",
+            "version": "v5.17.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/socialite.git",
-                "reference": "4e5be83c0b3ecf81b2ffa47092e917d1f79dce71"
+                "reference": "77be8be7ee5099aed8ca7cfddc1bf6f9ab3fc159"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/socialite/zipball/4e5be83c0b3ecf81b2ffa47092e917d1f79dce71",
-                "reference": "4e5be83c0b3ecf81b2ffa47092e917d1f79dce71",
+                "url": "https://api.github.com/repos/laravel/socialite/zipball/77be8be7ee5099aed8ca7cfddc1bf6f9ab3fc159",
+                "reference": "77be8be7ee5099aed8ca7cfddc1bf6f9ab3fc159",
                 "shasum": ""
             },
             "require": {
@@ -2419,7 +2419,7 @@
                 "issues": "https://github.com/laravel/socialite/issues",
                 "source": "https://github.com/laravel/socialite"
             },
-            "time": "2024-12-11T16:43:51+00:00"
+            "time": "2025-01-17T15:17:00+00:00"
         },
         {
             "name": "laravel/tinker",
