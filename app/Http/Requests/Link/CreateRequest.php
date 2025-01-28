@@ -7,6 +7,9 @@ namespace App\Http\Requests\Link;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+use App\Models\Domain;
+use App\Enums\DomainStatus;
+
 class CreateRequest extends FormRequest
 {
     /**
@@ -21,6 +24,17 @@ class CreateRequest extends FormRequest
      */
     public function rules(): array
     {
+        $workspaceDomains = $this
+            ->workspace
+            ?->domains
+            ?->pluck('domain')
+            ?->toArray() ?? [];
+
+        $domains = array_merge(
+            $workspaceDomains,
+            config('domains.available')
+        );
+
         return [
             'key' => Rule::when(
                 fn() => $this->key,
@@ -38,6 +52,7 @@ class CreateRequest extends FormRequest
                 'string',
                 'max:255',
                 'min:2',
+                Rule::in($domains),
                 Rule::unique('links')->where('key', $this->key)->ignore($this->route('id')),
             ],
             'url' => ['required', 'url', 'max:255', 'min:2'],

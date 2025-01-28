@@ -24,7 +24,7 @@ it('can list links', function () {
 
     $response = $this
         ->withToken($this->token->token)
-        ->get(route('api.links.index'));
+        ->json('GET', route('api.links.index'));
 
     $response->assertStatus(200)
         ->assertJsonCount(10, 'data');
@@ -33,9 +33,9 @@ it('can list links', function () {
 it('can create a new link', function () {
     $response = $this
         ->withToken($this->token->token)
-        ->post(route('api.links.store'), [
+        ->json('POST', route('api.links.store'), [
             'key' => 'new-link',
-            'domain' => 'lua.sh',
+            'domain' => config('domains.main'),
             'url' => 'https://lua.sh',
         ]);
 
@@ -45,9 +45,9 @@ it('can create a new link', function () {
 it('can create a new link with ios and android', function () {
     $response = $this
         ->withToken($this->token->token)
-        ->post(route('api.links.store'), [
+        ->json('POST', route('api.links.store'), [
             'key' => 'new-link',
-            'domain' => 'lua.sh',
+            'domain' => config('domains.main'),
             'url' => 'https://lua.sh',
             'ios' => 'https://apps.apple.com/app/333903271',
             'android' => 'https://play.google.com/store/apps/details?id=com.twitter.android',
@@ -66,9 +66,9 @@ it('can create a new link with expires_at', function () {
 
     $response = $this
         ->withToken($this->token->token)
-        ->post(route('api.links.store'), [
+        ->json('POST', route('api.links.store'), [
             'key' => 'new-link',
-            'domain' => 'lua.sh',
+            'domain' => config('domains.main'),
             'url' => 'https://lua.sh',
             'expires_at' => $expiresAt,
         ]);
@@ -87,13 +87,49 @@ it('can update a link', function () {
 
     $response = $this
         ->withToken($this->token->token)
-        ->put(route('api.links.update', $link->id), [
+        ->json('PUT', route('api.links.update', $link->id), [
             'key' => 'updated-link',
-            'domain' => 'lua.sh',
+            'domain' => config('domains.main'),
             'url' => 'https://lua.sh',
         ]);
 
     $response->assertStatus(200);
+});
+
+it('can not update a link with invalid domain served by lua', function () {
+    $response = $this
+        ->withToken($this->token->token)
+        ->json('PUT', route('api.links.update', 999999999), [
+            'key' => 'updated-link',
+            'domain' => 'lua.com',
+            'url' => 'https://lua.sh',
+        ]);
+
+    $response->assertStatus(422);
+});
+
+it('can not update a link with invalid custom domain', function () {
+    $response = $this
+        ->withToken($this->token->token)
+        ->json('PUT', route('api.links.update', 999999999), [
+            'key' => 'updated-link',
+            'domain' => 'track.company.com',
+            'url' => 'https://lua.sh',
+        ]);
+
+    $response->assertStatus(422);
+});
+
+it('can not update a link that does not exist', function () {
+    $response = $this
+        ->withToken($this->token->token)
+        ->json('PUT', route('api.links.update', 999999999), [
+            'key' => 'updated-link',
+            'domain' => config('domains.main'),
+            'url' => 'https://lua.sh',
+        ]);
+
+    $response->assertStatus(404);
 });
 
 it('can delete a link', function () {
@@ -103,17 +139,25 @@ it('can delete a link', function () {
 
     $response = $this
         ->withToken($this->token->token)
-        ->delete(route('api.links.destroy', $link->id));
+        ->json('DELETE', route('api.links.destroy', $link->id));
 
     $response->assertStatus(200);
+});
+
+it('can not delete a link that does not exist', function () {
+    $response = $this
+        ->withToken($this->token->token)
+        ->json('DELETE', route('api.links.destroy', 999999999));
+
+    $response->assertStatus(404);
 });
 
 it('can create a new link with password', function () {
     $response = $this
         ->withToken($this->token->token)
-        ->post(route('api.links.store'), [
+        ->json('POST', route('api.links.store'), [
             'key' => 'new-link',
-            'domain' => 'lua.sh',
+            'domain' => config('domains.main'),
             'url' => 'https://lua.sh',
             'password' => 'password',
         ]);
@@ -129,7 +173,7 @@ it('can validate password', function () {
 
     $response = $this
         ->withToken($this->token->token)
-        ->post(route('links.password.validate', $link->key), [
+        ->json('POST', route('links.password.validate', $link->key), [
             'password' => 'password',
         ]);
 
@@ -145,11 +189,36 @@ it('can not validate password', function () {
     $response = $this
         ->withToken($this->token->token)
         ->from(route('links.password', $link->key))
-        ->post(route('links.password.validate', $link->key), [
+        ->json('POST', route('links.password.validate', $link->key), [
             'password' => 'wrong-password',
         ]);
 
     $response
         ->assertSessionHasErrors('password')
         ->assertRedirect(route('links.password', $link->key));
+});
+
+
+it('can not create a new link with invalid domain served by lua', function () {
+    $response = $this
+        ->withToken($this->token->token)
+        ->json('POST', route('api.links.store'), [
+            'key' => 'new-link',
+            'domain' => 'lua.com',
+            'url' => 'https://lua.sh',
+        ]);
+
+    $response->assertStatus(422);
+});
+
+it('can not create a new link with invalid custom domain', function () {
+    $response = $this
+        ->withToken($this->token->token)
+        ->json('POST', route('api.links.store'), [
+            'key' => 'new-link',
+            'domain' => 'track.company.com',
+            'url' => 'https://lua.sh',
+        ]);
+
+    $response->assertStatus(422);
 });

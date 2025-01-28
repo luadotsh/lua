@@ -21,6 +21,17 @@ class UpdateRequest extends FormRequest
      */
     public function rules(): array
     {
+        $workspaceDomains = $this
+            ->workspace
+            ?->domains
+            ?->pluck('domain')
+            ?->toArray() ?? [];
+
+        $domains = array_merge(
+            $workspaceDomains,
+            config('domains.available')
+        );
+
         return [
             'key' => Rule::when(
                 fn() => $this->key,
@@ -38,6 +49,7 @@ class UpdateRequest extends FormRequest
                 'string',
                 'max:255',
                 'min:2',
+                Rule::in($domains),
                 Rule::unique('links')->where('key', $this->key)->ignore($this->route('id')),
             ],
             'url' => ['required', 'url', 'max:255', 'min:2'],

@@ -41,7 +41,7 @@ it('cannot create a link without url', function () {
         ->actingAs($this->user)
         ->from(route('links.index'))
         ->post(route('links.store'), [
-            'domain' => 'lua.sh',
+            'domain' => config('domains.main'),
             'key' => 'new-link',
             'url' => null,
         ]);
