@@ -7,7 +7,7 @@ Whether you're an individual looking for branded, trackable links or a business 
 ## 🌟 Features
 
 - 🌐 **Shorten URLs**: Quickly shorten long URLs with an intuitive interface.
-- 📊 **Detailed Analytics**: Track clicks, referrers, devices, geolocation, and more with a comprehensive dashboard.
+- 📊 **Detailed Analytics**: Track clicks, referers, devices, geolocation, and more with a comprehensive dashboard.
 - ⚡ **Custom Domains**: Add and manage custom domains to create branded URLs.
 - 🔗 **Custom URL Slugs**: Personalize your links with memorable, custom slugs.
 - 📱 **Responsive Design**: Enjoy a mobile-friendly front end built with Vue 3 and TailwindCSS.

@@ -101,7 +101,7 @@ const columns = reactive([
     },
     {
         key: "referer",
-        label: "Referrer",
+        label: "Referer",
         show: false,
     },
 ]);

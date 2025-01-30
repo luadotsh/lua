@@ -15,11 +15,11 @@ const { range } = defineProps({
     range: Object,
 });
 
-const tabNames = ["Referrer"];
-const tabs = { Referrer, Medium, Source, Campaign, Content, Term };
+const tabNames = ["Referer"];
+const tabs = { Referer, Medium, Source, Campaign, Content, Term };
 const tab = ref("Referer");
 const campaigns = [
-    "Referrer",
+    "Referer",
     "Medium",
     "Source",
     "Campaign",
@@ -38,7 +38,7 @@ const setTab = (value) => {
             :currentTab="tab"
             :tabs="tabNames"
             @update="setTab"
-            title="Referrers"
+            title="Referers"
         >
             <template #left>
                 <Menu as="div" class="relative z-20 inline-block text-left">
@@ -47,12 +47,12 @@ const setTab = (value) => {
                             :class="{
                                 'cursor-pointer flex items-center capitalize text-xs font-medium rounded-md px-3 py-1.5 border': true,
                                 'border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-300':
-                                    tab !== 'Referrer',
+                                    tab !== 'Referer',
                                 'text-zinc-600 dark:text-zinc-400 border-transparent':
-                                    tab === 'Referrer',
+                                    tab === 'Referer',
                             }"
                         >
-                            {{ tab == "Referrer" ? "All " : tab }}
+                            {{ tab == "Referer" ? "All " : tab }}
                             <PhCaretDown
                                 class="w-4 h-4 ml-1"
                                 aria-hidden="true"
