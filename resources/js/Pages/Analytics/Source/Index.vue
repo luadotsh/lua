@@ -15,11 +15,11 @@ const { range } = defineProps({
     range: Object,
 });
 
-const tabNames = ["Referer"];
-const tabs = { Referer, Medium, Source, Campaign, Content, Term };
+const tabNames = ["Referrer"];
+const tabs = { Referrer, Medium, Source, Campaign, Content, Term };
 const tab = ref("Referer");
 const campaigns = [
-    "Referer",
+    "Referrer",
     "Medium",
     "Source",
     "Campaign",
@@ -38,38 +38,38 @@ const setTab = (value) => {
             :currentTab="tab"
             :tabs="tabNames"
             @update="setTab"
-            title="Referers"
+            title="Referrers"
         >
             <template #left>
-                <Menu as="div" class="relative inline-block text-left z-20">
+                <Menu as="div" class="relative z-20 inline-block text-left">
                     <div>
                         <MenuButton
                             :class="{
                                 'cursor-pointer flex items-center capitalize text-xs font-medium rounded-md px-3 py-1.5 border': true,
                                 'border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-300':
-                                    tab !== 'Referer',
+                                    tab !== 'Referrer',
                                 'text-zinc-600 dark:text-zinc-400 border-transparent':
-                                    tab === 'Referer',
+                                    tab === 'Referrer',
                             }"
                         >
-                            {{ tab == "Referer" ? "All " : tab }}
+                            {{ tab == "Referrer" ? "All " : tab }}
                             <PhCaretDown
-                                class="h-4 w-4 ml-1"
+                                class="w-4 h-4 ml-1"
                                 aria-hidden="true"
                             />
                         </MenuButton>
                     </div>
 
                     <transition
-                        enter-active-class="transition ease-out duration-100"
-                        enter-from-class="transform opacity-0 scale-95"
-                        enter-to-class="transform opacity-100 scale-100"
-                        leave-active-class="transition ease-in duration-75"
-                        leave-from-class="transform opacity-100 scale-100"
-                        leave-to-class="transform opacity-0 scale-95"
+                        enter-active-class="transition duration-100 ease-out"
+                        enter-from-class="transform scale-95 opacity-0"
+                        enter-to-class="transform scale-100 opacity-100"
+                        leave-active-class="transition duration-75 ease-in"
+                        leave-from-class="transform scale-100 opacity-100"
+                        leave-to-class="transform scale-95 opacity-0"
                     >
                         <MenuItems
-                            class="absolute right-0 z-10 mt-2 w-36 origin-top-right divide-y divide-zinc-100 dark:divide-zinc-700 rounded-md bg-white dark:bg-zinc-900 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                            class="absolute right-0 z-10 mt-2 origin-top-right bg-white divide-y rounded-md shadow-lg w-36 divide-zinc-100 dark:divide-zinc-700 dark:bg-zinc-900 ring-1 ring-black ring-opacity-5 focus:outline-none"
                         >
                             <div class="p-1">
                                 <MenuItem
