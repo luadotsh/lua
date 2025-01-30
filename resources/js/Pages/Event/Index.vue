@@ -132,24 +132,24 @@ const refresh = (value) => {
             />
         </template>
         <div class="space-y-4">
-            <div class="mx-auto grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div class="grid grid-cols-1 gap-4 mx-auto sm:grid-cols-2">
                 <ChartClick
                     :range="range"
-                    class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 bg-white dark:bg-zinc-800 px-4 py-4"
+                    class="flex flex-wrap items-baseline justify-between px-4 py-4 bg-white gap-x-4 gap-y-2 dark:bg-zinc-800"
                 />
                 <ChartQR
                     :range="range"
-                    class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 bg-white dark:bg-zinc-800 px-4 py-4"
+                    class="flex flex-wrap items-baseline justify-between px-4 py-4 bg-white gap-x-4 gap-y-2 dark:bg-zinc-800"
                 />
             </div>
 
             <div
-                class="border border-zinc-200 dark:border-zinc-700 rounded-lg overflow-hidden"
+                class="overflow-hidden border rounded-lg border-zinc-200 dark:border-zinc-700"
             >
                 <div class="px-4 sm:px-0">
                     <div class="flex flex-col">
                         <div
-                            class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8"
+                            class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8"
                         >
                             <div
                                 class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8"
