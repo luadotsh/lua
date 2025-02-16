@@ -30,7 +30,7 @@ class CreateRequest extends FormRequest
     public function messages()
     {
         return [
-            'domain.regex' => 'The domain format is invalid.',
+            'domain.regex' => 'The domain format is invalid, do not include schema at the beginning of the domain.',
             'domain.unique' => 'The domain has already been taken.',
             'domain.not_in' => 'The domain is not allowed.',
         ];

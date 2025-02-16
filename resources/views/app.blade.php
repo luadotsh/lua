@@ -14,7 +14,6 @@
 
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
-
     <!-- Scripts -->
     @routes
     @vite('resources/js/app.js')

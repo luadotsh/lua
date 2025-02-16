@@ -42,12 +42,17 @@ const store = () => {
         <template #content>
             <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
                 <div class="sm:col-span-6">
-                    <Label for="domain" value="Domain" :required="true" />
+                    <Label
+                        for="domain"
+                        value="Domain"
+                        :required="true"
+                        tooltip="Do not include schema at the beginning of the domain."
+                    />
                     <Input
                         id="domain"
                         type="text"
                         v-model="form.domain"
-                        placeholder="go.example.com"
+                        placeholder="marketing.domain.com"
                     />
                     <InputError :message="form.errors.domain" class="mt-2" />
                 </div>
