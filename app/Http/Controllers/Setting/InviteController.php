@@ -25,14 +25,14 @@ class InviteController extends Controller
 
     public function store(InviteRequest $request)
     {
-        $response = Gate::inspect('reached-user-limit', $request->workspace);
+        $workspace = auth()->user()->currentWorkspace;
+
+        $response = Gate::inspect('reached-user-limit', $workspace);
         if (!$response->allowed()) {
             session()->flash('flash.banner', 'You have reached the limit of team members, please upgrade your plan.');
             session()->flash('flash.bannerStyle', 'danger');
             return redirect()->route('setting.team-members.index');
         }
-
-        $workspace = auth()->user()->currentWorkspace;
 
         // check if email already exist
         $user = User::where('email', $request->email)->first();

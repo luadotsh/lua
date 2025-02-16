@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Setting;
 use App\Http\Requests\Domain\CreateRequest;
 use App\Http\Requests\Domain\UpdateRequest;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -19,7 +20,7 @@ class DomainController extends Controller
 {
     public function index()
     {
-        $domains = Domain::where('workspace_id', auth()->user()->currentWorkspace->id)->get();
+        $domains = Domain::where('workspace_id', Auth::user()->currentWorkspace->id)->get();
 
         return Inertia::render('Setting/Domain/Index', [
             'domains' => $domains,
@@ -29,7 +30,9 @@ class DomainController extends Controller
 
     public function store(CreateRequest $request)
     {
-        $response = Gate::inspect('reached-domain-limit', $request->workspace);
+        $workspace = Auth::user()->currentWorkspace;
+
+        $response = Gate::inspect('reached-domain-limit', $workspace);
         if (!$response->allowed()) {
             session()->flash('flash.banner', 'You have reached the limit of domains, please upgrade your plan.');
             session()->flash('flash.bannerStyle', 'danger');
@@ -37,7 +40,7 @@ class DomainController extends Controller
         }
 
         Domain::create([
-            'workspace_id' => auth()->user()->currentWorkspace->id,
+            'workspace_id' => $workspace->id,
             'domain' => $request->domain,
             'status' => Status::PENDING,
             'not_found_url' => $request->not_found_url,
@@ -52,7 +55,7 @@ class DomainController extends Controller
 
     public function update(UpdateRequest $request, $id)
     {
-        $domain = Domain::where('id', $id)->where('workspace_id', auth()->user()->currentWorkspace->id)->firstOrFail();
+        $domain = Domain::where('id', $id)->where('workspace_id', Auth::user()->currentWorkspace->id)->firstOrFail();
         $domain->domain = $request->domain;
         $domain->not_found_url = $request->not_found_url;
         $domain->expired_url = $request->expired_url;
@@ -71,7 +74,7 @@ class DomainController extends Controller
 
     public function destroy($id)
     {
-        $domain = Domain::where('workspace_id', auth()->user()->currentWorkspace->id)->where('id', $id)->firstOrFail();
+        $domain = Domain::where('workspace_id', Auth::user()->currentWorkspace->id)->where('id', $id)->firstOrFail();
         $domain->delete();
 
         session()->flash('flash.banner', 'Domain deleted successful.');
@@ -82,7 +85,7 @@ class DomainController extends Controller
 
     public function validateDns($id, Request $request)
     {
-        $workspace = auth()->user()->currentWorkspace;
+        $workspace = Auth::user()->currentWorkspace;
 
         $domain = Domain::where('workspace_id', $workspace->id)->where('id', $id)->firstOrFail();
 

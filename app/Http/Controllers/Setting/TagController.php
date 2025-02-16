@@ -25,7 +25,10 @@ class TagController extends Controller
 
     public function store(Request $request)
     {
-        $response = Gate::inspect('reached-tag-limit', $request->workspace);
+
+        $workspace = auth()->user()->currentWorkspace;
+
+        $response = Gate::inspect('reached-tag-limit', $workspace);
         if (!$response->allowed()) {
             session()->flash('flash.banner', 'You have reached the limit of tags, please upgrade your plan.');
             session()->flash('flash.bannerStyle', 'danger');
@@ -36,8 +39,6 @@ class TagController extends Controller
             'name' => ['required', 'max:255'],
             'color' => ['required', 'max:255'],
         ]);
-
-        $workspace = auth()->user()->currentWorkspace;
 
         $label = new Tag;
         $label->workspace_id = $workspace->id;
