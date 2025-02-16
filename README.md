@@ -7,7 +7,7 @@ Whether you're an individual looking for branded, trackable links or a business 
 ## 🌟 Features
 
 - 🌐 **Shorten URLs**: Quickly shorten long URLs with an intuitive interface.
-- 📊 **Detailed Analytics**: Track clicks, referrers, devices, geolocation, and more with a comprehensive dashboard.
+- 📊 **Detailed Analytics**: Track clicks, referers, devices, geolocation, and more with a comprehensive dashboard.
 - ⚡ **Custom Domains**: Add and manage custom domains to create branded URLs.
 - 🔗 **Custom URL Slugs**: Personalize your links with memorable, custom slugs.
 - 📱 **Responsive Design**: Enjoy a mobile-friendly front end built with Vue 3 and TailwindCSS.
@@ -61,6 +61,7 @@ For self-hosting or local development, please check the [Self Hosting](https://d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/paulocastellano"><img src="https://avatars.githubusercontent.com/u/265964?v=4?s=100" width="100px;" alt="Paulo Castellano"/><br /><sub><b>Paulo Castellano</b></sub></a><br /><a href="https://github.com/luadotsh/lua/commits?author=paulocastellano" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://conferencias.dev/"><img src="https://avatars.githubusercontent.com/u/6404401?v=4?s=100" width="100px;" alt="Victor Gazotti"/><br /><sub><b>Victor Gazotti</b></sub></a><br /><a href="https://github.com/luadotsh/lua/commits?author=Arkanius" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://muhammadsaim.com"><img src="https://avatars.githubusercontent.com/u/19898499?v=4?s=100" width="100px;" alt="Muhammad Saim"/><br /><sub><b>Muhammad Saim</b></sub></a><br /><a href="https://github.com/luadotsh/lua/commits?author=MuhammadSaim" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://promium.pro"><img src="https://avatars.githubusercontent.com/u/6384282?v=4?s=100" width="100px;" alt="Ibon Azkoitia"/><br /><sub><b>Ibon Azkoitia</b></sub></a><br /><a href="https://github.com/luadotsh/lua/commits?author=IbonAzkoitia" title="Code">💻</a></td>
     </tr>
   </tbody>
   <tfoot>
