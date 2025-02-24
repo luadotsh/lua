@@ -1854,16 +1854,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v11.42.1",
+            "version": "v11.44.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "ff392f42f6c55cc774ce75553a11c6b031da67f8"
+                "reference": "e9a33da34815ac1ed46c7e4c477a775f4592f0a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/ff392f42f6c55cc774ce75553a11c6b031da67f8",
-                "reference": "ff392f42f6c55cc774ce75553a11c6b031da67f8",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/e9a33da34815ac1ed46c7e4c477a775f4592f0a7",
+                "reference": "e9a33da34815ac1ed46c7e4c477a775f4592f0a7",
                 "shasum": ""
             },
             "require": {
@@ -2065,29 +2065,29 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2025-02-12T20:58:18+00:00"
+            "time": "2025-02-24T13:08:54+00:00"
         },
         {
             "name": "laravel/horizon",
-            "version": "v5.30.2",
+            "version": "v5.30.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/horizon.git",
-                "reference": "baef526f036717b0090754cbd9c9b67f879739fd"
+                "reference": "7b9ee870bf0e425b956fd0433f616f98fe951f72"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/horizon/zipball/baef526f036717b0090754cbd9c9b67f879739fd",
-                "reference": "baef526f036717b0090754cbd9c9b67f879739fd",
+                "url": "https://api.github.com/repos/laravel/horizon/zipball/7b9ee870bf0e425b956fd0433f616f98fe951f72",
+                "reference": "7b9ee870bf0e425b956fd0433f616f98fe951f72",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "ext-pcntl": "*",
                 "ext-posix": "*",
-                "illuminate/contracts": "^9.21|^10.0|^11.0",
-                "illuminate/queue": "^9.21|^10.0|^11.0",
-                "illuminate/support": "^9.21|^10.0|^11.0",
+                "illuminate/contracts": "^9.21|^10.0|^11.0|^12.0",
+                "illuminate/queue": "^9.21|^10.0|^11.0|^12.0",
+                "illuminate/support": "^9.21|^10.0|^11.0|^12.0",
                 "nesbot/carbon": "^2.17|^3.0",
                 "php": "^8.0",
                 "ramsey/uuid": "^4.0",
@@ -2098,9 +2098,9 @@
             },
             "require-dev": {
                 "mockery/mockery": "^1.0",
-                "orchestra/testbench": "^7.0|^8.0|^9.0",
+                "orchestra/testbench": "^7.0|^8.0|^9.0|^10.0",
                 "phpstan/phpstan": "^1.10",
-                "phpunit/phpunit": "^9.0|^10.4",
+                "phpunit/phpunit": "^9.0|^10.4|^11.5",
                 "predis/predis": "^1.1|^2.0"
             },
             "suggest": {
@@ -2143,9 +2143,9 @@
             ],
             "support": {
                 "issues": "https://github.com/laravel/horizon/issues",
-                "source": "https://github.com/laravel/horizon/tree/v5.30.2"
+                "source": "https://github.com/laravel/horizon/tree/v5.30.3"
             },
-            "time": "2025-01-13T16:51:22+00:00"
+            "time": "2025-02-11T13:52:50+00:00"
         },
         {
             "name": "laravel/prompts",
@@ -3505,16 +3505,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "3.8.5",
+            "version": "3.8.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CarbonPHP/carbon.git",
-                "reference": "b1a53a27898639579a67de42e8ced5d5386aa9a4"
+                "reference": "ff2f20cf83bd4d503720632ce8a426dc747bf7fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CarbonPHP/carbon/zipball/b1a53a27898639579a67de42e8ced5d5386aa9a4",
-                "reference": "b1a53a27898639579a67de42e8ced5d5386aa9a4",
+                "url": "https://api.github.com/repos/CarbonPHP/carbon/zipball/ff2f20cf83bd4d503720632ce8a426dc747bf7fd",
+                "reference": "ff2f20cf83bd4d503720632ce8a426dc747bf7fd",
                 "shasum": ""
             },
             "require": {
@@ -3607,7 +3607,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-02-11T16:28:45+00:00"
+            "time": "2025-02-20T17:33:38+00:00"
         },
         {
             "name": "nette/schema",
