@@ -17,7 +17,7 @@
     "axios": "^1.7.4",
     "concurrently": "^9.0.1",
     "husky": "^9.1.6",
-    "laravel-echo": "^1.16.1",
+    "laravel-echo": "^2.0.2",
     "laravel-vite-plugin": "^1.0",
     "postcss": "^8.4.31",
     "pusher-js": "^8.4.0-rc2",
