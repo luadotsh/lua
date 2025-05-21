@@ -596,7 +596,7 @@
 		},
 		{
 			"key": "API_TOKEN",
-			"value": "d2182184-d722-48d4-84b0-9826b090c3dc",
+			"value": "YOUR_API_TOKEN_HERE",
 			"type": "string"
 		}
 	]
