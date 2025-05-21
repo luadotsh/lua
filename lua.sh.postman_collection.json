@@ -1,0 +1,603 @@
+{
+	"info": {
+		"_postman_id": "ad625805-901d-42d6-af26-9085a202793f",
+		"name": "lua.sh",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "6097401"
+	},
+	"item": [
+		{
+			"name": "Links",
+			"item": [
+				{
+					"name": "All Links",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/links",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"links"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Link",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/links/9dfaab18-ad35-4f30-9038-53bab26e1147",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"links",
+								"9dfaab18-ad35-4f30-9038-53bab26e1147"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Link",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"key\": \"ab-67cdw34\", // Slug for the short URL (only lowercase letters, numbers, and hyphens).\n    \"domain\": \"lua.sh\", // The domain to use for the short link. Must be one of: lua.sh, git.now, cal.now, fig.now, spoti.now, or a custom domain from your workspace.\n    \"url\": \"https://github.com/MuhammadSaim/lua\", // The original URL to be shortened.\n    \"ios\": \"\", // (Optional) Redirect URL specifically for iOS users.\n    \"android\": \"\", // (Optional) Redirect URL specifically for Android users.\n    \"utm_source\": \"\", // (Optional) UTM parameter to identify the source of the traffic (e.g., newsletter, Facebook).\n    \"utm_medium\": \"\", // (Optional) UTM parameter to identify the marketing medium (e.g., email, CPC).\n    \"utm_campaign\": \"\", // (Optional) UTM parameter to identify a specific campaign (e.g., summer_sale).\n    \"utm_term\": \"\", // (Optional) UTM parameter for paid search keywords.\n    \"utm_content\": \"\", // (Optional) UTM parameter to differentiate similar content or links within the same ad.\n    \"tags\": [], // (Optional) Array of tag IDs to categorize or filter links.\n    \"external_id\": \"\", // (Optional) Custom ID from an external system for reference or integration purposes.\n    \"password\": \"\", // (Optional) Password to restrict access to the short URL.\n    \"expires_at\": \"\", // (Optional) Date/time when the short URL should expire. Format: ISO 8601 (e.g., 2025-12-31T23:59:59Z).\n    \"expired_redirect_url\": \"\" // (Optional) URL to redirect to after expiration instead of showing a 404 or expired message.\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/links",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"links"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Link",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"key\": \"ab-67cdw34\", // Slug for the short URL (only lowercase letters, numbers, and hyphens).\n    \"domain\": \"lua.sh\", // The domain to use for the short link. Must be one of: lua.sh, git.now, cal.now, fig.now, spoti.now, or a custom domain from your workspace.\n    \"url\": \"https://github.com/MuhammadSaim/lua\", // The original URL to be shortened.\n    \"ios\": \"\", // (Optional) Redirect URL specifically for iOS users.\n    \"android\": \"\", // (Optional) Redirect URL specifically for Android users.\n    \"utm_source\": \"\", // (Optional) UTM parameter to identify the source of the traffic (e.g., newsletter, Facebook).\n    \"utm_medium\": \"\", // (Optional) UTM parameter to identify the marketing medium (e.g., email, CPC).\n    \"utm_campaign\": \"\", // (Optional) UTM parameter to identify a specific campaign (e.g., summer_sale).\n    \"utm_term\": \"\", // (Optional) UTM parameter for paid search keywords.\n    \"utm_content\": \"\", // (Optional) UTM parameter to differentiate similar content or links within the same ad.\n    \"tags\": [], // (Optional) Array of tag IDs to categorize or filter links.\n    \"external_id\": \"\", // (Optional) Custom ID from an external system for reference or integration purposes.\n    \"password\": \"\", // (Optional) Password to restrict access to the short URL.\n    \"expires_at\": \"\", // (Optional) Date/time when the short URL should expire. Format: ISO 8601 (e.g., 2025-12-31T23:59:59Z).\n    \"expired_redirect_url\": \"\" // (Optional) URL to redirect to after expiration instead of showing a 404 or expired message.\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/links/9ec9d94d-7fe3-486f-ace3-840e88f9de30",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"links",
+								"9ec9d94d-7fe3-486f-ace3-840e88f9de30"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Link",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/links/9ec9d94d-7fe3-486f-ace3-840e88f9de30",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"links",
+								"9ec9d94d-7fe3-486f-ace3-840e88f9de30"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Link's QR Code",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/links/9ec9df75-7472-4d6a-a27f-5b1a40a811cd/qr-code",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"links",
+								"9ec9df75-7472-4d6a-a27f-5b1a40a811cd",
+								"qr-code"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tags",
+			"item": [
+				{
+					"name": "All Tags",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/tags",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"tags"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Tag",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"New Task\", // (Required) The tag name. Example: \"Important\", \"Urgent\".\n    \"color\": \"zinc\" // (Required) The tag color. Must be one of: \"red\", \"orange\", \"yellow\", \"green\", \"cyan\", \"teal\", \"blue\", \"indigo\", \"purple\", \"fuchsia\", \"pink\", \"zinc\".\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/tags",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"tags"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Tag",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Marketing New\", // (Required) The tag name. Example: \"Important\", \"Urgent\".\n    \"color\": \"red\" // (Required) The tag color. Must be one of: \"red\", \"orange\", \"yellow\", \"green\", \"cyan\", \"teal\", \"blue\", \"indigo\", \"purple\", \"fuchsia\", \"pink\", \"zinc\".\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/tags/9dfaab17-c8dc-4673-97a6-36c5bfcbae61",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"tags",
+								"9dfaab17-c8dc-4673-97a6-36c5bfcbae61"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Tag",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/tags/9ec9ecf8-dbac-4899-ba01-f5eeea0227a8",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"tags",
+								"9ec9ecf8-dbac-4899-ba01-f5eeea0227a8"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Domains",
+			"item": [
+				{
+					"name": "All Domains",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/domains",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"domains"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Domain",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"domain\": \"facebook.com\", // (Required) The custom domain you want to use for generating short links. Must be a valid domain name.\n    \"not_found_url\": \"\", // (Optional) URL to redirect users if a short link under this domain is not found (404 fallback).\n    \"expired_url\": \"\" // (Optional) URL to redirect users if the short link under this domain has expired.\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/domains",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"domains"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Domain",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"domain\": \"facebook.com\", // (Required) The custom domain you want to use for generating short links. Must be a valid domain name.\n    \"not_found_url\": \"\", // (Optional) URL to redirect users if a short link under this domain is not found (404 fallback).\n    \"expired_url\": \"\" // (Optional) URL to redirect users if the short link under this domain has expired.\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/domains/9eca0545-1b76-4785-abdd-4c0d062c15d9",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"domains",
+								"9eca0545-1b76-4785-abdd-4c0d062c15d9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Domain",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/domains/9eca0545-1b76-4785-abdd-4c0d062c15d9",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"domains",
+								"9eca0545-1b76-4785-abdd-4c0d062c15d9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Validate Domain",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"domain\": \"new.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/domains/validate",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"domains",
+								"validate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Website Favicon",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{BASE_URL}}/websites/favicon?url=https://facebook.com",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"websites",
+						"favicon"
+					],
+					"query": [
+						{
+							"key": "url",
+							"value": "https://facebook.com"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{API_TOKEN}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "https://lua.test/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "API_TOKEN",
+			"value": "YOUR_API_TOKEN_HERE",
+			"type": "string"
+		}
+	]
+}
