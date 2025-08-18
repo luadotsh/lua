@@ -66,6 +66,8 @@ services:
 
     mailhog:
         image: mailhog/mailhog:latest
+# if using Apple Silicon        
+#        platform: linux/amd64
         ports:
             - '${FORWARD_MAILHOG_PORT:-1025}:1025'
             - '${FORWARD_MAILHOG_DASHBOARD_PORT:-8025}:8025'

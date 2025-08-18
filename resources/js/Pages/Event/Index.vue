@@ -35,6 +35,11 @@ const columns = reactive([
         show: true,
     },
     {
+        key: "ip",
+        label: "Ip",
+        show: true,
+    },
+    {
         key: "country",
         label: "Country",
         show: true,
@@ -117,6 +122,18 @@ const refresh = (value) => {
             method: "get",
             preserveState: true,
         }
+    );
+};
+
+// function to convert country code to flag
+const countryCodeToFlagEmoji = (code) => {
+    if (!code) return "🌐";
+    // convert to uppercase
+    const country = code.toUpperCase();
+    // UK is actually GB in ISO standard
+    const normalized = country === "UK" ? "GB" : country;
+    return normalized.replace(/./g, (char) =>
+        String.fromCodePoint(127397 + char.charCodeAt(0))
     );
 };
 </script>
@@ -210,13 +227,39 @@ const refresh = (value) => {
                                                         columns.find(
                                                             (c) =>
                                                                 c.key ===
+                                                                    'ip' &&
+                                                                c.show
+                                                        )
+                                                    "
+                                                    class="table-td"
+                                                >
+                                                    {{ event.ip }}
+                                                </td>
+                                                <td
+                                                    v-if="
+                                                        columns.find(
+                                                            (c) =>
+                                                                c.key ===
                                                                     'country' &&
                                                                 c.show
                                                         )
                                                     "
                                                     class="table-td"
                                                 >
-                                                    {{ event.country }}
+                                                   <span :class="`fi fi-${event.country.toLowerCase()}`">&nbsp; </span> {{ event.country }}
+                                                </td>
+                                                <td
+                                                    v-if="
+                                                        columns.find(
+                                                            (c) =>
+                                                                c.key ===
+                                                                    'country-flag' &&
+                                                                c.show
+                                                        )
+                                                    "
+                                                    class="table-td"
+                                                >
+                                                    
                                                 </td>
                                                 <td
                                                     v-if="

@@ -84,3 +84,115 @@ For self-hosting or local development, please check the [Self Hosting](https://d
 A big thanks to our sponsors and partners who make Lua possible. If you're interested in sponsoring Lua and supporting the project, please check out our profile on [GitHub sponsors](https://github.com/sponsors/luadotsh) ❤️
 
 [mercantive.com](https://mercantive.com) • [changelogfy.com](https://changelogfy.com)
+
+
+## ⚡ Quick Start
+
+| Step | Command |
+|------|--------|
+| Clone the repo | `git clone https://github.com/wmhchathuranga/lua.sh.git && cd lua.sh` |
+| Copy env file | `cp .env.example .env` and update the .env |
+| Install PHP deps | `composer install` *(or Sail Composer)* |
+| Start Docker | `docker compose -f docker-compose.yml up -d --build` |
+| Laravel setup | `./vendor/bin/sail artisan key:generate && ./vendor/bin/sail artisan migrate --seed && ./vendor/bin/sail artisan storage:link` |
+| Frontend setup | `./vendor/bin/sail npm ci && ./vendor/bin/sail npm i -D tailwindcss@^3 postcss@^8 autoprefixer@^10 && ./vendor/bin/sail npm run dev` |
+| Start Analytics | `./vendor/bin/sail artisan queue:work` |
+| Access app | [http://localhost](http://localhost) |
+
+---
+
+## 🚀 Installation
+
+Follow these steps for a full local development environment:
+
+### **Prerequisites**
+- [Docker](https://www.docker.com/products/docker-desktop)  
+- Docker Compose plugin  
+- Git  
+- Node.js & npm *(optional if using Sail’s Node image)*  
+- Composer *(optional if using Sail’s Composer image)*  
+
+---
+
+### **1️⃣ Clone & Configure**
+```bash
+git clone https://github.com/wmhchathuranga/lua.sh.git lua.sh
+cd lua.sh
+
+# Copy environment
+cp .env.example .env
+```
+And update the .env
+---
+
+### **2️⃣ Install PHP Dependencies**
+```bash
+composer install
+```
+
+---
+
+### **3️⃣ Start the Docker Stack**
+```bash
+docker compose -f docker-compose.yml up -d --build
+```
+
+Verify services:
+```bash
+./vendor/bin/sail ps
+```
+
+---
+
+### **4️⃣ Laravel Setup**
+```bash
+./vendor/bin/sail artisan key:generate
+./vendor/bin/sail artisan migrate --seed
+./vendor/bin/sail artisan storage:link
+```
+
+---
+
+### **5️⃣ Install Frontend**
+```bash
+./vendor/bin/sail npm ci
+
+# Ensure compatible TailwindCSS version
+./vendor/bin/sail npm i -D tailwindcss@^3 postcss@^8 autoprefixer@^10
+
+# Run Vite dev server
+./vendor/bin/sail npm run dev
+```
+
+---
+
+### **✅ Access Your App**
+- **Application:** [http://localhost](http://localhost)  
+- **MailHog (emails):** [http://localhost:8025](http://localhost:8025)
+
+---
+
+## 🔹 Useful Commands
+
+| Task                        | Command                                       |
+|-----------------------------|-----------------------------------------------|
+| Stop containers             | `./vendor/bin/sail down`                      |
+| Rebuild without cache       | `./vendor/bin/sail build --no-cache`          |
+| Laravel logs                | `./vendor/bin/sail logs -f laravel.test`      |
+| Queue worker (dev)          | `./vendor/bin/sail artisan queue:work`        |
+| Fresh DB migration & seed   | `./vendor/bin/sail artisan migrate:fresh --seed` |
+| Clear caches                | `./vendor/bin/sail artisan config:clear && ./vendor/bin/sail artisan cache:clear` |
+
+---
+```
+1. cp .env.example .env
+2. composer i
+3. docker compose -f docker-compose.yml up -d --build
+4. ./vendor/bin/sail ps
+5. ./vendor/bin/sail artisan key:generate
+6. ./vendor/bin/sail artisan migrate --seed
+7. ./vendor/bin/sail artisan storage:link
+8. ./vendor/bin/sail npm ci
+9. ./vendor/bin/sail npm i -D tailwindcss@^3 postcss@^8 autoprefixer@^10
+10. ./vendor/bin/sail npm run dev
+```

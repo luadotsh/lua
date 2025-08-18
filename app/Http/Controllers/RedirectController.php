@@ -41,7 +41,7 @@ class RedirectController extends Controller
             $link,
             $request->userAgent(),
             $request->getLanguages(),
-            $request->ip(),
+            $request->header('CF-Connecting-IP'),
             $request->input('qr') ? true : false,
             $utms,
             $request->header('Referer')
