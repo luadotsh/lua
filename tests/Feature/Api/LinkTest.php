@@ -99,7 +99,7 @@ it('can update a link', function () {
 it('can not update a link with invalid domain served by lua', function () {
     $response = $this
         ->withToken($this->token->token)
-        ->json('PUT', route('api.links.update', 999999999), [
+        ->json('PUT', route('api.links.update', '00000000-0000-0000-0000-000000000000'), [
             'key' => 'updated-link',
             'domain' => 'lua.com',
             'url' => 'https://lua.sh',
@@ -111,7 +111,7 @@ it('can not update a link with invalid domain served by lua', function () {
 it('can not update a link with invalid custom domain', function () {
     $response = $this
         ->withToken($this->token->token)
-        ->json('PUT', route('api.links.update', 999999999), [
+        ->json('PUT', route('api.links.update', '00000000-0000-0000-0000-000000000000'), [
             'key' => 'updated-link',
             'domain' => 'track.company.com',
             'url' => 'https://lua.sh',
@@ -123,7 +123,7 @@ it('can not update a link with invalid custom domain', function () {
 it('can not update a link that does not exist', function () {
     $response = $this
         ->withToken($this->token->token)
-        ->json('PUT', route('api.links.update', 999999999), [
+        ->json('PUT', route('api.links.update', '00000000-0000-0000-0000-000000000000'), [
             'key' => 'updated-link',
             'domain' => config('domains.main'),
             'url' => 'https://lua.sh',
@@ -147,7 +147,7 @@ it('can delete a link', function () {
 it('can not delete a link that does not exist', function () {
     $response = $this
         ->withToken($this->token->token)
-        ->json('DELETE', route('api.links.destroy', 999999999));
+        ->json('DELETE', route('api.links.destroy', '00000000-0000-0000-0000-000000000000'));
 
     $response->assertStatus(404);
 });

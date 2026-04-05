@@ -14,6 +14,8 @@ use App\Enums\LinkStat\Event;
 use App\Models\Link;
 use App\Models\LinkStat;
 
+use Stevebauman\Location\Facades\Location;
+
 class ProcessLinkStat implements ShouldQueue
 {
     use Queueable;
@@ -39,15 +41,15 @@ class ProcessLinkStat implements ShouldQueue
         $service = new UserAgentService();
 
         // user geo
-        $geo = geoip($this->ip);
+        $geo = Location::get($this->ip) ?: null;
 
         LinkStat::create([
             'workspace_id' => $this->link->workspace_id,
             'link_id' => $this->link->id,
             'event' => $this->qr ? Event::QR_SCAN : Event::CLICK,
-            'country' => $geo->iso_code,
-            'region' => $geo->state_name,
-            'city' => $geo->city,
+            'country' => $geo?->countryCode,
+            'region' => $geo?->regionName,
+            'city' => $geo?->cityName,
             'browser' => $service->getBrowser($this->userAgent),
             'os' => $service->getOS($this->userAgent),
             'device' => $service->getDevice($this->userAgent),

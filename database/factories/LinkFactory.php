@@ -24,13 +24,14 @@ class LinkFactory extends Factory
     {
         $slug = Str::random(7);
         $domain = config('domains.main');
+        $appUrl = config('app.url');
 
         return [
             'workspace_id' => Workspace::factory(),
             'domain' => $domain,
             'key' => $slug,
             'url' => $this->faker->url,
-            'link' => "https://{$domain}/{$slug}",
+            'link' => "{$appUrl}/{$slug}",
             'ios' => $this->faker->url,
             'android' => $this->faker->url,
             'utm_source' => $this->faker->word,

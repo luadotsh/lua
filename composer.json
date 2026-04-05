@@ -5,14 +5,14 @@
     "keywords": ["laravel", "php", "url-shortener", "short-url", "shortener", "short-links"],
     "license": "AGPL-3.0-or-later",
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "inertiajs/inertia-laravel": "^2.0",
-        "laravel/cashier": "^15.4",
-        "laravel/framework": "^11.34",
+        "laravel/cashier": "^16.0",
+        "laravel/framework": "^13.0",
         "laravel/horizon": "^5.29",
         "laravel/reverb": "^1.0",
         "laravel/socialite": "^5.16",
-        "laravel/tinker": "^2.9",
+        "laravel/tinker": "^3.0",
         "league/flysystem-aws-s3-v3": "^3.0",
         "sendkit/sendkit-laravel": "^1.1",
         "sentry/sentry-laravel": "^4.10",
@@ -20,18 +20,19 @@
         "spatie/color": "^1.6",
         "spatie/laravel-medialibrary": "^11.9",
         "tightenco/ziggy": "^2.0",
-        "torann/geoip": "^3.0"
+        "stevebauman/location": "^7.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
+        "laravel/boost": "^2.4",
         "laravel/pail": "^1.1",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.26",
         "laravel/telescope": "^5.2",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.1",
-        "pestphp/pest": "^3.6",
-        "pestphp/pest-plugin-laravel": "^3.0"
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0"
     },
     "autoload": {
         "psr-4": {
@@ -65,6 +66,9 @@
         "dev": [
             "Composer\\Config::disableProcessTimeout",
             "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail\" \"npm run dev\" --names=server,queue,logs,vite"
+        ],
+        "pre-package-uninstall": [
+            "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
         ]
     },
     "extra": {
