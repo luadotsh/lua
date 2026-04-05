@@ -55,7 +55,7 @@ const setColumn = (status) => {
                     leave-to-class="transform opacity-0 scale-95"
                 >
                     <MenuItems
-                        class="absolute right-0 z-10 mt-2 w-52 origin-top-right divide-y divide-zinc-100 dark:divide-zinc-700 rounded-md bg-white dark:bg-zinc-900 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                        class="absolute right-0 z-10 mt-2 w-52 origin-top-right divide-y divide-zinc-100 dark:divide-zinc-700 rounded-md bg-white dark:bg-zinc-900 shadow-lg ring-1 ring-black/5 focus:outline-none"
                     >
                         <div class="py-1">
                             <div>

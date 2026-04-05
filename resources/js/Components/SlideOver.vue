@@ -54,7 +54,7 @@ const close = () => {
             <div class="fixed inset-0" />
 
             <div class="fixed inset-0 overflow-hidden">
-                <div class="absolute inset-0 bg-opacity-40 bg-zinc-800">
+                <div class="absolute inset-0 bg-zinc-800/40">
                     <div
                         class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full"
                     >

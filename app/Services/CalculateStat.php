@@ -18,22 +18,22 @@ class CalculateStat
     public function __construct()
     {
         $this->format = [
-            'minute' => '%Y-%m-%d %H:%i:00',
-            'hour' => '%Y-%m-%d %H:00:00',
-            'day' => '%Y-%m-%d',
-            'month' => '%Y-%m',
-            'year' => '%Y',
+            'minute' => 'YYYY-MM-DD HH24:MI:00',
+            'hour' => 'YYYY-MM-DD HH24:00:00',
+            'day' => 'YYYY-MM-DD',
+            'month' => 'YYYY-MM',
+            'year' => 'YYYY',
         ];
     }
 
     public function events($workspace, $timezone, $start, $end, $group)
     {
         // Fetch clicks data with Eloquent using groupBy and date formatting
-        $clicks = LinkStat::selectRaw("DATE_FORMAT(created_at, '{$this->format[$group]}') as formatted_date, COUNT(*) as value")
+        $clicks = LinkStat::selectRaw("TO_CHAR(created_at, '{$this->format[$group]}') as formatted_date, COUNT(*) as value")
         ->where('workspace_id', $workspace->id)
             ->whereBetween('created_at', [$start, $end])
-            ->groupByRaw("DATE_FORMAT(created_at, '{$this->format[$group]}')")
-            ->orderByRaw("DATE_FORMAT(created_at, '{$this->format[$group]}') asc")
+            ->groupByRaw("TO_CHAR(created_at, '{$this->format[$group]}')")
+            ->orderByRaw("TO_CHAR(created_at, '{$this->format[$group]}') asc")
             ->get();
 
         // Total clicks for the current period
@@ -73,12 +73,12 @@ class CalculateStat
     public function clicks($workspace, $timezone, $start, $end, $group)
     {
         // Fetch clicks data with Eloquent using groupBy and date formatting
-        $clicks = LinkStat::selectRaw("DATE_FORMAT(created_at, '{$this->format[$group]}') as formatted_date, COUNT(*) as value")
+        $clicks = LinkStat::selectRaw("TO_CHAR(created_at, '{$this->format[$group]}') as formatted_date, COUNT(*) as value")
             ->where('workspace_id', $workspace->id)
             ->where('event', Event::CLICK)
             ->whereBetween('created_at', [$start, $end])
-            ->groupByRaw("DATE_FORMAT(created_at, '{$this->format[$group]}')")
-            ->orderByRaw("DATE_FORMAT(created_at, '{$this->format[$group]}') asc")
+            ->groupByRaw("TO_CHAR(created_at, '{$this->format[$group]}')")
+            ->orderByRaw("TO_CHAR(created_at, '{$this->format[$group]}') asc")
             ->get();
 
         // Total clicks for the current period
@@ -119,12 +119,12 @@ class CalculateStat
     public function qrScans($workspace, $timezone, $start, $end, $group)
     {
         // Fetch clicks data with Eloquent using groupBy and date formatting
-        $clicks = LinkStat::selectRaw("DATE_FORMAT(created_at, '{$this->format[$group]}') as formatted_date, COUNT(*) as value")
+        $clicks = LinkStat::selectRaw("TO_CHAR(created_at, '{$this->format[$group]}') as formatted_date, COUNT(*) as value")
         ->where('workspace_id', $workspace->id)
             ->where('event', Event::QR_SCAN)
             ->whereBetween('created_at', [$start, $end])
-            ->groupByRaw("DATE_FORMAT(created_at, '{$this->format[$group]}')")
-            ->orderByRaw("DATE_FORMAT(created_at, '{$this->format[$group]}') asc")
+            ->groupByRaw("TO_CHAR(created_at, '{$this->format[$group]}')")
+            ->orderByRaw("TO_CHAR(created_at, '{$this->format[$group]}') asc")
             ->get();
 
         // Total clicks for the current period

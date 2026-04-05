@@ -54,7 +54,7 @@ watch(
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
                         <div
-                            :class="`absolute top-0 left-0 h-full dark:bg-opacity-20 rounded-r-md bg-zinc-100 dark:bg-zinc-500`"
+                            :class="`absolute top-0 left-0 h-full rounded-r-md bg-zinc-100 dark:bg-zinc-500/20`"
                             :style="`max-width: 85%; width: ${helper.calcPercentage(
                                 total,
                                 value.y

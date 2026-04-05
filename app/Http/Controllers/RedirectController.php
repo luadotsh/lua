@@ -22,7 +22,8 @@ class RedirectController extends Controller
 {
     public function redirect(Request $request, $key = null): RedirectResponse
     {
-        $link = Link::where('link', $request->url())
+        $link = Link::where('domain', $request->getHost())
+            ->where('key', $key)
             ->with('workspace')
             ->firstOrFail();
 

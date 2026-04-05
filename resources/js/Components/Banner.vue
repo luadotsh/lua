@@ -38,7 +38,7 @@ watch(message, async () => {
                 leave-to-class="opacity-0"
             >
                 <div
-                    class="max-w-sm w-full bg-zinc-900 shadow-2xl rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden"
+                    class="max-w-sm w-full bg-zinc-900 shadow-2xl rounded-lg pointer-events-auto ring-1 ring-black/5 overflow-hidden"
                 >
                     <div class="px-4 py-4">
                         <div class="flex items-center">

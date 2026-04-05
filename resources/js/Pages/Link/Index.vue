@@ -211,7 +211,7 @@ onMounted(() => {
                                 placement: 'top',
                                 html: true,
                             }"
-                            class="inline-flex items-center ring-1 ring-inset ring-opacity-40 text-sm truncate font-medium px-2 py-1 rounded bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 ring-zinc-300 dark:ring-zinc-700 space-x-1 p-4"
+                            class="inline-flex items-center ring-1 ring-inset ring-zinc-300/40 dark:ring-zinc-700/40 text-sm truncate font-medium px-2 py-1 rounded bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 space-x-1 p-4"
                         >
                             <PhCursorClick class="h-3 lg:h-4 w-3 lg:w-4" />
                             <div class="flex items-center space-x-1">
@@ -244,7 +244,7 @@ onMounted(() => {
                                     leave-to-class="transform opacity-0 scale-95"
                                 >
                                     <MenuItems
-                                        class="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 dark:divide-gray-700 rounded-md bg-white dark:bg-zinc-900 shadow-lg ring-1 ring-black dark:ring-zinc-700 ring-opacity-5 focus:outline-none"
+                                        class="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 dark:divide-gray-700 rounded-md bg-white dark:bg-zinc-900 shadow-lg ring-1 ring-black/5 dark:ring-zinc-700 focus:outline-none"
                                     >
                                         <div class="py-1">
                                             <MenuItem v-slot="{ active }">

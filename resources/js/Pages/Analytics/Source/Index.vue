@@ -69,7 +69,7 @@ const setTab = (value) => {
                         leave-to-class="transform scale-95 opacity-0"
                     >
                         <MenuItems
-                            class="absolute right-0 z-10 mt-2 origin-top-right bg-white divide-y rounded-md shadow-lg w-36 divide-zinc-100 dark:divide-zinc-700 dark:bg-zinc-900 ring-1 ring-black ring-opacity-5 focus:outline-none"
+                            class="absolute right-0 z-10 mt-2 origin-top-right bg-white divide-y rounded-md shadow-lg w-36 divide-zinc-100 dark:divide-zinc-700 dark:bg-zinc-900 ring-1 ring-black/5 focus:outline-none"
                         >
                             <div class="p-1">
                                 <MenuItem

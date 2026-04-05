@@ -29,9 +29,9 @@ it('invalid link will return 404', function () {
     $response->assertNotFound();
 });
 
-it('git.now needs to be redirected to https://www.lua.sh [website]', function () {
+it('lua.sh needs to be redirected to https://www.lua.sh [website]', function () {
     $response = $this
-        ->get('https://git.now');
+        ->get('https://lua.sh');
 
     $response->assertStatus(302);
     $response->assertRedirect('https://www.lua.sh');
@@ -40,7 +40,7 @@ it('git.now needs to be redirected to https://www.lua.sh [website]', function ()
 
 it('fig.now needs to be redirected to https://www.lua.sh [website]', function () {
     $response = $this
-        ->get('https://git.now');
+        ->get('https://lua.sh');
 
     $response->assertStatus(302);
     $response->assertRedirect('https://www.lua.sh');
@@ -48,7 +48,7 @@ it('fig.now needs to be redirected to https://www.lua.sh [website]', function ()
 
 it('cal.now needs to be redirected to https://www.lua.sh [website]', function () {
     $response = $this
-        ->get('https://git.now');
+        ->get('https://lua.sh');
 
     $response->assertStatus(302);
     $response->assertRedirect('https://www.lua.sh');
@@ -56,7 +56,7 @@ it('cal.now needs to be redirected to https://www.lua.sh [website]', function ()
 
 it('spoti.now needs to be redirected to https://www.lua.sh [website]', function () {
     $response = $this
-        ->get('https://git.now');
+        ->get('https://lua.sh');
 
     $response->assertStatus(302);
     $response->assertRedirect('https://www.lua.sh');

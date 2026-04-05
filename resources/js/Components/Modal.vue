@@ -84,7 +84,7 @@ const maxWidthClass = computed(() => {
                         @click="close"
                     >
                         <div
-                            class="absolute inset-0 bg-opacity-40 bg-zinc-800"
+                            class="absolute inset-0 bg-zinc-800/40"
                         />
                     </div>
                 </transition>
@@ -97,7 +97,7 @@ const maxWidthClass = computed(() => {
                     leave-from-class="opacity-100 translate-y-0 sm:scale-100"
                     leave-to-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 >
-                    <div class="flex items-center justify-center h-screen p-4">
+                    <div class="relative z-10 flex items-center justify-center h-screen p-4">
                         <div
                             v-show="show"
                             class="mb-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl overflow-hidden shadow-xl transform transition-all sm:w-full sm:mx-auto"

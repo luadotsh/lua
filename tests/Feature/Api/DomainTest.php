@@ -19,7 +19,7 @@ beforeEach(function () {
 
 it('can validate a domain', function () {
     $response = $this
-        ->get(route('api.domains.validate', ['domain' => 'git.now']));
+        ->get(route('api.domains.validate', ['domain' => 'lua.sh']));
 
     $response->assertStatus(200)
         ->assertJson([
