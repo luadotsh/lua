@@ -6,20 +6,20 @@
     "license": "AGPL-3.0-or-later",
     "require": {
         "php": "^8.3",
-        "inertiajs/inertia-laravel": "^2.0",
+        "inertiajs/inertia-laravel": "^3.0",
         "laravel/cashier": "^16.0",
         "laravel/framework": "^13.0",
         "laravel/horizon": "^5.29",
         "laravel/reverb": "^1.0",
         "laravel/socialite": "^5.16",
         "laravel/tinker": "^3.0",
+        "laravel/wayfinder": "^0.1.15",
         "league/flysystem-aws-s3-v3": "^3.0",
         "sendkit/sendkit-laravel": "^1.1",
         "sentry/sentry-laravel": "^4.10",
         "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/color": "^1.6",
         "spatie/laravel-medialibrary": "^11.9",
-        "tightenco/ziggy": "^2.0",
         "stevebauman/location": "^7.0"
     },
     "require-dev": {
