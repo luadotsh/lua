@@ -21,8 +21,13 @@ Migrate the entire Lua frontend from HeadlessUI + custom JS components to shadcn
 7. **Entry point**: `app.js` → `app.ts`
 8. **Layouts**: Custom layouts → SendKit-style AppSidebarLayout
 9. **Components**: 37 custom components → shadcn ui/ components + custom wrappers
-10. **CSS**: Keep Tailwind v4, adopt SendKit's design token system (CSS variables)
+10. **CSS**: Replace `app.css` entirely with SendKit's design token system (CSS variables, `@theme inline`, shadows, radii)
 11. **Vite**: Update `vite.config.js` → `vite.config.ts` with Wayfinder plugin
+12. **Blade**: Update `app.blade.php` — add dark mode detection script (from SendKit), update font (Inter → Inter or keep), point to `app.ts`, remove `@routes` (Ziggy)
+13. **Directory casing**: `Components/` → `components/`, `Layouts/` → `layouts/`, `Pages/` → `pages/` (match SendKit lowercase convention)
+14. **Select logic**: All plain selects → shadcn `<Select>`, selects with search → shadcn `<Combobox>`
+15. **Settings nav**: Copy `SettingsNav.vue` from SendKit, adapt for Lua settings pages
+16. **User menu**: Copy `UserInfo.vue` + `UserMenuContent.vue` from SendKit (includes theme switcher light/dark/system)
 
 ### What stays the same
 
@@ -39,8 +44,18 @@ Migrate the entire Lua frontend from HeadlessUI + custom JS components to shadcn
 - @headlessui/vue
 - @phosphor-icons/vue
 - floating-vue
-- tightenco/ziggy (JS package)
+- tightenco/ziggy (JS package — remove from both npm and composer)
 - Custom CSS component classes in app.css (.btn, .btn-primary, .card, .badge, .form-input, .table-*, etc.)
+- `resources/js/theme.js` (replaced by `composables/useAppearance.ts`)
+- `resources/js/helper.js` (utilities moved to `lib/utils.ts`)
+- `resources/css/v-calendar.css` and `resources/css/floating.css` (no longer needed)
+
+### Components from SendKit NOT being copied (domain-specific)
+
+- `editor/` (tiptap email editor — 30+ files)
+- `automations/` (workflow builder — 12 files)
+- `campaigns/`, `contacts/`, `contact/`, `contact-property/`, `domain/`, `email/`, `email-validation/`, `metrics/`, `segment/`, `sender/`, `template/`, `webhook/`, `api-key/`
+- `AutoSaveStatus.vue`, `SocialLoginButtons.vue`, `PlaceholderPattern.vue`
 
 ## Dependencies
 
@@ -145,6 +160,10 @@ resources/js/
     Toast.vue                     # From SendKit (vue-sonner wrapper)
     PhotoUpload.vue               # From SendKit
     PlanPickerDialog.vue          # From SendKit, adapted for Lua plans
+    UserInfo.vue                  # From SendKit (avatar + name display)
+    UserMenuContent.vue           # From SendKit (dropdown with theme switcher)
+    SettingsNav.vue               # From SendKit, adapted for Lua settings pages
+    InputError.vue                # Rewritten in TS
     Chart.vue                     # Keep existing (chart.js)
     ColorSelector.vue             # Keep existing (vue3-colorpicker)
     DomainStatus.vue              # Rewrite in TS
@@ -188,14 +207,39 @@ resources/js/
     vue-shims.d.ts                # From SendKit
 ```
 
-### CSS Strategy
+### CSS Strategy (`resources/css/app.css`)
 
-Replace current custom CSS classes in `app.css` with SendKit's design token approach:
+Replace entirely with SendKit's approach:
 
-- Copy CSS custom properties (colors, radii, shadows) from SendKit's `app.css`
-- Adapt color palette to Lua's brand (violet/purple accent instead of neutral)
-- Remove all custom `.btn-*`, `.card`, `.badge-*`, `.form-input`, `.table-*` classes
-- Keep Lua-specific styles: `.prose-formatter`, tiptap styles, vue3-colorpicker overrides
+```css
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'vue-sonner/style.css';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@custom-variant dark (&:is(.dark *));
+
+:root { /* SendKit's design tokens — all CSS custom properties */ }
+.dark { /* Dark mode overrides */ }
+@theme inline { /* Tailwind theme mapping to CSS vars */ }
+@layer base { /* Border + body defaults */ }
+```
+
+- Copy all CSS custom properties from SendKit (colors, shadows, radii, fonts, spacing)
+- Adapt font-family: change 'Space Grotesk' to 'Inter' (Lua's brand font)
+- Adapt sidebar-primary color to Lua's violet brand if desired
+- Remove ALL existing custom classes (.btn-*, .card, .badge-*, .form-input, .table-*, .link, .page-title, etc.)
+- Keep: `.prose-formatter`, tiptap paragraph fix, vue3-colorpicker overrides
+
+### Blade Template (`resources/views/app.blade.php`)
+
+Copy from SendKit and adapt:
+- Add inline dark mode detection `<script>` in `<head>` (prevents FOUC)
+- Add `@class(['dark' => ($appearance ?? 'system') == 'dark'])` on `<html>` tag
+- Change `@routes` (Ziggy) → remove entirely
+- Change `@vite('resources/js/app.js')` → `@vite(['resources/js/app.ts'])`
+- Keep Inter font (Lua's brand) instead of Space Grotesk
+- Remove `class="h-full"` from html/body (SendKit doesn't use it)
 
 ### Layout Migration
 
@@ -238,33 +282,45 @@ Steps:
 
 Key changes:
 - Import path stays `@inertiajs/vue3`
-- `usePage()` API may have changed
-- Check for breaking changes in form helper
-- Update `createInertiaApp` setup
+- `usePage()` now returns typed props via `InertiaConfig.sharedPageProps` (see `global.d.ts`)
+- Form helper: check for breaking changes
+- `createInertiaApp` setup: match SendKit pattern (simpler, no extra plugins like VCalendar/FloatingVue)
+- `router` import for navigation events
+- Shared page props typed in `global.d.ts`:
+  ```ts
+  declare module '@inertiajs/core' {
+    export interface InertiaConfig {
+      sharedPageProps: {
+        name: string;
+        auth: Auth;
+        flash: { banner?: string; bannerStyle?: string };
+        sidebarOpen: boolean;
+        // ... Lua-specific props
+      };
+    }
+  }
+  ```
+
+### Appearance / Dark Mode System
+
+Replace Lua's current `theme.js` (`useDarkTheme` composable) with SendKit's `useAppearance.ts`:
+- Supports 3 modes: light, dark, system
+- Persists to localStorage + cookie (for SSR)
+- `initializeTheme()` called in `app.ts` after mount
+- Theme switcher in user dropdown menu (via `UserMenuContent.vue`)
+- Blade template has inline script to prevent FOUC
 
 ### TypeScript Config
 
-Copy from SendKit and adapt:
-
-```json
-{
-  "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "strict": true,
-    "jsx": "preserve",
-    "sourceMap": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "paths": {
-      "@/*": ["./resources/js/*"]
-    },
-    "types": ["vite/client", "node"]
-  },
-  "include": ["resources/js/**/*.ts", "resources/js/**/*.vue"],
-  "exclude": ["node_modules"]
-}
+Copy `tsconfig.json` from SendKit verbatim. Key settings:
+- `target`: ESNext, `module`: ESNext, `moduleResolution`: bundler
+- `strict`: true
+- `paths`: `@/*` → `./resources/js/*`
+- `types`: `["vite/client"]`
+- `jsx`: preserve, `jsxImportSource`: vue
+- `allowJs`: true (allows gradual migration if needed)
+- `noEmit`: true, `sourceMap`: true
+- `include`: `resources/js/**/*.ts`, `resources/js/**/*.d.ts`, `resources/js/**/*.tsx`, `resources/js/**/*.vue`
 ```
 
 ### shadcn Configuration
@@ -305,7 +361,8 @@ Each page needs:
 |---|---|
 | `<Modal>` | `<Dialog>` |
 | `<SlideOver>` | `<Sheet>` |
-| `<Dropdown>` (HeadlessUI Listbox) | `<Combobox>` or `<Select>` |
+| `<Dropdown>` (HeadlessUI Listbox, plain) | `<Select>` (shadcn) |
+| `<Dropdown>` (HeadlessUI Listbox, with search) | `<Combobox>` (shadcn) |
 | `<Input>` | `<Input>` (shadcn) |
 | `<Label>` | `<Label>` (shadcn) |
 | `<Select>` | `<NativeSelect>` or `<Select>` (shadcn) |
@@ -329,19 +386,42 @@ Each page needs:
 | `<SectionTitle>` | `<Heading>` (from SendKit) |
 | `<SectionBorder>` | `<Separator>` (shadcn) |
 
+### Wayfinder Laravel Setup
+
+Server-side:
+1. `composer require laravel/wayfinder`
+2. Wayfinder auto-generates TypeScript route helpers from Laravel routes
+3. Generated into `resources/js/routes/` (or wherever configured)
+4. Each route becomes a typed function: `index()`, `show(id)`, `store()`, etc.
+5. Import pattern: `import { index as linksIndex } from '@/routes/app/links';`
+
+### Appearance Middleware
+
+SendKit passes `$appearance` to the blade template for SSR dark mode. Need to add middleware or share this via `HandleInertiaRequests`:
+
+```php
+// In HandleInertiaRequests.php share():
+'appearance' => $request->cookie('appearance', 'system'),
+'sidebarOpen' => $request->cookie('sidebar_state', true),
+```
+
 ## Testing
 
 - Run `npx vite build` after migration to verify no build errors
+- Run `vue-tsc --noEmit` to verify TypeScript types
 - Run `php artisan test` to verify backend still works
 - Manual testing of all pages in browser
-- Verify dark mode works on all pages
-- Verify mobile sidebar works
+- Verify dark mode works (light/dark/system)
+- Verify mobile sidebar works (collapsible)
+- Verify toast notifications work (flash messages)
+- Verify all forms submit correctly (Inertia v3)
 
 ## Files Count Estimate
 
 - ~207 UI component files (copied from SendKit)
-- ~10 composable/lib/type files (copied + adapted)
+- ~15 composable/lib/type files (copied + adapted)
 - ~7 layout files (copied + adapted)
 - ~99 existing .vue files rewritten (JS → TS, new components)
-- ~10 config files (tsconfig, components.json, vite.config.ts, etc.)
-- **Total: ~333 files touched**
+- ~10 config files (tsconfig, components.json, vite.config.ts, app.blade.php, etc.)
+- ~9 existing .js utility files → .ts
+- **Total: ~347 files touched**
