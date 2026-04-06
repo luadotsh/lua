@@ -12,9 +12,15 @@ class HandleInertiaRequests extends Middleware
     /**
      * The root template that is loaded on the first page visit.
      *
-     * @var string
+     * @return string|array{0: string, 1: array<string, mixed>}
      */
-    protected $rootView = 'app';
+    public function rootView(Request $request): string|array
+    {
+        return [
+            'app',
+            ['appearance' => $request->cookie('appearance', 'system')],
+        ];
+    }
 
     /**
      * Determine the current asset version.
@@ -33,6 +39,7 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
+            'name' => config('app.name'),
             'auth' => [
                 'user' => function () use ($request) {
                     if (! $request->user()) {
@@ -48,7 +55,7 @@ class HandleInertiaRequests extends Middleware
                     ]));
                 },
             ],
-            'csrf_token' => csrf_token(),
+            'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'flash' => $request->session()->get('flash', []),
             'env' => config('app.env'),
             'locale' => app()->getLocale(),
