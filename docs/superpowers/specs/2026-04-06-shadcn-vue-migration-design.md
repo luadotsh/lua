@@ -75,6 +75,7 @@ Migrate the entire Lua frontend from HeadlessUI + custom JS components to shadcn
     "vue-sonner": "^2.0.9"
   },
   "devDependencies": {
+    "@laravel/echo-vue": "^2.3.0",
     "@laravel/vite-plugin-wayfinder": "^0.1.3",
     "@types/node": "^22.13.5",
     "typescript": "^5.2.2",
@@ -86,13 +87,27 @@ Migrate the entire Lua frontend from HeadlessUI + custom JS components to shadcn
 }
 ```
 
-### Remove
+**Composer:**
+```
+composer require inertiajs/inertia-laravel:^3.0 laravel/wayfinder
+composer remove tightenco/ziggy
+```
+
+### Remove (npm)
 
 ```
 @headlessui/vue
 @phosphor-icons/vue
 floating-vue
-tightenco/ziggy (npm — keep composer package if needed for server-side)
+laravel-echo (replaced by @laravel/echo-vue)
+pusher-js (bundled in echo-vue)
+autoprefixer (if still present)
+```
+
+### Keep (despite Inertia v3 removing it)
+
+```
+axios — used directly in 5 files (Menu.vue, Logo.vue, Avatar.vue, Qrcode.vue, bootstrap.js)
 ```
 
 ## Architecture
@@ -280,26 +295,80 @@ Steps:
 
 ### Inertia v2 → v3 Migration
 
-Key changes:
-- Import path stays `@inertiajs/vue3`
-- `usePage()` now returns typed props via `InertiaConfig.sharedPageProps` (see `global.d.ts`)
-- Form helper: check for breaking changes
-- `createInertiaApp` setup: match SendKit pattern (simpler, no extra plugins like VCalendar/FloatingVue)
-- `router` import for navigation events
-- Shared page props typed in `global.d.ts`:
-  ```ts
-  declare module '@inertiajs/core' {
-    export interface InertiaConfig {
-      sharedPageProps: {
-        name: string;
-        auth: Auth;
-        flash: { banner?: string; bannerStyle?: string };
-        sidebarOpen: boolean;
-        // ... Lua-specific props
-      };
-    }
+**Packages:**
+- `composer require inertiajs/inertia-laravel:^3.0`
+- `npm install @inertiajs/vue3@^3.0`
+- Run `php artisan vendor:publish --provider="Inertia\ServiceProvider" --force`
+- Run `php artisan view:clear`
+
+**Breaking changes that affect Lua:**
+
+1. **Axios removed from Inertia** — Lua uses axios in 5 files (bootstrap.js, Menu.vue, Logo.vue, Avatar.vue, Qrcode.vue). Options:
+   - Keep axios as explicit dependency (it's in package.json already), OR
+   - Migrate to Inertia's `useHttp()` hook for those requests
+   - Decision: keep axios for now, migrate later
+
+2. **`<title inertia>` → `<title data-inertia>`** in `app.blade.php`
+
+3. **`Inertia::lazy()` → `Inertia::optional()`** — grep shows Lua doesn't use `lazy()`, so no change needed
+
+4. **`router.cancel()` → `router.cancelAll()`** — Lua doesn't use this
+
+5. **Event renames** — `invalid` → `httpException`, `exception` → `networkError` — Lua doesn't use these
+
+6. **`future` options removed** — Lua doesn't set these
+
+7. **Config restructured** — `testing.page_paths` → `pages.paths` etc. Handled by `vendor:publish --force`
+
+8. **`useForm` processing state** — now only resets in `onFinish`. Review forms that depend on `processing` state.
+
+**New config/inertia.php** (copy from SendKit):
+```php
+'ssr' => [
+    'enabled' => (bool) env('INERTIA_SSR_ENABLED', false), // disabled for Lua
+],
+'pages' => [
+    'ensure_pages_exist' => false,
+    'paths' => [resource_path('js/pages')], // lowercase after migration
+    'extensions' => ['js', 'jsx', 'ts', 'tsx', 'vue'],
+],
+'testing' => ['ensure_pages_exist' => true],
+'expose_shared_prop_keys' => true,
+'history' => ['encrypt' => false],
+```
+
+**HandleInertiaRequests.php updates:**
+- Add `sidebarOpen` prop (from cookie, like SendKit)
+- Add `appearance` prop (from cookie, for SSR dark mode)
+- Keep workspace-based auth structure (different from SendKit's team-based)
+
+**Shared page props typed in `global.d.ts`:**
+```ts
+declare module '@inertiajs/core' {
+  export interface InertiaConfig {
+    sharedPageProps: {
+      name: string;
+      auth: Auth;
+      flash: { banner?: string; bannerStyle?: string };
+      sidebarOpen: boolean;
+      appearance: string;
+      env: string;
+      locale: string;
+    };
   }
-  ```
+}
+```
+
+### Echo Migration
+
+SendKit uses `@laravel/echo-vue` (new Vue-specific Echo package) with `configureEcho()`.
+Lua currently uses `laravel-echo` + `pusher-js` with global `window.Echo`.
+
+Migration:
+- Install `@laravel/echo-vue`
+- Replace `echo.js` with `echo.ts` using `configureEcho()` pattern from SendKit
+- Remove `pusher-js` from dependencies (bundled in echo-vue)
+- Remove `window.Echo` and `window.Pusher` globals
 
 ### Appearance / Dark Mode System
 
