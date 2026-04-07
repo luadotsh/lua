@@ -1,29 +1,54 @@
-<script setup>
+<script setup lang="ts">
 import { useForm, usePage, router } from "@inertiajs/vue3";
+import { ref } from "vue";
+import dayjs from "@/dayjs";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import LinkForm from "./LinkForm.vue";
+import * as linksRoute from "@/routes/links";
 
-import Accordion from "@/Components/Accordion.vue";
-import SlideOver from "@/Components/SlideOver.vue";
-import Button from "@/Components/Button.vue";
-import Input from "@/Components/Input.vue";
-import InputError from "@/Components/InputError.vue";
-import Label from "@/Components/Label.vue";
-import Dropdown from "@/Components/Dropdown.vue";
-import DatePicker from "@/Components/DatePicker.vue";
+interface Tag {
+    id: string | number;
+    name: string;
+}
 
-const domains = usePage().props.domains;
-const tags = usePage().props.tags;
+interface LinkData {
+    id: string | number;
+    url: string;
+    domain: string;
+    key: string;
+    tags: Tag[];
+    ios?: string;
+    android?: string;
+    password?: string;
+    expires_at?: string;
+    expired_redirect_url?: string;
+}
 
-const { link } = defineProps({
-    link: Object,
-});
+const { link } = defineProps<{ link: LinkData }>();
 
 const form = useForm({
     ...link,
     tags: link.tags.map((t) => t.id),
 });
 
+const expiresAtDate = ref(
+    link.expires_at ? dayjs(link.expires_at).format("YYYY-MM-DDTHH:mm") : ""
+);
+
 const store = () => {
-    form.put(route("links.update", link.id), {
+    if (expiresAtDate.value) {
+        form.expires_at = dayjs(expiresAtDate.value).utc().format("YYYY-MM-DD HH:mm:ss");
+    } else {
+        form.expires_at = "";
+    }
+    form.put(linksRoute.update.url(link.id), {
         preserveScroll: true,
         onSuccess: () => {
             form.reset();
@@ -34,221 +59,19 @@ const store = () => {
 </script>
 
 <template>
-    <SlideOver
-        max-width="2xl"
-        :show="true"
-        @close="router.visit(route('links.index'))"
-    >
-        <template #title> Edit Link </template>
+    <Dialog :open="true" @update:open="(val) => !val && router.visit(linksRoute.index.url())">
+        <DialogContent class="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+                <DialogTitle>Edit Link</DialogTitle>
+            </DialogHeader>
 
-        <template #content>
-            <div class="flex flex-col gap-4">
-                <Accordion :is-open="true">
-                    <template #title> General </template>
-                    <template #content>
-                        <div class="col-span-6 lg:col-span-3">
-                            <Label
-                                for="domain"
-                                value="Short Link"
-                                :required="true"
-                            />
-                            <Dropdown
-                                id="domain"
-                                :options="
-                                    domains.map((d) => ({
-                                        id: d,
-                                        label: d,
-                                    }))
-                                "
-                                class="w-full"
-                                :search="true"
-                                placeholder="Select..."
-                                v-model="form.domain"
-                            />
+            <LinkForm :form="form" v-model:expires-at-date="expiresAtDate" />
 
-                            <InputError
-                                :message="form.errors.domain"
-                                class="mt-2"
-                            />
-                        </div>
-
-                        <div class="col-span-6 lg:col-span-3">
-                            <Label
-                                for="key"
-                                value="Custom back-half (optional)"
-                            />
-                            <Input
-                                id="key"
-                                type="text"
-                                v-model="form.key"
-                                placeholder="e.g. super-link"
-                            />
-
-                            <InputError
-                                :message="form.errors.key"
-                                class="mt-2"
-                            />
-                        </div>
-                        <div class="col-span-6">
-                            <Label
-                                for="url"
-                                value="Destination URL"
-                                :required="true"
-                            />
-                            <Input
-                                id="url"
-                                type="text"
-                                v-model="form.url"
-                                placeholder="e.g. https://example.com"
-                            />
-                            <InputError
-                                :message="form.errors.url"
-                                class="mt-2"
-                            />
-                        </div>
-
-                        <div class="col-span-6">
-                            <Label for="tags" value="Tags" />
-
-                            <Dropdown
-                                id="tags"
-                                :options="
-                                    tags.map((t) => ({
-                                        id: t.id,
-                                        label: t.name,
-                                    }))
-                                "
-                                class="w-full"
-                                :search="true"
-                                :multiple="true"
-                                placeholder="Select..."
-                                v-model="form.tags"
-                            />
-
-                            <InputError
-                                :message="form.errors.tags"
-                                class="mt-2"
-                            />
-                        </div>
-                    </template>
-                </Accordion>
-
-                <Accordion :is-open="false">
-                    <template #title> Targeted Traffic </template>
-                    <template #content>
-                        <div class="col-span-6">
-                            <Label
-                                for="ios"
-                                value="iOS URL"
-                                :required="false"
-                            />
-                            <Input
-                                id="ios"
-                                type="text"
-                                v-model="form.ios"
-                                placeholder="e.g. https://apps.apple.com/app/333903271"
-                            />
-                            <InputError
-                                :message="form.errors.ios"
-                                class="mt-2"
-                            />
-                        </div>
-
-                        <div class="col-span-6">
-                            <Label
-                                for="android"
-                                value="Android URL"
-                                :required="false"
-                            />
-                            <Input
-                                id="android"
-                                type="text"
-                                v-model="form.android"
-                                placeholder="e.g. https://play.google.com/store/apps/details?id=com.twitter.android"
-                            />
-                            <InputError
-                                :message="form.errors.android"
-                                class="mt-2"
-                            />
-                        </div>
-                    </template>
-                </Accordion>
-
-                <Accordion :is-open="false">
-                    <template #title> Link Password </template>
-                    <template #content>
-                        <div class="col-span-6">
-                            <Label
-                                for="password"
-                                value="Password"
-                                :required="false"
-                            />
-                            <Input
-                                id="password"
-                                type="text"
-                                v-model="form.password"
-                                placeholder="Create a password"
-                            />
-                            <InputError
-                                :message="form.errors.password"
-                                class="mt-2"
-                            />
-                        </div>
-                    </template>
-                </Accordion>
-
-                <Accordion :is-open="false">
-                    <template #title> Expiration </template>
-                    <template #content>
-                        <div class="col-span-6">
-                            <Label
-                                for="expires_at"
-                                value="Date and Time"
-                                :required="false"
-                            />
-                            <DatePicker
-                                v-model="form.expires_at"
-                                mode="dateTime"
-                            />
-                            <InputError
-                                :message="form.errors.expires_at"
-                                class="mt-2"
-                            />
-                        </div>
-
-                        <div class="col-span-6">
-                            <Label
-                                for="expired_redirect_url"
-                                value="Redirect users to a specific URL"
-                                :required="false"
-                            />
-                            <Input
-                                id="expired_redirect_url"
-                                type="text"
-                                v-model="form.expired_redirect_url"
-                                placeholder="e.g. https://example.com"
-                            />
-                            <InputError
-                                :message="form.errors.expired_redirect_url"
-                                class="mt-2"
-                            />
-                        </div>
-                    </template>
-                </Accordion>
-            </div>
-        </template>
-
-        <template #footer>
-            <Button
-                @click="store"
-                :class="{
-                    'opacity-25': form.processing,
-                    'btn-primary': true,
-                }"
-                :disabled="form.processing"
-            >
-                Update Link
-            </Button>
-        </template>
-    </SlideOver>
+            <DialogFooter>
+                <Button @click="store" :disabled="form.processing" :class="{ 'opacity-25': form.processing }">
+                    Update Link
+                </Button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
 </template>

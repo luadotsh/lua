@@ -1,59 +1,60 @@
-<script setup>
-import { Link } from "@inertiajs/vue3";
+<script setup lang="ts">
+import { Link } from '@inertiajs/vue3';
+import { Button } from '@/components/ui/button';
 
-defineProps({
+defineProps<{
     data: {
-        type: Object,
-        required: true,
-    },
-});
+        links?: unknown[];
+        from?: number;
+        to?: number;
+        total?: number;
+        prev_page_url?: string | null;
+        next_page_url?: string | null;
+    };
+}>();
 </script>
 
 <template>
-    <div>
-        <div
-            v-if="data.links.length > 3"
-            class="py-2 flex items-center justify-between"
-        >
-            <div class="hidden sm:block">
-                <p class="text-sm text-zinc-800 dark:text-zinc-300">
-                    {{ $t("pagination.showing") }}
-                    <span class="font-medium">{{ data.from }}</span>
-                    {{ $t("pagination.to") }}
-                    <span class="font-medium">{{ data.to }}</span>
-                    {{ $t("pagination.of") }}
-                    <span class="font-medium">{{ data.total }}</span>
-                    {{ $t("pagination.results") }}
-                </p>
-            </div>
-            <div class="flex-1 flex justify-between sm:justify-end">
-                <Link
-                    v-if="data.prev_page_url"
-                    :href="data.prev_page_url"
-                    class="btn btn-secondary"
-                    preserve-scroll
-                    preserve-state
-                >
-                    {{ $t("pagination.previous") }}
+    <div v-if="(data.links?.length ?? 0) > 3" class="py-2 flex items-center justify-between">
+        <div class="hidden sm:block">
+            <p class="text-sm text-muted-foreground">
+                Showing
+                <span class="font-medium text-foreground">{{ data.from }}</span>
+                to
+                <span class="font-medium text-foreground">{{ data.to }}</span>
+                of
+                <span class="font-medium text-foreground">{{ data.total }}</span>
+                results
+            </p>
+        </div>
+        <div class="flex items-center gap-2">
+            <Button
+                v-if="data.prev_page_url"
+                variant="outline"
+                size="sm"
+                as-child
+            >
+                <Link :href="data.prev_page_url" preserve-scroll preserve-state>
+                    Previous
                 </Link>
+            </Button>
+            <Button v-else variant="outline" size="sm" disabled>
+                Previous
+            </Button>
 
-                <div v-else class="btn btn-secondary cursor-not-allowed">
-                    {{ $t("pagination.previous") }}
-                </div>
-
-                <Link
-                    v-if="data.next_page_url"
-                    :href="data.next_page_url"
-                    class="ml-2 btn btn-secondary"
-                    preserve-scroll
-                    preserve-state
-                >
-                    {{ $t("pagination.next") }}
+            <Button
+                v-if="data.next_page_url"
+                variant="outline"
+                size="sm"
+                as-child
+            >
+                <Link :href="data.next_page_url" preserve-scroll preserve-state>
+                    Next
                 </Link>
-                <div v-else class="ml-2 cursor-not-allowed btn btn-secondary">
-                    {{ $t("pagination.next") }}
-                </div>
-            </div>
+            </Button>
+            <Button v-else variant="outline" size="sm" disabled>
+                Next
+            </Button>
         </div>
     </div>
 </template>

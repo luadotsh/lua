@@ -1,46 +1,114 @@
-<script setup>
-import { ref } from "vue";
-import { useForm } from "@inertiajs/vue3";
-import ConfirmationModal from "@/Components/ConfirmationModal.vue";
-import Button from "@/Components/Button.vue";
+<script setup lang="ts">
+import { router } from '@inertiajs/vue3';
+import { IconCopy, IconX } from '@tabler/icons-vue';
+import { computed, ref } from 'vue';
+import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { copyToClipboard } from '@/lib/utils';
 
-const isOpen = ref(false);
-const deleteForm = useForm({});
-
-const url = ref("");
-
-defineProps({
+const props = defineProps({
     title: {
         type: String,
-        default: "Are you sure?",
+        default: 'Are you sure?',
     },
 
     description: {
         type: String,
-        default:
-            "Are you sure you want to perform this action? This action cannot be undone.",
+        default: 'Are you sure you want to perform this action?',
     },
 
     action: {
         type: String,
-        default: "Delete",
+        default: 'Delete',
+    },
+
+    cancel: {
+        type: String,
+        default: 'Cancel',
+    },
+
+    method: {
+        type: String,
+        default: 'delete',
     },
 });
 
+const emit = defineEmits(['deleted', 'closed']);
+
+const isOpen = ref(false);
+const processing = ref(false);
+const url = ref<string | null>(null);
+const confirmInput = ref('');
+const confirmText = ref('');
+
+const requiresConfirmation = computed(() => confirmText.value.length > 0);
+const isConfirmed = computed(
+    () =>
+        !requiresConfirmation.value || confirmInput.value === confirmText.value,
+);
+
 const remove = () => {
-    deleteForm.delete(url.value, {
-        onSuccess: () => close(),
-    });
+    if (!url.value || !isConfirmed.value) return;
+
+    processing.value = true;
+
+    const options = {
+        preserveState: true,
+        preserveScroll: true,
+        onSuccess: () => {
+            close();
+            emit('deleted');
+        },
+        onFinish: () => {
+            processing.value = false;
+        },
+    };
+
+    const method = props.method as 'delete' | 'get' | 'post' | 'put' | 'patch';
+
+    if (method === 'delete' || method === 'get') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        router[method](url.value, options as any);
+    } else {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        router[method](url.value, {}, options as any);
+    }
 };
 
-const open = (data) => {
+const open = (data: { url: string; confirmText?: string }) => {
     url.value = data.url;
+    confirmText.value = data.confirmText ?? '';
+    processing.value = false;
+    confirmInput.value = '';
     isOpen.value = true;
 };
 
 const close = () => {
-    url.value = "";
     isOpen.value = false;
+    processing.value = false;
+    confirmInput.value = '';
+    emit('closed');
+};
+
+const onOpenChange = (value: boolean) => {
+    isOpen.value = value;
+    if (!value) {
+        close();
+    }
 };
 
 defineExpose({
@@ -50,31 +118,83 @@ defineExpose({
 </script>
 
 <template>
-    <ConfirmationModal :show="isOpen" @close="close()" maxWidth="sm">
-        <template #title>
-            {{ title }}
-        </template>
-
-        <template #content>
-            {{ description }}
-        </template>
-
-        <template #footer>
-            <Button @click="close()" class="btn-secondary !px-6">
-                Cancel
-            </Button>
-
+    <Dialog :open="isOpen" @update:open="onOpenChange">
+        <DialogContent :show-close-button="false" dusk="confirm-delete-modal">
             <Button
-                class="ml-3"
-                :class="{
-                    'opacity-25': deleteForm.processing,
-                    'btn-danger w-full': true,
-                }"
-                :disabled="deleteForm.processing"
-                @click="remove"
+                variant="ghost"
+                size="icon"
+                class="absolute top-4 right-4 size-7"
+                @click="close"
             >
-                {{ action }}
+                <IconX class="size-4" />
+                <span class="sr-only">Close</span>
             </Button>
-        </template>
-    </ConfirmationModal>
+            <DialogHeader>
+                <DialogTitle>{{ title }}</DialogTitle>
+                <DialogDescription class="space-y-1">
+                    <span class="block">{{ description }}</span>
+                    <span class="block font-semibold text-destructive">
+                        This cannot be undone.
+                    </span>
+                </DialogDescription>
+            </DialogHeader>
+            <div v-if="requiresConfirmation" class="py-2">
+                <p
+                    class="mb-2 flex flex-wrap items-center gap-1 text-sm text-muted-foreground"
+                >
+                    <span>Type</span>
+                    <code
+                        class="inline-flex items-center gap-1 rounded-sm border bg-zinc-200 px-1.5 text-sm break-all text-foreground dark:bg-zinc-700"
+                    >
+                        {{ confirmText }}
+                        <TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger as-child>
+                                    <button
+                                        type="button"
+                                        tabindex="-1"
+                                        class="inline-flex shrink-0 items-center rounded text-muted-foreground hover:text-foreground"
+                                        @click="
+                                            copyToClipboard(
+                                                confirmText,
+                                                'Copied to clipboard',
+                                            )
+                                        "
+                                    >
+                                        <IconCopy class="size-3" />
+                                    </button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>Copy to clipboard</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                    </code>
+                    <span>to confirm.</span>
+                </p>
+                <Input
+                    v-model="confirmInput"
+                    autocomplete="off"
+                    dusk="confirm-delete-input"
+                />
+            </div>
+            <DialogFooter>
+                <Button
+                    variant="destructive"
+                    :disabled="processing || !isConfirmed"
+                    dusk="confirm-delete-button"
+                    @click="remove"
+                >
+                    {{ action }}
+                </Button>
+                <Button
+                    variant="secondary"
+                    dusk="confirm-delete-cancel"
+                    @click="close"
+                >
+                    {{ cancel }}
+                </Button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
 </template>

@@ -1,19 +1,23 @@
-<script setup>
+<script setup lang="ts">
 import { useForm, usePage } from "@inertiajs/vue3";
 import { ref, computed } from "vue";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import * as apiTokensRoutes from "@/routes/setting/api-tokens";
 
-import DialogModal from "@/Components/DialogModal.vue";
-import Button from "@/Components/Button.vue";
-import Input from "@/Components/Input.vue";
-import InputError from "@/Components/InputError.vue";
-import Label from "@/Components/Label.vue";
-
-const token = computed(() => usePage().props.flash.token);
+const token = computed(() => usePage().props.flash?.token);
 const displayToken = ref(false);
 
 const form = useForm({
     name: "",
-    color: "",
 });
 
 const show = ref(false);
@@ -28,7 +32,7 @@ defineExpose({
 });
 
 const store = () => {
-    form.post(route("setting.api-tokens.store"), {
+    form.post(apiTokensRoutes.store.url(), {
         preserveScroll: true,
         onSuccess: () => {
             displayToken.value = true;
@@ -40,47 +44,44 @@ const store = () => {
 </script>
 
 <template>
-    <DialogModal max-width="md" :show="show" @close="show = null">
-        <template #title>New API Token</template>
+    <Dialog :open="show" @update:open="(val) => (show = val)">
+        <DialogContent class="max-w-md">
+            <DialogHeader>
+                <DialogTitle>New API Token</DialogTitle>
+            </DialogHeader>
 
-        <template #content>
-            <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-                <div class="sm:col-span-6">
-                    <Label for="name" value="Name" :required="true" />
+            <div class="mt-4 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                <div class="sm:col-span-6 grid gap-2">
+                    <Label for="name">Name <span class="text-red-500">*</span></Label>
                     <Input
                         id="name"
                         type="text"
                         v-model="form.name"
                         placeholder=""
                     />
-                    <InputError :message="form.errors.name" class="mt-2" />
+                    <p v-if="form.errors.name" class="mt-2 text-sm text-red-600">{{ form.errors.name }}</p>
                 </div>
             </div>
-        </template>
 
-        <template #footer>
-            <Button
-                @click="store"
-                :class="{
-                    'opacity-25': form.processing,
-                    'btn-primary': true,
-                }"
-                :disabled="form.processing"
-            >
-                Generate Token
-            </Button>
-        </template>
-    </DialogModal>
+            <DialogFooter>
+                <Button
+                    @click="store"
+                    :disabled="form.processing"
+                    :class="{ 'opacity-25': form.processing }"
+                >
+                    Generate Token
+                </Button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
 
     <!-- Token Value Modal -->
-    <DialogModal
-        :show="displayToken"
-        @close="displayToken = false"
-        max-width="md"
-    >
-        <template #title> API Token </template>
+    <Dialog :open="displayToken" @update:open="(val) => (displayToken = val)">
+        <DialogContent class="max-w-md">
+            <DialogHeader>
+                <DialogTitle>API Token</DialogTitle>
+            </DialogHeader>
 
-        <template #content>
             <div class="text-zinc-800 dark:text-zinc-300">
                 Please copy your new API token. For your security, it won't be
                 shown again.
@@ -92,12 +93,12 @@ const store = () => {
             >
                 {{ token }}
             </div>
-        </template>
 
-        <template #footer>
-            <Button @click="displayToken = false" class="btn btn-primary">
-                Close
-            </Button>
-        </template>
-    </DialogModal>
+            <DialogFooter>
+                <Button @click="displayToken = false">
+                    Close
+                </Button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
 </template>

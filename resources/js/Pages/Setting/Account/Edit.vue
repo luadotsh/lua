@@ -1,31 +1,30 @@
-<script setup>
+<script setup lang="ts">
 import { usePage, useForm, Head } from "@inertiajs/vue3";
-import AppLayout from "@/Layouts/Master.vue";
-import Button from "@/Components/Button.vue";
-import Input from "@/Components/Input.vue";
-import InputError from "@/Components/InputError.vue";
-import Label from "@/Components/Label.vue";
+import AppLayout from "@/layouts/AppLayout.vue";
+import SettingsLayout from "@/layouts/settings/Layout.vue";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import Avatar from "./Avatar.vue";
-import Dropdown from "@/Components/Dropdown.vue";
+import * as accountRoutes from "@/routes/setting/account";
+
+defineProps<{
+    mustVerifyEmail?: boolean;
+    status?: boolean;
+}>();
 
 const user = usePage().props.auth.user;
-
-defineProps({
-    mustVerifyEmail: Boolean,
-    status: Boolean,
-});
 
 const form = useForm({
     name: user.name,
     email: user.email,
-    theme: user.theme,
     current_password: "",
     password: "",
     password_confirmation: "",
 });
 
 const update = () => {
-    form.post(route("setting.account.update"), {
+    form.post(accountRoutes.update.url(), {
         onSuccess: () => {
             form.reset();
         },
@@ -37,29 +36,18 @@ const update = () => {
     <Head title="Account" />
 
     <AppLayout>
-        <template #header>
-            <div class="sm:flex sm:items-center">
-                <div class="sm:flex-auto">
-                    <h1 class="page-title">Settings</h1>
-                </div>
-            </div>
-        </template>
-
-        <div class="mx-auto w-full max-w-7xl lg:px-4 lg:py-12">
+        <SettingsLayout>
             <div class="flex items-center justify-between">
                 <div>
-                    <h2 class="setting-page-title">Account Information</h2>
-                    <p class="setting-page-subtitle">
+                    <h2 class="text-lg font-semibold">Account Information</h2>
+                    <p class="text-sm text-zinc-500 dark:text-zinc-400">
                         Update your account's name, email and password.
                     </p>
                 </div>
                 <div>
                     <Button
-                        :class="{
-                            'flex items-center space-x-1.5 btn-primary': true,
-                            'opacity-25': form.processing,
-                        }"
                         :disabled="form.processing"
+                        :class="{ 'opacity-25': form.processing }"
                         @click="update"
                     >
                         Save Changes
@@ -72,7 +60,7 @@ const update = () => {
                 <div
                     class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6"
                 >
-                    <Label for="name" value="Name" :required="true" />
+                    <Label for="name">Name <span class="text-red-500">*</span></Label>
                     <div class="mt-2 sm:col-span-2 sm:mt-0">
                         <Input
                             id="name"
@@ -80,14 +68,14 @@ const update = () => {
                             type="text"
                             autocomplete="name"
                         />
-                        <InputError :message="form.errors.name" class="mt-2" />
+                        <p v-if="form.errors.name" class="mt-2 text-sm text-red-600">{{ form.errors.name }}</p>
                     </div>
                 </div>
 
                 <div
                     class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6"
                 >
-                    <Label for="email" value="Email" :required="true" />
+                    <Label for="email">Email <span class="text-red-500">*</span></Label>
                     <div class="mt-2 sm:col-span-2 sm:mt-0">
                         <Input
                             id="email"
@@ -95,14 +83,14 @@ const update = () => {
                             type="text"
                             autocomplete="email"
                         />
-                        <InputError :message="form.errors.email" class="mt-2" />
+                        <p v-if="form.errors.email" class="mt-2 text-sm text-red-600">{{ form.errors.email }}</p>
                     </div>
                 </div>
 
                 <div
                     class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6"
                 >
-                    <Label for="avatar" value="Avatar" />
+                    <Label for="avatar">Avatar</Label>
                     <div class="mt-2 sm:col-span-2 sm:mt-0">
                         <Avatar />
                     </div>
@@ -112,7 +100,7 @@ const update = () => {
                     class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6"
                 >
                     <div>
-                        <Label for="current_password" value="Password" />
+                        <Label for="current_password">Password</Label>
                         <p class="text-sm text-zinc-500 dark:text-zinc-400">
                             Confirm your current password before setting a new
                             one. 8 characters minimum.
@@ -127,11 +115,7 @@ const update = () => {
                                 autocomplete="new-password"
                                 placeholder="Current Password"
                             />
-
-                            <InputError
-                                :message="form.errors.password"
-                                class="mt-2"
-                            />
+                            <p v-if="form.errors.current_password" class="mt-2 text-sm text-red-600">{{ form.errors.current_password }}</p>
                         </div>
                         <div>
                             <Input
@@ -141,11 +125,7 @@ const update = () => {
                                 autocomplete="new-password"
                                 placeholder="New Password"
                             />
-
-                            <InputError
-                                :message="form.errors.password"
-                                class="mt-2"
-                            />
+                            <p v-if="form.errors.password" class="mt-2 text-sm text-red-600">{{ form.errors.password }}</p>
                         </div>
                         <div>
                             <Input
@@ -155,46 +135,12 @@ const update = () => {
                                 autocomplete="current-password"
                                 placeholder="Confirm Password"
                             />
-                            <InputError
-                                :message="form.errors.password_confirmation"
-                                class="mt-2"
-                            />
+                            <p v-if="form.errors.password_confirmation" class="mt-2 text-sm text-red-600">{{ form.errors.password_confirmation }}</p>
                         </div>
                     </div>
                 </div>
 
-                <div
-                    class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6"
-                >
-                    <Label for="theme" value="Theme" :required="true" />
-
-                    <div class="mt-2 sm:col-span-2 sm:mt-0">
-                        <Dropdown
-                            id="theme"
-                            :search="true"
-                            :options="[
-                                {
-                                    id: 'LIGHT',
-                                    label: 'Light',
-                                },
-                                {
-                                    id: 'DARK',
-                                    label: 'Dark',
-                                },
-                                {
-                                    id: 'SYSTEM',
-                                    label: 'System',
-                                },
-                            ]"
-                            class="w-full"
-                            v-model="form.theme"
-                        />
-
-                        <InputError :message="form.errors.theme" class="mt-2" />
-                    </div>
-                </div>
             </div>
-        </div>
+        </SettingsLayout>
     </AppLayout>
 </template>
-./Avatar.vue

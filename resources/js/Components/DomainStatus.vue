@@ -1,30 +1,38 @@
-<script setup>
-import { router } from "@inertiajs/vue3";
+<script setup lang="ts">
+import { router } from '@inertiajs/vue3';
+import { Badge } from '@/components/ui/badge';
+import { validateDns } from '@/routes/setting/domains';
 
-const { domain } = defineProps({
-    domain: {
-        type: Object,
-        required: true,
-    },
-});
+interface Domain {
+    id: string | number;
+    status: string;
+}
 
-const validateDns = async () => {
-    router.visit(route("setting.domains.validate-dns", domain.id), {
-        method: "get",
+const { domain } = defineProps<{
+    domain: Domain;
+}>();
+
+const handleValidateDns = () => {
+    router.visit(validateDns(domain.id).url, {
+        method: 'get',
         preserveState: true,
     });
 };
 </script>
 
 <template>
-    <div v-if="domain.status === 'active'" class="badge badge-green">
+    <Badge v-if="domain.status === 'active'" variant="default" class="bg-green-500 hover:bg-green-500">
         Active
-    </div>
-    <div
+    </Badge>
+    <Badge
         v-else-if="domain.status === 'pending'"
-        class="badge badge-red cursor-pointer"
-        @click="validateDns"
+        variant="destructive"
+        class="cursor-pointer"
+        @click="handleValidateDns"
     >
         Validate DNS
-    </div>
+    </Badge>
+    <Badge v-else variant="secondary">
+        {{ domain.status }}
+    </Badge>
 </template>

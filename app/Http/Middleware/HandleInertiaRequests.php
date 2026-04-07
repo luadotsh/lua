@@ -11,15 +11,10 @@ class HandleInertiaRequests extends Middleware
 {
     /**
      * The root template that is loaded on the first page visit.
-     *
-     * @return string|array{0: string, 1: array<string, mixed>}
      */
-    public function rootView(Request $request): string|array
+    public function rootView(Request $request): string
     {
-        return [
-            'app',
-            ['appearance' => $request->cookie('appearance', 'system')],
-        ];
+        return 'app';
     }
 
     /**

@@ -1,23 +1,26 @@
-<script setup>
+<script setup lang="ts">
 import { useForm } from "@inertiajs/vue3";
-import Label from "@/Components/Label.vue";
-import Input from "@/Components/Input.vue";
-import InputError from "@/Components/InputError.vue";
-import Button from "@/Components/Button.vue";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import InputError from "@/components/InputError.vue";
 
-const { link } = defineProps({
-    link: {
-        type: Object,
-        required: true,
-    },
-});
+import { validate as validatePasswordRoute } from "@/routes/links/password";
+
+interface LinkData {
+    key: string;
+}
+
+const { link } = defineProps<{
+    link: LinkData;
+}>();
 
 const form = useForm({
     password: "",
 });
 
 const submit = () => {
-    form.post(route("links.password.validate", link.key));
+    form.post(validatePasswordRoute.url(link.key));
 };
 </script>
 
@@ -32,7 +35,9 @@ const submit = () => {
         <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
             <form class="space-y-4" @submit.prevent="submit">
                 <div>
-                    <Label for="password" value="Password" :required="true" />
+                    <Label for="password">
+                        Password <span class="text-red-500">*</span>
+                    </Label>
 
                     <Input
                         id="password"
@@ -49,7 +54,7 @@ const submit = () => {
                 </div>
 
                 <div>
-                    <Button type="submit" class="btn btn-primary w-full">
+                    <Button type="submit" class="w-full">
                         Unlock
                     </Button>
                 </div>

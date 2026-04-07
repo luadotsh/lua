@@ -1,193 +1,162 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
-import { Head } from "@inertiajs/vue3";
-import Button from "@/Components/Button.vue";
-import ConfirmDeleteModal from "@/Components/ConfirmDeleteModal.vue";
-import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
-
+import { Head, router } from "@inertiajs/vue3";
+import { Button } from "@/components/ui/button";
 import {
-    PhGlobe,
-    PhPencil,
-    PhDotsThreeOutlineVertical,
-    PhArrowBendDownRight,
-    PhTrash,
-} from "@phosphor-icons/vue";
-
-import DomainStatus from "@/Components/DomainStatus.vue";
-import EmptyState from "@/Components/EmptyState.vue";
-import AppLayout from "@/Layouts/Master.vue";
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { IconDots, IconWorld } from "@tabler/icons-vue";
+import DomainStatus from "@/components/DomainStatus.vue";
+import AppLayout from "@/layouts/AppLayout.vue";
+import SettingsLayout from "@/layouts/settings/Layout.vue";
 import CreateModal from "./Create.vue";
 import EditModal from "./Edit.vue";
+import * as domainsRoutes from "@/routes/setting/domains";
 
-const confirmDeleteModal = ref(null);
-const createModal = ref(null);
-const editModal = ref(null);
+const createModal = ref<InstanceType<typeof CreateModal> | null>(null);
+const editModal = ref<InstanceType<typeof EditModal> | null>(null);
+const domainToDelete = ref<{ id: string | number } | null>(null);
 
-const { domains, hasData } = defineProps({
-    domains: Object,
-    hasData: Boolean,
-});
+const props = defineProps<{
+    domains: object;
+    hasData: boolean;
+}>();
+
+const confirmDelete = (domain: { id: string | number }) => {
+    domainToDelete.value = domain;
+};
+
+const deleteDomain = () => {
+    if (!domainToDelete.value) {
+        return;
+    }
+
+    router.delete(domainsRoutes.destroy.url(domainToDelete.value.id), {
+        preserveScroll: true,
+        onSuccess: () => {
+            domainToDelete.value = null;
+        },
+    });
+};
 </script>
 
 <template>
-    <Head title="Tags" />
+    <Head title="Domains" />
 
     <AppLayout>
-        <CreateModal ref="createModal" />
-        <EditModal ref="editModal" />
+        <SettingsLayout>
+            <CreateModal ref="createModal" />
+            <EditModal ref="editModal" />
 
-        <ConfirmDeleteModal
-            ref="confirmDeleteModal"
-            description="Are you sure you want to delete this domain?"
-        />
+            <AlertDialog :open="!!domainToDelete" @update:open="(val) => !val && (domainToDelete = null)">
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Domain</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Are you sure you want to delete this domain?
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel @click="domainToDelete = null">Cancel</AlertDialogCancel>
+                        <AlertDialogAction @click="deleteDomain" class="bg-red-600 hover:bg-red-700">Delete</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
 
-        <template #header>
-            <div class="w-full">
-                <div class="flex items-center justify-between">
-                    <div class="sm:flex-auto">
-                        <h1 class="page-title">Domains</h1>
-                    </div>
-                    <div>
-                        <Button class="btn-primary" @click="createModal.open()">
-                            New Domain
-                        </Button>
-                    </div>
-                </div>
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-lg font-semibold">Domains</h2>
+                <Button @click="createModal?.open()">
+                    New Domain
+                </Button>
             </div>
-        </template>
 
-        <div>
-            <div
-                class="w-full flex flex-col transition-[gap,opacity] min-w-0 gap-4"
-            >
+            <div>
                 <div
-                    v-for="domain in domains"
-                    :key="domain.id"
-                    class="flex items-center justify-between group border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 border rounded-lg p-2 lg:p-4"
+                    class="w-full flex flex-col transition-[gap,opacity] min-w-0 gap-4"
                 >
-                    <div class="flex items-center justify-center lg:space-x-4">
-                        <div
-                            class="rounded-full hidden lg:flex border border-zinc-200 dark:border-zinc-700 dark:bg-white/5 p-0.5"
-                        >
-                            <img
-                                :src="
-                                    route('websites.favicon', {
-                                        url: domain.domain,
-                                    })
-                                "
-                                alt="favicon"
-                                class="h-8 w-8 rounded-full"
-                            />
-                        </div>
-                        <div>
-                            <div class="flex items-center space-x-2 mb-1">
-                                <div class="text-zinc-800 dark:text-zinc-300">
-                                    {{ domain.domain }}
-                                </div>
-                            </div>
-                            <div class="ml-0.5 flex items-center space-x-2">
-                                <PhArrowBendDownRight
-                                    weight="bold"
-                                    class="text-zinc-400 h-4 w-4"
-                                />
-                                <div
-                                    class="text-[13px] text-zinc-600 dark:text-zinc-400"
-                                >
-                                    {{
-                                        domain.not_found_url ??
-                                        "No redirect configured"
-                                    }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <DomainStatus :domain="domain" />
-
-                        <Menu as="div" class="relative inline-block text-left">
-                            <div>
-                                <MenuButton class="flex items-center">
-                                    <PhDotsThreeOutlineVertical
-                                        class="h-5 w-5 text-gray-400"
-                                        aria-hidden="true"
-                                    />
-                                </MenuButton>
-                            </div>
-
-                            <transition
-                                enter-active-class="transition ease-out duration-100"
-                                enter-from-class="transform opacity-0 scale-95"
-                                enter-to-class="transform opacity-100 scale-100"
-                                leave-active-class="transition ease-in duration-75"
-                                leave-from-class="transform opacity-100 scale-100"
-                                leave-to-class="transform opacity-0 scale-95"
+                    <div
+                        v-for="domain in domains"
+                        :key="domain.id"
+                        class="flex items-center justify-between group border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 border rounded-lg p-2 lg:p-4"
+                    >
+                        <div class="flex items-center justify-center lg:space-x-4">
+                            <div
+                                class="rounded-full hidden lg:flex border border-zinc-200 dark:border-zinc-700 dark:bg-white/5 p-0.5"
                             >
-                                <MenuItems
-                                    class="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
-                                >
-                                    <div class="py-1">
-                                        <MenuItem v-slot="{ active }">
-                                            <div
-                                                @click="editModal.open(domain)"
-                                                :class="[
-                                                    active
-                                                        ? 'bg-gray-100 text-gray-900'
-                                                        : 'text-gray-700',
-                                                    'group flex items-center px-4 py-2 text-sm',
-                                                ]"
-                                            >
-                                                <PhPencil
-                                                    class="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
-                                                    aria-hidden="true"
-                                                />
-                                                Edit
-                                            </div>
-                                        </MenuItem>
+                                <img
+                                    :src="route('websites.favicon', { url: domain.domain })"
+                                    alt="favicon"
+                                    class="h-8 w-8 rounded-full"
+                                />
+                            </div>
+                            <div>
+                                <div class="flex items-center space-x-2 mb-1">
+                                    <div class="text-zinc-800 dark:text-zinc-300">
+                                        {{ domain.domain }}
                                     </div>
+                                </div>
+                                <div class="ml-0.5 flex items-center space-x-2">
+                                    <div
+                                        class="text-[13px] text-zinc-600 dark:text-zinc-400"
+                                    >
+                                        {{
+                                            domain.not_found_url ??
+                                            "No redirect configured"
+                                        }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <DomainStatus :domain="domain" />
 
-                                    <div class="py-1">
-                                        <MenuItem v-slot="{ active }">
-                                            <div
-                                                @click="
-                                                    confirmDeleteModal.open({
-                                                        url: route(
-                                                            'setting.domains.destroy',
-                                                            {
-                                                                id: domain.id,
-                                                            }
-                                                        ),
-                                                    })
-                                                "
-                                                :class="[
-                                                    active
-                                                        ? 'bg-red-50 text-red-600'
-                                                        : 'text-red-500',
-                                                    'group flex items-center px-4 py-2 text-sm cursor-pointer',
-                                                ]"
-                                            >
-                                                <PhTrash
-                                                    class="mr-3 h-5 w-5 text-red-500"
-                                                    aria-hidden="true"
-                                                />
-                                                Delete
-                                            </div>
-                                        </MenuItem>
-                                    </div>
-                                </MenuItems>
-                            </transition>
-                        </Menu>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger as-child>
+                                    <Button variant="ghost" size="icon">
+                                        <IconDots class="h-4 w-4 text-zinc-400" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem @click="editModal?.open(domain)">
+                                        Edit
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem
+                                        class="text-red-600 focus:text-red-600"
+                                        @click="confirmDelete(domain)"
+                                    >
+                                        Delete
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <EmptyState
-            v-if="!hasData"
-            :icon="PhGlobe"
-            title="You don't have any domains yet."
-            description="Domains are used to create branded short links. e.g. link.yourdomain.com/short-link"
-            buttonTitle="Add Domain"
-        >
-        </EmptyState>
+            <div
+                v-if="!hasData"
+                class="flex flex-col items-center justify-center py-12 text-center"
+            >
+                <IconWorld class="h-12 w-12 text-zinc-300 mb-4" />
+                <h3 class="text-sm font-semibold text-zinc-800 dark:text-zinc-200">You don't have any domains yet.</h3>
+                <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Domains are used to create branded short links. e.g. link.yourdomain.com/short-link</p>
+                <Button class="mt-4" @click="createModal?.open()">Add Domain</Button>
+            </div>
+        </SettingsLayout>
     </AppLayout>
 </template>

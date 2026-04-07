@@ -1,20 +1,19 @@
-<script setup>
-import { ref } from "vue";
+<script setup lang="ts">
 import { Head, useForm, usePage } from "@inertiajs/vue3";
-import AppLayout from "@/Layouts/Master.vue";
-import Button from "@/Components/Button.vue";
-import Input from "@/Components/Input.vue";
-import InputError from "@/Components/InputError.vue";
-import Label from "@/Components/Label.vue";
-import Dropdown from "@/Components/Dropdown.vue";
+import AppLayout from "@/layouts/AppLayout.vue";
+import SettingsLayout from "@/layouts/settings/Layout.vue";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import Logo from "./Logo.vue";
+import * as workspaceRoutes from "@/routes/setting/workspace";
 
 const workspace = usePage().props.auth.user.current_workspace;
 
 const form = useForm(workspace);
 
 const update = () => {
-    form.put(route("setting.workspace.update"), {
+    form.put(workspaceRoutes.update.url(), {
         preserveScroll: true,
     });
 };
@@ -24,30 +23,19 @@ const update = () => {
     <Head title="Workspace Settings" />
 
     <AppLayout>
-        <template #header>
-            <div class="sm:flex sm:items-center">
-                <div class="sm:flex-auto">
-                    <h1 class="page-title">Settings</h1>
-                </div>
-            </div>
-        </template>
-
-        <div class="mx-auto w-full max-w-7xl lg:px-4 lg:py-12">
+        <SettingsLayout>
             <div class="flex items-center justify-between">
                 <div>
-                    <h2 class="setting-page-title">Workspace Settings</h2>
-                    <p class="setting-page-subtitle">
+                    <h2 class="text-lg font-semibold">Workspace Settings</h2>
+                    <p class="text-sm text-zinc-500 dark:text-zinc-400">
                         Here you can update your workspace settings like name,
                         logo, etc.
                     </p>
                 </div>
                 <div>
                     <Button
-                        :class="{
-                            'flex items-center space-x-1.5 btn-primary': true,
-                            'opacity-25': form.processing,
-                        }"
                         :disabled="form.processing"
+                        :class="{ 'opacity-25': form.processing }"
                         @click="update"
                     >
                         Save Changes
@@ -60,7 +48,7 @@ const update = () => {
                 <div
                     class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6"
                 >
-                    <Label for="logo" value="Logo" />
+                    <Label for="logo">Logo</Label>
                     <div class="mt-2 sm:col-span-2 sm:mt-0">
                         <Logo />
                     </div>
@@ -68,7 +56,7 @@ const update = () => {
                 <div
                     class="sm:grid sm:grid-cols-3 sm:items-center sm:gap-4 sm:py-6"
                 >
-                    <Label for="name" value="Name" :required="true" />
+                    <Label for="name">Name <span class="text-red-500">*</span></Label>
                     <div class="mt-2 sm:col-span-2 sm:mt-0">
                         <Input
                             id="name"
@@ -76,10 +64,10 @@ const update = () => {
                             type="text"
                             autocomplete="name"
                         />
-                        <InputError :message="form.errors.name" class="mt-2" />
+                        <p v-if="form.errors.name" class="mt-2 text-sm text-red-600">{{ form.errors.name }}</p>
                     </div>
                 </div>
             </div>
-        </div>
+        </SettingsLayout>
     </AppLayout>
 </template>

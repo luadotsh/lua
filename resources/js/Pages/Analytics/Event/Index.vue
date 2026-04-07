@@ -1,28 +1,31 @@
-<script setup>
+<script setup lang="ts">
 import { ref, reactive, watch } from "vue";
-import Chart from "@/Components/Chart.vue";
+import Chart from "@/components/Chart.vue";
+import { statistics } from "@/routes/analytics";
+
+interface Range {
+    timezone: string;
+    group: string;
+    start: string | null;
+    end: string | null;
+}
+
+const props = defineProps<{
+    range: Range;
+}>();
 
 const data = reactive({
     total: 0,
     chart: {
         label: "",
-        data: [],
-        labels: [],
+        data: [] as number[],
+        labels: [] as string[],
     },
-});
-
-const props = defineProps({
-    range: Object,
 });
 
 const refresh = () => {
     axios
-        .get(route("analytics.statistics"), {
-            params: {
-                ...props.range,
-                metric: "events",
-            },
-        })
+        .get(statistics.url({ query: { ...props.range, metric: "events" } }))
         .then((response) => {
             data.total = response.data.total;
             data.chart = response.data.chart;

@@ -1,52 +1,49 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from "vue";
 import { router, usePage } from "@inertiajs/vue3";
-import Button from "@/Components/Button.vue";
-import { PhTrash } from "@phosphor-icons/vue";
+import { Button } from "@/components/ui/button";
+import { IconTrash } from "@tabler/icons-vue";
 import axios from "axios";
+import * as mediasRoutes from "@/routes/medias";
 
-const input = ref(null);
-const uploadHasErrors = ref(null);
+const input = ref<HTMLInputElement | null>(null);
+const uploadHasErrors = ref<string | null>(null);
 const isLoading = ref(false);
 
 const user = computed(() => usePage().props.auth.user);
 
 const upload = async () => {
-    input.value.click();
+    input.value!.click();
 
-    input.value.onchange = async () => {
-        // loading
+    input.value!.onchange = async (event: Event) => {
         isLoading.value = true;
 
         const formData = new FormData();
-        formData.append("media", event.target.files[0]);
+        formData.append("media", (event.target as HTMLInputElement).files![0]);
         formData.append("model", "User");
         formData.append("model_id", user.value.id);
         formData.append("collection", "photos");
         formData.append("visibility", "public");
 
         await axios
-            .post(route("medias.store"), formData)
-            .then((data) => {
-                // reset
+            .post(mediasRoutes.store.url(), formData)
+            .then(() => {
                 uploadHasErrors.value = null;
-
                 router.reload();
             })
             .catch((error) => {
                 console.log(error);
             })
             .finally(() => {
-                // reset
                 isLoading.value = false;
-                input.value.value = null;
+                input.value!.value = "";
             });
     };
 };
 
 const destroy = () => {
     router.delete(
-        route("medias.destroy", {
+        mediasRoutes.destroy.url({
             modelId: user.value.media?.[0].model_id,
             id: user.value.media?.[0].id,
         }),
@@ -73,12 +70,11 @@ const destroy = () => {
             </div>
             <div>
                 <Button
+                    variant="outline"
+                    size="sm"
                     @click="upload"
-                    :class="{
-                        'btn-secondary btn-sm': true,
-                        'opacity-25': isLoading,
-                    }"
                     :disabled="isLoading"
+                    :class="{ 'opacity-25': isLoading }"
                 >
                     Choose
                 </Button>
@@ -93,7 +89,7 @@ const destroy = () => {
             @click="destroy"
             class="p-2 hover:bg-zinc-100 rounded-md cursor-pointer"
         >
-            <PhTrash class="text-zinc-500" size="20" />
+            <IconTrash class="text-zinc-500 h-5 w-5" />
         </div>
     </div>
     <div v-show="uploadHasErrors" class="my-2">

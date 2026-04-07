@@ -1,20 +1,65 @@
-<script setup>
-import { reactive, ref } from "vue";
+<script setup lang="ts">
+import { ref } from "vue";
 import { router } from "@inertiajs/vue3";
-import Layout from "@/Layouts/Master.vue";
+import AppLayout from "@/layouts/AppLayout.vue";
 import date from "@/date";
 
-import Pagination from "@/Components/Pagination.vue";
+import * as eventsRoute from "@/routes/events";
+
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
+import Pagination from "@/components/Pagination.vue";
 import Header from "./Header.vue";
 import ChartClick from "./ChartClick.vue";
 import ChartQR from "./ChartQR.vue";
 
-const props = defineProps({
-    start: String,
-    end: String,
-    table: Object,
-    hasData: Boolean,
-});
+interface Column {
+    key: string;
+    label: string;
+    show: boolean;
+}
+
+interface EventLink {
+    link: string;
+}
+
+interface EventData {
+    id: string | number;
+    event: string;
+    link: EventLink;
+    country: string;
+    region: string;
+    city: string;
+    device: string;
+    browser: string;
+    os: string;
+    created_at: string;
+    language: string;
+    utm_medium: string;
+    utm_source: string;
+    utm_campaign: string;
+    utm_content: string;
+    utm_term: string;
+    referer: string;
+}
+
+interface Table {
+    data: EventData[];
+    next_page_url: string | null;
+}
+
+const props = defineProps<{
+    start: string;
+    end: string;
+    table: Table;
+    hasData: boolean;
+}>();
 
 const range = ref({
     start: props.start,
@@ -23,95 +68,33 @@ const range = ref({
     group: "day",
 });
 
-const columns = reactive([
-    {
-        key: "event",
-        label: "Event",
-        show: true,
-    },
-    {
-        key: "link",
-        label: "Link",
-        show: true,
-    },
-    {
-        key: "country",
-        label: "Country",
-        show: true,
-    },
-    {
-        key: "region",
-        label: "Region",
-        show: true,
-    },
-    {
-        key: "city",
-        label: "City",
-        show: false,
-    },
-    {
-        key: "device",
-        label: "Device",
-        show: true,
-    },
-    {
-        key: "browser",
-        label: "Browser",
-        show: true,
-    },
-    {
-        key: "os",
-        label: "OS",
-        show: true,
-    },
-    {
-        key: "date",
-        label: "Date",
-        show: true,
-    },
-    {
-        key: "language",
-        label: "Language",
-        show: false,
-    },
-    {
-        key: "utm_medium",
-        label: "Utm Medium",
-        show: false,
-    },
-    {
-        key: "utm_source",
-        label: "Utm Source",
-        show: false,
-    },
-    {
-        key: "utm_campaign",
-        label: "Utm Campaign",
-        show: false,
-    },
-    {
-        key: "utm_content",
-        label: "Utm Content",
-        show: false,
-    },
-    {
-        key: "utm_term",
-        label: "Utm Term",
-        show: false,
-    },
-    {
-        key: "referer",
-        label: "Referer",
-        show: false,
-    },
+const columns = ref<Column[]>([
+    { key: "event", label: "Event", show: true },
+    { key: "link", label: "Link", show: true },
+    { key: "country", label: "Country", show: true },
+    { key: "region", label: "Region", show: true },
+    { key: "city", label: "City", show: false },
+    { key: "device", label: "Device", show: true },
+    { key: "browser", label: "Browser", show: true },
+    { key: "os", label: "OS", show: true },
+    { key: "date", label: "Date", show: true },
+    { key: "language", label: "Language", show: false },
+    { key: "utm_medium", label: "Utm Medium", show: false },
+    { key: "utm_source", label: "Utm Source", show: false },
+    { key: "utm_campaign", label: "Utm Campaign", show: false },
+    { key: "utm_content", label: "Utm Content", show: false },
+    { key: "utm_term", label: "Utm Term", show: false },
+    { key: "referer", label: "Referer", show: false },
 ]);
 
-const refresh = (value) => {
+const refresh = (value: typeof range.value) => {
     range.value = value;
     router.visit(
-        route("events.index", {
-            start: range.value.start,
-            end: range.value.end,
+        eventsRoute.index.url({
+            query: {
+                start: range.value.start,
+                end: range.value.end,
+            },
         }),
         {
             method: "get",
@@ -122,8 +105,8 @@ const refresh = (value) => {
 </script>
 
 <template>
-    <Layout>
-        <template #header>
+    <AppLayout>
+        <template #header-right>
             <Header
                 :columns="columns"
                 :range="range"
@@ -131,6 +114,7 @@ const refresh = (value) => {
                 @update:range="refresh"
             />
         </template>
+
         <div class="space-y-4">
             <div class="grid grid-cols-1 gap-4 mx-auto sm:grid-cols-2">
                 <ChartClick
@@ -143,268 +127,41 @@ const refresh = (value) => {
                 />
             </div>
 
-            <div
-                class="overflow-hidden border rounded-lg border-zinc-200 dark:border-zinc-700"
-            >
-                <div class="px-4 sm:px-0">
-                    <div class="flex flex-col">
-                        <div
-                            class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8"
-                        >
-                            <div
-                                class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8"
-                            >
-                                <div class="table-wrapper">
-                                    <table class="table">
-                                        <thead class="table-thead">
-                                            <tr class="table-tr">
-                                                <template
-                                                    v-for="column in columns"
-                                                    :key="column.key"
-                                                >
-                                                    <th
-                                                        v-if="column.show"
-                                                        scope="col"
-                                                        class="table-th"
-                                                    >
-                                                        {{ column.label }}
-                                                    </th>
-                                                </template>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="table-tbody">
-                                            <tr
-                                                as="tr"
-                                                v-for="event in table.data"
-                                                :key="event.id"
-                                                class="table-tr"
-                                            >
-                                                <td
-                                                    v-if="
-                                                        columns.find(
-                                                            (c) =>
-                                                                c.key ===
-                                                                    'event' &&
-                                                                c.show
-                                                        )
-                                                    "
-                                                    class="table-td"
-                                                >
-                                                    {{ event.event }}
-                                                </td>
-                                                <td
-                                                    v-if="
-                                                        columns.find(
-                                                            (c) =>
-                                                                c.key ===
-                                                                    'link' &&
-                                                                c.show
-                                                        )
-                                                    "
-                                                    class="table-td"
-                                                >
-                                                    {{ event.link.link }}
-                                                </td>
-                                                <td
-                                                    v-if="
-                                                        columns.find(
-                                                            (c) =>
-                                                                c.key ===
-                                                                    'country' &&
-                                                                c.show
-                                                        )
-                                                    "
-                                                    class="table-td"
-                                                >
-                                                    {{ event.country }}
-                                                </td>
-                                                <td
-                                                    v-if="
-                                                        columns.find(
-                                                            (c) =>
-                                                                c.key ===
-                                                                    'region' &&
-                                                                c.show
-                                                        )
-                                                    "
-                                                    class="table-td"
-                                                >
-                                                    {{ event.region }}
-                                                </td>
-
-                                                <td
-                                                    v-if="
-                                                        columns.find(
-                                                            (c) =>
-                                                                c.key ===
-                                                                    'city' &&
-                                                                c.show
-                                                        )
-                                                    "
-                                                    class="table-td"
-                                                >
-                                                    {{ event.city }}
-                                                </td>
-                                                <td
-                                                    v-if="
-                                                        columns.find(
-                                                            (c) =>
-                                                                c.key ===
-                                                                    'device' &&
-                                                                c.show
-                                                        )
-                                                    "
-                                                    class="table-td"
-                                                >
-                                                    {{ event.device }}
-                                                </td>
-                                                <td
-                                                    v-if="
-                                                        columns.find(
-                                                            (c) =>
-                                                                c.key ===
-                                                                    'browser' &&
-                                                                c.show
-                                                        )
-                                                    "
-                                                    class="table-td"
-                                                >
-                                                    {{ event.browser }}
-                                                </td>
-                                                <td
-                                                    v-if="
-                                                        columns.find(
-                                                            (c) =>
-                                                                c.key ===
-                                                                    'os' &&
-                                                                c.show
-                                                        )
-                                                    "
-                                                    class="table-td"
-                                                >
-                                                    {{ event.os }}
-                                                </td>
-                                                <td
-                                                    v-if="
-                                                        columns.find(
-                                                            (c) =>
-                                                                c.key ===
-                                                                    'date' &&
-                                                                c.show
-                                                        )
-                                                    "
-                                                    class="table-td"
-                                                >
-                                                    {{
-                                                        date.formatDateTime(
-                                                            event.created_at
-                                                        )
-                                                    }}
-                                                </td>
-                                                <td
-                                                    v-if="
-                                                        columns.find(
-                                                            (c) =>
-                                                                c.key ===
-                                                                    'language' &&
-                                                                c.show
-                                                        )
-                                                    "
-                                                    class="table-td"
-                                                >
-                                                    {{ event.language }}
-                                                </td>
-                                                <td
-                                                    v-if="
-                                                        columns.find(
-                                                            (c) =>
-                                                                c.key ===
-                                                                    'utm_medium' &&
-                                                                c.show
-                                                        )
-                                                    "
-                                                    class="table-td"
-                                                >
-                                                    {{ event.utm_medium }}
-                                                </td>
-                                                <td
-                                                    v-if="
-                                                        columns.find(
-                                                            (c) =>
-                                                                c.key ===
-                                                                    'utm_source' &&
-                                                                c.show
-                                                        )
-                                                    "
-                                                    class="table-td"
-                                                >
-                                                    {{ event.utm_source }}
-                                                </td>
-                                                <td
-                                                    v-if="
-                                                        columns.find(
-                                                            (c) =>
-                                                                c.key ===
-                                                                    'utm_campaign' &&
-                                                                c.show
-                                                        )
-                                                    "
-                                                    class="table-td"
-                                                >
-                                                    {{ event.utm_campaign }}
-                                                </td>
-                                                <td
-                                                    v-if="
-                                                        columns.find(
-                                                            (c) =>
-                                                                c.key ===
-                                                                    'utm_content' &&
-                                                                c.show
-                                                        )
-                                                    "
-                                                    class="table-td"
-                                                >
-                                                    {{ event.utm_content }}
-                                                </td>
-                                                <td
-                                                    v-if="
-                                                        columns.find(
-                                                            (c) =>
-                                                                c.key ===
-                                                                    'utm_term' &&
-                                                                c.show
-                                                        )
-                                                    "
-                                                    class="table-td"
-                                                >
-                                                    {{ event.utm_term }}
-                                                </td>
-                                                <td
-                                                    v-if="
-                                                        columns.find(
-                                                            (c) =>
-                                                                c.key ===
-                                                                    'referer' &&
-                                                                c.show
-                                                        )
-                                                    "
-                                                    class="table-td"
-                                                >
-                                                    {{ event.referer }}
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="rounded-md border">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead v-for="column in columns.filter((c) => c.show)" :key="column.key">
+                                {{ column.label }}
+                            </TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        <TableRow v-for="event in table.data" :key="event.id">
+                            <TableCell v-if="columns.find((c) => c.key === 'event' && c.show)">{{ event.event }}</TableCell>
+                            <TableCell v-if="columns.find((c) => c.key === 'link' && c.show)">{{ event.link.link }}</TableCell>
+                            <TableCell v-if="columns.find((c) => c.key === 'country' && c.show)">{{ event.country }}</TableCell>
+                            <TableCell v-if="columns.find((c) => c.key === 'region' && c.show)">{{ event.region }}</TableCell>
+                            <TableCell v-if="columns.find((c) => c.key === 'city' && c.show)">{{ event.city }}</TableCell>
+                            <TableCell v-if="columns.find((c) => c.key === 'device' && c.show)">{{ event.device }}</TableCell>
+                            <TableCell v-if="columns.find((c) => c.key === 'browser' && c.show)">{{ event.browser }}</TableCell>
+                            <TableCell v-if="columns.find((c) => c.key === 'os' && c.show)">{{ event.os }}</TableCell>
+                            <TableCell v-if="columns.find((c) => c.key === 'date' && c.show)">{{ date.formatDateTime(event.created_at) }}</TableCell>
+                            <TableCell v-if="columns.find((c) => c.key === 'language' && c.show)">{{ event.language }}</TableCell>
+                            <TableCell v-if="columns.find((c) => c.key === 'utm_medium' && c.show)">{{ event.utm_medium }}</TableCell>
+                            <TableCell v-if="columns.find((c) => c.key === 'utm_source' && c.show)">{{ event.utm_source }}</TableCell>
+                            <TableCell v-if="columns.find((c) => c.key === 'utm_campaign' && c.show)">{{ event.utm_campaign }}</TableCell>
+                            <TableCell v-if="columns.find((c) => c.key === 'utm_content' && c.show)">{{ event.utm_content }}</TableCell>
+                            <TableCell v-if="columns.find((c) => c.key === 'utm_term' && c.show)">{{ event.utm_term }}</TableCell>
+                            <TableCell v-if="columns.find((c) => c.key === 'referer' && c.show)">{{ event.referer }}</TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
             </div>
         </div>
 
         <template v-if="table.next_page_url" #pagination>
             <Pagination :data="table" />
         </template>
-    </Layout>
+    </AppLayout>
 </template>

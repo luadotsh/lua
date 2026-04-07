@@ -1,97 +1,83 @@
-<script setup>
-import AuthLayout from "@/Layouts/Auth.vue";
-import InputError from "@/Components/InputError.vue";
-import Label from "@/Components/Label.vue";
-import Button from "@/Components/Button.vue";
-import Input from "@/Components/Input.vue";
-import { Head, Link, useForm } from "@inertiajs/vue3";
+<script setup lang="ts">
+import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import AuthLayout from '@/layouts/AuthLayout.vue';
+import { login as loginRoute } from '@/routes';
+import { request as forgotPasswordRoute } from '@/routes/password';
+import Social from '@/pages/Auth/Partial/Social.vue';
 
-defineProps({
-    canResetPassword: {
-        type: Boolean,
-    },
-    status: {
-        type: String,
-    },
-});
+defineProps<{
+    canResetPassword?: boolean;
+    status?: string;
+}>();
 
 const form = useForm({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
     remember: true,
 });
 
 const submit = () => {
-    form.post(route("login"), {
-        onFinish: () => form.reset("password"),
+    form.post(loginRoute().url, {
+        onFinish: () => form.reset('password'),
     });
 };
 </script>
 
 <template>
-    <AuthLayout>
+    <AuthLayout title="Sign in" description="Enter your email and password to sign in">
         <Head title="Log in" />
-        <div class="mb-6">
-            <h1 class="page-title text-center">Sign in</h1>
+
+        <Social />
+
+        <div v-if="status" class="text-sm font-medium text-green-600">
+            {{ status }}
         </div>
 
-        <form @submit.prevent="submit">
-            <div>
-                <Label for="email" value="Email" :required="true" />
-
+        <form class="flex flex-col gap-4" @submit.prevent="submit">
+            <div class="grid gap-2">
+                <Label for="email">Email</Label>
                 <Input
                     id="email"
-                    type="email"
-                    name="email"
                     v-model="form.email"
-                    required
-                    autofocus
+                    type="email"
                     autocomplete="username"
+                    autofocus
+                    required
                 />
-
-                <InputError class="mt-2" :message="form.errors.email" />
+                <p v-if="form.errors.email" class="text-sm text-destructive">{{ form.errors.email }}</p>
             </div>
 
-            <div class="mt-4">
-                <Label for="password" value="Password" :required="true" />
-
+            <div class="grid gap-2">
+                <div class="flex items-center">
+                    <Label for="password">Password</Label>
+                    <Link
+                        :href="forgotPasswordRoute()"
+                        class="ml-auto text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground"
+                    >
+                        Forgot your password?
+                    </Link>
+                </div>
                 <Input
                     id="password"
-                    name="password"
-                    type="password"
                     v-model="form.password"
-                    required
+                    type="password"
                     autocomplete="current-password"
+                    required
                 />
-
-                <InputError class="mt-2" :message="form.errors.password" />
+                <p v-if="form.errors.password" class="text-sm text-destructive">{{ form.errors.password }}</p>
             </div>
 
-            <div class="flex items-center justify-end mt-4">
-                <Button
-                    :class="{
-                        'btn-primary w-full': true,
-                        'opacity-25': form.processing,
-                    }"
-                    :disabled="form.processing"
-                >
-                    Sign in
-                </Button>
-            </div>
+            <Button type="submit" class="w-full" :disabled="form.processing">
+                Sign in
+            </Button>
         </form>
 
-        <div class="mt-6 flex items-center justify-center space-x-6">
-            <Link
-                :href="route('password.request')"
-                class="text-sm hover:underline link"
-            >
-                Forgot your password?
-            </Link>
-
-            <Link
-                :href="route('register')"
-                class="text-sm hover:underline link"
-            >
+        <div class="text-center text-sm text-muted-foreground">
+            Don't have an account?
+            <Link href="/register" class="underline underline-offset-4 hover:text-foreground">
                 Sign up
             </Link>
         </div>

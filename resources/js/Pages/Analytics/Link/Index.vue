@@ -1,33 +1,31 @@
-<script setup>
+<script setup lang="ts">
 import { ref, watch } from "vue";
-import Tab from "@/Components/Tab.vue";
-import Table from "@/Components/Table.vue";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import Table from "@/components/Table.vue";
+import { statistics } from "@/routes/analytics";
+
+interface Range {
+    timezone: string;
+    group: string;
+    start: string | null;
+    end: string | null;
+}
+
+const props = defineProps<{
+    range: Range;
+}>();
 
 const tab = ref("links");
-const tabs = ["links"];
-
-const setTab = (value) => {
-    tab.value = value;
-};
-
-const props = defineProps({
-    range: Object,
-});
-
 const data = ref(null);
 
 const loadData = () => {
     axios
-        .get(route("analytics.statistics"), {
-            params: {
-                ...props.range,
-                metric: "links",
-            },
-        })
+        .get(statistics.url({ query: { ...props.range, metric: "links" } }))
         .then((response) => {
             data.value = response.data;
         });
 };
+
 watch(
     props,
     () => {
@@ -39,10 +37,19 @@ watch(
 
 <template>
     <div class="min-h-[450px]">
-        <Tab :currentTab="tab" :tabs="tabs" @update="setTab" title="Links" />
+        <Tabs v-model="tab">
+            <div class="flex items-center justify-between mb-4">
+                <div class="capitalize text-base font-semibold text-black dark:text-white">
+                    Links
+                </div>
+                <TabsList>
+                    <TabsTrigger value="links">Links</TabsTrigger>
+                </TabsList>
+            </div>
 
-        <div class="mt-4">
-            <Table v-if="data" :data="data" :favicon="true" />
-        </div>
+            <TabsContent value="links">
+                <Table v-if="data" :data="data" :favicon="true" />
+            </TabsContent>
+        </Tabs>
     </div>
 </template>

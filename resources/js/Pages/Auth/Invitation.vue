@@ -1,106 +1,95 @@
-<script setup>
-import { useForm, Head } from "@inertiajs/vue3";
-import AuthLayout from "@/Layouts/Auth.vue";
-import Button from "@/Components/Button.vue";
-import Input from "@/Components/Input.vue";
-import InputError from "@/Components/InputError.vue";
-import Label from "@/Components/Label.vue";
+<script setup lang="ts">
+import { Head, useForm } from '@inertiajs/vue3';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import AuthLayout from '@/layouts/AuthLayout.vue';
+import { accept } from '@/routes/auth/invites';
 
-const { id, name, email } = defineProps({
-    name: String,
-    email: String,
-    id: String,
-    status: String,
-});
+const props = defineProps<{
+    id: string;
+    name?: string;
+    email?: string;
+    status?: string;
+}>();
 
 const form = useForm({
-    id: id,
-    email: email,
-    name: name,
-    password: "",
-    password_confirmation: "",
+    id: props.id,
+    email: props.email ?? '',
+    name: props.name ?? '',
+    password: '',
+    password_confirmation: '',
 });
 
 const submit = () => {
-    form.post(route("auth.invites.accept", form.id), {
+    form.post(accept(form.id).url, {
         onFinish: () => form.reset(),
     });
 };
 </script>
+
 <template>
-    <Head title="Invite" />
-    <AuthLayout>
-        <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
+    <AuthLayout title="Accept Invitation" description="Create your account to join the workspace">
+        <Head title="Invite" />
+
+        <div v-if="status" class="text-sm font-medium text-green-600">
             {{ status }}
         </div>
 
-        <form @submit.prevent="submit">
-            <div class="">
-                <Label for="name" value="Name" :required="true" />
-
+        <form class="flex flex-col gap-4" @submit.prevent="submit">
+            <div class="grid gap-2">
+                <Label for="name">Name</Label>
                 <Input
                     id="name"
-                    type="text"
                     v-model="form.name"
-                    required
+                    type="text"
                     autofocus
+                    required
                     autocomplete="off"
                 />
-
-                <InputError class="mt-2" :message="form.errors.name" />
+                <p v-if="form.errors.name" class="text-sm text-destructive">{{ form.errors.name }}</p>
             </div>
 
-            <div class="mt-4">
-                <Label for="email" value="Email" :required="true" />
+            <div class="grid gap-2">
+                <Label for="email">Email</Label>
                 <Input
                     id="email"
-                    type="email"
                     v-model="form.email"
-                    required
+                    type="email"
                     readonly
                     autocomplete="off"
                 />
             </div>
 
-            <div class="mt-4">
-                <Label for="password" value="Password" :required="true" />
+            <div class="grid gap-2">
+                <Label for="password">Password</Label>
                 <Input
                     id="password"
-                    type="password"
                     v-model="form.password"
+                    type="password"
                     required
                     placeholder="Create your password"
                     autocomplete="off"
                 />
+                <p v-if="form.errors.password" class="text-sm text-destructive">{{ form.errors.password }}</p>
             </div>
 
-            <div class="mt-4">
-                <Label
-                    for="password_confirmation"
-                    value="Confirm Password"
-                    :required="true"
-                />
+            <div class="grid gap-2">
+                <Label for="password_confirmation">Confirm Password</Label>
                 <Input
                     id="password_confirmation"
-                    type="password"
                     v-model="form.password_confirmation"
+                    type="password"
                     required
                     placeholder="Repeat your password"
                     autocomplete="off"
                 />
+                <p v-if="form.errors.password_confirmation" class="text-sm text-destructive">{{ form.errors.password_confirmation }}</p>
             </div>
 
-            <div class="flex items-center justify-end mt-4">
-                <Button
-                    :class="{
-                        'btn-primary': true,
-                        'opacity-25': form.processing,
-                    }"
-                    :disabled="form.processing"
-                >
-                    Create Account
-                </Button>
-            </div>
+            <Button type="submit" class="w-full" :disabled="form.processing">
+                Create Account
+            </Button>
         </form>
     </AuthLayout>
 </template>

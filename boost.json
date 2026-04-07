@@ -1,0 +1,23 @@
+{
+    "agents": [
+        "claude_code",
+        "cursor"
+    ],
+    "guidelines": true,
+    "mcp": true,
+    "nightwatch_mcp": false,
+    "packages": [
+        "spatie/laravel-medialibrary"
+    ],
+    "sail": false,
+    "skills": [
+        "cashier-stripe-development",
+        "laravel-best-practices",
+        "configuring-horizon",
+        "socialite-development",
+        "pest-testing",
+        "inertia-vue-development",
+        "tailwindcss-development",
+        "medialibrary-development"
+    ]
+}

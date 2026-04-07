@@ -1,266 +1,141 @@
-<script setup>
-import colorLib from "@kurkle/color";
-import helper from "@/helper";
-import Chart from "chart.js/auto";
-import { RadioGroup, RadioGroupOption } from "@headlessui/vue";
+<script setup lang="ts">
+import { VisArea, VisAxis, VisGroupedBar, VisLine, VisXYContainer } from '@unovis/vue';
+import { computed, ref } from 'vue';
+import { formatNumberCompact } from '@/lib/utils';
+import {
+    type ChartConfig,
+    ChartContainer,
+    ChartCrosshair,
+    ChartTooltip,
+    ChartTooltipContent,
+    componentToString,
+} from '@/components/ui/chart';
 
-import { ref, reactive, watch } from "vue";
+const VIOLET = '#A78BFA';
 
-import { useDarkTheme } from "@/theme";
-const { isDarkTheme } = useDarkTheme();
+const types = [
+    { value: 'line', label: 'Line' },
+    { value: 'bar', label: 'Bar' },
+];
 
-const types = reactive([
-    { value: "bar", label: "Bar" },
-    { value: "line", label: "Line" },
-]);
-
-const props = defineProps({
-    type: {
-        type: String,
-        default: "bar",
-        required: false,
-    },
-
-    title: {
-        type: String,
-        required: true,
-    },
-
+const props = defineProps<{
+    type?: string;
+    title: string;
     data: {
-        type: Object,
-        required: true,
-    },
-});
+        total: number;
+        chart: {
+            labels: string[];
+            data: number[];
+            label: string;
+        };
+    };
+}>();
 
-const chartType = ref(types.find((type) => type.value === props.type));
-const chartElementRef = ref(null);
-let chartElement;
+const chartType = ref(types.find((t) => t.value === (props.type ?? 'bar')) ?? types[1]);
 
-const data = reactive({
-    total: props.data.total,
-    chart: props.data.chart,
-});
+type DataPoint = { index: number; label: string; value: number };
 
-const transparentize = (value, opacity) => {
-    var alpha = opacity === undefined ? 0.5 : 1 - opacity;
-    return colorLib(value).alpha(alpha).rgbString();
-};
-
-const renderChart = (force = false) => {
-    // clear canva
-    if (chartElement && !force) {
-        chartElement.data.labels = data.chart.labels;
-        chartElement.data.datasets[0].data = data.chart.data;
-        chartElement.data.datasets[0].label = data.chart.label;
-        chartElement.update();
-        return;
-    }
-
-    if (force) {
-        chartElement.destroy();
-    }
-
-    chartElement = new Chart(chartElementRef.value, {
-        type: chartType.value.value,
-        data: {
-            labels: data.chart.labels,
-            datasets: [
-                {
-                    label: data.chart.label,
-                    data: data.chart.data,
-                    fill: true,
-                    backgroundColor: transparentize("#A78BFA", 0.97),
-                    borderColor: "#A78BFA",
-                    borderRadius: 4,
-                    borderWidth: 1.5,
-                    tension: 0.3,
-                    pointStyle: "circle",
-                    pointRadius: 0,
-                    pointHoverRadius: 4,
-                    pointHoverBackgroundColor: "#ffffff",
-                    pointHoverBorderColor: "#A78BFA",
-                    pointHoverBorderWidth: 2,
-                    spanGaps: true,
-                },
-            ],
-        },
-        options: {
-            clip: false,
-            responsive: true,
-            maintainAspectRatio: false,
-            aspectRatio: 4,
-            layout: {
-                padding: {
-                    top: 10,
-                },
-            },
-            plugins: {
-                legend: {
-                    display: false,
-                },
-                tooltip: {
-                    usePointStyle: true,
-                    boxWidth: 10,
-                    boxHeight: 10,
-                    boxPadding: 4,
-                    backgroundColor: "#ffffff",
-                    titleFont: {
-                        weight: "500",
-                        size: 14,
-                    },
-                    titleColor: "#000000",
-                    bodyColor: "#000000",
-                    bodyFont: {
-                        weight: "500",
-                        size: 12,
-                    },
-
-                    padding: {
-                        left: 10,
-                        right: 10,
-                        top: 5,
-                        bottom: 5,
-                    },
-
-                    borderColor: "rgba(0,0,0,0.1)",
-                    borderWidth: 1,
-                    displayColors: true,
-
-                    callbacks: {
-                        label: (context) => {
-                            return `${context.formattedValue} ${props.title}`;
-                        },
-                        labelColor: function (context) {
-                            return {
-                                borderColor: context.dataset.borderColor,
-                                backgroundColor: "#ffffff",
-                            };
-                        },
-
-                        labelTextColor: function (context) {
-                            return context.dataset.pointHoverBorderColor;
-                        },
-                    },
-                },
-            },
-
-            interaction: {
-                mode: "index",
-                intersect: false,
-            },
-
-            scales: {
-                x: {
-                    ticks: {
-                        autoSkip: false,
-                        maxRotation: 0,
-                        minRotation: 0,
-                        align: "inner",
-                        color: "#9ca3af",
-                        callback: (value, index, values) => {
-                            if (index == 0 || index == values.length - 1) {
-                                return data.chart.labels[index];
-                            } else {
-                                return "";
-                            }
-                        },
-                    },
-
-                    grid: {
-                        display: true,
-                        drawTicks: false,
-                        color: isDarkTheme ? "#374151" : "#ddd", // for the grid lines
-                        tickBorderDash: [6, 7], // also for the tick, if long enough
-                        tickLength: 10, // just to see the dotted line
-                        tickWidth: 2,
-                        drawOnChartArea: false,
-                    },
-                    border: {
-                        dash: [4, 4],
-                        color: "transparent",
-                    },
-                    beginAtZero: true,
-                },
-                y: {
-                    display: false,
-                    beginAtZero: true,
-                },
-            },
-        },
-    });
-};
-
-watch(chartType, () => {
-    renderChart(true);
-});
-
-watch(
-    props,
-    () => {
-        data.total = props.data.total;
-        data.chart = props.data.chart;
-        renderChart();
-    },
-    {
-        deep: true,
-    }
+const chartData = computed<DataPoint[]>(() =>
+    props.data.chart.labels.map((label, i) => ({
+        index: i,
+        label,
+        value: props.data.chart.data[i] ?? 0,
+    }))
 );
+
+const xAccessor = (_d: DataPoint, i: number) => i;
+const yAccessor = (d: DataPoint) => d.value;
+
+const xTickFormat = (i: number) => {
+    const items = chartData.value;
+    if (i === 0) return items[0]?.label ?? '';
+    if (i === items.length - 1) return items[items.length - 1]?.label ?? '';
+    return '';
+};
+
+const chartConfig: ChartConfig = {
+    value: { label: props.title, color: VIOLET },
+};
+
+const tooltipTemplate = componentToString(chartConfig, ChartTooltipContent, {
+    indicator: 'dot' as const,
+    labelFormatter: (x: number | Date) => chartData.value[x as number]?.label ?? '',
+});
 </script>
 
 <template>
-    <div
-        class="border border-zinc-200 dark:border-zinc-700 rounded-lg overflow-hidden"
-    >
-        <div class="w-full flex justify-between">
+    <div class="border border-border rounded-lg overflow-hidden p-4">
+        <div class="w-full flex justify-between mb-4">
             <div>
-                <div
-                    class="text-base font-medium text-zinc-800 dark:text-zinc-300 mb-1"
-                >
-                    {{ props.title }}
-                </div>
-                <div
-                    class="text-2xl font-semibold text-zinc-800 dark:text-white"
-                >
-                    {{ helper.kFormatter(data.total) }}
-                </div>
+                <div class="text-base font-medium text-foreground mb-1">{{ title }}</div>
+                <div class="text-2xl font-semibold text-foreground">{{ formatNumberCompact(data.total) }}</div>
             </div>
             <div class="flex justify-center">
                 <fieldset>
-                    <RadioGroup
-                        v-model="chartType"
-                        class="grid grid-cols-2 gap-x-1 rounded-md p-1 text-center text-xs font-semibold leading-5 ring-1 ring-inset ring-zinc-200 dark:ring-zinc-700"
-                    >
-                        <RadioGroupOption
-                            as="template"
+                    <div class="grid grid-cols-2 gap-x-1 rounded-md p-1 text-center text-xs font-semibold leading-5 ring-1 ring-inset ring-border">
+                        <button
                             v-for="option in types"
                             :key="option.value"
-                            :value="option"
-                            v-slot="{ checked }"
+                            type="button"
+                            :class="[
+                                chartType.value === option.value
+                                    ? 'bg-foreground text-background'
+                                    : 'text-muted-foreground',
+                                'cursor-pointer rounded px-2.5 py-1 transition-colors',
+                            ]"
+                            @click="chartType = option"
                         >
-                            <div
-                                :class="[
-                                    checked
-                                        ? 'bg-zinc-800 dark:bg-zinc-900 text-white'
-                                        : 'text-zinc-500 dark:text-zinc-300',
-                                    'cursor-pointer rounded px-2.5 py-1',
-                                ]"
-                            >
-                                {{ option.label }}
-                            </div>
-                        </RadioGroupOption>
-                    </RadioGroup>
+                            {{ option.label }}
+                        </button>
+                    </div>
                 </fieldset>
             </div>
         </div>
 
-        <div
-            class="w-full"
-            style="position: relative; height: 260px; width: 100%"
-        >
-            <canvas
-                ref="chartElementRef"
-                style="width: 100%; height: 100%"
-            ></canvas>
-        </div>
+        <ChartContainer :config="chartConfig" class="h-[260px]">
+            <template #default>
+                <VisXYContainer :data="chartData" :height="260">
+                    <template v-if="chartType.value === 'line'">
+                        <VisArea
+                            :x="xAccessor"
+                            :y="yAccessor"
+                            :color="VIOLET"
+                            :opacity="0.15"
+                            curveType="monotoneX"
+                        />
+                        <VisLine
+                            :x="xAccessor"
+                            :y="yAccessor"
+                            :color="VIOLET"
+                            :lineWidth="1.5"
+                            curveType="monotoneX"
+                        />
+                    </template>
+                    <template v-else>
+                        <VisGroupedBar
+                            :x="xAccessor"
+                            :y="[yAccessor]"
+                            :color="[VIOLET]"
+                            :barPadding="0.4"
+                        />
+                    </template>
+
+                    <VisAxis
+                        type="x"
+                        :tickFormat="xTickFormat"
+                        :numTicks="chartData.length"
+                        :gridLine="false"
+                        :domainLine="false"
+                        :tickLine="false"
+                    />
+
+                    <ChartCrosshair
+                        :template="tooltipTemplate"
+                        color="var(--border)"
+                    />
+                    <ChartTooltip />
+                </VisXYContainer>
+            </template>
+        </ChartContainer>
     </div>
 </template>

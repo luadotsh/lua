@@ -1,56 +1,43 @@
-<script setup>
-import AuthLayout from "@/Layouts/Auth.vue";
-import InputError from "@/Components/InputError.vue";
-import Label from "@/Components/Label.vue";
-import Button from "@/Components/Button.vue";
-import Input from "@/Components/Input.vue";
-import { Head, useForm } from "@inertiajs/vue3";
+<script setup lang="ts">
+import { Head, useForm } from '@inertiajs/vue3';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import AuthLayout from '@/layouts/AuthLayout.vue';
+import { confirm as passwordConfirmRoute } from '@/routes/password';
 
 const form = useForm({
-    password: "",
+    password: '',
 });
 
 const submit = () => {
-    form.post(route("password.confirm"), {
+    form.post(passwordConfirmRoute().url, {
         onFinish: () => form.reset(),
     });
 };
 </script>
 
 <template>
-    <AuthLayout>
+    <AuthLayout title="Confirm Password" description="This is a secure area — please confirm your password">
         <Head title="Confirm Password" />
 
-        <div class="mb-4 text-sm text-zinc-600">
-            This is a secure area of the application. Please confirm your
-            password before continuing.
-        </div>
-
-        <form @submit.prevent="submit">
-            <div>
-                <Label for="password" value="Password" />
+        <form class="flex flex-col gap-4" @submit.prevent="submit">
+            <div class="grid gap-2">
+                <Label for="password">Password</Label>
                 <Input
                     id="password"
-                    type="password"
                     v-model="form.password"
-                    required
+                    type="password"
                     autocomplete="current-password"
                     autofocus
+                    required
                 />
-                <InputError class="mt-2" :message="form.errors.password" />
+                <p v-if="form.errors.password" class="text-sm text-destructive">{{ form.errors.password }}</p>
             </div>
 
-            <div class="flex justify-end mt-4">
-                <Button
-                    :class="{
-                        'btn-primary ml-4': true,
-                        'opacity-25': form.processing,
-                    }"
-                    :disabled="form.processing"
-                >
-                    Confirm
-                </Button>
-            </div>
+            <Button type="submit" class="w-full" :disabled="form.processing">
+                Confirm
+            </Button>
         </form>
     </AuthLayout>
 </template>

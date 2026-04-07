@@ -1,109 +1,76 @@
-<script setup>
-import AuthLayout from "@/Layouts/Auth.vue";
-import InputError from "@/Components/InputError.vue";
-import Label from "@/Components/Label.vue";
-import Button from "@/Components/Button.vue";
-import Input from "@/Components/Input.vue";
-import { Head, useForm } from "@inertiajs/vue3";
+<script setup lang="ts">
+import { Head, useForm } from '@inertiajs/vue3';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import AuthLayout from '@/layouts/AuthLayout.vue';
+import { store as passwordStoreRoute } from '@/routes/password';
 
-const props = defineProps({
-    email: {
-        type: String,
-        required: true,
-    },
-    token: {
-        type: String,
-        required: true,
-    },
-});
+const props = defineProps<{
+    email: string;
+    token: string;
+}>();
 
 const form = useForm({
     token: props.token,
     email: props.email,
-    password: "",
-    password_confirmation: "",
+    password: '',
+    password_confirmation: '',
 });
 
 const submit = () => {
-    form.post(route("password.store"), {
-        onFinish: () => form.reset("password", "password_confirmation"),
+    form.post(passwordStoreRoute().url, {
+        onFinish: () => form.reset('password', 'password_confirmation'),
     });
 };
 </script>
 
 <template>
-    <AuthLayout>
+    <AuthLayout title="Create new password" description="Enter your new password below">
         <Head title="Reset Password" />
 
-        <div class="mb-6">
-            <h1 class="page-title text-center">Create new password</h1>
-        </div>
-
-        <form @submit.prevent="submit">
-            <div>
-                <Label for="email" value="Email" :required="true" />
-
+        <form class="flex flex-col gap-4" @submit.prevent="submit">
+            <div class="grid gap-2">
+                <Label for="email">Email</Label>
                 <Input
                     id="email"
-                    type="email"
                     v-model="form.email"
-                    required
-                    autofocus
-                    readonly
+                    type="email"
                     autocomplete="username"
+                    readonly
                 />
-
-                <InputError class="mt-2" :message="form.errors.email" />
+                <p v-if="form.errors.email" class="text-sm text-destructive">{{ form.errors.email }}</p>
             </div>
 
-            <div class="mt-4">
-                <Label for="password" value="Password" :required="true" />
-
+            <div class="grid gap-2">
+                <Label for="password">Password</Label>
                 <Input
                     id="password"
-                    type="password"
                     v-model="form.password"
-                    placeholder="Password with 8+ characters"
-                    required
+                    type="password"
                     autocomplete="new-password"
+                    required
+                    placeholder="Password with 8+ characters"
                 />
-
-                <InputError class="mt-2" :message="form.errors.password" />
+                <p v-if="form.errors.password" class="text-sm text-destructive">{{ form.errors.password }}</p>
             </div>
 
-            <div class="mt-4">
-                <Label
-                    for="password_confirmation"
-                    value="Confirm Password"
-                    :required="true"
-                />
-
+            <div class="grid gap-2">
+                <Label for="password_confirmation">Confirm Password</Label>
                 <Input
                     id="password_confirmation"
-                    type="password"
                     v-model="form.password_confirmation"
-                    placeholder="Password with 8+ characters"
-                    required
+                    type="password"
                     autocomplete="new-password"
+                    required
+                    placeholder="Password with 8+ characters"
                 />
-
-                <InputError
-                    class="mt-2"
-                    :message="form.errors.password_confirmation"
-                />
+                <p v-if="form.errors.password_confirmation" class="text-sm text-destructive">{{ form.errors.password_confirmation }}</p>
             </div>
 
-            <div class="flex items-center justify-end mt-4">
-                <Button
-                    :class="{
-                        'btn-primary w-full': true,
-                        'opacity-25': form.processing,
-                    }"
-                    :disabled="form.processing"
-                >
-                    Reset Password
-                </Button>
-            </div>
+            <Button type="submit" class="w-full" :disabled="form.processing">
+                Reset Password
+            </Button>
         </form>
     </AuthLayout>
 </template>

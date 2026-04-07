@@ -1,25 +1,29 @@
-<script setup>
-import Table from "@/Components/Table.vue";
+<script setup lang="ts">
+import Table from "@/components/Table.vue";
 import { ref, watch } from "vue";
+import { statistics } from "@/routes/analytics";
 
-const props = defineProps({
-    range: Object,
-});
+interface Range {
+    timezone: string;
+    group: string;
+    start: string | null;
+    end: string | null;
+}
+
+const props = defineProps<{
+    range: Range;
+}>();
 
 const data = ref(null);
 
 const loadData = () => {
     axios
-        .get(route("analytics.statistics"), {
-            params: {
-                ...props.range,
-                metric: "referers",
-            },
-        })
+        .get(statistics.url({ query: { ...props.range, metric: "referers" } }))
         .then((response) => {
             data.value = response.data;
         });
 };
+
 watch(
     props,
     () => {
@@ -28,6 +32,7 @@ watch(
     { immediate: true }
 );
 </script>
+
 <template>
     <Table v-if="data" :data="data" :favicon="true" />
 </template>

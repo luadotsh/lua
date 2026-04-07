@@ -1,46 +1,87 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useForm, usePage, Head } from "@inertiajs/vue3";
-import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { IconSearch, IconDots } from "@tabler/icons-vue";
 import date from "@/date";
 import debounce from "@/debounce";
-
-import AppLayout from "@/Layouts/Master.vue";
-import Input from "@/Components/Input.vue";
-import Button from "@/Components/Button.vue";
-import ConfirmationModal from "@/Components/ConfirmationModal.vue";
+import AppLayout from "@/layouts/AppLayout.vue";
+import SettingsLayout from "@/layouts/settings/Layout.vue";
 import InviteIndex from "./Invite/Index.vue";
+import InviteCreate from "./Invite/Create.vue";
+import * as teamMembersRoutes from "@/routes/setting/team-members";
 
 const user = usePage().props.auth.user;
+const inviteCreateDialog = ref<InstanceType<typeof InviteCreate> | null>(null);
 
-import { PhMagnifyingGlass, PhDotsThreeOutline } from "@phosphor-icons/vue";
-
-defineProps({
-    users: Array,
-    invites: Array,
-});
+defineProps<{
+    users: Array<{
+        id: string | number;
+        name: string;
+        email: string;
+        created_at: string;
+        membership: { role: string };
+    }>;
+    invites: Array<{
+        id: string | number;
+        name: string;
+        email: string;
+        role: string;
+        created_at: string;
+    }>;
+}>();
 
 const searchForm = useForm({
     q: "",
 });
 
 const updateUserForm = useForm({
-    role: null,
+    role: null as string | null,
 });
 
 const removeFromTeamForm = useForm({});
-const beingRemoveFromTeam = ref(null);
+const beingRemoveFromTeam = ref<string | number | null>(null);
 
 const leaveTeamForm = useForm({});
-const beingLeaving = ref(null);
+const beingLeaving = ref<boolean>(false);
 
-const confirmRemoveFromTeam = (id) => {
+const confirmRemoveFromTeam = (id: string | number) => {
     beingRemoveFromTeam.value = id;
 };
 
 const removeFromTeam = () => {
+    if (!beingRemoveFromTeam.value) {
+        return;
+    }
+
     removeFromTeamForm.delete(
-        route("team-members.destroy", beingRemoveFromTeam.value),
+        teamMembersRoutes.destroy.url(beingRemoveFromTeam.value),
         {
             preserveScroll: true,
             preserveState: true,
@@ -50,21 +91,21 @@ const removeFromTeam = () => {
 };
 
 const confirmLeaveTeam = () => {
-    beingLeaving.value = user;
+    beingLeaving.value = true;
 };
 
 const leaveTeam = () => {
-    leaveTeamForm.delete(route("setting.team-members.leave"), {
+    leaveTeamForm.delete(teamMembersRoutes.leave.url(), {
         preserveScroll: true,
         preserveState: true,
-        onSuccess: () => (beingLeaving.value = null),
+        onSuccess: () => (beingLeaving.value = false),
     });
 };
 
-const changeUserRole = (user, role) => {
+const changeUserRole = (member: { id: string | number }, role: string) => {
     updateUserForm.role = role;
 
-    updateUserForm.put(route("team-members.role", user.id), {
+    updateUserForm.put(teamMembersRoutes.role.url(member.id), {
         preserveScroll: true,
         preserveState: true,
         onSuccess: () => updateUserForm.reset(),
@@ -72,15 +113,16 @@ const changeUserRole = (user, role) => {
 };
 
 const searchDebounce = debounce(function () {
-    searchForm.get(route("setting.team-members.index"), {
+    searchForm.get(teamMembersRoutes.index.url(), {
         preserveScroll: true,
         preserveState: true,
     });
 }, 300);
 
 onMounted(() => {
-    if (route().params.q) {
-        searchForm.q = route().params.q;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('q')) {
+        searchForm.q = params.get('q') ?? '';
     }
 });
 </script>
@@ -88,20 +130,60 @@ onMounted(() => {
 <template>
     <Head title="Team Members" />
     <AppLayout>
-        <template #header>
-            <div class="sm:flex sm:items-center flex-1">
-                <div class="sm:flex-auto">
-                    <h1 class="page-title">Users</h1>
-                </div>
-                <div class="mt-4 sm:mt-0 sm:ml-16 flex space-x-2 sm:flex-none">
+        <SettingsLayout>
+            <AlertDialog :open="beingLeaving" @update:open="(val) => (beingLeaving = val)">
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Leave Team</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Are you sure you want to leave from the team?
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel @click="beingLeaving = false">Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            @click="leaveTeam"
+                            class="bg-red-600 hover:bg-red-700"
+                            :class="{ 'opacity-25': leaveTeamForm.processing }"
+                        >
+                            Leave
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
+            <AlertDialog :open="beingRemoveFromTeam != null" @update:open="(val) => !val && (beingRemoveFromTeam = null)">
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Remove From Team</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Are you sure you want to remove this user from the team?
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel @click="beingRemoveFromTeam = null">Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            @click="removeFromTeam"
+                            class="bg-red-600 hover:bg-red-700"
+                            :class="{ 'opacity-25': removeFromTeamForm.processing }"
+                        >
+                            Remove
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-lg font-semibold">Users</h2>
+                <div class="flex space-x-2">
                     <div class="relative flex-1">
                         <div
                             class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
                         >
-                            <PhMagnifyingGlass class="h-5 w-5 text-zinc-400" />
+                            <IconSearch class="h-5 w-5 text-zinc-400" />
                         </div>
                         <Input
-                            class="w-full !pl-10"
+                            class="w-full pl-10"
                             id="search-field"
                             autocomplete="off"
                             type="text"
@@ -111,245 +193,92 @@ onMounted(() => {
                         />
                     </div>
 
-                    <Button
-                        :href="route('setting.invites.create')"
-                        class="btn-primary"
-                    >
-                        Invite
-                    </Button>
+                    <Button @click="inviteCreateDialog?.open()">Invite</Button>
                 </div>
             </div>
-        </template>
 
-        <div class="flex flex-col">
-            <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                <div
-                    class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8"
-                >
-                    <div class="table-wrapper">
-                        <table class="table">
-                            <thead class="table-thead">
-                                <tr class="table-tr">
-                                    <th scope="col" class="table-th">Name</th>
-                                    <th scope="col" class="table-th">E-mail</th>
-                                    <th scope="col" class="table-th">Role</th>
-
-                                    <th scope="col" class="table-th">
-                                        Sign up
-                                    </th>
-                                    <th scope="col" class="table-th">
-                                        <span class="sr-only">Edit</span>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="table-tbody">
-                                <tr v-for="member in users" :key="member.id">
-                                    <td class="table-td">
-                                        {{ member.name }}
-                                    </td>
-                                    <td class="table-td">
-                                        {{ member.email }}
-                                    </td>
-                                    <td class="table-td">
-                                        {{ member.membership.role }}
-                                    </td>
-                                    <td class="table-td">
-                                        {{
-                                            date.formatDateTime(
-                                                member.created_at
-                                            )
-                                        }}
-                                    </td>
-
-                                    <td class="table-td">
-                                        <Menu
-                                            as="div"
-                                            class="relative inline-block text-left"
-                                            v-if="
-                                                member.id === user.id ||
-                                                user.current_workspace.role !==
-                                                    'USER'
-                                            "
-                                        >
-                                            <MenuButton class="">
-                                                <PhDotsThreeOutline
-                                                    class="h-4 w-4 stroke-2 text-black"
-                                                />
-                                            </MenuButton>
-
-                                            <transition
-                                                enter-active-class="transition ease-out duration-100"
-                                                enter-from-class="transform opacity-0 scale-95"
-                                                enter-to-class="transform opacity-100 scale-100"
-                                                leave-active-class="transition ease-in duration-75"
-                                                leave-from-class="transform opacity-100 scale-100"
-                                                leave-to-class="transform opacity-0 scale-95"
+            <div class="flex flex-col">
+                <div class="rounded-md border">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Name</TableHead>
+                                <TableHead>E-mail</TableHead>
+                                <TableHead>Role</TableHead>
+                                <TableHead>Sign up</TableHead>
+                                <TableHead><span class="sr-only">Actions</span></TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            <TableRow v-for="member in users" :key="member.id">
+                                <TableCell>{{ member.name }}</TableCell>
+                                <TableCell>{{ member.email }}</TableCell>
+                                <TableCell>{{ member.membership.role }}</TableCell>
+                                <TableCell>{{ date.formatDateTime(member.created_at) }}</TableCell>
+                                <TableCell>
+                                    <DropdownMenu
+                                        v-if="
+                                            member.id === user.id ||
+                                            user.current_workspace.role !== 'USER'
+                                        "
+                                    >
+                                        <DropdownMenuTrigger as-child>
+                                            <Button variant="ghost" size="icon">
+                                                <IconDots class="h-4 w-4 text-zinc-500" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                            <DropdownMenuItem
+                                                v-if="
+                                                    member.id !== user.id &&
+                                                    user.current_workspace.role !== 'USER'
+                                                "
+                                                @click="changeUserRole(member, member.membership.role == 'USER' ? 'ADMIN' : 'USER')"
                                             >
-                                                <MenuItems
-                                                    class="absolute right-0 top-0 z-10 mt-2 w-56 origin-top-right divide-y divide-zinc-100 font-medium rounded bg-white border border-zinc-200 shadow-2xl focus:outline-none"
-                                                >
-                                                    <div
-                                                        class="py-1 px-1"
-                                                        v-if="
-                                                            member.id !==
-                                                                user.id &&
-                                                            user
-                                                                .current_workspace
-                                                                .role !== 'USER'
-                                                        "
-                                                    >
-                                                        <MenuItem
-                                                            v-slot="{ active }"
-                                                        >
-                                                            <div
-                                                                @click="
-                                                                    changeUserRole(
-                                                                        member,
-                                                                        member
-                                                                            .membership
-                                                                            .role ==
-                                                                            'USER'
-                                                                            ? 'ADMIN'
-                                                                            : 'USER'
-                                                                    )
-                                                                "
-                                                                class="flex items-center text-zinc-800 hover:bg-zinc-100 rounded space-x-2 px-4 py-2 text-sm cursor-pointer"
-                                                            >
-                                                                <div>
-                                                                    {{
-                                                                        member
-                                                                            .membership
-                                                                            .role ==
-                                                                        "USER"
-                                                                            ? "Change Role to Admin"
-                                                                            : "Change Role to User"
-                                                                    }}
-                                                                </div>
-                                                            </div>
-                                                        </MenuItem>
-                                                    </div>
-                                                    <div
-                                                        class="py-1 px-1"
-                                                        v-if="
-                                                            user
-                                                                .current_workspace
-                                                                .role !==
-                                                                'USER' &&
-                                                            member.id !==
-                                                                user.id
-                                                        "
-                                                    >
-                                                        <MenuItem
-                                                            v-slot="{ active }"
-                                                        >
-                                                            <div
-                                                                @click="
-                                                                    confirmRemoveFromTeam(
-                                                                        member.id
-                                                                    )
-                                                                "
-                                                                class="flex items-center text-zinc-800 hover:bg-zinc-100 rounded space-x-2 px-4 py-2 text-sm cursor-pointer"
-                                                            >
-                                                                Remove From Team
-                                                            </div>
-                                                        </MenuItem>
-                                                    </div>
-                                                    <div
-                                                        class="py-1 px-1"
-                                                        v-if="
-                                                            member.id ===
-                                                            user.id
-                                                        "
-                                                    >
-                                                        <MenuItem
-                                                            v-slot="{ active }"
-                                                        >
-                                                            <div
-                                                                @click="
-                                                                    confirmLeaveTeam
-                                                                "
-                                                                class="flex items-center text-zinc-800 hover:bg-zinc-100 rounded space-x-2 px-4 py-2 text-sm cursor-pointer"
-                                                            >
-                                                                Leave Team
-                                                            </div>
-                                                        </MenuItem>
-                                                    </div>
-                                                </MenuItems>
-                                            </transition>
-                                        </Menu>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                                                {{
+                                                    member.membership.role == "USER"
+                                                        ? "Change Role to Admin"
+                                                        : "Change Role to User"
+                                                }}
+                                            </DropdownMenuItem>
+                                            <DropdownMenuSeparator
+                                                v-if="
+                                                    member.id !== user.id &&
+                                                    user.current_workspace.role !== 'USER'
+                                                "
+                                            />
+                                            <DropdownMenuItem
+                                                v-if="
+                                                    user.current_workspace.role !== 'USER' &&
+                                                    member.id !== user.id
+                                                "
+                                                class="text-red-600 focus:text-red-600"
+                                                @click="confirmRemoveFromTeam(member.id)"
+                                            >
+                                                Remove From Team
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem
+                                                v-if="member.id === user.id"
+                                                class="text-red-600 focus:text-red-600"
+                                                @click="confirmLeaveTeam"
+                                            >
+                                                Leave Team
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
                 </div>
             </div>
-        </div>
 
-        <InviteIndex
-            v-if="user.current_workspace.role !== 'USER'"
-            :invites="invites"
-        />
+            <InviteIndex
+                v-if="user.current_workspace.role !== 'USER'"
+                :invites="invites"
+            />
 
-        <ConfirmationModal
-            :show="beingLeaving"
-            @close="beingLeaving = null"
-            max-width="sm"
-        >
-            <template #title> Leave Team </template>
-
-            <template #content>
-                Are you sure you want to leave from the team?
-            </template>
-
-            <template #footer>
-                <Button @click="beingLeaving = null" class="btn-secondary">
-                    Cancel
-                </Button>
-
-                <Button
-                    @click="leaveTeam"
-                    :class="{
-                        'ml-2 btn-danger': true,
-                        'opacity-25': leaveTeamForm.processing,
-                    }"
-                    :disabled="leaveTeamForm.processing"
-                >
-                    Leave
-                </Button>
-            </template>
-        </ConfirmationModal>
-
-        <ConfirmationModal
-            :show="beingRemoveFromTeam"
-            @close="beingRemoveFromTeam = null"
-            max-width="sm"
-        >
-            <template #title> Remove From Team </template>
-
-            <template #content>
-                Are you sure you want to remove this user from the team?
-            </template>
-
-            <template #footer>
-                <Button
-                    @click="beingRemoveFromTeam = null"
-                    class="btn-secondary"
-                >
-                    Cancel
-                </Button>
-
-                <Button
-                    @click="removeFromTeam"
-                    :class="{
-                        'ml-2 btn-danger': true,
-                        'opacity-25': removeFromTeamForm.processing,
-                    }"
-                    :disabled="removeFromTeamForm.processing"
-                >
-                    Leave
-                </Button>
-            </template>
-        </ConfirmationModal>
+            <InviteCreate ref="inviteCreateDialog" />
+        </SettingsLayout>
     </AppLayout>
 </template>

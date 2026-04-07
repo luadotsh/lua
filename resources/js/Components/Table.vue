@@ -1,45 +1,39 @@
-<script setup>
-import country from "@/country";
-import helper from "@/helper";
-import { onMounted, ref, computed, watch } from "vue";
+<script setup lang="ts">
+import { watch, ref } from 'vue';
+import country from '@/country';
+import { calcTotal, calcPercentage, kFormatter, favicon } from '@/lib/utils';
+import { favicon as websitesFaviconRoute } from '@/routes/websites';
+
+type DataItem = { x: string; y: number };
+
+const prop = defineProps<{
+    data: DataItem[];
+    favicon?: boolean;
+    country?: boolean;
+    capitalize?: boolean;
+    uppercase?: boolean;
+}>();
 
 const total = ref(0);
 
-const prop = defineProps({
-    data: {
-        type: Object,
-        required: true,
-    },
-    favicon: {
-        type: Boolean,
-        default: false,
-    },
-    country: {
-        type: Boolean,
-        default: false,
-    },
-
-    capitalize: {
-        type: Boolean,
-        default: false,
-    },
-
-    uppercase: {
-        type: Boolean,
-        default: false,
-    },
-});
-
-const formatName = (name) => {
+const formatName = (name: string) => {
     return prop.country ? country.getCountryName(name) : name;
 };
 
+const getFaviconUrl = (url: string) => {
+    try {
+        return websitesFaviconRoute({ query: { url: encodeURI(url) } }).url;
+    } catch {
+        return favicon(url);
+    }
+};
+
 watch(
-    prop,
-    async () => {
-        total.value = helper.calcTotal(prop.data);
+    () => prop.data,
+    () => {
+        total.value = calcTotal(prop.data);
     },
-    { deep: true, immediate: true }
+    { deep: true, immediate: true },
 );
 </script>
 
@@ -48,37 +42,28 @@ watch(
         <div class="space-y-2 relative">
             <div
                 v-for="value in prop.data"
-                :key="value"
+                :key="value.x"
                 class="relative w-full group"
             >
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
                         <div
-                            :class="`absolute top-0 left-0 h-full rounded-r-md bg-zinc-100 dark:bg-zinc-500/20`"
-                            :style="`max-width: 85%; width: ${helper.calcPercentage(
-                                total,
-                                value.y
-                            )}%`"
-                        ></div>
+                            class="absolute top-0 left-0 h-full rounded-r-md bg-zinc-100 dark:bg-zinc-500/20"
+                            :style="`max-width: 85%; width: ${calcPercentage(total, value.y)}%`"
+                        />
                         <div class="flex items-center space-x-2 z-10 px-2 py-1">
                             <img
                                 v-if="prop.favicon"
-                                :src="
-                                    route('websites.favicon', {
-                                        url: encodeURI(value.x),
-                                    })
-                                "
+                                :src="getFaviconUrl(value.x)"
                                 class="w-4 h-4"
                                 :alt="value.x"
                             />
-
                             <div v-if="prop.country">
                                 {{ country.getCountryFlag(value.x) }}
                             </div>
-
                             <div
                                 :class="{
-                                    'text-zinc-800 dark:text-white text-sm font-medium': true,
+                                    'text-foreground text-sm font-medium': true,
                                     capitalize: prop.capitalize,
                                     uppercase: prop.uppercase,
                                 }"
@@ -88,27 +73,18 @@ watch(
                         </div>
                     </div>
                     <div class="flex items-center justify-between min-w-[3rem]">
-                        <div
-                            class="invisible group-hover:visible flex text-xs font-semibold text-zinc-500 dark:hover:text-zinc-300 mr-2"
-                        >
-                            {{ helper.calcPercentage(total, value.y) }}%
+                        <div class="invisible group-hover:visible flex text-xs font-semibold text-muted-foreground mr-2">
+                            {{ calcPercentage(total, value.y) }}%
                         </div>
-                        <div
-                            class="text-sm font-semibold text-zinc-800 dark:text-white"
-                        >
-                            {{ helper.kFormatter(value.y) }}
+                        <div class="text-sm font-semibold text-foreground">
+                            {{ kFormatter(value.y) }}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div
-        v-else
-        class="min-h-[300px] flex flex-col sm:justify-center items-center"
-    >
-        <div class="text-zinc-800 dark:text-zinc-300 font-medium text-sm">
-            No data
-        </div>
+    <div v-else class="min-h-[300px] flex flex-col sm:justify-center items-center">
+        <div class="text-muted-foreground font-medium text-sm">No data</div>
     </div>
 </template>

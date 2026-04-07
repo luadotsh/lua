@@ -1,8 +1,30 @@
-<script setup>
-import { ref, reactive, watch } from "vue";
-import Chart from "@/Components/Chart.vue";
+<script setup lang="ts">
+import { reactive, watch } from "vue";
+import Chart from "@/components/Chart.vue";
 
-const data = reactive({
+import * as analyticsRoute from "@/routes/analytics";
+
+interface Range {
+    start: string;
+    end: string;
+    timezone: string;
+    group: string;
+}
+
+interface ChartData {
+    total: number;
+    chart: {
+        label: string;
+        data: number[];
+        labels: string[];
+    };
+}
+
+const props = defineProps<{
+    range: Range;
+}>();
+
+const data = reactive<ChartData>({
     total: 0,
     chart: {
         label: "",
@@ -11,18 +33,14 @@ const data = reactive({
     },
 });
 
-const props = defineProps({
-    range: Object,
-});
-
 const refresh = () => {
     axios
-        .get(route("analytics.statistics"), {
-            params: {
+        .get(analyticsRoute.statistics.url({
+            query: {
                 ...props.range,
                 metric: "clicks",
             },
-        })
+        }))
         .then((response) => {
             data.total = response.data.total;
             data.chart = response.data.chart;

@@ -1,29 +1,55 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
 import { useForm, usePage } from "@inertiajs/vue3";
 import dayjs from "@/dayjs";
-import Button from "@/Components/Button.vue";
-import ConfirmationModal from "@/Components/ConfirmationModal.vue";
+import { Button } from "@/components/ui/button";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
+import * as invitesRoutes from "@/routes/setting/invites";
 
-const { invites } = defineProps({
-    invites: {
-        type: Array,
-        required: true,
-    },
-});
+defineProps<{
+    invites: Array<{
+        id: string | number;
+        name: string;
+        email: string;
+        role: string;
+        created_at: string;
+    }>;
+}>();
 
 const deleteForm = useForm({});
-const beingDeleted = ref(null);
+const beingDeleted = ref<string | number | null>(null);
 
-const formatDate = (date) => {
+const formatDate = (date: string) => {
     return dayjs(date).format("MMMM D, YYYY h:mm A");
 };
-const confirmDeletion = (invite) => {
-    beingDeleted.value = invite;
+
+const confirmDeletion = (invite: { id: string | number }) => {
+    beingDeleted.value = invite.id;
 };
 
 const deleteInvite = () => {
-    deleteForm.delete(route("setting.invites.destroy", beingDeleted.value), {
+    if (!beingDeleted.value) {
+        return;
+    }
+
+    deleteForm.delete(invitesRoutes.destroy.url(beingDeleted.value), {
         preserveScroll: true,
         preserveState: true,
         onSuccess: () => (beingDeleted.value = null),
@@ -35,94 +61,53 @@ const deleteInvite = () => {
     <div v-if="invites.length >= 1" class="mt-8">
         <div class="sm:flex sm:items-center mb-4">
             <div class="sm:flex-auto">
-                <h1 class="page-title">Pending Invites</h1>
+                <h2 class="text-lg font-semibold">Pending Invites</h2>
             </div>
         </div>
 
-        <div class="flex flex-col">
-            <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                <div
-                    class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8"
-                >
-                    <div class="table-wrapper">
-                        <table class="table">
-                            <thead class="table-thead">
-                                <tr class="table-tr">
-                                    <th scope="col" class="table-th">Name</th>
-                                    <th scope="col" class="table-th">E-mail</th>
-                                    <th scope="col" class="table-th">Role</th>
+        <AlertDialog :open="beingDeleted != null" @update:open="(val) => !val && (beingDeleted = null)">
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Delete Invite</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        Are you sure you would like to cancel this invite?
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel @click="beingDeleted = null">Cancel</AlertDialogCancel>
+                    <AlertDialogAction @click="deleteInvite" class="bg-red-600 hover:bg-red-700">Delete</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
 
-                                    <th scope="col" class="table-th">
-                                        Invited At
-                                    </th>
-                                    <th scope="col" class="table-th">
-                                        <span class="sr-only">Edit</span>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="table-tbody">
-                                <tr v-for="invite in invites" :key="invite.id">
-                                    <td class="table-td">
-                                        {{ invite.name }}
-                                    </td>
-                                    <td class="table-td">
-                                        {{ invite.email }}
-                                    </td>
-                                    <td class="table-td">
-                                        {{ invite.role }}
-                                    </td>
-                                    <td class="table-td">
-                                        {{ formatDate(invite.created_at) }}
-                                    </td>
-
-                                    <td class="table-td">
-                                        <a
-                                            v-if="
-                                                $page.props.auth.user.role !=
-                                                'user'
-                                            "
-                                            href="#"
-                                            @click="confirmDeletion(invite.id)"
-                                            class="text-red-600 hover:underline font-medium"
-                                            >Cancel</a
-                                        >
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+        <div class="rounded-md border">
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Name</TableHead>
+                        <TableHead>E-mail</TableHead>
+                        <TableHead>Role</TableHead>
+                        <TableHead>Invited At</TableHead>
+                        <TableHead><span class="sr-only">Actions</span></TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    <TableRow v-for="invite in invites" :key="invite.id">
+                        <TableCell>{{ invite.name }}</TableCell>
+                        <TableCell>{{ invite.email }}</TableCell>
+                        <TableCell>{{ invite.role }}</TableCell>
+                        <TableCell>{{ formatDate(invite.created_at) }}</TableCell>
+                        <TableCell>
+                            <a
+                                v-if="$page.props.auth.user.role != 'user'"
+                                href="#"
+                                @click.prevent="confirmDeletion(invite)"
+                                class="text-red-600 hover:underline font-medium"
+                            >Cancel</a>
+                        </TableCell>
+                    </TableRow>
+                </TableBody>
+            </Table>
         </div>
     </div>
-
-    <ConfirmationModal
-        :show="beingDeleted != null"
-        @close="beingDeleted = null"
-        maxWidth="sm"
-    >
-        <template #title>Delete Invite</template>
-
-        <template #content>
-            Are you sure you would like to cancel this invite?
-        </template>
-
-        <template #footer>
-            <Button @click="beingDeleted = null" class="btn-secondary">
-                Cancel
-            </Button>
-
-            <Button
-                class="ml-3"
-                :class="{
-                    'opacity-25': deleteForm.processing,
-                    'btn-danger': true,
-                }"
-                :disabled="deleteForm.processing"
-                @click="deleteInvite"
-            >
-                Delete
-            </Button>
-        </template>
-    </ConfirmationModal>
 </template>

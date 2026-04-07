@@ -1,13 +1,18 @@
-<script setup>
-import { useForm, usePage } from "@inertiajs/vue3";
+<script setup lang="ts">
+import { useForm } from "@inertiajs/vue3";
 import { ref } from "vue";
-
-import DialogModal from "@/Components/DialogModal.vue";
-import Button from "@/Components/Button.vue";
-import Input from "@/Components/Input.vue";
-import InputError from "@/Components/InputError.vue";
-import Label from "@/Components/Label.vue";
-import ColorSelector from "@/Components/ColorSelector.vue";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import ColorSelector from "@/components/ColorSelector.vue";
+import * as tagsRoutes from "@/routes/setting/tags";
 
 const form = useForm({
     name: "",
@@ -25,7 +30,7 @@ defineExpose({
 });
 
 const store = () => {
-    form.post(route("setting.tags.store"), {
+    form.post(tagsRoutes.store.url(), {
         preserveScroll: true,
         onSuccess: () => {
             form.reset();
@@ -36,41 +41,40 @@ const store = () => {
 </script>
 
 <template>
-    <DialogModal max-width="xl" :show="show" @close="show = null">
-        <template #title>New Tag</template>
+    <Dialog :open="show" @update:open="(val) => (show = val)">
+        <DialogContent class="max-w-xl">
+            <DialogHeader>
+                <DialogTitle>New Tag</DialogTitle>
+            </DialogHeader>
 
-        <template #content>
-            <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-                <div class="sm:col-span-6">
-                    <Label for="name" value="Name" :required="true" />
+            <div class="mt-4 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                <div class="sm:col-span-6 grid gap-2">
+                    <Label for="name">Name <span class="text-red-500">*</span></Label>
                     <Input
                         id="name"
                         type="text"
                         v-model="form.name"
                         placeholder=""
                     />
-                    <InputError :message="form.errors.name" class="mt-2" />
+                    <p v-if="form.errors.name" class="mt-2 text-sm text-red-600">{{ form.errors.name }}</p>
                 </div>
 
-                <div class="sm:col-span-6">
-                    <Label for="color" value="Choose color" :required="true" />
+                <div class="sm:col-span-6 grid gap-2">
+                    <Label for="color">Choose color <span class="text-red-500">*</span></Label>
                     <ColorSelector id="color" v-model="form.color" />
-                    <InputError :message="form.errors.color" class="mt-2" />
+                    <p v-if="form.errors.color" class="mt-2 text-sm text-red-600">{{ form.errors.color }}</p>
                 </div>
             </div>
-        </template>
 
-        <template #footer>
-            <Button
-                @click="store"
-                :class="{
-                    'opacity-25': form.processing,
-                    'btn-primary': true,
-                }"
-                :disabled="form.processing"
-            >
-                Add Tag
-            </Button>
-        </template>
-    </DialogModal>
+            <DialogFooter>
+                <Button
+                    @click="store"
+                    :disabled="form.processing"
+                    :class="{ 'opacity-25': form.processing }"
+                >
+                    Add Tag
+                </Button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
 </template>

@@ -1,19 +1,44 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
-import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
-import { PhGear, PhCheckCircle, PhCircle } from "@phosphor-icons/vue";
-import RangePicker from "@/Components/RangePicker.vue";
+import { IconSettings, IconCircleCheck, IconCircle } from "@tabler/icons-vue";
 
-const emit = defineEmits(["update:columns", "update:range"]);
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
-const props = defineProps({
-    columns: Object,
-    range: Object,
-});
+import RangePicker from "@/components/RangePicker.vue";
+
+interface Column {
+    key: string;
+    label: string;
+    show: boolean;
+}
+
+interface Range {
+    start: string;
+    end: string;
+    timezone: string;
+    group: string;
+}
+
+const emit = defineEmits<{
+    (e: "update:columns", columns: Column[]): void;
+    (e: "update:range", range: Range): void;
+}>();
+
+const props = defineProps<{
+    columns: Column[];
+    range: Range;
+}>();
 
 const range = ref(props.range);
 
-const setColumn = (status) => {
+const setColumn = (status: Column) => {
     props.columns.forEach((item) => {
         item.show = item.key === status.key ? !item.show : item.show;
     });
@@ -36,69 +61,36 @@ const setColumn = (status) => {
                 placement="bottom-end"
                 class="w-full"
             />
-            <Menu as="div" class="relative inline-block text-left">
-                <div>
-                    <MenuButton class="btn btn-secondary">
-                        <PhGear
+            <DropdownMenu>
+                <DropdownMenuTrigger as-child>
+                    <Button variant="outline" size="icon">
+                        <IconSettings
                             class="h-5 w-5 text-zinc-500 dark:text-zinc-300"
                             aria-hidden="true"
                         />
-                    </MenuButton>
-                </div>
+                    </Button>
+                </DropdownMenuTrigger>
 
-                <transition
-                    enter-active-class="transition ease-out duration-100"
-                    enter-from-class="transform opacity-0 scale-95"
-                    enter-to-class="transform opacity-100 scale-100"
-                    leave-active-class="transition ease-in duration-75"
-                    leave-from-class="transform opacity-100 scale-100"
-                    leave-to-class="transform opacity-0 scale-95"
-                >
-                    <MenuItems
-                        class="absolute right-0 z-10 mt-2 w-52 origin-top-right divide-y divide-zinc-100 dark:divide-zinc-700 rounded-md bg-white dark:bg-zinc-900 shadow-lg ring-1 ring-black/5 focus:outline-none"
+                <DropdownMenuContent align="end" class="w-52">
+                    <DropdownMenuLabel>Columns</DropdownMenuLabel>
+                    <DropdownMenuItem
+                        v-for="column in props.columns"
+                        :key="column.key"
+                        @click.prevent="setColumn(column)"
+                        class="cursor-pointer flex items-center space-x-2"
                     >
-                        <div class="py-1">
-                            <div>
-                                <div
-                                    class="px-4 pt-2 text-[13px] font-medium text-black dark:text-white"
-                                >
-                                    Columns
-                                </div>
-                            </div>
-                            <MenuItem
-                                v-slot="{ active }"
-                                v-for="column in props.columns"
-                                :key="column.id"
-                            >
-                                <div
-                                    @click.prevent="setColumn(column)"
-                                    :class="[
-                                        active
-                                            ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-300'
-                                            : 'text-zinc-800 dark:text-zinc-300',
-                                        ' px-4 py-1.5 text-sm cursor-pointer flex flex-1 items-center space-x-2',
-                                    ]"
-                                >
-                                    <div>
-                                        <PhCheckCircle
-                                            v-if="column.show"
-                                            class="h-5 w-5 text-zinc-800 dark:text-zinc-300"
-                                            weight="fill"
-                                        />
-                                        <PhCircle
-                                            v-else
-                                            class="h-5 w-5 text-zinc-800 dark:text-zinc-300"
-                                        />
-                                    </div>
-                                    <div class="truncate">
-                                        {{ column.label }}
-                                    </div>
-                                </div>
-                            </MenuItem>
-                        </div>
-                    </MenuItems>
-                </transition>
-            </Menu>
+                        <IconCircleCheck
+                            v-if="column.show"
+                            class="h-5 w-5 text-zinc-800 dark:text-zinc-300"
+                        />
+                        <IconCircle
+                            v-else
+                            class="h-5 w-5 text-zinc-800 dark:text-zinc-300"
+                        />
+                        <span class="truncate">{{ column.label }}</span>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
         </div>
     </div>
 </template>
