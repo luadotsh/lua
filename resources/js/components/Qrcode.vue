@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import {
     Dialog,
     DialogContent,
@@ -8,7 +8,7 @@ import {
     DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import HexColorInput from "@/components/HexColorInput.vue";
 import { copyToClipboard } from "@/lib/utils";
 import { qrCode as qrCodeRoute } from "@/routes/api";
 
@@ -17,25 +17,26 @@ interface LinkData {
     link?: string;
 }
 
-const colors = [
-    "#000000",
-    "#FF6B6B",
-    "#FAB005",
-    "#15AABF",
-    "#FF922B",
-    "#7048E8",
-    "#2F9E44",
-];
+const DEFAULT_COLOR = "#000000";
 
 const linkIsCopied = ref(false);
-const color = ref<string>("#000000");
+const color = ref<string>(DEFAULT_COLOR);
+
+// The picker can hand back null when its field is emptied, but a QR code always
+// needs a colour — an empty one would render the code invisible.
+const pickedColor = computed({
+    get: () => color.value,
+    set: (value: string | null) => {
+        color.value = value ?? DEFAULT_COLOR;
+    },
+});
 const link = ref<LinkData | null>(null);
 const imageUrl = ref("");
 const isOpen = ref(false);
 
 const open = (l: LinkData) => {
     link.value = l;
-    color.value = colors[0];
+    color.value = DEFAULT_COLOR;
     isOpen.value = true;
 };
 
@@ -77,45 +78,7 @@ watch(
                 />
             </div>
 
-            <div class="flex items-center justify-between space-x-4">
-                <div class="flex items-center space-x-2 overflow-x-auto p-2">
-                    <button
-                        v-for="hex in colors"
-                        :key="hex"
-                        type="button"
-                        class="relative flex items-center justify-center rounded-full p-0.5 focus:outline-none"
-                        :class="color === hex ? 'ring-2 ring-offset-1' : ''"
-                        :style="color === hex ? { '--tw-ring-color': hex } : {}"
-                        @click="color = hex"
-                    >
-                        <span
-                            class="h-[30px] w-[30px] rounded-full block"
-                            :style="{ backgroundColor: hex }"
-                        />
-                    </button>
-                </div>
-                <div class="relative">
-                    <Input
-                        type="text"
-                        v-model="color"
-                        placeholder="#000000"
-                        maxlength="7"
-                        class="pr-10"
-                    />
-                    <div class="absolute inset-y-0 right-0 flex py-1.5 pr-1">
-                        <color-picker
-                            v-model:pureColor="color"
-                            format="hex"
-                            shape="square"
-                            pickerType="chrome"
-                            :disableAlpha="true"
-                            :disableHistory="true"
-                            :roundHistory="true"
-                            :debounce="75"
-                        />
-                    </div>
-                </div>
-            </div>
+            <HexColorInput v-model="pickedColor" placeholder="#000000" />
 
             <DialogFooter>
                 <Button
