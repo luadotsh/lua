@@ -1,11 +1,12 @@
 import '../css/app.css';
 import './bootstrap';
 
-import { createInertiaApp } from '@inertiajs/vue3';
+import { createInertiaApp, router } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import type { DefineComponent } from 'vue';
 import { createApp, h } from 'vue';
 import { initializeTheme } from './composables/useAppearance';
+import { capturePageview, initializePostHog, syncPostHogContext } from './posthog';
 
 // Third-party plugins still needed
 import { i18nVue } from 'laravel-vue-i18n';
@@ -20,6 +21,18 @@ createInertiaApp({
             import.meta.glob<DefineComponent>('./pages/**/*.vue'),
         ),
     setup({ el, App, props, plugin }) {
+        // Identify + workspace group + first pageview. The same hooks fire on
+        // every Inertia navigation below, so a workspace switch re-attaches
+        // the right group and SPA navigations still register as pageviews.
+        initializePostHog();
+        syncPostHogContext(props.initialPage);
+        capturePageview();
+
+        router.on('navigate', (event) => {
+            syncPostHogContext(event.detail.page);
+            capturePageview();
+        });
+
         createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(i18nVue, {

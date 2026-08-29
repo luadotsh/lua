@@ -39,6 +39,7 @@
     "clsx": "^2.1.1",
     "dayjs": "^1.11.23",
     "laravel-vue-i18n": "^2.7.7",
+    "posthog-js": "^1.422.5",
     "qrcode": "^1.5.4",
     "reka-ui": "^2.10.4",
     "tailwind-merge": "^3.5.0",

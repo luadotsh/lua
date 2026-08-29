@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
+use PostHog\PostHog;
+
+use App\Services\PostHogService;
+
 use App\Policies\WorkspacePolicy;
 
 use App\Models\Workspace;
@@ -50,6 +54,9 @@ class AppServiceProvider extends ServiceProvider
         // Cashier configuration
         Cashier::useCustomerModel(Workspace::class);
 
+        // Analytics
+        $this->configurePostHog();
+
         // Vite configuration
         Vite::prefetch(concurrency: 3);
 
@@ -80,6 +87,22 @@ class AppServiceProvider extends ServiceProvider
             'tag' => Tag::class,
             'user' => User::class,
             'workspace' => Workspace::class,
+        ]);
+    }
+
+    /**
+     * The SDK is only initialised when a key is actually configured; every
+     * call site is already gated on PostHogService, so a missing key means
+     * nothing is sent rather than anything failing.
+     */
+    protected function configurePostHog(): void
+    {
+        if (! PostHogService::isEnabled()) {
+            return;
+        }
+
+        PostHog::init(config('services.posthog.api_key'), [
+            'host' => config('services.posthog.host'),
         ]);
     }
 }

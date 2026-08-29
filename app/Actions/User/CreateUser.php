@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Actions\User;
 
 use App\Actions\Workspace\CreateWorkspace;
+use App\Enums\PostHog\UserEvent;
+use App\Jobs\PostHog\SyncUser;
 use App\Models\User;
+use App\Services\PostHogService;
 use Illuminate\Support\Facades\DB;
 
 class CreateUser
@@ -16,14 +19,14 @@ class CreateUser
      * except an invited user gets a personal workspace here, so no signup flow
      * has to stop at a create-workspace step.
      *
-     * @param  array{name: string, email: string, password?: string|null, email_verified_at?: \DateTimeInterface|null, current_workspace_id?: string|null, is_invite?: bool}  $data
+     * @param  array{name: string, email: string, password?: string|null, email_verified_at?: \DateTimeInterface|null, current_workspace_id?: string|null, is_invite?: bool, auth_provider?: string}  $data
      * @param  array<string, string>  $attributionParameters  UTM parameters and ad click IDs captured before signup
      */
     public static function execute(array $data, array $attributionParameters = []): User
     {
         $isInviteRegistration = (bool) data_get($data, 'is_invite', false);
 
-        return DB::transaction(function () use ($data, $attributionParameters, $isInviteRegistration): User {
+        $user = DB::transaction(function () use ($data, $attributionParameters, $isInviteRegistration): User {
             $user = User::create([
                 ...$attributionParameters,
                 'name' => data_get($data, 'name'),
@@ -43,5 +46,22 @@ class CreateUser
 
             return $user;
         });
+
+        if (PostHogService::shouldTrack()) {
+            SyncUser::dispatch((string) $user->id);
+
+            // Joining a workspace by invite is not a signup, so it does not
+            // emit the acquisition event.
+            if (! $isInviteRegistration) {
+                app(PostHogService::class)->capture(
+                    (string) $user->id,
+                    UserEvent::SignedUp->value,
+                    ['auth_provider' => data_get($data, 'auth_provider', 'email')],
+                    $user->currentWorkspace,
+                );
+            }
+        }
+
+        return $user;
     }
 }

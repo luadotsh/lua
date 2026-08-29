@@ -57,6 +57,7 @@ class GoogleController extends Controller
             'name' => $googleUser->name,
             'email' => $googleUser->email,
             'email_verified_at' => now(),
+            'auth_provider' => 'google',
         ], $this->retrieveAttributionParameters());
 
         event(new Registered($user));

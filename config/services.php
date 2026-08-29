@@ -33,4 +33,11 @@ return [
         ],
     ],
 
+
+    'posthog' => [
+        'enabled' => (bool) env('POSTHOG_ENABLED', false),
+        'api_key' => env('POSTHOG_API_KEY'),
+        'host' => env('POSTHOG_HOST', 'https://us.i.posthog.com'),
+    ],
+
 ];
