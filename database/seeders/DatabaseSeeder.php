@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
         // Run these seeders in all environments
         $this->call([
             PlanSeeder::class,
+            PassportSeeder::class,
         ]);
     }
 }

@@ -44,6 +44,49 @@ Whether you're an individual looking for branded, trackable links or a business 
 **Dark Mode is also available**
 ![Dark Mode](.github/screenshot/events-dark.png)
 
+---
+
+## 🚀 Getting Started
+
+```bash
+composer install
+npm install
+
+cp .env.example .env
+php artisan key:generate
+
+# OAuth signing keys for the API and the MCP server. These are gitignored,
+# so every environment generates its own — without them the api guard
+# rejects every token.
+php artisan passport:keys
+
+php artisan migrate --seed
+
+npm run dev
+```
+
+The seeders create the plans and the Passport personal access client that
+API keys are issued from. Both are idempotent, so `php artisan db:seed` is
+safe to re-run on deploy.
+
+### Optional integrations
+
+Each of these stays off until its credentials are set, so a self-hosted
+install only shows what it can actually use:
+
+| | Environment variables |
+|---|---|
+| Google sign-in | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` |
+| GitHub sign-in | `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` |
+| PostHog analytics | `POSTHOG_ENABLED=true`, `POSTHOG_API_KEY` |
+
+### MCP server
+
+The app ships an MCP server at `/mcp`, authenticated with OAuth. Connect an
+assistant from **Settings → Authentication**, where the server URL and the
+current connections are listed. A connection can only act on the workspace
+it was authorised from.
+
 ## 🌟 Premium Domains - Cloud Only
 
 **lua.sh** provide you access to an array of sleek and memorable domains for your shortened URLs:
