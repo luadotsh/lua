@@ -52,13 +52,6 @@ const store = () => form.post(linksRoute.store.url());
     <Head title="New link" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <template #header-actions>
-            <Button variant="ghost" as-child>
-                <Link :href="linksRoute.index.url()">Cancel</Link>
-            </Button>
-            <Button :disabled="form.processing" @click="store">Continue</Button>
-        </template>
-
         <div class="mx-auto w-full max-w-xl p-4 sm:p-6">
             <form class="flex flex-col gap-5" @submit.prevent="store">
                 <div class="grid gap-2">
@@ -137,6 +130,13 @@ const store = () => form.post(linksRoute.store.url());
                 <p class="text-sm text-muted-foreground">
                     Tags, UTMs, platform targeting, a password and an expiry come next.
                 </p>
+
+                <div class="flex items-center gap-2">
+                    <Button type="submit" :disabled="form.processing">Continue</Button>
+                    <Button variant="ghost" as-child>
+                        <Link :href="linksRoute.index.url()">Cancel</Link>
+                    </Button>
+                </div>
             </form>
         </div>
     </AppLayout>
