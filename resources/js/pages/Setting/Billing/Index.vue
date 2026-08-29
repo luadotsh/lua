@@ -73,7 +73,10 @@ const tags = computed(() => {
     <Head title="Plan and Usage" />
 
     <AppLayout>
-        <SettingsLayout>
+        <SettingsLayout
+            title="Billing"
+            description="Your plan, usage and invoices."
+        >
             <div class="space-y-4">
                 <div
                     class="border border-zinc-200 dark:border-zinc-700 rounded-lg overflow-hidden px-6 py-8 text-zinc-800 dark:text-zinc-300"
@@ -81,7 +84,7 @@ const tags = computed(() => {
                     <div class="flex flex-col justify-center space-y-4">
                         <div class="sm:flex sm:items-center">
                             <div class="sm:flex-auto">
-                                <h1 class="text-lg font-semibold">Plan and Usage</h1>
+                                <h2 class="text-lg font-semibold">Plan and Usage</h2>
                             </div>
 
                             <a

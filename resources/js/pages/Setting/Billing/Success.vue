@@ -16,7 +16,9 @@ onMounted(() => {
 <template>
     <Head title="Processing Payment" />
     <AppLayout>
-        <SettingsLayout>
+        <SettingsLayout
+            title="Billing"
+        >
             <div class="flex min-h-full flex-1 flex-col justify-center">
                 <div class="max-w-3xl mx-auto">
                     <div class="flex items-center space-x-2">

@@ -33,7 +33,10 @@ const update = () => {
     <Head title="Account" />
 
     <AppLayout>
-        <SettingsLayout>
+        <SettingsLayout
+            title="Account"
+            description="Your name, email and photo."
+        >
             <div class="flex flex-col space-y-6">
                 <HeadingSmall
                     title="Photo"

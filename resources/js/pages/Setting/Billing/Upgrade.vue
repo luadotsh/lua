@@ -103,20 +103,12 @@ const frequency = ref(frequencies[0]);
 
 <template>
     <AppLayout>
-        <SettingsLayout>
-            <div class="py-8">
-                <div class="mx-auto max-w-4xl text-center">
-                    <div
-                        class="text-2xl font-semibold text-zinc-800 dark:text-zinc-100"
-                    >
-                        Choose your plan
-                    </div>
-                    <div class="text-zinc-600 dark:text-zinc-400">
-                        Find a plan that fits your needs and start tracking your
-                        links
-                    </div>
-                </div>
-                <div class="mt-12 flex justify-center">
+        <SettingsLayout
+            title="Choose your plan"
+            description="Find a plan that fits your needs and start tracking your links."
+        >
+            <div>
+                <div class="flex justify-center">
                     <fieldset aria-label="Payment frequency">
                         <div
                             class="grid grid-cols-2 gap-x-1 rounded-full bg-zinc-100 dark:bg-white/5 p-1 text-center text-xs font-semibold leading-5 dark:text-white"

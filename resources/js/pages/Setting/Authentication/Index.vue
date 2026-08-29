@@ -88,7 +88,10 @@ const disconnect = (provider: string) => {
     <Head title="Authentication" />
 
     <AppLayout>
-        <SettingsLayout>
+        <SettingsLayout
+            title="Authentication"
+            description="Your password, connected accounts and browser sessions."
+        >
             <!-- Password -->
             <section>
                 <h2 class="text-base font-semibold text-zinc-800 dark:text-zinc-200">Password</h2>

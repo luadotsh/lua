@@ -26,7 +26,10 @@ const update = () => {
     <Head title="Workspace" />
 
     <AppLayout>
-        <SettingsLayout>
+        <SettingsLayout
+            title="Workspace"
+            description="Your workspace's name and logo."
+        >
             <div class="flex flex-col space-y-6">
                 <HeadingSmall
                     title="Logo"
