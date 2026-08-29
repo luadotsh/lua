@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Auth;
 
+use App\Actions\Auth\LoginUser;
 use App\Actions\Auth\LinkSocialAccount;
 use App\Actions\User\CreateUser;
 use App\Enums\Auth\SocialAuthProvider;
@@ -11,7 +12,6 @@ use App\Http\Controllers\Auth\Concerns\PreservesAttributionParameters;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -79,7 +79,7 @@ class SocialAuthController extends Controller
                 LinkSocialAccount::execute($existingUser, $socialProvider, $socialUser->getId());
             }
 
-            Auth::login($existingUser, true);
+            LoginUser::forUser($request, $existingUser, remember: true);
 
             return redirect()->to(route('links.index'));
         }
@@ -94,7 +94,7 @@ class SocialAuthController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
+        LoginUser::forUser($request, $user);
 
         return redirect(route('links.index'));
     }

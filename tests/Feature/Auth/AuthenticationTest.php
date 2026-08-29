@@ -45,3 +45,37 @@ test('users can logout', function () {
     $this->assertGuest();
     $response->assertRedirect('/');
 });
+
+it('locks out after too many failed attempts on the same email and ip', function () {
+    $user = App\Models\User::factory()->create();
+
+    for ($i = 0; $i < 5; $i++) {
+        $this->post(route('login'), [
+            'email' => $user->email,
+            'password' => 'wrong-password',
+        ]);
+    }
+
+    // The sixth attempt is refused even with the right password.
+    $this->post(route('login'), [
+        'email' => $user->email,
+        'password' => 'password',
+    ])->assertSessionHasErrors('email');
+
+    $this->assertGuest();
+});
+
+it('regenerates the session on login so a fixated id cannot be reused', function () {
+    $user = App\Models\User::factory()->create();
+
+    $this->get(route('login'));
+    $before = session()->getId();
+
+    $this->post(route('login'), [
+        'email' => $user->email,
+        'password' => 'password',
+    ]);
+
+    expect(session()->getId())->not->toBe($before);
+    $this->assertAuthenticated();
+});

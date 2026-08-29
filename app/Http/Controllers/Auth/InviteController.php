@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Auth;
 
+use App\Actions\Auth\LoginUser;
 use App\Http\Requests\Auth\AcceptInviteRequest;
 use App\Actions\User\CreateUser;
 use App\Models\Invite;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 
@@ -56,7 +56,7 @@ class InviteController extends Controller
             'invite_role' => $invite->role,
         ]);
 
-        Auth::login($user);
+        LoginUser::forUser($request, $user);
 
         // deleta o invite
         $invite->delete();
