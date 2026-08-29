@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\Domain\ValidateRequest;
 use App\Http\Resources\Api\DomainResource;
 
 use Illuminate\Support\Facades\Gate;
@@ -17,12 +18,8 @@ use App\Enums\Domain\Status;
 
 class DomainController extends Controller
 {
-    public function validate(Request $request)
+    public function validate(ValidateRequest $request)
     {
-        $request->validate([
-            'domain' => ['required', 'max:255'],
-        ], $request->query());
-
         $defaults = in_array($request->input('domain'), config('domains.available'));
         $db = Domain::where('domain', $request->input('domain'))
             ->where('status', Status::ACTIVE)

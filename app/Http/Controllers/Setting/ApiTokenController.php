@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Setting;
 
+use App\Http\Requests\ApiToken\CreateRequest;
 use App\Actions\AccessToken\ListWorkspaceApiKeys;
 use App\Actions\AccessToken\RevokeAccessToken;
 use App\Actions\ApiKey\CreateApiKey;
@@ -30,13 +31,8 @@ class ApiTokenController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(CreateRequest $request)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'expires_at' => CreateApiKey::expiresAtRules(),
-        ]);
-
         $result = CreateApiKey::execute(
             auth()->user(),
             auth()->user()->currentWorkspace,

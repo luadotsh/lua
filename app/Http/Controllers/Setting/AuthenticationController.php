@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Setting;
 
+use App\Http\Requests\Authentication\UpdatePasswordRequest;
+use App\Http\Requests\Authentication\DestroySessionsRequest;
 use App\Actions\AccessToken\ListConnectedMcpClients;
 use App\Actions\AccessToken\RevokeAccessToken;
 use App\Enums\Auth\SocialAuthProvider;
@@ -13,8 +15,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -39,17 +39,11 @@ class AuthenticationController extends Controller
         ]);
     }
 
-    public function updatePassword(Request $request): RedirectResponse
+    public function updatePassword(UpdatePasswordRequest $request): RedirectResponse
     {
-        $user = $request->user();
-
-        $request->validate([
-            // Someone who signed up with Google has no password to confirm yet.
-            'current_password' => $user->password ? ['required', 'current_password'] : ['nullable'],
-            'password' => ['required', 'confirmed', Password::defaults()],
+        $request->user()->update([
+            'password' => Hash::make($request->validated('password')),
         ]);
-
-        $user->update(['password' => Hash::make($request->password)]);
 
         session()->flash('flash.banner', 'Password updated.');
         session()->flash('flash.bannerStyle', 'success');
@@ -57,19 +51,9 @@ class AuthenticationController extends Controller
         return back();
     }
 
-    public function destroyOtherSessions(Request $request): RedirectResponse
+    public function destroyOtherSessions(DestroySessionsRequest $request): RedirectResponse
     {
         $user = $request->user();
-
-        if ($user->password) {
-            $request->validate(['password' => ['required', 'current_password']]);
-        } else {
-            $request->validate([
-                'email_confirmation' => ['required', Rule::in([$user->email])],
-            ], [
-                'email_confirmation.in' => 'That does not match your email address.',
-            ]);
-        }
 
         DB::table(config('session.table', 'sessions'))
             ->where('user_id', $user->id)

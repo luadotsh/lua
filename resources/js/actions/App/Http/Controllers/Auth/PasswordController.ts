@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Auth\PasswordController::update
-* @see app/Http/Controllers/Auth/PasswordController.php:18
+* @see app/Http/Controllers/Auth/PasswordController.php:19
 * @route '/password'
 */
 export const update = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -16,7 +16,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Auth\PasswordController::update
-* @see app/Http/Controllers/Auth/PasswordController.php:18
+* @see app/Http/Controllers/Auth/PasswordController.php:19
 * @route '/password'
 */
 update.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ update.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Auth\PasswordController::update
-* @see app/Http/Controllers/Auth/PasswordController.php:18
+* @see app/Http/Controllers/Auth/PasswordController.php:19
 * @route '/password'
 */
 update.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -35,7 +35,7 @@ update.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
 
 /**
 * @see \App\Http\Controllers\Auth\PasswordController::update
-* @see app/Http/Controllers/Auth/PasswordController.php:18
+* @see app/Http/Controllers/Auth/PasswordController.php:19
 * @route '/password'
 */
 const updateForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -50,7 +50,7 @@ const updateForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> =>
 
 /**
 * @see \App\Http\Controllers\Auth\PasswordController::update
-* @see app/Http/Controllers/Auth/PasswordController.php:18
+* @see app/Http/Controllers/Auth/PasswordController.php:19
 * @route '/password'
 */
 updateForm.put = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

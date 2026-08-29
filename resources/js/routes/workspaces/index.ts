@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\WorkspaceController::create
-* @see app/Http/Controllers/WorkspaceController.php:19
+* @see app/Http/Controllers/WorkspaceController.php:20
 * @route '/workspaces/create'
 */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkspaceController::create
-* @see app/Http/Controllers/WorkspaceController.php:19
+* @see app/Http/Controllers/WorkspaceController.php:20
 * @route '/workspaces/create'
 */
 create.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ create.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\WorkspaceController::create
-* @see app/Http/Controllers/WorkspaceController.php:19
+* @see app/Http/Controllers/WorkspaceController.php:20
 * @route '/workspaces/create'
 */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\WorkspaceController::create
-* @see app/Http/Controllers/WorkspaceController.php:19
+* @see app/Http/Controllers/WorkspaceController.php:20
 * @route '/workspaces/create'
 */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\WorkspaceController::create
-* @see app/Http/Controllers/WorkspaceController.php:19
+* @see app/Http/Controllers/WorkspaceController.php:20
 * @route '/workspaces/create'
 */
 const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 
 /**
 * @see \App\Http\Controllers\WorkspaceController::create
-* @see app/Http/Controllers/WorkspaceController.php:19
+* @see app/Http/Controllers/WorkspaceController.php:20
 * @route '/workspaces/create'
 */
 createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\WorkspaceController::create
-* @see app/Http/Controllers/WorkspaceController.php:19
+* @see app/Http/Controllers/WorkspaceController.php:20
 * @route '/workspaces/create'
 */
 createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ create.form = createForm
 
 /**
 * @see \App\Http\Controllers\WorkspaceController::store
-* @see app/Http/Controllers/WorkspaceController.php:24
+* @see app/Http/Controllers/WorkspaceController.php:25
 * @route '/workspaces'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -97,7 +97,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkspaceController::store
-* @see app/Http/Controllers/WorkspaceController.php:24
+* @see app/Http/Controllers/WorkspaceController.php:25
 * @route '/workspaces'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\WorkspaceController::store
-* @see app/Http/Controllers/WorkspaceController.php:24
+* @see app/Http/Controllers/WorkspaceController.php:25
 * @route '/workspaces'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -116,7 +116,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\WorkspaceController::store
-* @see app/Http/Controllers/WorkspaceController.php:24
+* @see app/Http/Controllers/WorkspaceController.php:25
 * @route '/workspaces'
 */
 const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -126,7 +126,7 @@ const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => 
 
 /**
 * @see \App\Http\Controllers\WorkspaceController::store
-* @see app/Http/Controllers/WorkspaceController.php:24
+* @see app/Http/Controllers/WorkspaceController.php:25
 * @route '/workspaces'
 */
 storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -138,7 +138,7 @@ store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\WorkspaceController::updateCurrent
-* @see app/Http/Controllers/WorkspaceController.php:45
+* @see app/Http/Controllers/WorkspaceController.php:42
 * @route '/workspaces/update-current'
 */
 export const updateCurrent = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -153,7 +153,7 @@ updateCurrent.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkspaceController::updateCurrent
-* @see app/Http/Controllers/WorkspaceController.php:45
+* @see app/Http/Controllers/WorkspaceController.php:42
 * @route '/workspaces/update-current'
 */
 updateCurrent.url = (options?: RouteQueryOptions) => {
@@ -162,7 +162,7 @@ updateCurrent.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\WorkspaceController::updateCurrent
-* @see app/Http/Controllers/WorkspaceController.php:45
+* @see app/Http/Controllers/WorkspaceController.php:42
 * @route '/workspaces/update-current'
 */
 updateCurrent.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -172,7 +172,7 @@ updateCurrent.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
 
 /**
 * @see \App\Http\Controllers\WorkspaceController::updateCurrent
-* @see app/Http/Controllers/WorkspaceController.php:45
+* @see app/Http/Controllers/WorkspaceController.php:42
 * @route '/workspaces/update-current'
 */
 const updateCurrentForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -187,7 +187,7 @@ const updateCurrentForm = (options?: RouteQueryOptions): RouteFormDefinition<'po
 
 /**
 * @see \App\Http\Controllers\WorkspaceController::updateCurrent
-* @see app/Http/Controllers/WorkspaceController.php:45
+* @see app/Http/Controllers/WorkspaceController.php:42
 * @route '/workspaces/update-current'
 */
 updateCurrentForm.put = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Setting;
 
+use App\Http\Requests\Tag\UpdateRequest;
+use App\Http\Requests\Tag\CreateRequest;
+use App\Http\Requests\Tag\SortRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +26,7 @@ class TagController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(CreateRequest $request)
     {
 
         $workspace = auth()->user()->currentWorkspace;
@@ -34,11 +37,6 @@ class TagController extends Controller
             session()->flash('flash.bannerStyle', 'danger');
             return back();
         }
-
-        $request->validate([
-            'name' => ['required', 'max:255'],
-            'color' => ['required', 'max:255'],
-        ]);
 
         $label = new Tag;
         $label->workspace_id = $workspace->id;
@@ -53,13 +51,8 @@ class TagController extends Controller
         return back();
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateRequest $request, $id)
     {
-        $request->validate([
-            'name' => ['required', 'max:255'],
-            'color' => ['required', 'max:255'],
-        ]);
-
         $tag = Tag::where('id', $id)->where('workspace_id', auth()->user()->currentWorkspace->id)->firstOrFail();
         $tag->name = $request->name;
         $tag->color = $request->color;
@@ -82,12 +75,8 @@ class TagController extends Controller
         return back();
     }
 
-    public function sort(Request $request)
+    public function sort(SortRequest $request)
     {
-        $request->validate([
-            'tags' => ['required', 'array']
-        ]);
-
         $workspace = auth()->user()->currentWorkspace;
 
         DB::beginTransaction();

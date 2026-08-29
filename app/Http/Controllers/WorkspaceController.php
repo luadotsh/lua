@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Workspace\StoreRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -21,12 +22,8 @@ class WorkspaceController extends Controller
         return Inertia::render('Workspace/Create');
     }
 
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-        ]);
-
         try {
             CreateWorkspace::execute(auth()->user(), [
                 'name' => $request->name,

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Media\StoreRequest;
+use App\Http\Requests\Media\SortRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
@@ -13,16 +15,8 @@ use App\Models\Media;
 
 class MediaController extends Controller
 {
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        $request->validate([
-            'media' => ['required', 'file'],
-            'collection' => 'required',
-            'model' => 'required',
-            'model_id' => 'required',
-            'visibility' => 'required|in:public,private',
-        ]);
-
         $model = 'App?Models?'.$request->model;
         $model = str_replace('?', '\\', $model);
 
@@ -41,14 +35,8 @@ class MediaController extends Controller
         return response()->json($upload);
     }
 
-    public function sort(Request $request)
+    public function sort(SortRequest $request)
     {
-        $request->validate([
-            'medias' => ['required', 'array'],
-            'model' => 'required',
-            'collection' => 'required',
-        ]);
-
         DB::beginTransaction();
 
         try {

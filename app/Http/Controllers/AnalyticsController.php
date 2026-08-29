@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Analytics\StatisticsRequest;
 use App\Services\CalculateStat;
 
 use Carbon\Carbon;
@@ -28,38 +29,8 @@ class AnalyticsController extends Controller
         ]);
     }
 
-    public function statistics(Request $request)
+    public function statistics(StatisticsRequest $request)
     {
-        $request->validate([
-            'start' => ['required', 'max:255', 'date_format:Y-m-d'],
-            'end' => ['required', 'max:255', 'date_format:Y-m-d'],
-            'metric' => [
-                'required',
-                'max:255',
-                Rule::in([
-                    'events',
-                    'clicks',
-                    'qrScans',
-                    'links',
-                    'referers',
-                    'utm-sources',
-                    'utm-mediums',
-                    'utm-campaigns',
-                    'utm-contents',
-                    'utm-terms',
-                    'browsers',
-                    'os',
-                    'devices',
-                    'languages',
-                    'countries',
-                    'regions',
-                    'cities'
-                ])
-            ],
-            'group' => ['required', 'max:255', 'in:minute,hour,day,month'],
-            'timezone' => ['required', 'max:255'],
-        ]);
-
         $workspace = auth()->user()->currentWorkspace;
 
         $timezone = $request->timezone;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Requests\Auth\AcceptInviteRequest;
 use App\Actions\User\CreateUser;
 use App\Models\Invite;
 use App\Models\User;
@@ -28,14 +29,8 @@ class InviteController extends Controller
         ]);
     }
 
-    public function accept(Request $request, $id)
+    public function accept(AcceptInviteRequest $request, $id)
     {
-        $request->validate([
-            'email' => ['required', 'email', 'max:255'],
-            'name' => ['required', 'max:255'],
-            'password' => ['required', 'max:255', 'confirmed'],
-        ]);
-
         // valida o id
         $invite = Invite::where('id', $id)
             ->where('email', $request->email)

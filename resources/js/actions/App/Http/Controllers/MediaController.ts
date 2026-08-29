@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\MediaController::download
-* @see app/Http/Controllers/MediaController.php:95
+* @see app/Http/Controllers/MediaController.php:83
 * @route '/medias/{id}/download'
 */
 export const download = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ download.definition = {
 
 /**
 * @see \App\Http\Controllers\MediaController::download
-* @see app/Http/Controllers/MediaController.php:95
+* @see app/Http/Controllers/MediaController.php:83
 * @route '/medias/{id}/download'
 */
 download.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -43,7 +43,7 @@ download.url = (args: { id: string | number } | [id: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\MediaController::download
-* @see app/Http/Controllers/MediaController.php:95
+* @see app/Http/Controllers/MediaController.php:83
 * @route '/medias/{id}/download'
 */
 download.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -53,7 +53,7 @@ download.get = (args: { id: string | number } | [id: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\MediaController::download
-* @see app/Http/Controllers/MediaController.php:95
+* @see app/Http/Controllers/MediaController.php:83
 * @route '/medias/{id}/download'
 */
 download.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -63,7 +63,7 @@ download.head = (args: { id: string | number } | [id: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\MediaController::download
-* @see app/Http/Controllers/MediaController.php:95
+* @see app/Http/Controllers/MediaController.php:83
 * @route '/medias/{id}/download'
 */
 const downloadForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -73,7 +73,7 @@ const downloadForm = (args: { id: string | number } | [id: string | number ] | s
 
 /**
 * @see \App\Http\Controllers\MediaController::download
-* @see app/Http/Controllers/MediaController.php:95
+* @see app/Http/Controllers/MediaController.php:83
 * @route '/medias/{id}/download'
 */
 downloadForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -83,7 +83,7 @@ downloadForm.get = (args: { id: string | number } | [id: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\MediaController::download
-* @see app/Http/Controllers/MediaController.php:95
+* @see app/Http/Controllers/MediaController.php:83
 * @route '/medias/{id}/download'
 */
 downloadForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -100,7 +100,7 @@ download.form = downloadForm
 
 /**
 * @see \App\Http\Controllers\MediaController::store
-* @see app/Http/Controllers/MediaController.php:16
+* @see app/Http/Controllers/MediaController.php:18
 * @route '/medias'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -115,7 +115,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\MediaController::store
-* @see app/Http/Controllers/MediaController.php:16
+* @see app/Http/Controllers/MediaController.php:18
 * @route '/medias'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -124,7 +124,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\MediaController::store
-* @see app/Http/Controllers/MediaController.php:16
+* @see app/Http/Controllers/MediaController.php:18
 * @route '/medias'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -134,7 +134,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\MediaController::store
-* @see app/Http/Controllers/MediaController.php:16
+* @see app/Http/Controllers/MediaController.php:18
 * @route '/medias'
 */
 const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -144,7 +144,7 @@ const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => 
 
 /**
 * @see \App\Http\Controllers\MediaController::store
-* @see app/Http/Controllers/MediaController.php:16
+* @see app/Http/Controllers/MediaController.php:18
 * @route '/medias'
 */
 storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -156,7 +156,7 @@ store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\MediaController::sort
-* @see app/Http/Controllers/MediaController.php:44
+* @see app/Http/Controllers/MediaController.php:38
 * @route '/medias/sort'
 */
 export const sort = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -171,7 +171,7 @@ sort.definition = {
 
 /**
 * @see \App\Http\Controllers\MediaController::sort
-* @see app/Http/Controllers/MediaController.php:44
+* @see app/Http/Controllers/MediaController.php:38
 * @route '/medias/sort'
 */
 sort.url = (options?: RouteQueryOptions) => {
@@ -180,7 +180,7 @@ sort.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\MediaController::sort
-* @see app/Http/Controllers/MediaController.php:44
+* @see app/Http/Controllers/MediaController.php:38
 * @route '/medias/sort'
 */
 sort.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -190,7 +190,7 @@ sort.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\MediaController::sort
-* @see app/Http/Controllers/MediaController.php:44
+* @see app/Http/Controllers/MediaController.php:38
 * @route '/medias/sort'
 */
 const sortForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -200,7 +200,7 @@ const sortForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => (
 
 /**
 * @see \App\Http\Controllers\MediaController::sort
-* @see app/Http/Controllers/MediaController.php:44
+* @see app/Http/Controllers/MediaController.php:38
 * @route '/medias/sort'
 */
 sortForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -212,7 +212,7 @@ sort.form = sortForm
 
 /**
 * @see \App\Http\Controllers\MediaController::thumbnail
-* @see app/Http/Controllers/MediaController.php:75
+* @see app/Http/Controllers/MediaController.php:63
 * @route '/medias/{modelId}/thumbnail/{id}'
 */
 export const thumbnail = (args: { modelId: string | number, id: string | number } | [modelId: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -227,7 +227,7 @@ thumbnail.definition = {
 
 /**
 * @see \App\Http\Controllers\MediaController::thumbnail
-* @see app/Http/Controllers/MediaController.php:75
+* @see app/Http/Controllers/MediaController.php:63
 * @route '/medias/{modelId}/thumbnail/{id}'
 */
 thumbnail.url = (args: { modelId: string | number, id: string | number } | [modelId: string | number, id: string | number ], options?: RouteQueryOptions) => {
@@ -253,7 +253,7 @@ thumbnail.url = (args: { modelId: string | number, id: string | number } | [mode
 
 /**
 * @see \App\Http\Controllers\MediaController::thumbnail
-* @see app/Http/Controllers/MediaController.php:75
+* @see app/Http/Controllers/MediaController.php:63
 * @route '/medias/{modelId}/thumbnail/{id}'
 */
 thumbnail.post = (args: { modelId: string | number, id: string | number } | [modelId: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -263,7 +263,7 @@ thumbnail.post = (args: { modelId: string | number, id: string | number } | [mod
 
 /**
 * @see \App\Http\Controllers\MediaController::thumbnail
-* @see app/Http/Controllers/MediaController.php:75
+* @see app/Http/Controllers/MediaController.php:63
 * @route '/medias/{modelId}/thumbnail/{id}'
 */
 const thumbnailForm = (args: { modelId: string | number, id: string | number } | [modelId: string | number, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -273,7 +273,7 @@ const thumbnailForm = (args: { modelId: string | number, id: string | number } |
 
 /**
 * @see \App\Http\Controllers\MediaController::thumbnail
-* @see app/Http/Controllers/MediaController.php:75
+* @see app/Http/Controllers/MediaController.php:63
 * @route '/medias/{modelId}/thumbnail/{id}'
 */
 thumbnailForm.post = (args: { modelId: string | number, id: string | number } | [modelId: string | number, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -285,7 +285,7 @@ thumbnail.form = thumbnailForm
 
 /**
 * @see \App\Http\Controllers\MediaController::destroy
-* @see app/Http/Controllers/MediaController.php:101
+* @see app/Http/Controllers/MediaController.php:89
 * @route '/medias/{modelId}/{id}'
 */
 export const destroy = (args: { modelId: string | number, id: string | number } | [modelId: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -300,7 +300,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\MediaController::destroy
-* @see app/Http/Controllers/MediaController.php:101
+* @see app/Http/Controllers/MediaController.php:89
 * @route '/medias/{modelId}/{id}'
 */
 destroy.url = (args: { modelId: string | number, id: string | number } | [modelId: string | number, id: string | number ], options?: RouteQueryOptions) => {
@@ -326,7 +326,7 @@ destroy.url = (args: { modelId: string | number, id: string | number } | [modelI
 
 /**
 * @see \App\Http\Controllers\MediaController::destroy
-* @see app/Http/Controllers/MediaController.php:101
+* @see app/Http/Controllers/MediaController.php:89
 * @route '/medias/{modelId}/{id}'
 */
 destroy.delete = (args: { modelId: string | number, id: string | number } | [modelId: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -336,7 +336,7 @@ destroy.delete = (args: { modelId: string | number, id: string | number } | [mod
 
 /**
 * @see \App\Http\Controllers\MediaController::destroy
-* @see app/Http/Controllers/MediaController.php:101
+* @see app/Http/Controllers/MediaController.php:89
 * @route '/medias/{modelId}/{id}'
 */
 const destroyForm = (args: { modelId: string | number, id: string | number } | [modelId: string | number, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -351,7 +351,7 @@ const destroyForm = (args: { modelId: string | number, id: string | number } | [
 
 /**
 * @see \App\Http\Controllers\MediaController::destroy
-* @see app/Http/Controllers/MediaController.php:101
+* @see app/Http/Controllers/MediaController.php:89
 * @route '/medias/{modelId}/{id}'
 */
 destroyForm.delete = (args: { modelId: string | number, id: string | number } | [modelId: string | number, id: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

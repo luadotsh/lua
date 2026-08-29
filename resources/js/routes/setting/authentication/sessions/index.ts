@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::destroy
-* @see app/Http/Controllers/Setting/AuthenticationController.php:60
+* @see app/Http/Controllers/Setting/AuthenticationController.php:54
 * @route '/settings/authentication/sessions'
 */
 export const destroy = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -16,7 +16,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::destroy
-* @see app/Http/Controllers/Setting/AuthenticationController.php:60
+* @see app/Http/Controllers/Setting/AuthenticationController.php:54
 * @route '/settings/authentication/sessions'
 */
 destroy.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ destroy.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::destroy
-* @see app/Http/Controllers/Setting/AuthenticationController.php:60
+* @see app/Http/Controllers/Setting/AuthenticationController.php:54
 * @route '/settings/authentication/sessions'
 */
 destroy.delete = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -35,7 +35,7 @@ destroy.delete = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::destroy
-* @see app/Http/Controllers/Setting/AuthenticationController.php:60
+* @see app/Http/Controllers/Setting/AuthenticationController.php:54
 * @route '/settings/authentication/sessions'
 */
 const destroyForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -50,7 +50,7 @@ const destroyForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> =
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::destroy
-* @see app/Http/Controllers/Setting/AuthenticationController.php:60
+* @see app/Http/Controllers/Setting/AuthenticationController.php:54
 * @route '/settings/authentication/sessions'
 */
 destroyForm.delete = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

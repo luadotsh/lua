@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\Qrcode\ShowRequest;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use SimpleSoftwareIO\QrCode\Generator;
 
@@ -16,13 +17,8 @@ use App\Models\Link;
 
 class QrcodeController extends Controller
 {
-    public function __invoke($id, Request $request)
+    public function __invoke($id, ShowRequest $request)
     {
-        $request->validate([
-            'download' => ['nullable', 'boolean'],
-            'color' => ['nullable', 'regex:/^#([a-f0-9]{6}|[a-f0-9]{3})$/i'],
-        ]);
-
         $link = Link::findOrFail($id);
 
         $qrCodeGenerator = QrCode::getFacadeRoot();
