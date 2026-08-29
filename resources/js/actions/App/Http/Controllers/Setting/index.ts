@@ -1,5 +1,6 @@
 import AccountController from './AccountController'
 import AuthenticationController from './AuthenticationController'
+import McpController from './McpController'
 import WorkspaceController from './WorkspaceController'
 import DomainController from './DomainController'
 import BillingController from './BillingController'
@@ -12,6 +13,7 @@ import ApiTokenController from './ApiTokenController'
 const Setting = {
     AccountController: Object.assign(AccountController, AccountController),
     AuthenticationController: Object.assign(AuthenticationController, AuthenticationController),
+    McpController: Object.assign(McpController, McpController),
     WorkspaceController: Object.assign(WorkspaceController, WorkspaceController),
     DomainController: Object.assign(DomainController, DomainController),
     BillingController: Object.assign(BillingController, BillingController),

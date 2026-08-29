@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::destroy
-* @see app/Http/Controllers/Setting/AuthenticationController.php:67
+* @see app/Http/Controllers/Setting/AuthenticationController.php:56
 * @route '/settings/authentication/providers/{provider}'
 */
 export const destroy = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -16,7 +16,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::destroy
-* @see app/Http/Controllers/Setting/AuthenticationController.php:67
+* @see app/Http/Controllers/Setting/AuthenticationController.php:56
 * @route '/settings/authentication/providers/{provider}'
 */
 destroy.url = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -43,7 +43,7 @@ destroy.url = (args: { provider: string | number } | [provider: string | number 
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::destroy
-* @see app/Http/Controllers/Setting/AuthenticationController.php:67
+* @see app/Http/Controllers/Setting/AuthenticationController.php:56
 * @route '/settings/authentication/providers/{provider}'
 */
 destroy.delete = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -53,7 +53,7 @@ destroy.delete = (args: { provider: string | number } | [provider: string | numb
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::destroy
-* @see app/Http/Controllers/Setting/AuthenticationController.php:67
+* @see app/Http/Controllers/Setting/AuthenticationController.php:56
 * @route '/settings/authentication/providers/{provider}'
 */
 const destroyForm = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -68,7 +68,7 @@ const destroyForm = (args: { provider: string | number } | [provider: string | n
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::destroy
-* @see app/Http/Controllers/Setting/AuthenticationController.php:67
+* @see app/Http/Controllers/Setting/AuthenticationController.php:56
 * @route '/settings/authentication/providers/{provider}'
 */
 destroyForm.delete = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

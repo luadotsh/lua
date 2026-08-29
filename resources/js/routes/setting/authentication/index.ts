@@ -1,10 +1,9 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../wayfinder'
 import sessions from './sessions'
 import providers from './providers'
-import mcp from './mcp'
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::edit
-* @see app/Http/Controllers/Setting/AuthenticationController.php:26
+* @see app/Http/Controllers/Setting/AuthenticationController.php:23
 * @route '/settings/authentication'
 */
 export const edit = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -19,7 +18,7 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::edit
-* @see app/Http/Controllers/Setting/AuthenticationController.php:26
+* @see app/Http/Controllers/Setting/AuthenticationController.php:23
 * @route '/settings/authentication'
 */
 edit.url = (options?: RouteQueryOptions) => {
@@ -28,7 +27,7 @@ edit.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::edit
-* @see app/Http/Controllers/Setting/AuthenticationController.php:26
+* @see app/Http/Controllers/Setting/AuthenticationController.php:23
 * @route '/settings/authentication'
 */
 edit.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -38,7 +37,7 @@ edit.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::edit
-* @see app/Http/Controllers/Setting/AuthenticationController.php:26
+* @see app/Http/Controllers/Setting/AuthenticationController.php:23
 * @route '/settings/authentication'
 */
 edit.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -48,7 +47,7 @@ edit.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::edit
-* @see app/Http/Controllers/Setting/AuthenticationController.php:26
+* @see app/Http/Controllers/Setting/AuthenticationController.php:23
 * @route '/settings/authentication'
 */
 const editForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -58,7 +57,7 @@ const editForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::edit
-* @see app/Http/Controllers/Setting/AuthenticationController.php:26
+* @see app/Http/Controllers/Setting/AuthenticationController.php:23
 * @route '/settings/authentication'
 */
 editForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -68,7 +67,7 @@ editForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::edit
-* @see app/Http/Controllers/Setting/AuthenticationController.php:26
+* @see app/Http/Controllers/Setting/AuthenticationController.php:23
 * @route '/settings/authentication'
 */
 editForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -85,7 +84,7 @@ edit.form = editForm
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::password
-* @see app/Http/Controllers/Setting/AuthenticationController.php:45
+* @see app/Http/Controllers/Setting/AuthenticationController.php:34
 * @route '/settings/authentication/password'
 */
 export const password = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -100,7 +99,7 @@ password.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::password
-* @see app/Http/Controllers/Setting/AuthenticationController.php:45
+* @see app/Http/Controllers/Setting/AuthenticationController.php:34
 * @route '/settings/authentication/password'
 */
 password.url = (options?: RouteQueryOptions) => {
@@ -109,7 +108,7 @@ password.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::password
-* @see app/Http/Controllers/Setting/AuthenticationController.php:45
+* @see app/Http/Controllers/Setting/AuthenticationController.php:34
 * @route '/settings/authentication/password'
 */
 password.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -119,7 +118,7 @@ password.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::password
-* @see app/Http/Controllers/Setting/AuthenticationController.php:45
+* @see app/Http/Controllers/Setting/AuthenticationController.php:34
 * @route '/settings/authentication/password'
 */
 const passwordForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -134,7 +133,7 @@ const passwordForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> 
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::password
-* @see app/Http/Controllers/Setting/AuthenticationController.php:45
+* @see app/Http/Controllers/Setting/AuthenticationController.php:34
 * @route '/settings/authentication/password'
 */
 passwordForm.put = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -154,7 +153,6 @@ const authentication = {
     password: Object.assign(password, password),
     sessions: Object.assign(sessions, sessions),
     providers: Object.assign(providers, providers),
-    mcp: Object.assign(mcp, mcp),
 }
 
 export default authentication

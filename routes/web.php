@@ -2,26 +2,25 @@
 
 declare(strict_types=1);
 
-use Illuminate\Support\Facades\Route;
-
-use App\Http\Controllers\WorkspaceController;
-use App\Http\Controllers\LinkController;
-use App\Http\Controllers\RedirectController;
-use App\Http\Controllers\EventController;
 use App\Http\Controllers\AnalyticsController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\LinkController;
 use App\Http\Controllers\MediaController;
-
-// setting
+use App\Http\Controllers\RedirectController;
 use App\Http\Controllers\Setting\AccountController;
+use App\Http\Controllers\Setting\ApiTokenController;
+// setting
 use App\Http\Controllers\Setting\AuthenticationController;
-use App\Http\Controllers\Setting\WorkspaceController as SettingWorkspaceController;
-use App\Http\Controllers\Setting\UsageController;
 use App\Http\Controllers\Setting\BillingController;
 use App\Http\Controllers\Setting\DomainController;
 use App\Http\Controllers\Setting\InviteController;
+use App\Http\Controllers\Setting\McpController as SettingMcpController;
 use App\Http\Controllers\Setting\TagController;
-use App\Http\Controllers\Setting\ApiTokenController;
 use App\Http\Controllers\Setting\TeamMemberController;
+use App\Http\Controllers\Setting\UsageController;
+use App\Http\Controllers\Setting\WorkspaceController as SettingWorkspaceController;
+use App\Http\Controllers\WorkspaceController;
+use Illuminate\Support\Facades\Route;
 
 Route::group(
     [
@@ -29,7 +28,7 @@ Route::group(
             'auth',
             'verified',
             'set-workspace',
-            'billing'
+            'billing',
         ],
     ],
     function () {
@@ -70,7 +69,10 @@ Route::group(
             Route::put('/authentication/password', [AuthenticationController::class, 'updatePassword'])->name('setting.authentication.password')->withoutMiddleware(['set-store']);
             Route::delete('/authentication/sessions', [AuthenticationController::class, 'destroyOtherSessions'])->name('setting.authentication.sessions.destroy')->withoutMiddleware(['set-store']);
             Route::delete('/authentication/providers/{provider}', [AuthenticationController::class, 'disconnectProvider'])->name('setting.authentication.providers.destroy')->withoutMiddleware(['set-store']);
-            Route::delete('/authentication/mcp/{id}', [AuthenticationController::class, 'revokeMcpClient'])->name('setting.authentication.mcp.destroy');
+
+            // mcp
+            Route::get('/mcp', [SettingMcpController::class, 'index'])->name('setting.mcp.index');
+            Route::delete('/mcp/{id}', [SettingMcpController::class, 'destroy'])->name('setting.mcp.destroy');
 
             Route::get('/workspace', [SettingWorkspaceController::class, 'edit'])->name('setting.workspace.edit');
             Route::put('/workspace', [SettingWorkspaceController::class, 'update'])->name('setting.workspace.update');

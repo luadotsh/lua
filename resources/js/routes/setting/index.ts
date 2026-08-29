@@ -1,5 +1,6 @@
 import account from './account'
 import authentication from './authentication'
+import mcp from './mcp'
 import workspace from './workspace'
 import domains from './domains'
 import billing from './billing'
@@ -12,6 +13,7 @@ import apiTokens from './api-tokens'
 const setting = {
     account: Object.assign(account, account),
     authentication: Object.assign(authentication, authentication),
+    mcp: Object.assign(mcp, mcp),
     workspace: Object.assign(workspace, workspace),
     domains: Object.assign(domains, domains),
     billing: Object.assign(billing, billing),

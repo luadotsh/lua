@@ -1,21 +1,17 @@
 <script setup lang="ts">
 import { Head, router, useForm } from "@inertiajs/vue3";
 import { ref } from "vue";
-import { IconPlugConnected, IconDeviceLaptop } from "@tabler/icons-vue";
+import { IconDeviceLaptop } from "@tabler/icons-vue";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import PasswordInput from "@/components/PasswordInput.vue";
-import { copyToClipboard } from "@/lib/utils";
-import date from "@/date";
 import AppLayout from "@/layouts/AppLayout.vue";
 import SettingsLayout from "@/layouts/settings/Layout.vue";
 import { password as passwordRoute } from "@/routes/setting/authentication";
 import { destroy as destroySessions } from "@/routes/setting/authentication/sessions";
 import { destroy as destroyProvider } from "@/routes/setting/authentication/providers";
-import { destroy as revokeMcpClient } from "@/routes/setting/authentication/mcp";
 import { social } from "@/routes/auth";
-import type { McpClient } from "@/types";
 
 type ConnectedAccount = {
     provider: string;
@@ -31,12 +27,10 @@ type Session = {
     is_current: boolean;
 };
 
-const props = defineProps<{
+defineProps<{
     hasPassword: boolean;
     connectedAccounts: ConnectedAccount[];
     sessions: Session[];
-    mcpClients: McpClient[];
-    mcpUrl: string;
 }>();
 
 const passwordForm = useForm({
@@ -75,13 +69,6 @@ const disconnect = (provider: string) => {
     });
 };
 
-const revokeMcp = (id: string) => {
-    router.delete(revokeMcpClient.url(id), {
-        preserveScroll: true,
-    });
-};
-
-const copyMcpUrl = () => copyToClipboard(props.mcpUrl, "MCP server URL copied");
 </script>
 
 <template>
@@ -185,55 +172,6 @@ const copyMcpUrl = () => copyToClipboard(props.mcpUrl, "MCP server URL copied");
 
                 <p v-else class="mt-4 text-sm text-zinc-500 dark:text-zinc-400">
                     No social providers are configured on this installation.
-                </p>
-            </section>
-
-            <!-- MCP -->
-            <section>
-                <h2 class="text-base font-semibold text-zinc-800 dark:text-zinc-200">MCP connections</h2>
-                <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                    Connect an AI assistant to this workspace. Connections are yours alone, and
-                    each one can only act on the workspace it was authorised from.
-                </p>
-
-                <div class="mt-4 grid max-w-md gap-2">
-                    <Label for="mcp-url">Server URL</Label>
-                    <div class="flex items-center gap-2">
-                        <Input id="mcp-url" :model-value="mcpUrl" readonly class="font-mono text-sm" />
-                        <Button variant="outline" size="sm" @click="copyMcpUrl">Copy</Button>
-                    </div>
-                </div>
-
-                <div v-if="mcpClients.length" class="mt-4 space-y-2">
-                    <div
-                        v-for="client in mcpClients"
-                        :key="client.id"
-                        class="flex items-center justify-between rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-4"
-                    >
-                        <div class="flex items-center space-x-3">
-                            <IconPlugConnected class="h-5 w-5 text-zinc-400" />
-                            <div>
-                                <div class="text-sm font-medium text-zinc-600 dark:text-white">
-                                    {{ client.name ?? "Unnamed client" }}
-                                </div>
-                                <div class="text-xs text-zinc-500 dark:text-zinc-400">
-                                    {{
-                                        client.last_used_at
-                                            ? `Last used ${date.diffForHumans(client.last_used_at)}`
-                                            : "Never used"
-                                    }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <Button variant="outline" size="sm" @click="revokeMcp(client.id)">
-                            Revoke
-                        </Button>
-                    </div>
-                </div>
-
-                <p v-else class="mt-4 text-sm text-zinc-500 dark:text-zinc-400">
-                    No assistant is connected yet.
                 </p>
             </section>
 

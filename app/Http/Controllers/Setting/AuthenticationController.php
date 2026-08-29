@@ -4,20 +4,17 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Setting;
 
-use App\Actions\Auth\UpdatePassword;
-use App\Actions\Auth\UnlinkSocialAccount;
 use App\Actions\Auth\DestroyOtherSessions;
-use App\Http\Requests\Authentication\UpdatePasswordRequest;
-use App\Http\Requests\Authentication\DestroySessionsRequest;
-use App\Actions\AccessToken\ListConnectedMcpClients;
-use App\Actions\AccessToken\RevokeAccessToken;
+use App\Actions\Auth\UnlinkSocialAccount;
+use App\Actions\Auth\UpdatePassword;
 use App\Enums\Auth\SocialAuthProvider;
+use App\Http\Requests\Authentication\DestroySessionsRequest;
+use App\Http\Requests\Authentication\UpdatePasswordRequest;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -31,14 +28,6 @@ class AuthenticationController extends Controller
             'hasPassword' => (bool) $user->password,
             'connectedAccounts' => $this->connectedAccounts($user),
             'sessions' => $this->sessions($request),
-            'mcpClients' => ListConnectedMcpClients::execute($user, $user->currentWorkspace)
-                ->map(fn ($token) => [
-                    'id' => $token->id,
-                    'name' => $token->client?->name,
-                    'last_used_at' => $token->last_used_at?->toIso8601String(),
-                    'created_at' => $token->created_at?->toIso8601String(),
-                ])->values(),
-            'mcpUrl' => route('mcp'),
         ]);
     }
 
@@ -81,20 +70,6 @@ class AuthenticationController extends Controller
 
         session()->flash('flash.banner', "{$socialProvider->label()} disconnected.");
         session()->flash('flash.bannerStyle', 'success');
-
-        return back();
-    }
-
-    public function revokeMcpClient(Request $request, string $id): RedirectResponse
-    {
-        $revoked = RevokeAccessToken::execute(
-            $request->user(),
-            $request->user()->currentWorkspace,
-            $id,
-        );
-
-        session()->flash('flash.banner', $revoked ? 'Connection revoked.' : 'Connection not found.');
-        session()->flash('flash.bannerStyle', $revoked ? 'success' : 'danger');
 
         return back();
     }
