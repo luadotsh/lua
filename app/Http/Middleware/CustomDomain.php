@@ -41,7 +41,7 @@ class CustomDomain
 
         // If the domain is not found, we redirect to the website.
         if(!$domain) {
-            return $next(config('app.website'));
+            return Inertia::location(config('app.website'));
         }
 
         // if domain provides a not found url, we redirect to that url.

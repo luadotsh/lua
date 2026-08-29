@@ -30,7 +30,20 @@ it('invalid link will return 404', function () {
 });
 
 it('default domains without key should be redirected to website', function () {
-    config(['domains.available' => [config('domains.main')]]);
+    // The request host has to actually be one of the default domains, or this
+    // exercises the unknown-domain branch instead of the one it names.
+    config(['domains.available' => [parse_url(config('app.url'), PHP_URL_HOST)]]);
+    config(['app.website' => 'https://www.lua.sh']);
+
+    $response = $this
+        ->get(route('links.redirect'));
+
+    $response->assertRedirect(config('app.website'));
+});
+
+it('an unknown domain without key is redirected to the website', function () {
+    // Host is neither a default domain nor a registered custom domain.
+    config(['domains.available' => ['lua.sh']]);
     config(['app.website' => 'https://www.lua.sh']);
 
     $response = $this
