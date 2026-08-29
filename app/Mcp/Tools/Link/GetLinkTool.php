@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Mcp\Tools\Link;
 
+use App\Actions\Link\GetLink;
 use App\Http\Resources\Api\LinkResource;
 use App\Mcp\Concerns\ResolvesWorkspace;
-use App\Models\Link;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -33,9 +33,7 @@ class GetLinkTool extends Tool
 
     public function handle(Request $request): Response|ResponseFactory
     {
-        $link = Link::where('workspace_id', $this->workspace($request)->id)
-            ->with('tags')
-            ->find($request->get('id'));
+        $link = GetLink::execute($this->workspace($request), (string) $request->get('id'));
 
         if (! $link) {
             return Response::error('Link not found in this workspace.');

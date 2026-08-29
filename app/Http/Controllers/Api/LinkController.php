@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\Link\ListLinks;
+use App\Actions\Link\GetLink;
 use App\Actions\Link\UpdateLink;
 use App\Actions\Link\DeleteLink;
 use App\Actions\Link\CreateLink;
@@ -21,17 +23,17 @@ class LinkController extends Controller
 {
     public function index(Request $request)
     {
-        $links = Link::where('workspace_id', $request->workspace->id)
-            ->with('tags')
-            ->latest()
-            ->paginate(config('app.pagination.default'));
+        $links = ListLinks::execute($request->workspace, [
+            'search' => $request->query('q'),
+            'per_page' => $request->query('per_page'),
+        ]);
 
         return LinkResource::collection($links);
     }
 
     public function show($id, Request $request)
     {
-        $link = Link::where('workspace_id', $request->workspace->id)->where('id', $id)->with('tags')->first();
+        $link = GetLink::execute($request->workspace, $id);
         if (!$link) {
             return response()->json(['message' => 'Link not found'], 404);
         }
@@ -53,7 +55,7 @@ class LinkController extends Controller
 
     public function update($id, UpdateRequest $request)
     {
-        $link = Link::where('workspace_id', $request->workspace->id)->where('id', $id)->first();
+        $link = GetLink::execute($request->workspace, $id);
         if (!$link) {
             return response()->json(['message' => 'Link not found'], 404);
         }
@@ -65,7 +67,7 @@ class LinkController extends Controller
 
     public function destroy($id, Request $request)
     {
-        $link = Link::where('workspace_id', $request->workspace->id)->where('id', $id)->first();
+        $link = GetLink::execute($request->workspace, $id);
         if(!$link) {
             return response()->json(['message' => 'Link not found'], 404);
         }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mcp\Tools\Domain;
 
+use App\Actions\Domain\GetDomain;
 use App\Actions\Domain\DeleteDomain;
 use App\Mcp\Concerns\ResolvesWorkspace;
 use App\Models\Domain;
@@ -35,8 +36,7 @@ class DeleteDomainTool extends Tool
 
     public function handle(Request $request): Response|ResponseFactory
     {
-        $domain = Domain::where('workspace_id', $this->workspace($request)->id)
-            ->find($request->get('id'));
+        $domain = GetDomain::execute($this->workspace($request), (string) $request->get('id'));
 
         if (! $domain) {
             return Response::error('Domain not found in this workspace.');

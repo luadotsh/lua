@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\Tag\ListTags;
+use App\Actions\Tag\GetTag;
 use App\Actions\Tag\UpdateTag;
 use App\Actions\Tag\DeleteTag;
 use App\Actions\Tag\CreateTag;
@@ -21,9 +23,7 @@ class TagController extends Controller
 {
     public function index(Request $request)
     {
-        $tags = Tag::where('workspace_id', $request->workspace->id)
-            ->latest()
-            ->paginate(config('app.pagination.default'));
+        $tags = ListTags::paginate($request->workspace, $request->query('per_page'));
 
         return TagResource::collection($tags);
     }
@@ -42,7 +42,7 @@ class TagController extends Controller
 
     public function update($id, UpdateRequest $request)
     {
-        $tag = Tag::where('workspace_id', $request->workspace->id)->where('id', $id)->first();
+        $tag = GetTag::execute($request->workspace, $id);
         if (!$tag) {
             return response()->json(['message' => 'Tag not found'], 404);
         }
@@ -55,7 +55,7 @@ class TagController extends Controller
 
     public function destroy($id, Request $request)
     {
-        $tag = Tag::where('workspace_id', $request->workspace->id)->where('id', $id)->first();
+        $tag = GetTag::execute($request->workspace, $id);
         if (!$tag) {
             return response()->json(['message' => 'Tag not found'], 404);
         }

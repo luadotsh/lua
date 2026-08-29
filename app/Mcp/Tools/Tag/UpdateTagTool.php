@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mcp\Tools\Tag;
 
+use App\Actions\Tag\GetTag;
 use App\Actions\Tag\UpdateTag;
 use App\Enums\Tag\Color;
 use App\Http\Resources\Api\TagResource;
@@ -37,8 +38,7 @@ class UpdateTagTool extends Tool
 
     public function handle(Request $request): Response|ResponseFactory
     {
-        $tag = Tag::where('workspace_id', $this->workspace($request)->id)
-            ->find($request->get('id'));
+        $tag = GetTag::execute($this->workspace($request), (string) $request->get('id'));
 
         if (! $tag) {
             return Response::error('Tag not found in this workspace.');

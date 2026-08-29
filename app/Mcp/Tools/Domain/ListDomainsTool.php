@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Mcp\Tools\Domain;
 
+use App\Actions\Domain\ListDomains;
 use App\Http\Resources\Api\DomainResource;
 use App\Mcp\Concerns\ResolvesWorkspace;
-use App\Models\Domain;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -22,7 +22,7 @@ class ListDomainsTool extends Tool
 
     public function handle(Request $request): Response|ResponseFactory
     {
-        $domains = Domain::where('workspace_id', $this->workspace($request)->id)->get();
+        $domains = ListDomains::execute($this->workspace($request));
 
         return Response::structured(DomainResource::collection($domains)->resolve());
     }

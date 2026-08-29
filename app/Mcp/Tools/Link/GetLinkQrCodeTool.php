@@ -4,23 +4,20 @@ declare(strict_types=1);
 
 namespace App\Mcp\Tools\Link;
 
+use App\Actions\Link\GenerateQrCode;
 use App\Actions\Link\GetLink;
-use App\Actions\Link\DeleteLink;
 use App\Mcp\Concerns\ResolvesWorkspace;
-use App\Models\Link;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
-use Laravel\Mcp\Server\Attributes\Title;
 use Laravel\Mcp\Server\Tool;
-use Laravel\Mcp\Server\Tools\Annotations\IsDestructive;
+use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
 
-#[IsDestructive]
-#[Title('Delete link')]
-#[Description('Permanently delete a short link in this workspace. The link stops resolving immediately.')]
-class DeleteLinkTool extends Tool
+#[IsReadOnly]
+#[Description('Get the QR code for a link as a PNG image. Scans through it are counted separately from ordinary clicks.')]
+class GetLinkQrCodeTool extends Tool
 {
     use ResolvesWorkspace;
 
@@ -31,6 +28,8 @@ class DeleteLinkTool extends Tool
     {
         return [
             'id' => $schema->string()->description('The link id.')->required(),
+            'color' => $schema->string()->description('Hex colour for the code, e.g. #7C5CFF. Defaults to black.'),
+            'size' => $schema->integer()->description('Width and height in pixels. Defaults to 256.'),
         ];
     }
 
@@ -42,8 +41,11 @@ class DeleteLinkTool extends Tool
             return Response::error('Link not found in this workspace.');
         }
 
-        DeleteLink::execute($link);
+        $png = GenerateQrCode::execute($link, [
+            'color' => $request->get('color'),
+            'size' => $request->get('size'),
+        ]);
 
-        return Response::text('Link deleted.');
+        return Response::image(base64_encode($png), 'image/png');
     }
 }

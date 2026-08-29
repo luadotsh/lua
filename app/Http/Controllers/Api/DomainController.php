@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\Domain\GetDomain;
+use App\Actions\Domain\ListDomains;
 use App\Actions\Domain\UpdateDomain;
 use App\Actions\Domain\DeleteDomain;
 use App\Actions\Domain\CreateDomain;
@@ -37,9 +39,7 @@ class DomainController extends Controller
 
     public function index(Request $request)
     {
-        $domains = Domain::where('workspace_id', $request->workspace->id)
-            ->latest()
-            ->paginate(config('app.pagination.default'));
+        $domains = ListDomains::paginate($request->workspace, $request->query('per_page'));
 
         return DomainResource::collection($domains);
     }
@@ -58,7 +58,7 @@ class DomainController extends Controller
 
     public function update($id, UpdateRequest $request)
     {
-        $domain = Domain::where('workspace_id', $request->workspace->id)->where('id', $id)->first();
+        $domain = GetDomain::execute($request->workspace, $id);
         if (!$domain) {
             return response()->json(['message' => 'Domain not found'], 404);
         }
@@ -70,7 +70,7 @@ class DomainController extends Controller
 
     public function destroy($id, Request $request)
     {
-        $domain = Domain::where('workspace_id', $request->workspace->id)->where('id', $id)->first();
+        $domain = GetDomain::execute($request->workspace, $id);
         if (!$domain) {
             return response()->json(['message' => 'Domain not found'], 404);
         }

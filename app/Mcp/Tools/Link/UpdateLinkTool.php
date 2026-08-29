@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mcp\Tools\Link;
 
+use App\Actions\Link\GetLink;
 use App\Actions\Link\CreateLink;
 use App\Actions\Link\UpdateLink;
 use App\Http\Resources\Api\LinkResource;
@@ -45,7 +46,7 @@ class UpdateLinkTool extends Tool
     {
         $workspace = $this->workspace($request);
 
-        $link = Link::where('workspace_id', $workspace->id)->find($request->get('id'));
+        $link = GetLink::execute($workspace, (string) $request->get('id'));
 
         if (! $link) {
             return Response::error('Link not found in this workspace.');

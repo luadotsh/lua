@@ -13,6 +13,7 @@ use App\Mcp\Tools\Invite\DeleteInviteTool;
 use App\Mcp\Tools\Invite\ListInvitesTool;
 use App\Mcp\Tools\Link\CreateLinkTool;
 use App\Mcp\Tools\Link\DeleteLinkTool;
+use App\Mcp\Tools\Link\GetLinkQrCodeTool;
 use App\Mcp\Tools\Link\GetLinkTool;
 use App\Mcp\Tools\Link\ListLinksTool;
 use App\Mcp\Tools\Link\UpdateLinkTool;
@@ -41,6 +42,7 @@ class LuaServer extends Server
         CreateLinkTool::class,
         UpdateLinkTool::class,
         DeleteLinkTool::class,
+        GetLinkQrCodeTool::class,
 
         // Tags
         ListTagsTool::class,

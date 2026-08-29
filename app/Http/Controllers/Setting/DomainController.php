@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Setting;
 
+use App\Actions\Domain\GetDomain;
+use App\Actions\Domain\ListDomains;
 use App\Actions\Domain\UpdateDomain;
 use App\Actions\Domain\DeleteDomain;
 use App\Actions\Domain\CreateDomain;
@@ -23,7 +25,7 @@ class DomainController extends Controller
 {
     public function index()
     {
-        $domains = Domain::where('workspace_id', Auth::user()->currentWorkspace->id)->get();
+        $domains = ListDomains::execute(Auth::user()->currentWorkspace);
 
         return Inertia::render('Setting/Domain/Index', [
             'domains' => $domains,
@@ -52,7 +54,8 @@ class DomainController extends Controller
 
     public function update(UpdateRequest $request, $id)
     {
-        $domain = Domain::where('id', $id)->where('workspace_id', Auth::user()->currentWorkspace->id)->firstOrFail();
+        $domain = GetDomain::execute(Auth::user()->currentWorkspace, $id);
+        abort_unless($domain, 404);
 
         UpdateDomain::execute($domain, $request->validated());
 
@@ -64,7 +67,8 @@ class DomainController extends Controller
 
     public function destroy($id)
     {
-        $domain = Domain::where('workspace_id', Auth::user()->currentWorkspace->id)->where('id', $id)->firstOrFail();
+        $domain = GetDomain::execute(Auth::user()->currentWorkspace, $id);
+        abort_unless($domain, 404);
 
         DeleteDomain::execute($domain);
 
@@ -78,7 +82,8 @@ class DomainController extends Controller
     {
         $workspace = Auth::user()->currentWorkspace;
 
-        $domain = Domain::where('workspace_id', $workspace->id)->where('id', $id)->firstOrFail();
+        $domain = GetDomain::execute($workspace, $id);
+        abort_unless($domain, 404);
 
         // Use dns_get_record to fetch CNAME records
         $dnsRecords = dns_get_record($domain->domain, DNS_CNAME);

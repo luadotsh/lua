@@ -122,3 +122,33 @@ it('lists only the members of the bound workspace', function () {
         ->tool(App\Mcp\Tools\TeamMember\ListMembersTool::class, [])
         ->assertOk();
 });
+
+it('returns a qr code for a link in the bound workspace', function () {
+    $link = App\Models\Link::factory()->create([
+        'workspace_id' => $this->user->current_workspace_id,
+    ]);
+
+    LuaServer::actingAs($this->user)
+        ->tool(App\Mcp\Tools\Link\GetLinkQrCodeTool::class, ['id' => $link->id])
+        ->assertOk();
+});
+
+it('will not return a qr code for another workspace link', function () {
+    $other = App\Models\User::factory()->withWorkspace()->create();
+    $link = App\Models\Link::factory()->create(['workspace_id' => $other->current_workspace_id]);
+
+    LuaServer::actingAs($this->user)
+        ->tool(App\Mcp\Tools\Link\GetLinkQrCodeTool::class, ['id' => $link->id])
+        ->assertHasErrors();
+});
+
+it('paginates links through the shared action', function () {
+    App\Models\Link::factory(30)->create(['workspace_id' => $this->user->current_workspace_id]);
+
+    LuaServer::actingAs($this->user)
+        ->tool(App\Mcp\Tools\Link\ListLinksTool::class, ['per_page' => 5])
+        ->assertOk();
+
+    expect(App\Actions\Link\ListLinks::execute($this->user->currentWorkspace, ['per_page' => 5]))
+        ->toHaveCount(5);
+});

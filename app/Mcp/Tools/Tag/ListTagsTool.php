@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Mcp\Tools\Tag;
 
+use App\Actions\Tag\ListTags;
 use App\Http\Resources\Api\TagResource;
 use App\Mcp\Concerns\ResolvesWorkspace;
-use App\Models\Tag;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -22,9 +22,7 @@ class ListTagsTool extends Tool
 
     public function handle(Request $request): Response|ResponseFactory
     {
-        $tags = Tag::where('workspace_id', $this->workspace($request)->id)
-            ->orderBy('sort')
-            ->get();
+        $tags = ListTags::execute($this->workspace($request));
 
         return Response::structured(TagResource::collection($tags)->resolve());
     }

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Mcp\Tools\Link;
 
+use App\Actions\Link\ListLinks;
 use App\Http\Resources\Api\LinkResource;
 use App\Mcp\Concerns\ResolvesWorkspace;
-use App\Models\Link;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -36,17 +36,10 @@ class ListLinksTool extends Tool
 
     public function handle(Request $request): Response|ResponseFactory
     {
-        $search = $request->get('search');
-        $perPage = min(max((int) ($request->get('per_page') ?: 25), 1), 100);
-
-        $links = Link::where('workspace_id', $this->workspace($request)->id)
-            ->when($search, fn ($query) => $query->where(
-                fn ($q) => $q->where('url', 'like', "%{$search}%")
-                    ->orWhere('key', 'like', "%{$search}%"),
-            ))
-            ->with('tags')
-            ->latest()
-            ->paginate($perPage);
+        $links = ListLinks::execute($this->workspace($request), [
+            'search' => $request->get('search'),
+            'per_page' => $request->get('per_page') ?: 25,
+        ]);
 
         return Response::structured([
             'data' => LinkResource::collection($links->items())->resolve(),

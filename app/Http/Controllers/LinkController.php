@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Actions\Tag\ListTags;
+use App\Actions\Link\ListLinks;
+use App\Actions\Link\GetLink;
+use App\Actions\Domain\ListDomains;
 use App\Actions\Link\UpdateLink;
 use App\Actions\Link\DeleteLink;
 use App\Actions\Link\CreateLink;
@@ -27,39 +31,20 @@ class LinkController extends Controller
     {
         $workspace = Auth::user()->currentWorkspace;
 
-        $query = Link::where('workspace_id', $workspace->id)
-            ->with('tags')
-            ->latest();
+        // Keeps the 404 the old firstOrFail() produced for an unknown id.
+        $link = $id ? GetLink::execute($workspace, $id) : null;
+        abort_if($id && ! $link, 404);
 
-        // search
-        if ($request->q) {
-            $query->where(function ($query) use ($request) {
-                $query->where('link', 'LIKE', '%' . $request->q . '%');
-                $query->orWhere('url', 'LIKE', '%' . $request->q . '%');
-                $query->orWhere('utm_source', 'LIKE', '%' . $request->q . '%');
-                $query->orWhere('utm_medium', 'LIKE', '%' . $request->q . '%');
-                $query->orWhere('utm_campaign', 'LIKE', '%' . $request->q . '%');
-                $query->orWhere('utm_term', 'LIKE', '%' . $request->q . '%');
-                $query->orWhere('utm_content', 'LIKE', '%' . $request->q . '%');
-            });
-        }
+        $links = ListLinks::execute($workspace, ['search' => $request->q]);
 
-        $links = $query->paginate(config('app.pagination.default'));
-
-        // the workspace domains
-        $domains = Domain::where('workspace_id', $workspace->id)->get()->pluck('domain')->toArray();
+        $domains = ListDomains::execute($workspace)->pluck('domain')->toArray();
 
         return Inertia::render('Link/Index', [
             'table' => $links,
-            'hasData' => Link::where('workspace_id', $workspace->id)->exists(),
+            'hasData' => ListLinks::hasAny($workspace),
             'domains' => array_merge($domains, config('domains.available')),
-            'tags' => Tag::where('workspace_id', $workspace->id)->get(),
-            'link' => $id ? Link::where('workspace_id', $workspace->id)
-                ->where('id', $id)
-                ->with('tags')
-                ->firstOrFail()
-                ->makeVisible('password')
-                : null,
+            'tags' => ListTags::execute($workspace),
+            'link' => $link?->makeVisible('password'),
         ]);
     }
 
@@ -86,7 +71,8 @@ class LinkController extends Controller
     {
         $workspace = Auth::user()->currentWorkspace;
 
-        $link = Link::where('workspace_id', $workspace->id)->where('id', $id)->firstOrFail();
+        $link = GetLink::execute($workspace, $id);
+        abort_unless($link, 404);
 
         UpdateLink::execute($link, $request->validated());
 
@@ -100,7 +86,8 @@ class LinkController extends Controller
     {
         $workspace = Auth::user()->currentWorkspace;
 
-        $link = Link::where('workspace_id', $workspace->id)->where('id', $id)->firstOrFail();
+        $link = GetLink::execute($workspace, $id);
+        abort_unless($link, 404);
         DeleteLink::execute($link);
 
         session()->flash('flash.banner', 'Link deleted successfully.');

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Setting;
 
+use App\Actions\Tag\GetTag;
+use App\Actions\Tag\ListTags;
 use App\Actions\Tag\SortTags;
 use App\Actions\Tag\UpdateTag;
 use App\Actions\Tag\DeleteTag;
@@ -23,7 +25,7 @@ class TagController extends Controller
 {
     public function index()
     {
-        $tags = Tag::where('workspace_id', auth()->user()->currentWorkspace->id)->get();
+        $tags = ListTags::execute(auth()->user()->currentWorkspace);
 
         return Inertia::render('Setting/Tag/Index', [
             'tags' => $tags,
@@ -52,7 +54,8 @@ class TagController extends Controller
 
     public function update(UpdateRequest $request, $id)
     {
-        $tag = Tag::where('id', $id)->where('workspace_id', auth()->user()->currentWorkspace->id)->firstOrFail();
+        $tag = GetTag::execute(auth()->user()->currentWorkspace, $id);
+        abort_unless($tag, 404);
 
         UpdateTag::execute($tag, $request->validated());
 
@@ -64,7 +67,8 @@ class TagController extends Controller
 
     public function destroy($id)
     {
-        $tag = Tag::where('workspace_id', auth()->user()->currentWorkspace->id)->where('id', $id)->firstOrFail();
+        $tag = GetTag::execute(auth()->user()->currentWorkspace, $id);
+        abort_unless($tag, 404);
 
         DeleteTag::execute($tag);
 
