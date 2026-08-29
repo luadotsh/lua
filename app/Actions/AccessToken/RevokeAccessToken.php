@@ -5,21 +5,28 @@ declare(strict_types=1);
 namespace App\Actions\AccessToken;
 
 use App\Models\AccessToken;
+use App\Models\User;
 use App\Models\Workspace;
 
 class RevokeAccessToken
 {
     /**
-     * Revoking is scoped to the workspace the token is bound to, so a member of
-     * one workspace can never revoke another workspace's key by guessing an id.
+     * Scoped to the workspace, and for OAuth grants also to the user who
+     * authorised them, so no one can revoke another person's connection by
+     * guessing an id. Workspace API keys stay revocable by any member, since
+     * they act for the workspace rather than for a person.
      */
-    public static function execute(Workspace $workspace, string $tokenId): bool
+    public static function execute(User $user, Workspace $workspace, string $tokenId): bool
     {
         $token = AccessToken::query()
             ->where('workspace_id', $workspace->id)
             ->find($tokenId);
 
         if ($token === null) {
+            return false;
+        }
+
+        if ($token->isMcpOAuthGrant() && $token->user_id !== $user->id) {
             return false;
         }
 

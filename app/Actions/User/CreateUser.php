@@ -19,7 +19,7 @@ class CreateUser
      * except an invited user gets a personal workspace here, so no signup flow
      * has to stop at a create-workspace step.
      *
-     * @param  array{name: string, email: string, password?: string|null, email_verified_at?: \DateTimeInterface|null, current_workspace_id?: string|null, is_invite?: bool, auth_provider?: string}  $data
+     * @param  array{name: string, email: string, password?: string|null, google_id?: string|null, github_id?: string|null, email_verified_at?: \DateTimeInterface|null, current_workspace_id?: string|null, is_invite?: bool, auth_provider?: string}  $data
      * @param  array<string, string>  $attributionParameters  UTM parameters and ad click IDs captured before signup
      */
     public static function execute(array $data, array $attributionParameters = []): User
@@ -32,6 +32,8 @@ class CreateUser
                 'name' => data_get($data, 'name'),
                 'email' => data_get($data, 'email'),
                 'password' => data_get($data, 'password'),
+                'google_id' => data_get($data, 'google_id'),
+                'github_id' => data_get($data, 'github_id'),
                 'current_workspace_id' => data_get($data, 'current_workspace_id'),
                 'email_verified_at' => data_get($data, 'email_verified_at', $isInviteRegistration ? now() : null),
             ]);

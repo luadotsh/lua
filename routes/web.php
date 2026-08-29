@@ -13,6 +13,7 @@ use App\Http\Controllers\MediaController;
 
 // setting
 use App\Http\Controllers\Setting\AccountController;
+use App\Http\Controllers\Setting\AuthenticationController;
 use App\Http\Controllers\Setting\WorkspaceController as SettingWorkspaceController;
 use App\Http\Controllers\Setting\UsageController;
 use App\Http\Controllers\Setting\BillingController;
@@ -67,6 +68,13 @@ Route::group(
             Route::delete('/account/photo', [AccountController::class, 'deletePhoto'])->name('setting.account.photo.destroy')->withoutMiddleware(['set-store']);
 
             // workspace
+            // authentication
+            Route::get('/authentication', [AuthenticationController::class, 'edit'])->name('setting.authentication.edit')->withoutMiddleware(['set-store']);
+            Route::put('/authentication/password', [AuthenticationController::class, 'updatePassword'])->name('setting.authentication.password')->withoutMiddleware(['set-store']);
+            Route::delete('/authentication/sessions', [AuthenticationController::class, 'destroyOtherSessions'])->name('setting.authentication.sessions.destroy')->withoutMiddleware(['set-store']);
+            Route::delete('/authentication/providers/{provider}', [AuthenticationController::class, 'disconnectProvider'])->name('setting.authentication.providers.destroy')->withoutMiddleware(['set-store']);
+            Route::delete('/authentication/mcp/{id}', [AuthenticationController::class, 'revokeMcpClient'])->name('setting.authentication.mcp.destroy');
+
             Route::get('/workspace', [SettingWorkspaceController::class, 'edit'])->name('setting.workspace.edit');
             Route::put('/workspace', [SettingWorkspaceController::class, 'update'])->name('setting.workspace.update');
             Route::delete('/workspace/photo', [SettingWorkspaceController::class, 'deleteLogo'])->name('setting.workspace.logo.destroy');

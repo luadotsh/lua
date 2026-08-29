@@ -32,6 +32,8 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
         'password',
         'current_workspace_id',
         'photo',
+        'google_id',
+        'github_id',
         'email_verified_at',
         ...\App\Support\AttributionKeys::UTM,
         ...\App\Support\AttributionKeys::CLICK_ID,

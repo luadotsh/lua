@@ -13,7 +13,7 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 
 /**
@@ -44,8 +44,12 @@ Route::group(
         Route::post('/invites/{id}', [InviteController::class, 'accept'])->name('auth.invites.accept');
 
         // Google login...
-        Route::get('/google/login', [GoogleController::class, 'redirectToProvider'])->name('auth.google');
-        Route::get('/google/callback', [GoogleController::class, 'handleProviderCallback'])->name('auth.google.callback');
+        Route::get('/{provider}/login', [SocialAuthController::class, 'redirectToProvider'])
+            ->whereIn('provider', ['google', 'github'])
+            ->name('auth.social');
+        Route::get('/{provider}/callback', [SocialAuthController::class, 'handleProviderCallback'])
+            ->whereIn('provider', ['google', 'github'])
+            ->name('auth.social.callback');
     }
 );
 

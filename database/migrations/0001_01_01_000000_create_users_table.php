@@ -19,6 +19,10 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
+            // Set when the account is linked to Google, so the settings screen
+            // can show the connection and sign-in can match on it.
+            $table->string('google_id')->nullable()->unique();
+            $table->string('github_id')->nullable()->unique();
             $table->string('photo')->nullable();
             $table->foreignUuid('current_workspace_id')->nullable();
             $table->string('theme')->default(Theme::SYSTEM);

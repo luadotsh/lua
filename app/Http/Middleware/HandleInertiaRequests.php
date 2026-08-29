@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Enums\Auth\SocialAuthProvider;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -50,6 +51,11 @@ class HandleInertiaRequests extends Middleware
                     ]));
                 },
             ],
+            'socialProviders' => collect(SocialAuthProvider::enabled())
+                ->map(fn (SocialAuthProvider $provider) => [
+                    'provider' => $provider->value,
+                    'label' => $provider->label(),
+                ])->values(),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'flash' => $request->session()->get('flash', []),
             'env' => config('app.env'),

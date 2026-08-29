@@ -3,7 +3,7 @@ import AuthenticatedSessionController from './AuthenticatedSessionController'
 import PasswordResetLinkController from './PasswordResetLinkController'
 import NewPasswordController from './NewPasswordController'
 import InviteController from './InviteController'
-import GoogleController from './GoogleController'
+import SocialAuthController from './SocialAuthController'
 import EmailVerificationPromptController from './EmailVerificationPromptController'
 import VerifyEmailController from './VerifyEmailController'
 import EmailVerificationNotificationController from './EmailVerificationNotificationController'
@@ -16,7 +16,7 @@ const Auth = {
     PasswordResetLinkController: Object.assign(PasswordResetLinkController, PasswordResetLinkController),
     NewPasswordController: Object.assign(NewPasswordController, NewPasswordController),
     InviteController: Object.assign(InviteController, InviteController),
-    GoogleController: Object.assign(GoogleController, GoogleController),
+    SocialAuthController: Object.assign(SocialAuthController, SocialAuthController),
     EmailVerificationPromptController: Object.assign(EmailVerificationPromptController, EmailVerificationPromptController),
     VerifyEmailController: Object.assign(VerifyEmailController, VerifyEmailController),
     EmailVerificationNotificationController: Object.assign(EmailVerificationNotificationController, EmailVerificationNotificationController),
