@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { IconX, IconSettings, IconGripVertical } from "@tabler/icons-vue";
 import AppLayout from "@/layouts/AppLayout.vue";
-import SettingsLayout from "@/layouts/settings/Layout.vue";
 import CreateModal from "./Create.vue";
 import EditModal from "./Edit.vue";
 import * as tagsRoutes from "@/routes/setting/tags";
@@ -66,8 +65,12 @@ const deleteTag = () => {
 <template>
     <Head title="Tags" />
 
-    <AppLayout>
-        <SettingsLayout>
+    <AppLayout title="Tags">
+        <template #header-actions>
+            <Button @click="createModal?.open()">New Tag</Button>
+        </template>
+
+        <div class="p-4 sm:p-6">
             <CreateModal ref="createModal" />
             <EditModal ref="editModal" />
 
@@ -86,12 +89,6 @@ const deleteTag = () => {
                 </AlertDialogContent>
             </AlertDialog>
 
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-lg font-semibold">Tags</h2>
-                <Button @click="createModal?.open()">
-                    New Tag
-                </Button>
-            </div>
 
             <div>
                 <draggable
@@ -150,6 +147,6 @@ const deleteTag = () => {
                     </template>
                 </draggable>
             </div>
-        </SettingsLayout>
+        </div>
     </AppLayout>
 </template>

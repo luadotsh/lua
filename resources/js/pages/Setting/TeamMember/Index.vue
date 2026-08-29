@@ -32,7 +32,6 @@ import { IconSearch, IconDots } from "@tabler/icons-vue";
 import date from "@/date";
 import debounce from "@/debounce";
 import AppLayout from "@/layouts/AppLayout.vue";
-import SettingsLayout from "@/layouts/settings/Layout.vue";
 import InviteIndex from "./Invite/Index.vue";
 import InviteCreate from "./Invite/Create.vue";
 import * as teamMembersRoutes from "@/routes/setting/team-members";
@@ -129,8 +128,26 @@ onMounted(() => {
 
 <template>
     <Head title="Team Members" />
-    <AppLayout>
-        <SettingsLayout>
+    <AppLayout title="Members">
+        <template #header-actions>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <IconSearch class="h-4 w-4 text-muted-foreground" />
+                </div>
+                <Input
+                    class="w-64 pl-9"
+                    id="search-field"
+                    autocomplete="off"
+                    type="text"
+                    placeholder="Search members..."
+                    v-model="searchForm.q"
+                    @keyup="searchDebounce"
+                />
+            </div>
+            <Button @click="inviteCreateDialog?.open()">Invite</Button>
+        </template>
+
+        <div class="p-4 sm:p-6">
             <AlertDialog :open="beingLeaving" @update:open="(val) => (beingLeaving = val)">
                 <AlertDialogContent>
                     <AlertDialogHeader>
@@ -172,30 +189,6 @@ onMounted(() => {
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
-
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-lg font-semibold">Users</h2>
-                <div class="flex space-x-2">
-                    <div class="relative flex-1">
-                        <div
-                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
-                        >
-                            <IconSearch class="h-5 w-5 text-zinc-400" />
-                        </div>
-                        <Input
-                            class="w-full pl-10"
-                            id="search-field"
-                            autocomplete="off"
-                            type="text"
-                            placeholder="Search..."
-                            v-model="searchForm.q"
-                            @keyup="searchDebounce"
-                        />
-                    </div>
-
-                    <Button @click="inviteCreateDialog?.open()">Invite</Button>
-                </div>
-            </div>
 
             <div class="flex flex-col">
                 <div class="rounded-md border">
@@ -279,6 +272,6 @@ onMounted(() => {
             />
 
             <InviteCreate ref="inviteCreateDialog" />
-        </SettingsLayout>
+        </div>
     </AppLayout>
 </template>

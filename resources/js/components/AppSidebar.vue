@@ -1,30 +1,29 @@
 <script setup lang="ts">
-import { Link, router, usePage } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import {
     IconChevronRight,
     IconChartBar,
     IconClick,
     IconCalendarEvent,
-    IconSettings,
-    IconPlus,
+    IconKey,
+    IconPlugConnected,
     IconLink,
+    IconTag,
+    IconUsers,
+    IconWorld,
 } from '@tabler/icons-vue';
 import { computed } from 'vue';
 import NavMain from '@/components/NavMain.vue';
-import NavUser from '@/components/NavUser.vue';
+import WorkspaceMenuContent from '@/components/WorkspaceMenuContent.vue';
 import { Avatar } from '@/components/ui/avatar';
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
     Sidebar,
     SidebarContent,
-    SidebarFooter,
     SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
@@ -33,9 +32,12 @@ import {
 import { index as analyticsIndex } from '@/routes/analytics';
 import { index as linksIndex } from '@/routes/links';
 import { index as eventsIndex } from '@/routes/events';
-import { edit as settingsAccount } from '@/routes/setting/account';
-import { updateCurrent as workspacesUpdateCurrent, create as workspacesCreate } from '@/routes/workspaces';
 import { index as billingIndex, upgrade as billingUpgrade } from '@/routes/setting/billing';
+import { index as apiTokensIndex } from '@/routes/setting/api-tokens';
+import { index as domainsIndex } from '@/routes/setting/domains';
+import { index as mcpIndex } from '@/routes/setting/mcp';
+import { index as tagsIndex } from '@/routes/setting/tags';
+import { index as teamMembersIndex } from '@/routes/setting/team-members';
 import { type NavItem } from '@/types';
 
 const page = usePage();
@@ -61,21 +63,43 @@ const navItems: NavItem[] = [
         icon: IconCalendarEvent,
         activePattern: '/events',
     },
-    {
-        title: 'Settings',
-        href: settingsAccount().url,
-        icon: IconSettings,
-        activePattern: '/settings',
-    },
 ];
 
-const switchWorkspace = (workspaceId: string) => {
-    router.put(
-        workspacesUpdateCurrent().url,
-        { workspace_id: workspaceId },
-        { preserveScroll: true },
-    );
-};
+// Workspace-level configuration is a place you go to, not something buried two
+// clicks deep: it lives in the sidebar. What is personal to the account —
+// profile, sign-in, billing — stays behind the user menu at the bottom.
+const workspaceNavItems: NavItem[] = [
+    {
+        title: 'Domains',
+        href: domainsIndex().url,
+        icon: IconWorld,
+        activePattern: '/settings/domains',
+    },
+    {
+        title: 'Tags',
+        href: tagsIndex().url,
+        icon: IconTag,
+        activePattern: '/settings/tags',
+    },
+    {
+        title: 'Members',
+        href: teamMembersIndex().url,
+        icon: IconUsers,
+        activePattern: '/settings/team-members',
+    },
+    {
+        title: 'API Tokens',
+        href: apiTokensIndex().url,
+        icon: IconKey,
+        activePattern: '/settings/api-tokens',
+    },
+    {
+        title: 'MCP',
+        href: mcpIndex().url,
+        icon: IconPlugConnected,
+        activePattern: '/settings/mcp',
+    },
+];
 </script>
 
 <template>
@@ -104,38 +128,12 @@ const switchWorkspace = (workspaceId: string) => {
                             </SidebarMenuButton>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent
-                            class="w-[--reka-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+                            class="w-[--reka-dropdown-menu-trigger-width] min-w-64 rounded-lg"
                             align="start"
                             side="right"
                             :side-offset="4"
                         >
-                            <DropdownMenuLabel class="text-xs text-muted-foreground">
-                                Workspaces
-                            </DropdownMenuLabel>
-                            <div class="space-y-0.5">
-                                <DropdownMenuItem
-                                    v-for="workspace in auth.user?.workspaces"
-                                    :key="workspace.id"
-                                    class="gap-2"
-                                    :class="workspace.id === auth.user?.current_workspace_id ? 'bg-accent' : ''"
-                                    @click="switchWorkspace(workspace.id)"
-                                >
-                                    <Avatar
-                                        :src="workspace.logo_url"
-                                        :name="workspace.name"
-                                        class="h-5 w-5 shrink-0 rounded-md"
-                                        fallback-class="text-[10px]"
-                                    />
-                                    {{ workspace.name }}
-                                </DropdownMenuItem>
-                            </div>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem as-child>
-                                <Link :href="workspacesCreate().url">
-                                    <IconPlus class="size-4" />
-                                    Create Workspace
-                                </Link>
-                            </DropdownMenuItem>
+                            <WorkspaceMenuContent />
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </SidebarMenuItem>
@@ -144,6 +142,7 @@ const switchWorkspace = (workspaceId: string) => {
 
         <SidebarContent>
             <NavMain :items="navItems" />
+            <NavMain :items="workspaceNavItems" label="Workspace" />
         </SidebarContent>
 
         <div v-if="usage" class="px-3 py-3 group-data-[collapsible=icon]:hidden">
@@ -201,9 +200,6 @@ const switchWorkspace = (workspaceId: string) => {
             </Link>
         </div>
 
-        <SidebarFooter>
-            <NavUser />
-        </SidebarFooter>
     </Sidebar>
     <slot />
 </template>

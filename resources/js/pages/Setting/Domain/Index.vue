@@ -22,7 +22,6 @@ import {
 import { IconDots, IconWorld } from "@tabler/icons-vue";
 import DomainStatus from "@/components/DomainStatus.vue";
 import AppLayout from "@/layouts/AppLayout.vue";
-import SettingsLayout from "@/layouts/settings/Layout.vue";
 import CreateModal from "./Create.vue";
 import EditModal from "./Edit.vue";
 import * as domainsRoutes from "@/routes/setting/domains";
@@ -59,8 +58,12 @@ const deleteDomain = () => {
 <template>
     <Head title="Domains" />
 
-    <AppLayout>
-        <SettingsLayout>
+    <AppLayout title="Domains">
+        <template #header-actions>
+            <Button @click="createModal?.open()">New Domain</Button>
+        </template>
+
+        <div class="p-4 sm:p-6">
             <CreateModal ref="createModal" />
             <EditModal ref="editModal" />
 
@@ -79,12 +82,6 @@ const deleteDomain = () => {
                 </AlertDialogContent>
             </AlertDialog>
 
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-lg font-semibold">Domains</h2>
-                <Button @click="createModal?.open()">
-                    New Domain
-                </Button>
-            </div>
 
             <div>
                 <div
@@ -159,6 +156,6 @@ const deleteDomain = () => {
                 <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Domains are used to create branded short links. e.g. link.yourdomain.com/short-link</p>
                 <Button class="mt-4" @click="createModal?.open()">Add Domain</Button>
             </div>
-        </SettingsLayout>
+        </div>
     </AppLayout>
 </template>

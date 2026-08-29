@@ -15,7 +15,6 @@ import {
 import { IconX, IconKey } from "@tabler/icons-vue";
 import date from "@/date";
 import AppLayout from "@/layouts/AppLayout.vue";
-import SettingsLayout from "@/layouts/settings/Layout.vue";
 import CreateModal from "./Create.vue";
 import * as apiTokensRoutes from "@/routes/setting/api-tokens";
 import type { ApiToken } from "@/types";
@@ -49,8 +48,12 @@ const deleteToken = () => {
 <template>
     <Head title="API Tokens" />
 
-    <AppLayout>
-        <SettingsLayout>
+    <AppLayout title="API Tokens">
+        <template #header-actions>
+            <Button @click="createModal?.open()">New API Token</Button>
+        </template>
+
+        <div class="p-4 sm:p-6">
             <CreateModal ref="createModal" />
 
             <AlertDialog :open="!!tokenToDelete" @update:open="(val) => !val && (tokenToDelete = null)">
@@ -68,12 +71,6 @@ const deleteToken = () => {
                 </AlertDialogContent>
             </AlertDialog>
 
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-lg font-semibold">API Tokens</h2>
-                <Button @click="createModal?.open()">
-                    New API Token
-                </Button>
-            </div>
 
             <div>
                 <div class="px-4 sm:px-0 space-y-2">
@@ -131,6 +128,6 @@ const deleteToken = () => {
                 <h3 class="text-sm font-semibold text-zinc-800 dark:text-zinc-200">You don't have any API Tokens yet.</h3>
                 <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">API Tokens are required to use the API, so you can manage your links, tags, and domains programmatically.</p>
             </div>
-        </SettingsLayout>
+        </div>
     </AppLayout>
 </template>

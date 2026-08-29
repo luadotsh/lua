@@ -3,23 +3,14 @@ import { Link } from '@inertiajs/vue3';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { edit as accountEdit } from '@/routes/setting/account';
 import { edit as authenticationEdit } from '@/routes/setting/authentication';
-import { index as apiTokensIndex } from '@/routes/setting/api-tokens';
-import { index as mcpIndex } from '@/routes/setting/mcp';
+
 import { index as billingIndex } from '@/routes/setting/billing';
-import { index as domainsIndex } from '@/routes/setting/domains';
-import { index as tagsIndex } from '@/routes/setting/tags';
-import { index as teamMembersIndex } from '@/routes/setting/team-members';
 import { edit as workspaceEdit } from '@/routes/setting/workspace';
 
 const navItems = [
     { title: 'Account', href: accountEdit().url, pattern: '/settings/account' },
     { title: 'Authentication', href: authenticationEdit().url, pattern: '/settings/authentication' },
     { title: 'Workspace', href: workspaceEdit().url, pattern: '/settings/workspace' },
-    { title: 'Members', href: teamMembersIndex().url, pattern: '/settings/team-members' },
-    { title: 'Domains', href: domainsIndex().url, pattern: '/settings/domains' },
-    { title: 'Tags', href: tagsIndex().url, pattern: '/settings/tags' },
-    { title: 'API Tokens', href: apiTokensIndex().url, pattern: '/settings/api-tokens' },
-    { title: 'MCP', href: mcpIndex().url, pattern: '/settings/mcp' },
     { title: 'Billing', href: billingIndex().url, pattern: '/settings/billing' },
 ];
 

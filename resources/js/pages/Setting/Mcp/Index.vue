@@ -9,7 +9,6 @@ import McpPrimarySetup from "@/components/mcp/McpPrimarySetup.vue";
 import { Button } from "@/components/ui/button";
 import date from "@/date";
 import AppLayout from "@/layouts/AppLayout.vue";
-import SettingsLayout from "@/layouts/settings/Layout.vue";
 import { destroy as mcpDisconnect } from "@/routes/setting/mcp";
 
 interface ConnectedClient {
@@ -43,13 +42,13 @@ const confirmDisconnect = (client: ConnectedClient): void => {
 <template>
     <Head title="MCP" />
 
-    <AppLayout>
-        <SettingsLayout>
+    <AppLayout title="MCP">
+        <div class="p-4 sm:p-6">
             <div class="flex max-w-3xl flex-col gap-10">
-                <HeadingSmall
-                    title="MCP"
-                    description="Connect AI assistants to this workspace. Connections are yours alone, and each one can only act on the workspace it was authorised from."
-                />
+                <p class="text-sm text-foreground/70">
+                    Connect AI assistants to this workspace. Connections are yours alone,
+                    and each one can only act on the workspace it was authorised from.
+                </p>
 
                 <section class="space-y-6">
                     <McpPrimarySetup :mcp-url="mcpUrl" />
@@ -128,7 +127,7 @@ const confirmDisconnect = (client: ConnectedClient): void => {
                     </Button>
                 </section>
             </div>
-        </SettingsLayout>
+        </div>
 
         <ConfirmDeleteModal
             ref="deleteModal"
