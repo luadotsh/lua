@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\Tag\UpdateTag;
+use App\Actions\Tag\DeleteTag;
+use App\Actions\Tag\CreateTag;
 use App\Http\Resources\Api\TagResource;
 
 use Illuminate\Http\Request;
@@ -32,12 +35,7 @@ class TagController extends Controller
             return response()->json(['message' => 'You have reached the tag limit'], 403);
         }
 
-        $tag = Tag::create([
-            'workspace_id' => $request->workspace->id,
-            'name' => $request->name,
-            'color' => $request->color,
-            'sort' => Tag::where('workspace_id', $request->workspace->id)->count() + 1,
-        ]);
+        $tag = CreateTag::execute($request->workspace, $request->validated());
 
         return response()->json(new TagResource($tag), 201);
     }
@@ -49,10 +47,7 @@ class TagController extends Controller
             return response()->json(['message' => 'Tag not found'], 404);
         }
 
-        $tag->update([
-            'name' => $request->name,
-            'color' => $request->color,
-        ]);
+        UpdateTag::execute($tag, $request->validated());
 
 
         return response()->json(new TagResource($tag), 200);
@@ -65,7 +60,7 @@ class TagController extends Controller
             return response()->json(['message' => 'Tag not found'], 404);
         }
 
-        $tag->delete();
+        DeleteTag::execute($tag);
 
         return response()->json(['message' => 'Tag deleted']);
     }

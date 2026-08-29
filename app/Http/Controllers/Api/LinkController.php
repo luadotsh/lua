@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\Link\UpdateLink;
+use App\Actions\Link\DeleteLink;
+use App\Actions\Link\CreateLink;
 use App\Http\Resources\Api\LinkResource;
 
 use Illuminate\Http\Request;
@@ -43,27 +46,7 @@ class LinkController extends Controller
             return response()->json(['message' => 'You have reached the link limit'], 403);
         }
 
-        $link = Link::create([
-            'workspace_id' => $request->workspace->id,
-            'domain' => $request->domain,
-            'key' => $request->key,
-            'url' => $request->url,
-            'link' => "https://{$request->domain}/{$request->key}",
-            'ios' => $request->ios,
-            'android' => $request->android,
-            'utm_source' => $request->utm_source,
-            'utm_medium' => $request->utm_medium,
-            'utm_campaign' => $request->utm_campaign,
-            'utm_term' => $request->utm_term,
-            'utm_content' => $request->utm_content,
-            'password' => $request->password,
-            'external_id' => $request->external_id,
-            'expires_at' => $request->expires_at,
-            'expired_redirect_url' => $request->expired_redirect_url,
-        ]);
-
-        // update tags
-        $link->tags()->sync($request->tags);
+        $link = CreateLink::execute($request->workspace, $request->validated());
 
         return response()->json(new LinkResource($link), 201);
     }
@@ -75,26 +58,7 @@ class LinkController extends Controller
             return response()->json(['message' => 'Link not found'], 404);
         }
 
-        $link->update([
-            'domain' => $request->domain,
-            'key' => $request->key,
-            'url' => $request->url,
-            'link' => "https://{$request->domain}/{$request->key}",
-            'ios' => $request->ios,
-            'android' => $request->android,
-            'utm_source' => $request->utm_source,
-            'utm_medium' => $request->utm_medium,
-            'utm_campaign' => $request->utm_campaign,
-            'utm_term' => $request->utm_term,
-            'utm_content' => $request->utm_content,
-            'password' => $request->password,
-            'external_id' => $request->external_id,
-            'expires_at' => $request->expires_at,
-            'expired_redirect_url' => $request->expired_redirect_url,
-        ]);
-
-        // update tags
-        $link->tags()->sync($request->tags);
+        UpdateLink::execute($link, $request->validated());
 
         return response()->json(new LinkResource($link), 200);
     }
@@ -106,7 +70,7 @@ class LinkController extends Controller
             return response()->json(['message' => 'Link not found'], 404);
         }
 
-        $link->delete();
+        DeleteLink::execute($link);
 
         return response()->json(['message' => 'Link deleted'], 200);
     }

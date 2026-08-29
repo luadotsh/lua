@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Setting\TeamMemberController::index
-* @see app/Http/Controllers/Setting/TeamMemberController.php:20
+* @see app/Http/Controllers/Setting/TeamMemberController.php:22
 * @route '/settings/users'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\TeamMemberController::index
-* @see app/Http/Controllers/Setting/TeamMemberController.php:20
+* @see app/Http/Controllers/Setting/TeamMemberController.php:22
 * @route '/settings/users'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Setting\TeamMemberController::index
-* @see app/Http/Controllers/Setting/TeamMemberController.php:20
+* @see app/Http/Controllers/Setting/TeamMemberController.php:22
 * @route '/settings/users'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\TeamMemberController::index
-* @see app/Http/Controllers/Setting/TeamMemberController.php:20
+* @see app/Http/Controllers/Setting/TeamMemberController.php:22
 * @route '/settings/users'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\TeamMemberController::index
-* @see app/Http/Controllers/Setting/TeamMemberController.php:20
+* @see app/Http/Controllers/Setting/TeamMemberController.php:22
 * @route '/settings/users'
 */
 const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\Setting\TeamMemberController::index
-* @see app/Http/Controllers/Setting/TeamMemberController.php:20
+* @see app/Http/Controllers/Setting/TeamMemberController.php:22
 * @route '/settings/users'
 */
 indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\TeamMemberController::index
-* @see app/Http/Controllers/Setting/TeamMemberController.php:20
+* @see app/Http/Controllers/Setting/TeamMemberController.php:22
 * @route '/settings/users'
 */
 indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\Setting\TeamMemberController::role
-* @see app/Http/Controllers/Setting/TeamMemberController.php:42
+* @see app/Http/Controllers/Setting/TeamMemberController.php:44
 * @route '/settings/users/{id}/role'
 */
 export const role = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -97,7 +97,7 @@ role.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\TeamMemberController::role
-* @see app/Http/Controllers/Setting/TeamMemberController.php:42
+* @see app/Http/Controllers/Setting/TeamMemberController.php:44
 * @route '/settings/users/{id}/role'
 */
 role.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -124,7 +124,7 @@ role.url = (args: { id: string | number } | [id: string | number ] | string | nu
 
 /**
 * @see \App\Http\Controllers\Setting\TeamMemberController::role
-* @see app/Http/Controllers/Setting/TeamMemberController.php:42
+* @see app/Http/Controllers/Setting/TeamMemberController.php:44
 * @route '/settings/users/{id}/role'
 */
 role.put = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -134,7 +134,7 @@ role.put = (args: { id: string | number } | [id: string | number ] | string | nu
 
 /**
 * @see \App\Http\Controllers\Setting\TeamMemberController::role
-* @see app/Http/Controllers/Setting/TeamMemberController.php:42
+* @see app/Http/Controllers/Setting/TeamMemberController.php:44
 * @route '/settings/users/{id}/role'
 */
 const roleForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -149,7 +149,7 @@ const roleForm = (args: { id: string | number } | [id: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\Setting\TeamMemberController::role
-* @see app/Http/Controllers/Setting/TeamMemberController.php:42
+* @see app/Http/Controllers/Setting/TeamMemberController.php:44
 * @route '/settings/users/{id}/role'
 */
 roleForm.put = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -166,7 +166,7 @@ role.form = roleForm
 
 /**
 * @see \App\Http\Controllers\Setting\TeamMemberController::leave
-* @see app/Http/Controllers/Setting/TeamMemberController.php:81
+* @see app/Http/Controllers/Setting/TeamMemberController.php:82
 * @route '/settings/users/leave'
 */
 export const leave = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -181,7 +181,7 @@ leave.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\TeamMemberController::leave
-* @see app/Http/Controllers/Setting/TeamMemberController.php:81
+* @see app/Http/Controllers/Setting/TeamMemberController.php:82
 * @route '/settings/users/leave'
 */
 leave.url = (options?: RouteQueryOptions) => {
@@ -190,7 +190,7 @@ leave.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Setting\TeamMemberController::leave
-* @see app/Http/Controllers/Setting/TeamMemberController.php:81
+* @see app/Http/Controllers/Setting/TeamMemberController.php:82
 * @route '/settings/users/leave'
 */
 leave.delete = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -200,7 +200,7 @@ leave.delete = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\TeamMemberController::leave
-* @see app/Http/Controllers/Setting/TeamMemberController.php:81
+* @see app/Http/Controllers/Setting/TeamMemberController.php:82
 * @route '/settings/users/leave'
 */
 const leaveForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -215,7 +215,7 @@ const leaveForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => 
 
 /**
 * @see \App\Http\Controllers\Setting\TeamMemberController::leave
-* @see app/Http/Controllers/Setting/TeamMemberController.php:81
+* @see app/Http/Controllers/Setting/TeamMemberController.php:82
 * @route '/settings/users/leave'
 */
 leaveForm.delete = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -232,7 +232,7 @@ leave.form = leaveForm
 
 /**
 * @see \App\Http\Controllers\Setting\TeamMemberController::destroy
-* @see app/Http/Controllers/Setting/TeamMemberController.php:63
+* @see app/Http/Controllers/Setting/TeamMemberController.php:65
 * @route '/settings/users/{id}/remove-from-team'
 */
 export const destroy = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -247,7 +247,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\TeamMemberController::destroy
-* @see app/Http/Controllers/Setting/TeamMemberController.php:63
+* @see app/Http/Controllers/Setting/TeamMemberController.php:65
 * @route '/settings/users/{id}/remove-from-team'
 */
 destroy.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -274,7 +274,7 @@ destroy.url = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\Setting\TeamMemberController::destroy
-* @see app/Http/Controllers/Setting/TeamMemberController.php:63
+* @see app/Http/Controllers/Setting/TeamMemberController.php:65
 * @route '/settings/users/{id}/remove-from-team'
 */
 destroy.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -284,7 +284,7 @@ destroy.delete = (args: { id: string | number } | [id: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\Setting\TeamMemberController::destroy
-* @see app/Http/Controllers/Setting/TeamMemberController.php:63
+* @see app/Http/Controllers/Setting/TeamMemberController.php:65
 * @route '/settings/users/{id}/remove-from-team'
 */
 const destroyForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -299,7 +299,7 @@ const destroyForm = (args: { id: string | number } | [id: string | number ] | st
 
 /**
 * @see \App\Http\Controllers\Setting\TeamMemberController::destroy
-* @see app/Http/Controllers/Setting/TeamMemberController.php:63
+* @see app/Http/Controllers/Setting/TeamMemberController.php:65
 * @route '/settings/users/{id}/remove-from-team'
 */
 destroyForm.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

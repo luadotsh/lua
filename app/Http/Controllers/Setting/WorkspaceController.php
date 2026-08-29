@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Setting;
 
+use App\Actions\Workspace\UpdateWorkspace;
 use Illuminate\Http\Request;
 
 use App\Http\Requests\Workspace\UpdateRequest;
@@ -21,9 +22,7 @@ class WorkspaceController extends Controller
     {
         $workspace = auth()->user()->currentWorkspace;
 
-        $workspace->update([
-            'name' => $request->name,
-        ]);
+        UpdateWorkspace::execute($workspace, $request->validated());
 
         session()->flash('flash.banner', 'Workspace updated');
         session()->flash('flash.bannerStyle', 'success');

@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Setting\DomainController::index
-* @see app/Http/Controllers/Setting/DomainController.php:21
+* @see app/Http/Controllers/Setting/DomainController.php:24
 * @route '/settings/domains'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::index
-* @see app/Http/Controllers/Setting/DomainController.php:21
+* @see app/Http/Controllers/Setting/DomainController.php:24
 * @route '/settings/domains'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::index
-* @see app/Http/Controllers/Setting/DomainController.php:21
+* @see app/Http/Controllers/Setting/DomainController.php:24
 * @route '/settings/domains'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::index
-* @see app/Http/Controllers/Setting/DomainController.php:21
+* @see app/Http/Controllers/Setting/DomainController.php:24
 * @route '/settings/domains'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::index
-* @see app/Http/Controllers/Setting/DomainController.php:21
+* @see app/Http/Controllers/Setting/DomainController.php:24
 * @route '/settings/domains'
 */
 const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::index
-* @see app/Http/Controllers/Setting/DomainController.php:21
+* @see app/Http/Controllers/Setting/DomainController.php:24
 * @route '/settings/domains'
 */
 indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::index
-* @see app/Http/Controllers/Setting/DomainController.php:21
+* @see app/Http/Controllers/Setting/DomainController.php:24
 * @route '/settings/domains'
 */
 indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::store
-* @see app/Http/Controllers/Setting/DomainController.php:31
+* @see app/Http/Controllers/Setting/DomainController.php:34
 * @route '/settings/domains'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -97,7 +97,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::store
-* @see app/Http/Controllers/Setting/DomainController.php:31
+* @see app/Http/Controllers/Setting/DomainController.php:34
 * @route '/settings/domains'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::store
-* @see app/Http/Controllers/Setting/DomainController.php:31
+* @see app/Http/Controllers/Setting/DomainController.php:34
 * @route '/settings/domains'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -116,7 +116,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::store
-* @see app/Http/Controllers/Setting/DomainController.php:31
+* @see app/Http/Controllers/Setting/DomainController.php:34
 * @route '/settings/domains'
 */
 const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -126,7 +126,7 @@ const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => 
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::store
-* @see app/Http/Controllers/Setting/DomainController.php:31
+* @see app/Http/Controllers/Setting/DomainController.php:34
 * @route '/settings/domains'
 */
 storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -138,7 +138,7 @@ store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::update
-* @see app/Http/Controllers/Setting/DomainController.php:56
+* @see app/Http/Controllers/Setting/DomainController.php:53
 * @route '/settings/domains/{id}'
 */
 export const update = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -153,7 +153,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::update
-* @see app/Http/Controllers/Setting/DomainController.php:56
+* @see app/Http/Controllers/Setting/DomainController.php:53
 * @route '/settings/domains/{id}'
 */
 update.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -180,7 +180,7 @@ update.url = (args: { id: string | number } | [id: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::update
-* @see app/Http/Controllers/Setting/DomainController.php:56
+* @see app/Http/Controllers/Setting/DomainController.php:53
 * @route '/settings/domains/{id}'
 */
 update.put = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -190,7 +190,7 @@ update.put = (args: { id: string | number } | [id: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::update
-* @see app/Http/Controllers/Setting/DomainController.php:56
+* @see app/Http/Controllers/Setting/DomainController.php:53
 * @route '/settings/domains/{id}'
 */
 const updateForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -205,7 +205,7 @@ const updateForm = (args: { id: string | number } | [id: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::update
-* @see app/Http/Controllers/Setting/DomainController.php:56
+* @see app/Http/Controllers/Setting/DomainController.php:53
 * @route '/settings/domains/{id}'
 */
 updateForm.put = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -222,7 +222,7 @@ update.form = updateForm
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::destroy
-* @see app/Http/Controllers/Setting/DomainController.php:75
+* @see app/Http/Controllers/Setting/DomainController.php:65
 * @route '/settings/domains/{id}'
 */
 export const destroy = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -237,7 +237,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::destroy
-* @see app/Http/Controllers/Setting/DomainController.php:75
+* @see app/Http/Controllers/Setting/DomainController.php:65
 * @route '/settings/domains/{id}'
 */
 destroy.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -264,7 +264,7 @@ destroy.url = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::destroy
-* @see app/Http/Controllers/Setting/DomainController.php:75
+* @see app/Http/Controllers/Setting/DomainController.php:65
 * @route '/settings/domains/{id}'
 */
 destroy.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -274,7 +274,7 @@ destroy.delete = (args: { id: string | number } | [id: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::destroy
-* @see app/Http/Controllers/Setting/DomainController.php:75
+* @see app/Http/Controllers/Setting/DomainController.php:65
 * @route '/settings/domains/{id}'
 */
 const destroyForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -289,7 +289,7 @@ const destroyForm = (args: { id: string | number } | [id: string | number ] | st
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::destroy
-* @see app/Http/Controllers/Setting/DomainController.php:75
+* @see app/Http/Controllers/Setting/DomainController.php:65
 * @route '/settings/domains/{id}'
 */
 destroyForm.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -306,7 +306,7 @@ destroy.form = destroyForm
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::validateDns
-* @see app/Http/Controllers/Setting/DomainController.php:86
+* @see app/Http/Controllers/Setting/DomainController.php:77
 * @route '/settings/domains/{id}/validate-dns'
 */
 export const validateDns = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -321,7 +321,7 @@ validateDns.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::validateDns
-* @see app/Http/Controllers/Setting/DomainController.php:86
+* @see app/Http/Controllers/Setting/DomainController.php:77
 * @route '/settings/domains/{id}/validate-dns'
 */
 validateDns.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -348,7 +348,7 @@ validateDns.url = (args: { id: string | number } | [id: string | number ] | stri
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::validateDns
-* @see app/Http/Controllers/Setting/DomainController.php:86
+* @see app/Http/Controllers/Setting/DomainController.php:77
 * @route '/settings/domains/{id}/validate-dns'
 */
 validateDns.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -358,7 +358,7 @@ validateDns.get = (args: { id: string | number } | [id: string | number ] | stri
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::validateDns
-* @see app/Http/Controllers/Setting/DomainController.php:86
+* @see app/Http/Controllers/Setting/DomainController.php:77
 * @route '/settings/domains/{id}/validate-dns'
 */
 validateDns.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -368,7 +368,7 @@ validateDns.head = (args: { id: string | number } | [id: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::validateDns
-* @see app/Http/Controllers/Setting/DomainController.php:86
+* @see app/Http/Controllers/Setting/DomainController.php:77
 * @route '/settings/domains/{id}/validate-dns'
 */
 const validateDnsForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -378,7 +378,7 @@ const validateDnsForm = (args: { id: string | number } | [id: string | number ] 
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::validateDns
-* @see app/Http/Controllers/Setting/DomainController.php:86
+* @see app/Http/Controllers/Setting/DomainController.php:77
 * @route '/settings/domains/{id}/validate-dns'
 */
 validateDnsForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -388,7 +388,7 @@ validateDnsForm.get = (args: { id: string | number } | [id: string | number ] | 
 
 /**
 * @see \App\Http\Controllers\Setting\DomainController::validateDns
-* @see app/Http/Controllers/Setting/DomainController.php:86
+* @see app/Http/Controllers/Setting/DomainController.php:77
 * @route '/settings/domains/{id}/validate-dns'
 */
 validateDnsForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

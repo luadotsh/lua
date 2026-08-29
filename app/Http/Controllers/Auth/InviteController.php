@@ -53,11 +53,7 @@ class InviteController extends Controller
             'password' => Hash::make($request->password),
             'current_workspace_id' => $invite->workspace_id,
             'is_invite' => true,
-        ]);
-
-        // attach user to store
-        $user->workspaces()->attach($invite->workspace_id, [
-            'role' => $invite->role,
+            'invite_role' => $invite->role,
         ]);
 
         Auth::login($user);

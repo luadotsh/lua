@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Setting;
 
+use App\Actions\Domain\UpdateDomain;
+use App\Actions\Domain\DeleteDomain;
+use App\Actions\Domain\CreateDomain;
 use App\Http\Requests\Domain\CreateRequest;
 use App\Http\Requests\Domain\UpdateRequest;
 
@@ -39,13 +42,7 @@ class DomainController extends Controller
             return back();
         }
 
-        Domain::create([
-            'workspace_id' => $workspace->id,
-            'domain' => $request->domain,
-            'status' => Status::PENDING,
-            'not_found_url' => $request->not_found_url,
-            'expired_url' => $request->expired_url,
-        ]);
+        CreateDomain::execute($workspace, $request->validated());
 
         session()->flash('flash.banner', 'Domain added successful.');
         session()->flash('flash.bannerStyle', 'success');
@@ -56,15 +53,8 @@ class DomainController extends Controller
     public function update(UpdateRequest $request, $id)
     {
         $domain = Domain::where('id', $id)->where('workspace_id', Auth::user()->currentWorkspace->id)->firstOrFail();
-        $domain->domain = $request->domain;
-        $domain->not_found_url = $request->not_found_url;
-        $domain->expired_url = $request->expired_url;
-        $domain->save();
 
-        if($domain->wasChanged('domain')) {
-            $domain->status = Status::PENDING;
-            $domain->save();
-        }
+        UpdateDomain::execute($domain, $request->validated());
 
         session()->flash('flash.banner', 'Domain updated successful.');
         session()->flash('flash.bannerStyle', 'success');
@@ -75,7 +65,8 @@ class DomainController extends Controller
     public function destroy($id)
     {
         $domain = Domain::where('workspace_id', Auth::user()->currentWorkspace->id)->where('id', $id)->firstOrFail();
-        $domain->delete();
+
+        DeleteDomain::execute($domain);
 
         session()->flash('flash.banner', 'Domain deleted successful.');
         session()->flash('flash.bannerStyle', 'success');

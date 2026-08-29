@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\Domain\UpdateDomain;
+use App\Actions\Domain\DeleteDomain;
+use App\Actions\Domain\CreateDomain;
 use App\Http\Requests\Domain\ValidateRequest;
 use App\Http\Resources\Api\DomainResource;
 
@@ -48,13 +51,7 @@ class DomainController extends Controller
             return response()->json(['message' => 'You have reached the domain limit'], 403);
         }
 
-        $domain = Domain::create([
-            'workspace_id' => $request->workspace->id,
-            'domain' => $request->domain,
-            'status' => Status::PENDING,
-            'not_found_url' => $request->not_found_url,
-            'expired_url' => $request->expired_url,
-        ]);
+        $domain = CreateDomain::execute($request->workspace, $request->validated());
 
         return response()->json(new DomainResource($domain), 201);
     }
@@ -66,16 +63,7 @@ class DomainController extends Controller
             return response()->json(['message' => 'Domain not found'], 404);
         }
 
-        $domain->update([
-            'domain' => $request->domain,
-            'not_found_url' => $request->not_found_url,
-            'expired_url' => $request->expired_url,
-        ]);
-
-        if ($domain->wasChanged('domain')) {
-            $domain->status = Status::PENDING;
-            $domain->save();
-        }
+        UpdateDomain::execute($domain, $request->validated());
 
         return response()->json(new DomainResource($domain), 200);
     }
@@ -87,7 +75,7 @@ class DomainController extends Controller
             return response()->json(['message' => 'Domain not found'], 404);
         }
 
-        $domain->delete();
+        DeleteDomain::execute($domain);
 
         return response()->json(['message' => 'Domain deleted'], 200);
     }

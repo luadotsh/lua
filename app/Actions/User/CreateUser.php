@@ -19,7 +19,7 @@ class CreateUser
      * except an invited user gets a personal workspace here, so no signup flow
      * has to stop at a create-workspace step.
      *
-     * @param  array{name: string, email: string, password?: string|null, google_id?: string|null, github_id?: string|null, email_verified_at?: \DateTimeInterface|null, current_workspace_id?: string|null, is_invite?: bool, auth_provider?: string}  $data
+     * @param  array{name: string, email: string, password?: string|null, google_id?: string|null, github_id?: string|null, email_verified_at?: \DateTimeInterface|null, current_workspace_id?: string|null, is_invite?: bool, invite_role?: string, auth_provider?: string}  $data
      * @param  array<string, string>  $attributionParameters  UTM parameters and ad click IDs captured before signup
      */
     public static function execute(array $data, array $attributionParameters = []): User
@@ -38,8 +38,18 @@ class CreateUser
                 'email_verified_at' => data_get($data, 'email_verified_at', $isInviteRegistration ? now() : null),
             ]);
 
-            // An invited user joins the workspace that invited them; giving them
-            // a personal one too would leave them with a stray empty workspace.
+            // An invited user joins the workspace that invited them, with the
+            // role the invite carried; giving them a personal workspace too
+            // would leave a stray empty one behind.
+            if ($isInviteRegistration) {
+                $workspaceId = data_get($data, 'current_workspace_id');
+                $role = data_get($data, 'invite_role');
+
+                if ($workspaceId && $role) {
+                    $user->workspaces()->attach($workspaceId, ['role' => $role]);
+                }
+            }
+
             if (! $isInviteRegistration) {
                 CreateWorkspace::execute($user, [
                     'name' => CreateWorkspace::defaultNameFor((string) $user->name),

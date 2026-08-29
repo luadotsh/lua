@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Setting;
 
+use App\Actions\Account\UpdateAccount;
 use App\Http\Requests\Account\UpdateRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\Request;
@@ -28,15 +29,7 @@ class AccountController extends Controller
      */
     public function update(UpdateRequest $request)
     {
-        $user = $request->user();
-        $user->name = $request->name;
-        $user->email = $request->email;
-        // If the user is changing their email address, they will need to verify the new address.
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
-        }
-
-        $user->save();
+        UpdateAccount::execute($request->user(), $request->validated());
 
         session()->flash('flash.banner', 'Account updated');
         session()->flash('flash.bannerStyle', 'success');

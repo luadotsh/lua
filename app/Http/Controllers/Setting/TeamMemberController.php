@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Setting;
 
+use App\Actions\TeamMember\UpdateMemberRole;
+use App\Actions\TeamMember\RemoveMember;
 use App\Http\Requests\TeamMember\UpdateUserRoleRequest;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -49,7 +51,7 @@ class TeamMemberController extends Controller
         ->firstOrFail();
 
         // update user role
-        $user->workspaces()->syncWithPivotValues([auth()->user()->currentWorkspace->id], ['role' => $request->role], false);
+        UpdateMemberRole::execute(auth()->user()->currentWorkspace, $user, $request->role);
 
         session()->flash('flash.banner', 'User role updated');
         session()->flash('flash.bannerStyle', 'success');
@@ -69,8 +71,7 @@ class TeamMemberController extends Controller
         })
         ->firstOrFail();
 
-        // detach user from workspace
-        $user->workspaces()->detach(auth()->user()->currentWorkspace->id);
+        RemoveMember::execute(auth()->user()->currentWorkspace, $user);
 
         session()->flash('flash.banner', 'User removed successful');
         session()->flash('flash.bannerStyle', 'success');
@@ -90,7 +91,7 @@ class TeamMemberController extends Controller
             return back();
         }
 
-        $user->workspaces()->detach($workspace->id);
+        RemoveMember::execute($workspace, $user);
 
         $userWorkspaces = auth()->user()->workspaces();
 

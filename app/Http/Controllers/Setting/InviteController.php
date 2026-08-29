@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Setting;
 
+use App\Actions\Invite\DeleteInvite;
+use App\Actions\Invite\CreateInvite;
 use App\Http\Requests\Invite\InviteRequest;
 
 use Illuminate\Support\Facades\Mail;
@@ -37,29 +39,14 @@ class InviteController extends Controller
         // check if email already exist
         $user = User::where('email', $request->email)->first();
 
-        // if user already exists
-        if ($user) {
+        $invite = CreateInvite::execute($workspace, $request->validated());
 
-            // attach user to project
-            $user->workspaces()->syncWithPivotValues([
-                $workspace->id
-            ], ['role' => $request->role], false);
-
+        if ($invite === null) {
             session()->flash('flash.banner', 'User was added to team!');
             session()->flash('flash.bannerStyle', 'success');
 
             return back();
         }
-
-        // create invite
-        $invite = new Invite;
-        $invite->workspace_id = $workspace->id;
-        $invite->email = $request->email;
-        $invite->role = $request->role;
-        $invite->save();
-
-        // send email
-        Mail::to($invite->email)->send(new SendUserInvite($workspace, $invite));
 
         session()->flash('flash.banner', 'Invite was sent!');
         session()->flash('flash.bannerStyle', 'success');
@@ -72,7 +59,8 @@ class InviteController extends Controller
         $workspace = auth()->user()->currentWorkspace;
 
         $invite = Invite::where('id', $id)->where('workspace_id', $workspace->id)->firstOrFail();
-        $invite->delete();
+
+        DeleteInvite::execute($invite);
 
         session()->flash('flash.banner', 'Invite deleted successful.');
         session()->flash('flash.bannerStyle', 'success');

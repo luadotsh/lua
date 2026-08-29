@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 import photo from './photo'
 /**
 * @see \App\Http\Controllers\Setting\AccountController::edit
-* @see app/Http/Controllers/Setting/AccountController.php:18
+* @see app/Http/Controllers/Setting/AccountController.php:19
 * @route '/settings/account'
 */
 export const edit = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -17,7 +17,7 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\AccountController::edit
-* @see app/Http/Controllers/Setting/AccountController.php:18
+* @see app/Http/Controllers/Setting/AccountController.php:19
 * @route '/settings/account'
 */
 edit.url = (options?: RouteQueryOptions) => {
@@ -26,7 +26,7 @@ edit.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Setting\AccountController::edit
-* @see app/Http/Controllers/Setting/AccountController.php:18
+* @see app/Http/Controllers/Setting/AccountController.php:19
 * @route '/settings/account'
 */
 edit.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -36,7 +36,7 @@ edit.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\AccountController::edit
-* @see app/Http/Controllers/Setting/AccountController.php:18
+* @see app/Http/Controllers/Setting/AccountController.php:19
 * @route '/settings/account'
 */
 edit.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -46,7 +46,7 @@ edit.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\AccountController::edit
-* @see app/Http/Controllers/Setting/AccountController.php:18
+* @see app/Http/Controllers/Setting/AccountController.php:19
 * @route '/settings/account'
 */
 const editForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -56,7 +56,7 @@ const editForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\AccountController::edit
-* @see app/Http/Controllers/Setting/AccountController.php:18
+* @see app/Http/Controllers/Setting/AccountController.php:19
 * @route '/settings/account'
 */
 editForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -66,7 +66,7 @@ editForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\AccountController::edit
-* @see app/Http/Controllers/Setting/AccountController.php:18
+* @see app/Http/Controllers/Setting/AccountController.php:19
 * @route '/settings/account'
 */
 editForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -83,7 +83,7 @@ edit.form = editForm
 
 /**
 * @see \App\Http\Controllers\Setting\AccountController::update
-* @see app/Http/Controllers/Setting/AccountController.php:29
+* @see app/Http/Controllers/Setting/AccountController.php:30
 * @route '/settings/account'
 */
 export const update = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -98,7 +98,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\AccountController::update
-* @see app/Http/Controllers/Setting/AccountController.php:29
+* @see app/Http/Controllers/Setting/AccountController.php:30
 * @route '/settings/account'
 */
 update.url = (options?: RouteQueryOptions) => {
@@ -107,7 +107,7 @@ update.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Setting\AccountController::update
-* @see app/Http/Controllers/Setting/AccountController.php:29
+* @see app/Http/Controllers/Setting/AccountController.php:30
 * @route '/settings/account'
 */
 update.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -117,7 +117,7 @@ update.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\AccountController::update
-* @see app/Http/Controllers/Setting/AccountController.php:29
+* @see app/Http/Controllers/Setting/AccountController.php:30
 * @route '/settings/account'
 */
 const updateForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -127,7 +127,7 @@ const updateForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> =>
 
 /**
 * @see \App\Http\Controllers\Setting\AccountController::update
-* @see app/Http/Controllers/Setting/AccountController.php:29
+* @see app/Http/Controllers/Setting/AccountController.php:30
 * @route '/settings/account'
 */
 updateForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
