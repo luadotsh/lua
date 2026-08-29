@@ -3,9 +3,8 @@
 declare(strict_types=1);
 
 use App\Models\Link;
-use Illuminate\Support\Facades\DB;
-
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 
 uses(RefreshDatabase::class);
 
@@ -55,7 +54,7 @@ it('an unknown domain without key is redirected to the website', function () {
 
 it('redirects to the iOS URL if the user is on iOS', function () {
     $link = Link::factory()->create([
-        'ios' => 'https://example.com/ios'
+        'ios' => 'https://example.com/ios',
     ]);
 
     $response = $this
@@ -70,7 +69,7 @@ it('redirects to the iOS URL if the user is on iOS', function () {
 
 it('redirects to the default URL if the user not on iOS', function () {
     $link = Link::factory()->create([
-        'ios' => 'https://example.com/ios'
+        'ios' => 'https://example.com/ios',
     ]);
 
     $response = $this->get(route('links.redirect', $link->key));
@@ -81,7 +80,7 @@ it('redirects to the default URL if the user not on iOS', function () {
 
 it('redirects to the default URL if user its on iOS but no iOS URL is set', function () {
     $link = Link::factory()->create([
-        'ios' => null
+        'ios' => null,
     ]);
 
     $response = $this
@@ -96,7 +95,7 @@ it('redirects to the default URL if user its on iOS but no iOS URL is set', func
 
 it('redirects to the default URL if the user not on Android', function () {
     $link = Link::factory()->create([
-        'android' => 'https://example.com/android'
+        'android' => 'https://example.com/android',
     ]);
 
     $response = $this->get(route('links.redirect', $link->key));
@@ -107,14 +106,14 @@ it('redirects to the default URL if the user not on Android', function () {
 
 it('redirects to the default URL if user its on Android but no Android URL is set', function () {
     $link = Link::factory()->create([
-        'android' => null
+        'android' => null,
     ]);
 
     $response = $this
         ->withHeaders([
             'User-Agent' => 'Mozilla/5.0 (Linux; Android 14; Pixel 6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Mobile Safari/537.36',
         ])
-    ->get(route('links.redirect', $link->key));
+        ->get(route('links.redirect', $link->key));
 
     $response->assertStatus(302);
     $response->assertRedirect($link->url);
@@ -122,7 +121,7 @@ it('redirects to the default URL if user its on Android but no Android URL is se
 
 it('redirects to the Android URL if the user is on Android', function () {
     $link = Link::factory()->create([
-        'android' => 'https://example.com/android'
+        'android' => 'https://example.com/android',
     ]);
 
     $response = $this
@@ -232,4 +231,33 @@ it('gates a protected link and accepts only the right password', function () {
 
     $this->post(route('links.password.validate', 'locked-2'), ['password' => 'correct-horse'])
         ->assertSessionHasNoErrors();
+});
+
+it('sends the link utms on to the destination', function () {
+    // The factory fills every UTM; this test is about two of them.
+    $link = Link::factory()->create([
+        'url' => 'https://example.com/pricing',
+        'utm_source' => 'newsletter',
+        'utm_medium' => null,
+        'utm_campaign' => 'launch',
+        'utm_term' => null,
+        'utm_content' => null,
+    ]);
+
+    $this->get(route('links.redirect', $link->key))
+        ->assertRedirect('https://example.com/pricing?utm_source=newsletter&utm_campaign=launch');
+});
+
+it('prefers the utm the visitor arrived with', function () {
+    $link = Link::factory()->create([
+        'url' => 'https://example.com/pricing',
+        'utm_source' => 'newsletter',
+        'utm_medium' => null,
+        'utm_campaign' => null,
+        'utm_term' => null,
+        'utm_content' => null,
+    ]);
+
+    $this->get(route('links.redirect', $link->key).'?utm_source=twitter')
+        ->assertRedirect('https://example.com/pricing?utm_source=twitter');
 });

@@ -34,11 +34,10 @@ class LinkFactory extends Factory
             'link' => "https://{$domain}/{$slug}",
             'ios' => $this->faker->url,
             'android' => $this->faker->url,
-            'utm_source' => $this->faker->word,
-            'utm_medium' => $this->faker->word,
-            'utm_campaign' => $this->faker->word,
-            'utm_term' => $this->faker->word,
-            'utm_content' => $this->faker->word,
+            // Left unset: most links carry no campaign, and the redirect now
+            // appends whatever is here to the destination — a factory that
+            // always filled them made every redirect assertion carry five
+            // parameters nobody asked for.
             'clicks' => $this->faker->randomNumber(),
             'last_click' => $this->faker->dateTime,
         ];

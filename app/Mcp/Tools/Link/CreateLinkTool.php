@@ -7,7 +7,6 @@ namespace App\Mcp\Tools\Link;
 use App\Actions\Link\CreateLink;
 use App\Http\Resources\Api\LinkResource;
 use App\Mcp\Concerns\ResolvesWorkspace;
-use App\Models\Link;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
@@ -36,6 +35,11 @@ class CreateLinkTool extends Tool
             'expires_at' => $schema->string()->description('Expiry as Y-m-d H:i:s.'),
             'expired_redirect_url' => $schema->string()->description('Where to send visitors after expiry.'),
             'external_id' => $schema->string()->description('Your own identifier for this link.'),
+            'utm_source' => $schema->string()->description('utm_source appended to the destination URL.'),
+            'utm_medium' => $schema->string()->description('utm_medium appended to the destination URL.'),
+            'utm_campaign' => $schema->string()->description('utm_campaign appended to the destination URL.'),
+            'utm_term' => $schema->string()->description('utm_term appended to the destination URL.'),
+            'utm_content' => $schema->string()->description('utm_content appended to the destination URL.'),
             'tags' => $schema->array()->description('Tag ids to attach.'),
         ];
     }

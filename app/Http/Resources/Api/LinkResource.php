@@ -28,7 +28,6 @@ class LinkResource extends JsonResource
             'utm_campaign' => $this->utm_campaign,
             'utm_term' => $this->utm_term,
             'utm_content' => $this->utm_content,
-            'utm_name' => $this->utm_name,
             'clicks' => $this->clicks,
             'last_click' => $this->last_click,
             'external_id' => $this->external_id,

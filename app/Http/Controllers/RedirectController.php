@@ -4,20 +4,16 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Actions\Link\BuildDestination;
 use App\Actions\Link\ResolveLinkByKey;
+use App\Enums\Link\Os;
+use App\Jobs\ProcessLinkStat;
+use App\Models\Link;
 use App\Services\UserAgentService;
-
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-
-use App\Enums\Link\Os;
-
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
-
-use App\Jobs\ProcessLinkStat;
-
-use App\Models\Link;
 
 class RedirectController extends Controller
 {
@@ -34,7 +30,7 @@ class RedirectController extends Controller
             'utm_medium' => $request->input('utm_medium'),
             'utm_campaign' => $request->input('utm_campaign'),
             'utm_term' => $request->input('utm_term'),
-            'utm_content' => $request->input('utm_content')
+            'utm_content' => $request->input('utm_content'),
         ];
 
         ProcessLinkStat::dispatchIf(
@@ -55,7 +51,6 @@ class RedirectController extends Controller
             return redirect(route('links.password', $link->key));
         }
 
-
         /**
          * Expired Links
          */
@@ -73,19 +68,19 @@ class RedirectController extends Controller
          * If has iOS or Android redirect URL, check the user's OS and redirect to the appropriate URL.
          */
         if ($link->ios || $link->android) {
-            $service = new UserAgentService();
+            $service = new UserAgentService;
             $os = $service->getOS($request->userAgent());
 
             if ($os === Os::IOS->value && $link->ios) {
-                return redirect($link->ios, 302);
+                return redirect(BuildDestination::execute($link->ios, $link, $utms), 302);
             }
 
             if ($os === Os::ANDROID->value && $link->android) {
-                return redirect($link->android, 302);
+                return redirect(BuildDestination::execute($link->android, $link, $utms), 302);
             }
         }
 
-        return redirect($link->url, 302);
+        return redirect(BuildDestination::execute($link->url, $link, $utms), 302);
     }
 
     public function password(Request $request, $key)
@@ -108,11 +103,11 @@ class RedirectController extends Controller
         // hash_equals compares in constant time, so a wrong guess cannot be
         // narrowed down by how long the response took.
         if (is_string($link->password) && hash_equals($link->password, (string) $request->password)) {
-            return Inertia::location($link->url);
+            return Inertia::location(BuildDestination::execute($link->url, $link));
         }
 
         return back()->withErrors([
-            'password' => 'The password is incorrect.'
+            'password' => 'The password is incorrect.',
         ]);
     }
 }

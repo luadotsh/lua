@@ -329,7 +329,7 @@ destroy.form = destroyForm
 
 /**
 * @see \App\Http\Controllers\RedirectController::password
-* @see app/Http/Controllers/RedirectController.php:91
+* @see app/Http/Controllers/RedirectController.php:86
 * @route '/{key}/password'
 */
 export const password = (args: { key: string | number } | [key: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -344,7 +344,7 @@ password.definition = {
 
 /**
 * @see \App\Http\Controllers\RedirectController::password
-* @see app/Http/Controllers/RedirectController.php:91
+* @see app/Http/Controllers/RedirectController.php:86
 * @route '/{key}/password'
 */
 password.url = (args: { key: string | number } | [key: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -371,7 +371,7 @@ password.url = (args: { key: string | number } | [key: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\RedirectController::password
-* @see app/Http/Controllers/RedirectController.php:91
+* @see app/Http/Controllers/RedirectController.php:86
 * @route '/{key}/password'
 */
 password.get = (args: { key: string | number } | [key: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -381,7 +381,7 @@ password.get = (args: { key: string | number } | [key: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\RedirectController::password
-* @see app/Http/Controllers/RedirectController.php:91
+* @see app/Http/Controllers/RedirectController.php:86
 * @route '/{key}/password'
 */
 password.head = (args: { key: string | number } | [key: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -391,7 +391,7 @@ password.head = (args: { key: string | number } | [key: string | number ] | stri
 
 /**
 * @see \App\Http\Controllers\RedirectController::password
-* @see app/Http/Controllers/RedirectController.php:91
+* @see app/Http/Controllers/RedirectController.php:86
 * @route '/{key}/password'
 */
 const passwordForm = (args: { key: string | number } | [key: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -401,7 +401,7 @@ const passwordForm = (args: { key: string | number } | [key: string | number ] |
 
 /**
 * @see \App\Http\Controllers\RedirectController::password
-* @see app/Http/Controllers/RedirectController.php:91
+* @see app/Http/Controllers/RedirectController.php:86
 * @route '/{key}/password'
 */
 passwordForm.get = (args: { key: string | number } | [key: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -411,7 +411,7 @@ passwordForm.get = (args: { key: string | number } | [key: string | number ] | s
 
 /**
 * @see \App\Http\Controllers\RedirectController::password
-* @see app/Http/Controllers/RedirectController.php:91
+* @see app/Http/Controllers/RedirectController.php:86
 * @route '/{key}/password'
 */
 passwordForm.head = (args: { key: string | number } | [key: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -428,7 +428,7 @@ password.form = passwordForm
 
 /**
 * @see \App\Http\Controllers\RedirectController::redirect
-* @see app/Http/Controllers/RedirectController.php:24
+* @see app/Http/Controllers/RedirectController.php:20
 * @route '/{key?}'
 */
 export const redirect = (args?: { key?: string | number } | [key: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -443,7 +443,7 @@ redirect.definition = {
 
 /**
 * @see \App\Http\Controllers\RedirectController::redirect
-* @see app/Http/Controllers/RedirectController.php:24
+* @see app/Http/Controllers/RedirectController.php:20
 * @route '/{key?}'
 */
 redirect.url = (args?: { key?: string | number } | [key: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -474,7 +474,7 @@ redirect.url = (args?: { key?: string | number } | [key: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\RedirectController::redirect
-* @see app/Http/Controllers/RedirectController.php:24
+* @see app/Http/Controllers/RedirectController.php:20
 * @route '/{key?}'
 */
 redirect.get = (args?: { key?: string | number } | [key: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -484,7 +484,7 @@ redirect.get = (args?: { key?: string | number } | [key: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\RedirectController::redirect
-* @see app/Http/Controllers/RedirectController.php:24
+* @see app/Http/Controllers/RedirectController.php:20
 * @route '/{key?}'
 */
 redirect.head = (args?: { key?: string | number } | [key: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -494,7 +494,7 @@ redirect.head = (args?: { key?: string | number } | [key: string | number ] | st
 
 /**
 * @see \App\Http\Controllers\RedirectController::redirect
-* @see app/Http/Controllers/RedirectController.php:24
+* @see app/Http/Controllers/RedirectController.php:20
 * @route '/{key?}'
 */
 const redirectForm = (args?: { key?: string | number } | [key: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -504,7 +504,7 @@ const redirectForm = (args?: { key?: string | number } | [key: string | number ]
 
 /**
 * @see \App\Http\Controllers\RedirectController::redirect
-* @see app/Http/Controllers/RedirectController.php:24
+* @see app/Http/Controllers/RedirectController.php:20
 * @route '/{key?}'
 */
 redirectForm.get = (args?: { key?: string | number } | [key: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -514,7 +514,7 @@ redirectForm.get = (args?: { key?: string | number } | [key: string | number ] |
 
 /**
 * @see \App\Http\Controllers\RedirectController::redirect
-* @see app/Http/Controllers/RedirectController.php:24
+* @see app/Http/Controllers/RedirectController.php:20
 * @route '/{key?}'
 */
 redirectForm.head = (args?: { key?: string | number } | [key: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

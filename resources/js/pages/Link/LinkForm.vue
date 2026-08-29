@@ -38,6 +38,11 @@ interface FormData {
     expires_at?: string;
     expired_redirect_url?: string;
     password?: string;
+    utm_source?: string;
+    utm_medium?: string;
+    utm_campaign?: string;
+    utm_term?: string;
+    utm_content?: string;
     errors: Record<string, string>;
     [key: string]: any;
 }
@@ -51,10 +56,20 @@ const emit = defineEmits<{
     'update:expiresAtDate': [value: string];
 }>();
 
+// The five UTM parameters, in the order everyone writes them.
+const utmFields = [
+    { name: 'utm_source', label: 'Source', placeholder: 'e.g. newsletter' },
+    { name: 'utm_medium', label: 'Medium', placeholder: 'e.g. email' },
+    { name: 'utm_campaign', label: 'Campaign', placeholder: 'e.g. spring-launch' },
+    { name: 'utm_term', label: 'Term', placeholder: 'e.g. url-shortener' },
+    { name: 'utm_content', label: 'Content', placeholder: 'e.g. header-button' },
+] as const;
+
 const domains = usePage().props.domains as string[];
 const allTags = usePage().props.tags as Tag[];
 
 const generalOpen = ref(true);
+const utmOpen = ref(false);
 const trafficOpen = ref(false);
 const passwordOpen = ref(false);
 const expirationOpen = ref(false);
@@ -202,6 +217,44 @@ const selectedTagsLabel = computed(() => {
                             </ComboboxList>
                         </Combobox>
                         <p v-if="form.errors.tags" class="text-sm text-destructive">{{ form.errors.tags }}</p>
+                    </div>
+                </div>
+            </CollapsibleContent>
+        </Collapsible>
+
+        <!-- UTM Parameters -->
+        <Collapsible v-model:open="utmOpen">
+            <CollapsibleTrigger
+                class="w-full rounded-lg bg-muted hover:bg-muted/80 cursor-pointer text-sm px-4 py-2.5 flex items-center justify-between"
+            >
+                <span class="font-medium text-foreground">UTM Parameters</span>
+                <IconChevronDown
+                    class="h-4 w-4 text-muted-foreground transition-transform duration-200"
+                    :class="{ 'rotate-180': utmOpen }"
+                />
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+                <div class="grid grid-cols-6 gap-x-4 gap-y-4 px-1 pt-4 pb-2">
+                    <p class="col-span-6 text-sm text-muted-foreground">
+                        Added to the destination URL when someone opens the link, so the
+                        destination's own analytics can attribute the visit.
+                    </p>
+
+                    <div
+                        v-for="field in utmFields"
+                        :key="field.name"
+                        class="col-span-6 grid gap-2 sm:col-span-3"
+                    >
+                        <Label :for="field.name">{{ field.label }}</Label>
+                        <Input
+                            :id="field.name"
+                            type="text"
+                            v-model="form[field.name]"
+                            :placeholder="field.placeholder"
+                        />
+                        <p v-if="form.errors[field.name]" class="text-sm text-destructive">
+                            {{ form.errors[field.name] }}
+                        </p>
                     </div>
                 </div>
             </CollapsibleContent>

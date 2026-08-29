@@ -25,6 +25,11 @@ const form = useForm({
     expires_at: "",
     expired_redirect_url: "",
     password: "",
+    utm_source: "",
+    utm_medium: "",
+    utm_campaign: "",
+    utm_term: "",
+    utm_content: "",
 });
 
 const show = ref(false);
