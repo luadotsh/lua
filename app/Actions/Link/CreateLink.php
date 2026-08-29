@@ -8,6 +8,7 @@ use App\Models\Link;
 use App\Models\Workspace;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class CreateLink
 {
@@ -43,5 +44,59 @@ class CreateLink
 
             return $link->load('tags');
         });
+    }
+
+    /**
+     * Shared by the REST form requests and the MCP tools, so both surfaces
+     * enforce the same thing. Context is passed in rather than read off a
+     * request, because a tool call is not an HTTP request.
+     *
+     * @param  array<string, mixed>  $input
+     * @return array<string, mixed>
+     */
+    public static function rules(?Workspace $workspace, array $input, string|int|null $ignoreId = null): array
+    {
+        $domains = array_merge(
+            $workspace?->domains->pluck('domain')->toArray() ?? [],
+            config('domains.available'),
+        );
+
+        $domain = data_get($input, 'domain');
+        $key = data_get($input, 'key');
+
+        $optional = fn (mixed $value, array $rules) => Rule::when(fn () => filled($value), $rules);
+
+        return [
+            'key' => $optional($key, [
+                'required', 'string', 'max:255',
+                // Only lowercase letters, numbers and hyphens.
+                'regex:/^[a-z0-9-]+$/',
+                Rule::unique('links')->where('domain', $domain)->ignore($ignoreId),
+            ]),
+            'domain' => [
+                'required', 'string', 'max:255', 'min:2',
+                Rule::in($domains),
+                Rule::unique('links')->where('key', $key)->ignore($ignoreId),
+            ],
+            'url' => ['required', 'url', 'max:255', 'min:2'],
+            'ios' => ['nullable', 'url', 'max:255', 'min:2'],
+            'android' => ['nullable', 'url', 'max:255', 'min:2'],
+            'utm_source' => $optional(data_get($input, 'utm_source'), ['required', 'string', 'max:255', 'min:2']),
+            'utm_medium' => $optional(data_get($input, 'utm_medium'), ['required', 'string', 'max:255', 'min:2']),
+            'utm_campaign' => $optional(data_get($input, 'utm_campaign'), ['required', 'string', 'max:255', 'min:2']),
+            'utm_term' => $optional(data_get($input, 'utm_term'), ['required', 'string', 'max:255', 'min:2']),
+            'utm_content' => $optional(data_get($input, 'utm_content'), ['required', 'string', 'max:255', 'min:2']),
+            'tags' => ['array'],
+            'external_id' => $optional(data_get($input, 'external_id'), [
+                'nullable', 'string', 'max:255', 'min:2',
+                Rule::unique('links')->where('workspace_id', $workspace?->id)->ignore($ignoreId),
+            ]),
+            'password' => $optional(data_get($input, 'password'), ['required', 'string', 'max:255', 'min:6']),
+            'expires_at' => Rule::when(
+                fn () => filled(data_get($input, 'expires_at')) || filled(data_get($input, 'expired_redirect_url')),
+                ['required', 'date'],
+            ),
+            'expired_redirect_url' => $optional(data_get($input, 'expired_redirect_url'), ['nullable', 'url', 'max:255', 'min:2']),
+        ];
     }
 }

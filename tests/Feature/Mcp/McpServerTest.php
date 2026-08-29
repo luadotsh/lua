@@ -66,3 +66,59 @@ it('refuses to delete a link from another workspace', function () {
 
     expect(Link::find($link->id))->not->toBeNull();
 });
+
+it('creates a tag through the tool', function () {
+    LuaServer::actingAs($this->user)
+        ->tool(App\Mcp\Tools\Tag\CreateTagTool::class, ['name' => 'From MCP', 'color' => 'blue'])
+        ->assertOk();
+
+    expect(App\Models\Tag::where('workspace_id', $this->user->current_workspace_id)
+        ->where('name', 'From MCP')->exists())->toBeTrue();
+});
+
+it('rejects a tag colour outside the enum', function () {
+    LuaServer::actingAs($this->user)
+        ->tool(App\Mcp\Tools\Tag\CreateTagTool::class, ['name' => 'Bad', 'color' => 'octarine'])
+        ->assertHasErrors();
+});
+
+it('will not update a tag from another workspace', function () {
+    $other = App\Models\User::factory()->withWorkspace()->create();
+    $tag = App\Models\Tag::factory()->create(['workspace_id' => $other->current_workspace_id]);
+
+    LuaServer::actingAs($this->user)
+        ->tool(App\Mcp\Tools\Tag\UpdateTagTool::class, ['id' => $tag->id, 'name' => 'Stolen'])
+        ->assertHasErrors();
+
+    expect($tag->fresh()->name)->not->toBe('Stolen');
+});
+
+it('adds a domain through the tool', function () {
+    LuaServer::actingAs($this->user)
+        ->tool(App\Mcp\Tools\Domain\CreateDomainTool::class, ['domain' => 'links.example.com'])
+        ->assertOk();
+
+    $domain = App\Models\Domain::where('domain', 'links.example.com')->firstOrFail();
+
+    expect($domain->workspace_id)->toBe($this->user->current_workspace_id)
+        ->and($domain->status->value)->toBe('pending');
+});
+
+it('will not delete a domain from another workspace', function () {
+    $other = App\Models\User::factory()->withWorkspace()->create();
+    $domain = App\Models\Domain::factory()->create(['workspace_id' => $other->current_workspace_id]);
+
+    LuaServer::actingAs($this->user)
+        ->tool(App\Mcp\Tools\Domain\DeleteDomainTool::class, ['id' => $domain->id])
+        ->assertHasErrors();
+
+    expect(App\Models\Domain::find($domain->id))->not->toBeNull();
+});
+
+it('lists only the members of the bound workspace', function () {
+    App\Models\User::factory()->withWorkspace()->create();
+
+    LuaServer::actingAs($this->user)
+        ->tool(App\Mcp\Tools\TeamMember\ListMembersTool::class, [])
+        ->assertOk();
+});

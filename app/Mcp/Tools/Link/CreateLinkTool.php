@@ -11,7 +11,6 @@ use App\Models\Link;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -49,35 +48,17 @@ class CreateLinkTool extends Tool
             return Response::error('This workspace has reached its link limit. Upgrade the plan to create more links.');
         }
 
-        $domains = array_merge(
-            $workspace->domains->pluck('domain')->toArray(),
-            config('domains.available'),
-        );
-
         $data = $request->all();
         $data['domain'] = data_get($data, 'domain') ?: config('domains.main');
 
-        $validator = Validator::make($data, [
-            'url' => ['required', 'url', 'max:255', 'min:2'],
-            'domain' => ['required', 'string', Rule::in($domains)],
-            'key' => [
-                'nullable', 'string', 'max:255', 'regex:/^[a-z0-9-]+$/',
-                Rule::unique('links')->where('domain', $data['domain']),
-            ],
-            'ios' => ['nullable', 'url', 'max:255'],
-            'android' => ['nullable', 'url', 'max:255'],
-            'expired_redirect_url' => ['nullable', 'url', 'max:255'],
-            'tags' => ['nullable', 'array'],
-        ]);
+        // Same rules the REST endpoint enforces.
+        $validator = Validator::make($data, CreateLink::rules($workspace, $data));
 
         if ($validator->fails()) {
             return Response::error($validator->errors()->first());
         }
 
-        $link = CreateLink::execute($workspace, $validator->validated() + [
-            'external_id' => $request->get('external_id'),
-            'expires_at' => $request->get('expires_at'),
-        ]);
+        $link = CreateLink::execute($workspace, $validator->validated());
 
         return Response::structured((new LinkResource($link))->resolve());
     }

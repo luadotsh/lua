@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Mcp\Tools\Link;
 
+use App\Actions\Link\CreateLink;
 use App\Actions\Link\UpdateLink;
 use App\Http\Resources\Api\LinkResource;
 use App\Mcp\Concerns\ResolvesWorkspace;
 use App\Models\Link;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -51,27 +51,11 @@ class UpdateLinkTool extends Tool
             return Response::error('Link not found in this workspace.');
         }
 
-        $domains = array_merge(
-            $workspace->domains->pluck('domain')->toArray(),
-            config('domains.available'),
-        );
-
         $data = collect($request->all())->except('id')->all();
+        $data['domain'] = data_get($data, 'domain', $link->domain);
+        $data['url'] = data_get($data, 'url', $link->url);
 
-        $validator = Validator::make($data, [
-            'url' => ['sometimes', 'url', 'max:255', 'min:2'],
-            'domain' => ['sometimes', 'string', Rule::in($domains)],
-            'key' => [
-                'sometimes', 'string', 'max:255', 'regex:/^[a-z0-9-]+$/',
-                Rule::unique('links')
-                    ->where('domain', data_get($data, 'domain', $link->domain))
-                    ->ignore($link->id),
-            ],
-            'ios' => ['nullable', 'url', 'max:255'],
-            'android' => ['nullable', 'url', 'max:255'],
-            'expired_redirect_url' => ['nullable', 'url', 'max:255'],
-            'tags' => ['nullable', 'array'],
-        ]);
+        $validator = Validator::make($data, CreateLink::rules($workspace, $data, $link->id));
 
         if ($validator->fails()) {
             return Response::error($validator->errors()->first());
