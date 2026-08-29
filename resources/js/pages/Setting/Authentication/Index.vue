@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, router, useForm } from "@inertiajs/vue3";
-import { ref } from "vue";
+import { nextTick, ref } from "vue";
 import { IconDeviceLaptop } from "@tabler/icons-vue";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,6 +45,19 @@ const sessionsForm = useForm({
 });
 
 const confirmingLogout = ref(false);
+const confirmForm = ref<HTMLFormElement | null>(null);
+
+// The button is the last thing on the page, so swapping it for the confirm
+// field leaves that field below the fold: from where the eye is, the button
+// simply disappears and nothing happens. Bring it into view and focus it.
+const startLogout = async () => {
+    confirmingLogout.value = true;
+
+    await nextTick();
+
+    confirmForm.value?.scrollIntoView({ block: "center", behavior: "smooth" });
+    confirmForm.value?.querySelector("input")?.focus();
+};
 
 const updatePassword = () => {
     passwordForm.put(passwordRoute.url(), {
@@ -205,11 +218,16 @@ const disconnect = (provider: string) => {
                 </div>
 
                 <div class="mt-4 max-w-md">
-                    <Button v-if="!confirmingLogout" variant="outline" @click="confirmingLogout = true">
+                    <Button v-if="!confirmingLogout" variant="outline" @click="startLogout">
                         Sign out other sessions
                     </Button>
 
-                    <form v-else class="grid gap-3" @submit.prevent="logoutOtherSessions">
+                    <form
+                        v-else
+                        ref="confirmForm"
+                        class="grid gap-3"
+                        @submit.prevent="logoutOtherSessions"
+                    >
                         <div v-if="hasPassword" class="grid gap-2">
                             <Label for="sessions_password">Confirm your password</Label>
                             <PasswordInput

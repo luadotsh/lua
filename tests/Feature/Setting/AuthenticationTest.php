@@ -8,6 +8,7 @@ use App\Enums\User\Role;
 use App\Models\AccessToken;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 use function Pest\Laravel\actingAs;
@@ -122,4 +123,52 @@ it('will not let one member revoke another member oauth grant', function () {
 
     expect($revoked)->toBeFalse()
         ->and($theirToken->fresh()->revoked)->toBeFalse();
+});
+
+it('signs out the other sessions but keeps this one', function () {
+    config(['session.driver' => 'database']);
+
+    $keep = 'this-session';
+    $other = 'other-session';
+
+    foreach ([$keep, $other] as $id) {
+        DB::table('sessions')->insert([
+            'id' => $id,
+            'user_id' => $this->user->id,
+            'ip_address' => '127.0.0.1',
+            'user_agent' => 'Test',
+            'payload' => '',
+            'last_activity' => now()->timestamp,
+        ]);
+    }
+
+    actingAs($this->user)
+        ->withSession(['_token' => 'x'])
+        ->delete(route('setting.authentication.sessions.destroy'), [
+            'password' => 'password',
+        ])
+        ->assertSessionHasNoErrors();
+
+    expect(DB::table('sessions')->where('id', $other)->exists())->toBeFalse();
+});
+
+it('refuses to sign out the other sessions with a wrong password', function () {
+    config(['session.driver' => 'database']);
+
+    DB::table('sessions')->insert([
+        'id' => 'other-session',
+        'user_id' => $this->user->id,
+        'ip_address' => '127.0.0.1',
+        'user_agent' => 'Test',
+        'payload' => '',
+        'last_activity' => now()->timestamp,
+    ]);
+
+    actingAs($this->user)
+        ->delete(route('setting.authentication.sessions.destroy'), [
+            'password' => 'wrong',
+        ])
+        ->assertSessionHasErrors('password');
+
+    expect(DB::table('sessions')->where('id', 'other-session')->exists())->toBeTrue();
 });

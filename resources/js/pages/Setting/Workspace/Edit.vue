@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { Head, useForm, usePage } from "@inertiajs/vue3";
-import AppLayout from "@/layouts/AppLayout.vue";
-import SettingsLayout from "@/layouts/settings/Layout.vue";
+import HeadingSmall from "@/components/HeadingSmall.vue";
+import InputError from "@/components/InputError.vue";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Logo from "./Logo.vue";
+import { Separator } from "@/components/ui/separator";
+import AppLayout from "@/layouts/AppLayout.vue";
+import SettingsLayout from "@/layouts/settings/Layout.vue";
 import * as workspaceRoutes from "@/routes/setting/workspace";
+import Logo from "./Logo.vue";
 
 const workspace = usePage().props.auth.user.current_workspace;
 
@@ -20,53 +23,42 @@ const update = () => {
 </script>
 
 <template>
-    <Head title="Workspace Settings" />
+    <Head title="Workspace" />
 
     <AppLayout>
         <SettingsLayout>
-            <div class="flex items-center justify-between">
-                <div>
-                    <h2 class="text-lg font-semibold">Workspace Settings</h2>
-                    <p class="text-sm text-zinc-500 dark:text-zinc-400">
-                        Here you can update your workspace settings like name,
-                        logo, etc.
-                    </p>
-                </div>
-                <div>
-                    <Button
-                        :disabled="form.processing"
-                        :class="{ 'opacity-25': form.processing }"
-                        @click="update"
-                    >
-                        Save Changes
-                    </Button>
-                </div>
+            <div class="flex flex-col space-y-6">
+                <HeadingSmall
+                    title="Logo"
+                    description="This is how your workspace shows up across the app."
+                />
+
+                <Logo />
             </div>
-            <div
-                class="mt-6 space-y-8 border-b border-zinc-200 dark:border-zinc-700 pb-12 sm:space-y-0 sm:divide-y sm:divide-zinc-200 sm:dark:divide-zinc-700 sm:border-t sm:pb-0"
-            >
-                <div
-                    class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6"
-                >
-                    <Label for="logo">Logo</Label>
-                    <div class="mt-2 sm:col-span-2 sm:mt-0">
-                        <Logo />
-                    </div>
-                </div>
-                <div
-                    class="sm:grid sm:grid-cols-3 sm:items-center sm:gap-4 sm:py-6"
-                >
-                    <Label for="name">Name <span class="text-red-500">*</span></Label>
-                    <div class="mt-2 sm:col-span-2 sm:mt-0">
+
+            <Separator />
+
+            <div class="flex flex-col space-y-6">
+                <HeadingSmall
+                    title="Workspace information"
+                    description="Update your workspace's name."
+                />
+
+                <form class="space-y-6" @submit.prevent="update">
+                    <div class="grid gap-2">
+                        <Label for="name">Name</Label>
                         <Input
                             id="name"
                             v-model="form.name"
                             type="text"
-                            autocomplete="name"
+                            autocomplete="organization"
+                            placeholder="Your workspace name"
                         />
-                        <p v-if="form.errors.name" class="mt-2 text-sm text-red-600">{{ form.errors.name }}</p>
+                        <InputError :message="form.errors.name" />
                     </div>
-                </div>
+
+                    <Button :disabled="form.processing">Save changes</Button>
+                </form>
             </div>
         </SettingsLayout>
     </AppLayout>
