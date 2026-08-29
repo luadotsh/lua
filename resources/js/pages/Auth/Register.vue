@@ -2,6 +2,7 @@
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import PasswordInput from '@/components/PasswordInput.vue';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import { register as registerRoute } from '@/routes';
@@ -26,7 +27,7 @@ const submit = () => {
 
         <Social />
 
-        <form class="flex flex-col gap-4" @submit.prevent="submit">
+        <form class="flex flex-col gap-6" @submit.prevent="submit">
             <div class="grid gap-2">
                 <Label for="name">Name</Label>
                 <Input
@@ -56,10 +57,9 @@ const submit = () => {
 
             <div class="grid gap-2">
                 <Label for="password">Password</Label>
-                <Input
+                <PasswordInput
                     id="password"
                     v-model="form.password"
-                    type="password"
                     autocomplete="new-password"
                     required
                     placeholder="Min. 8 characters"

@@ -2,6 +2,7 @@
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import PasswordInput from '@/components/PasswordInput.vue';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import { login as loginRoute } from '@/routes';
@@ -36,7 +37,7 @@ const submit = () => {
             {{ status }}
         </div>
 
-        <form class="flex flex-col gap-4" @submit.prevent="submit">
+        <form class="flex flex-col gap-6" @submit.prevent="submit">
             <div class="grid gap-2">
                 <Label for="email">Email</Label>
                 <Input
@@ -60,10 +61,9 @@ const submit = () => {
                         Forgot your password?
                     </Link>
                 </div>
-                <Input
+                <PasswordInput
                     id="password"
                     v-model="form.password"
-                    type="password"
                     autocomplete="current-password"
                     required
                 />

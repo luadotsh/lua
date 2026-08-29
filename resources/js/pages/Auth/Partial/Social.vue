@@ -1,23 +1,27 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { google } from '@/routes/auth';
 </script>
 
 <template>
-    <div class="flex flex-col gap-4">
-        <Button variant="outline" as-child class="w-full">
-            <a :href="google().url">
-                <img src="/images/oauth/google.svg" class="h-4 w-4 mr-2" alt="Google" />
-                Continue with Google
-            </a>
-        </Button>
+    <!--
+        Button and divider are siblings on purpose: they inherit the auth
+        layout's gap-6, so the divider sits the same distance from the button
+        above it as from the form below. Wrapping them would make it hug the
+        button.
+    -->
+    <Button variant="outline" as-child class="w-full">
+        <a :href="google().url">
+            <img src="/images/oauth/google.svg" class="h-4 w-4 mr-2" alt="Google" />
+            Continue with Google
+        </a>
+    </Button>
 
-        <div class="relative">
-            <Separator />
-            <span class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-2 text-xs text-muted-foreground">
-                Or continue with
-            </span>
-        </div>
+    <div
+        class="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border"
+    >
+        <span class="relative z-10 bg-background px-2 text-muted-foreground">
+            Or continue with
+        </span>
     </div>
 </template>
