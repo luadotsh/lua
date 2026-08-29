@@ -115,7 +115,8 @@ const deleteTag = () => {
                                 <div class="flex flex-1 items-center space-x-4">
                                     <div class="flex items-center space-x-2">
                                         <div
-                                            :class="`h-2 w-2 rounded-full bg-${element.color}-400`"
+                                            class="h-2.5 w-2.5 shrink-0 rounded-full"
+                                            :style="{ backgroundColor: element.color }"
                                         ></div>
                                         <div
                                             class="font-medium text-sm text-zinc-600 dark:text-white"

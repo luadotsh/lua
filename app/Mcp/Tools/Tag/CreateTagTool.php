@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace App\Mcp\Tools\Tag;
 
 use App\Actions\Tag\CreateTag;
-use App\Enums\Tag\Color;
 use App\Http\Resources\Api\TagResource;
 use App\Mcp\Concerns\ResolvesWorkspace;
+use App\Models\Tag;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rules\Enum;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -30,7 +29,7 @@ class CreateTagTool extends Tool
     {
         return [
             'name' => $schema->string()->description('The tag name.')->required(),
-            'color' => $schema->string()->description('One of: red, orange, yellow, green, cyan, teal, blue, indigo, purple, fuchsia, pink, zinc.')->required(),
+            'color' => $schema->string()->description('A hex colour, e.g. #22c55e.')->required(),
         ];
     }
 
@@ -44,7 +43,7 @@ class CreateTagTool extends Tool
 
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255', 'min:2'],
-            'color' => ['required', 'string', new Enum(Color::class)],
+            'color' => ['required', 'string', 'regex:'.Tag::COLOR_PATTERN],
         ]);
 
         if ($validator->fails()) {

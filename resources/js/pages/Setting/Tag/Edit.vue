@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import ColorSelector from "@/components/ColorSelector.vue";
+import HexColorInput from "@/components/HexColorInput.vue";
 import * as tagsRoutes from "@/routes/setting/tags";
 
 interface Tag {
@@ -72,8 +72,8 @@ const update = () => {
                 </div>
 
                 <div class="sm:col-span-6 grid gap-2">
-                    <Label for="color">Choose color <span class="text-red-500">*</span></Label>
-                    <ColorSelector id="color" v-model="form.color" />
+                    <Label for="color">Color</Label>
+                    <HexColorInput v-model="form.color" name="color" />
                     <p v-if="form.errors.color" class="mt-2 text-sm text-red-600">{{ form.errors.color }}</p>
                 </div>
             </div>

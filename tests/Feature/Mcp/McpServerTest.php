@@ -2,8 +2,22 @@
 
 declare(strict_types=1);
 
+use App\Actions\Link\ListLinks;
 use App\Mcp\Servers\LuaServer;
+use App\Mcp\Tools\Domain\CreateDomainTool;
+use App\Mcp\Tools\Domain\DeleteDomainTool;
+use App\Mcp\Tools\Link\CreateLinkTool;
+use App\Mcp\Tools\Link\DeleteLinkTool;
+use App\Mcp\Tools\Link\GetLinkQrCodeTool;
+use App\Mcp\Tools\Link\GetLinkTool;
+use App\Mcp\Tools\Link\ListLinksTool;
+use App\Mcp\Tools\Tag\CreateTagTool;
+use App\Mcp\Tools\Tag\UpdateTagTool;
+use App\Mcp\Tools\TeamMember\ListMembersTool;
+use App\Mcp\Tools\Workspace\GetWorkspaceTool;
+use App\Models\Domain;
 use App\Models\Link;
+use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -22,7 +36,7 @@ it('rejects an unauthenticated request to the mcp endpoint', function () {
 });
 
 it('exposes the expected tools', function () {
-    $response = LuaServer::actingAs($this->user)->tool(App\Mcp\Tools\Workspace\GetWorkspaceTool::class, []);
+    $response = LuaServer::actingAs($this->user)->tool(GetWorkspaceTool::class, []);
 
     $response->assertOk();
 });
@@ -33,7 +47,7 @@ it('lists only links belonging to the bound workspace', function () {
     $other = User::factory()->withWorkspace()->create();
     Link::factory(2)->create(['workspace_id' => $other->current_workspace_id]);
 
-    $response = LuaServer::actingAs($this->user)->tool(App\Mcp\Tools\Link\ListLinksTool::class, []);
+    $response = LuaServer::actingAs($this->user)->tool(ListLinksTool::class, []);
 
     $response->assertOk();
 });
@@ -42,13 +56,13 @@ it('refuses to fetch a link from another workspace', function () {
     $other = User::factory()->withWorkspace()->create();
     $link = Link::factory()->create(['workspace_id' => $other->current_workspace_id]);
 
-    $response = LuaServer::actingAs($this->user)->tool(App\Mcp\Tools\Link\GetLinkTool::class, ['id' => $link->id]);
+    $response = LuaServer::actingAs($this->user)->tool(GetLinkTool::class, ['id' => $link->id]);
 
     $response->assertHasErrors();
 });
 
 it('creates a link through the tool', function () {
-    $response = LuaServer::actingAs($this->user)->tool(App\Mcp\Tools\Link\CreateLinkTool::class, ['url' => 'https://example.com', 'key' => 'from-mcp']);
+    $response = LuaServer::actingAs($this->user)->tool(CreateLinkTool::class, ['url' => 'https://example.com', 'key' => 'from-mcp']);
 
     $response->assertOk();
 
@@ -61,7 +75,7 @@ it('refuses to delete a link from another workspace', function () {
     $link = Link::factory()->create(['workspace_id' => $other->current_workspace_id]);
 
     LuaServer::actingAs($this->user)
-        ->tool(App\Mcp\Tools\Link\DeleteLinkTool::class, ['id' => $link->id])
+        ->tool(DeleteLinkTool::class, ['id' => $link->id])
         ->assertHasErrors();
 
     expect(Link::find($link->id))->not->toBeNull();
@@ -69,25 +83,25 @@ it('refuses to delete a link from another workspace', function () {
 
 it('creates a tag through the tool', function () {
     LuaServer::actingAs($this->user)
-        ->tool(App\Mcp\Tools\Tag\CreateTagTool::class, ['name' => 'From MCP', 'color' => 'blue'])
+        ->tool(CreateTagTool::class, ['name' => 'From MCP', 'color' => '#60a5fa'])
         ->assertOk();
 
-    expect(App\Models\Tag::where('workspace_id', $this->user->current_workspace_id)
+    expect(Tag::where('workspace_id', $this->user->current_workspace_id)
         ->where('name', 'From MCP')->exists())->toBeTrue();
 });
 
-it('rejects a tag colour outside the enum', function () {
+it('rejects a tag colour that is not a hex value', function () {
     LuaServer::actingAs($this->user)
-        ->tool(App\Mcp\Tools\Tag\CreateTagTool::class, ['name' => 'Bad', 'color' => 'octarine'])
+        ->tool(CreateTagTool::class, ['name' => 'Bad', 'color' => 'octarine'])
         ->assertHasErrors();
 });
 
 it('will not update a tag from another workspace', function () {
-    $other = App\Models\User::factory()->withWorkspace()->create();
-    $tag = App\Models\Tag::factory()->create(['workspace_id' => $other->current_workspace_id]);
+    $other = User::factory()->withWorkspace()->create();
+    $tag = Tag::factory()->create(['workspace_id' => $other->current_workspace_id]);
 
     LuaServer::actingAs($this->user)
-        ->tool(App\Mcp\Tools\Tag\UpdateTagTool::class, ['id' => $tag->id, 'name' => 'Stolen'])
+        ->tool(UpdateTagTool::class, ['id' => $tag->id, 'name' => 'Stolen'])
         ->assertHasErrors();
 
     expect($tag->fresh()->name)->not->toBe('Stolen');
@@ -95,60 +109,60 @@ it('will not update a tag from another workspace', function () {
 
 it('adds a domain through the tool', function () {
     LuaServer::actingAs($this->user)
-        ->tool(App\Mcp\Tools\Domain\CreateDomainTool::class, ['domain' => 'links.example.com'])
+        ->tool(CreateDomainTool::class, ['domain' => 'links.example.com'])
         ->assertOk();
 
-    $domain = App\Models\Domain::where('domain', 'links.example.com')->firstOrFail();
+    $domain = Domain::where('domain', 'links.example.com')->firstOrFail();
 
     expect($domain->workspace_id)->toBe($this->user->current_workspace_id)
         ->and($domain->status->value)->toBe('pending');
 });
 
 it('will not delete a domain from another workspace', function () {
-    $other = App\Models\User::factory()->withWorkspace()->create();
-    $domain = App\Models\Domain::factory()->create(['workspace_id' => $other->current_workspace_id]);
+    $other = User::factory()->withWorkspace()->create();
+    $domain = Domain::factory()->create(['workspace_id' => $other->current_workspace_id]);
 
     LuaServer::actingAs($this->user)
-        ->tool(App\Mcp\Tools\Domain\DeleteDomainTool::class, ['id' => $domain->id])
+        ->tool(DeleteDomainTool::class, ['id' => $domain->id])
         ->assertHasErrors();
 
-    expect(App\Models\Domain::find($domain->id))->not->toBeNull();
+    expect(Domain::find($domain->id))->not->toBeNull();
 });
 
 it('lists only the members of the bound workspace', function () {
-    App\Models\User::factory()->withWorkspace()->create();
+    User::factory()->withWorkspace()->create();
 
     LuaServer::actingAs($this->user)
-        ->tool(App\Mcp\Tools\TeamMember\ListMembersTool::class, [])
+        ->tool(ListMembersTool::class, [])
         ->assertOk();
 });
 
 it('returns a qr code for a link in the bound workspace', function () {
-    $link = App\Models\Link::factory()->create([
+    $link = Link::factory()->create([
         'workspace_id' => $this->user->current_workspace_id,
     ]);
 
     LuaServer::actingAs($this->user)
-        ->tool(App\Mcp\Tools\Link\GetLinkQrCodeTool::class, ['id' => $link->id])
+        ->tool(GetLinkQrCodeTool::class, ['id' => $link->id])
         ->assertOk();
 });
 
 it('will not return a qr code for another workspace link', function () {
-    $other = App\Models\User::factory()->withWorkspace()->create();
-    $link = App\Models\Link::factory()->create(['workspace_id' => $other->current_workspace_id]);
+    $other = User::factory()->withWorkspace()->create();
+    $link = Link::factory()->create(['workspace_id' => $other->current_workspace_id]);
 
     LuaServer::actingAs($this->user)
-        ->tool(App\Mcp\Tools\Link\GetLinkQrCodeTool::class, ['id' => $link->id])
+        ->tool(GetLinkQrCodeTool::class, ['id' => $link->id])
         ->assertHasErrors();
 });
 
 it('paginates links through the shared action', function () {
-    App\Models\Link::factory(30)->create(['workspace_id' => $this->user->current_workspace_id]);
+    Link::factory(30)->create(['workspace_id' => $this->user->current_workspace_id]);
 
     LuaServer::actingAs($this->user)
-        ->tool(App\Mcp\Tools\Link\ListLinksTool::class, ['per_page' => 5])
+        ->tool(ListLinksTool::class, ['per_page' => 5])
         ->assertOk();
 
-    expect(App\Actions\Link\ListLinks::execute($this->user->currentWorkspace, ['per_page' => 5]))
+    expect(ListLinks::execute($this->user->currentWorkspace, ['per_page' => 5]))
         ->toHaveCount(5);
 });

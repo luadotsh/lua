@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Tag;
 
+use App\Models\Tag;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Enum;
-
-use App\Enums\Tag\Color;
 
 class CreateRequest extends FormRequest
 {
@@ -18,7 +16,7 @@ class CreateRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255', 'min:2'],
-            'color' => ['required','string', 'max:255', new Enum(Color::class)],
+            'color' => ['required', 'string', 'regex:'.Tag::COLOR_PATTERN],
         ];
     }
 }

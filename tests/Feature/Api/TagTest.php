@@ -2,12 +2,9 @@
 
 declare(strict_types=1);
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-
-use App\Enums\Tag\Color;
-
-use App\Models\User;
 use App\Models\Tag;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
@@ -15,7 +12,6 @@ beforeEach(function () {
     $this->user = User::factory()->withWorkspace()->create();
     $this->token = apiTokenFor($this->user);
 });
-
 
 it('can list tags', function () {
 
@@ -36,7 +32,7 @@ it('can create a new tag', function () {
         ->withToken($this->token)
         ->post(route('api.tags.store'), [
             'name' => 'New Tag',
-            'color' => Color::BLUE->value,
+            'color' => '#60a5fa',
         ]);
 
     $response->assertStatus(201);
@@ -51,13 +47,13 @@ it('can update a tag', function () {
         ->withToken($this->token)
         ->put(route('api.tags.update', $tag->id), [
             'name' => 'Updated Tag',
-            'color' => Color::GREEN->value,
+            'color' => '#4ade80',
         ]);
 
     $response->assertStatus(200)
         ->assertJsonFragment([
             'name' => 'Updated Tag',
-            'color' => Color::GREEN->value,
+            'color' => '#4ade80',
         ]);
 });
 
@@ -71,4 +67,12 @@ it('can delete a tag', function () {
         ->delete(route('api.tags.destroy', $tag->id));
 
     $response->assertStatus(200);
+});
+
+it('refuses a colour that is not a hex value', function () {
+    $this
+        ->withToken($this->token)
+        ->postJson(route('api.tags.store'), ['name' => 'Bad', 'color' => 'green'])
+        ->assertStatus(422)
+        ->assertJsonValidationErrors('color');
 });

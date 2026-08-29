@@ -4,21 +4,23 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Scopes\TagScope;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-
-use App\Enums\Tag\Color;
-
-use App\Models\Scopes\TagScope;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Tag extends Model
 {
-    use HasFactory, SoftDeletes, HasUuids;
+    use HasFactory, HasUuids, SoftDeletes;
+
+    /**
+     * A CSS hex colour: 3, 6 or 8 digits. Kept here so the web request, the API
+     * request and the MCP tool all validate the same thing.
+     */
+    public const COLOR_PATTERN = '/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/';
 
     /**
      * The attributes that are mass assignable.
@@ -29,20 +31,8 @@ class Tag extends Model
         'workspace_id',
         'name',
         'sort',
-        'color'
+        'color',
     ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'color' => Color::class,
-        ];
-    }
 
     protected static function booted()
     {

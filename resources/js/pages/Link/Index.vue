@@ -166,8 +166,13 @@ onMounted(() => {
                                 v-for="tag in data.tags"
                                 :key="tag.id"
                                 variant="secondary"
-                                class="h-4 px-1.5 text-[10px] font-medium rounded"
+                                class="h-4 gap-1 px-1.5 text-[10px] font-medium rounded"
                             >
+                                <span
+                                    v-if="tag.color"
+                                    class="size-1.5 shrink-0 rounded-full"
+                                    :style="{ backgroundColor: tag.color }"
+                                />
                                 {{ tag.name }}
                             </Badge>
                         </div>

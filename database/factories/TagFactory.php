@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Models\Tag;
+use App\Models\Workspace;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-use App\Enums\Tag\Color;
-
-use App\Models\Workspace;
-
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Tag>
+ * @extends Factory<Tag>
  */
 class TagFactory extends Factory
 {
@@ -25,7 +23,7 @@ class TagFactory extends Factory
         return [
             'workspace_id' => Workspace::factory(),
             'name' => $this->faker->word,
-            'color' => Color::GREEN,
+            'color' => $this->faker->hexColor(),
             'sort' => $this->faker->randomNumber(),
         ];
     }

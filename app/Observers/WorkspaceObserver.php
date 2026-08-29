@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Observers;
 
-use App\Models\Workspace;
 use App\Models\Tag;
+use App\Models\Workspace;
 
 class WorkspaceObserver
 {
@@ -19,21 +19,21 @@ class WorkspaceObserver
             'workspace_id' => $workspace->id,
             'sort' => 1,
             'name' => 'Marketing',
-            'color' => 'red'
+            'color' => '#f87171',
         ]);
 
         Tag::create([
             'workspace_id' => $workspace->id,
             'sort' => 2,
             'name' => 'Sales',
-            'color' => 'blue'
+            'color' => '#60a5fa',
         ]);
 
         Tag::create([
             'workspace_id' => $workspace->id,
             'sort' => 3,
             'name' => 'Development',
-            'color' => 'green'
+            'color' => '#4ade80',
         ]);
     }
 

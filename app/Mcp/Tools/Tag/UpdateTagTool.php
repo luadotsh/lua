@@ -6,13 +6,11 @@ namespace App\Mcp\Tools\Tag;
 
 use App\Actions\Tag\GetTag;
 use App\Actions\Tag\UpdateTag;
-use App\Enums\Tag\Color;
 use App\Http\Resources\Api\TagResource;
 use App\Mcp\Concerns\ResolvesWorkspace;
 use App\Models\Tag;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rules\Enum;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -32,7 +30,7 @@ class UpdateTagTool extends Tool
         return [
             'id' => $schema->string()->description('The tag id.')->required(),
             'name' => $schema->string()->description('The tag name.'),
-            'color' => $schema->string()->description('One of: red, orange, yellow, green, cyan, teal, blue, indigo, purple, fuchsia, pink, zinc.'),
+            'color' => $schema->string()->description('A hex colour, e.g. #22c55e.'),
         ];
     }
 
@@ -48,7 +46,7 @@ class UpdateTagTool extends Tool
 
         $validator = Validator::make($data, [
             'name' => ['sometimes', 'string', 'max:255', 'min:2'],
-            'color' => ['sometimes', 'string', new Enum(Color::class)],
+            'color' => ['sometimes', 'string', 'regex:'.Tag::COLOR_PATTERN],
         ]);
 
         if ($validator->fails()) {
