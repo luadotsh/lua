@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { usePage, useForm, Head } from "@inertiajs/vue3";
+import { usePage, useForm, Head, Link } from "@inertiajs/vue3";
 import AppLayout from "@/layouts/AppLayout.vue";
 import SettingsLayout from "@/layouts/settings/Layout.vue";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Avatar from "./Avatar.vue";
 import * as accountRoutes from "@/routes/setting/account";
+import { edit as authenticationEdit } from "@/routes/setting/authentication";
 
 defineProps<{
     mustVerifyEmail?: boolean;
@@ -18,9 +19,6 @@ const user = usePage().props.auth.user;
 const form = useForm({
     name: user.name,
     email: user.email,
-    current_password: "",
-    password: "",
-    password_confirmation: "",
 });
 
 const update = () => {
@@ -41,7 +39,7 @@ const update = () => {
                 <div>
                     <h2 class="text-lg font-semibold">Account Information</h2>
                     <p class="text-sm text-zinc-500 dark:text-zinc-400">
-                        Update your account's name, email and password.
+                        Update your account's name and email.
                     </p>
                 </div>
                 <div>
@@ -100,43 +98,19 @@ const update = () => {
                     class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6"
                 >
                     <div>
-                        <Label for="current_password">Password</Label>
+                        <Label>Password</Label>
                         <p class="text-sm text-zinc-500 dark:text-zinc-400">
-                            Confirm your current password before setting a new
-                            one. 8 characters minimum.
+                            Passwords, connected accounts and sessions live on
+                            their own page.
                         </p>
                     </div>
-                    <div class="mt-2 sm:col-span-2 sm:mt-0 space-y-2">
-                        <div>
-                            <Input
-                                id="current_password"
-                                v-model="form.current_password"
-                                type="password"
-                                autocomplete="new-password"
-                                placeholder="Current Password"
-                            />
-                            <p v-if="form.errors.current_password" class="mt-2 text-sm text-red-600">{{ form.errors.current_password }}</p>
-                        </div>
-                        <div>
-                            <Input
-                                id="password"
-                                v-model="form.password"
-                                type="password"
-                                autocomplete="new-password"
-                                placeholder="New Password"
-                            />
-                            <p v-if="form.errors.password" class="mt-2 text-sm text-red-600">{{ form.errors.password }}</p>
-                        </div>
-                        <div>
-                            <Input
-                                id="password_confirmation"
-                                v-model="form.password_confirmation"
-                                type="password"
-                                autocomplete="current-password"
-                                placeholder="Confirm Password"
-                            />
-                            <p v-if="form.errors.password_confirmation" class="mt-2 text-sm text-red-600">{{ form.errors.password_confirmation }}</p>
-                        </div>
+                    <div class="mt-2 sm:col-span-2 sm:mt-0">
+                        <Link
+                            :href="authenticationEdit().url"
+                            class="text-sm underline underline-offset-4 hover:text-foreground"
+                        >
+                            Go to authentication settings
+                        </Link>
                     </div>
                 </div>
 

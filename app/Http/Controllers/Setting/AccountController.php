@@ -6,7 +6,6 @@ namespace App\Http\Controllers\Setting;
 
 use App\Http\Requests\Account\UpdateRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -32,16 +31,9 @@ class AccountController extends Controller
         $user = $request->user();
         $user->name = $request->name;
         $user->email = $request->email;
-        $user->theme = $request->theme;
-
         // If the user is changing their email address, they will need to verify the new address.
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
-        }
-
-        // update the user password
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
         }
 
         $user->save();

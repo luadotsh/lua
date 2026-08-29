@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 use App\Enums\User\Role;
-use App\Enums\User\Theme;
 
 use App\Models\User;
 use App\Models\Workspace;
@@ -37,7 +36,6 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
-            'theme' => Theme::SYSTEM,
         ];
     }
 

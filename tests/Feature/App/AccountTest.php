@@ -25,8 +25,7 @@ test('profile information can be updated', function () {
         ->from(route('setting.account.edit'))
         ->post(route('setting.account.update'), [
             'name' => 'Test User',
-            'email' => 'test@example.com',
-            'theme' => $this->user->theme->value
+            'email' => 'test@example.com'
         ])
         ->assertSessionHasNoErrors()
         ->assertRedirect(route('setting.account.edit'));
@@ -43,8 +42,7 @@ test('email verification status is unchanged when email address is unchanged', f
         ->from(route('setting.account.edit'))
         ->post(route('setting.account.update'), [
             'name' => 'Test User',
-            'email' => $this->user->email,
-            'theme' => $this->user->theme->value
+            'email' => $this->user->email
         ])
         ->assertSessionHasNoErrors()
         ->assertRedirect(route('setting.account.edit'));
@@ -52,4 +50,21 @@ test('email verification status is unchanged when email address is unchanged', f
     $this->user->refresh();
 
     expect($this->user->email_verified_at)->not->toBeNull();
+});
+
+it('does not change the password from the profile screen', function () {
+    $user = App\Models\User::factory()->withWorkspace()->create([
+        'password' => Illuminate\Support\Facades\Hash::make('original-password'),
+    ]);
+
+    // The profile form used to accept a password without confirming the
+    // current one; it must ignore the field entirely now.
+    Pest\Laravel\actingAs($user)->post(route('setting.account.update'), [
+        'name' => $user->name,
+        'email' => $user->email,
+        'password' => 'hijacked-password',
+        'password_confirmation' => 'hijacked-password',
+    ]);
+
+    expect(Illuminate\Support\Facades\Hash::check('original-password', $user->fresh()->password))->toBeTrue();
 });

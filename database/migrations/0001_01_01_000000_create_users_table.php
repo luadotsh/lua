@@ -4,8 +4,6 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-use App\Enums\User\Theme;
-
 return new class extends Migration
 {
     /**
@@ -25,7 +23,6 @@ return new class extends Migration
             $table->string('github_id')->nullable()->unique();
             $table->string('photo')->nullable();
             $table->foreignUuid('current_workspace_id')->nullable();
-            $table->string('theme')->default(Theme::SYSTEM);
 
             // Signup attribution. UTMs are our own campaign values, so 255 is
             // plenty; ad click IDs are opaque provider tokens with no

@@ -14,7 +14,6 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Laravel\Passport\HasApiTokens;
 
 use App\Models\Traits\HasWorkspaces;
-use App\Enums\User\Theme;
 
 class User extends Authenticatable implements MustVerifyEmail, HasMedia
 {
@@ -59,7 +58,6 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'theme' => Theme::class,
         ];
     }
 
