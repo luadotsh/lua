@@ -4,115 +4,80 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Actions\Analytics\GetBreakdown;
+use App\Actions\Analytics\GetOverview;
+use App\Actions\Analytics\GetTimeseries;
 use App\Http\Requests\Analytics\StatisticsRequest;
-use App\Services\CalculateStat;
-
-use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class AnalyticsController extends Controller
 {
-    public function __construct(
-        public CalculateStat $stat
-    ) {}
+    /**
+     * Which breakdowns each card shows, and the icon set beside their rows.
+     * Adding a slice is an entry here plus one in GetBreakdown::DIMENSIONS.
+     */
+    private const CARDS = [
+        'sources' => [
+            ['key' => 'referer', 'label' => 'Referrer', 'icon' => 'favicon'],
+            ['key' => 'utm_source', 'label' => 'Source'],
+            ['key' => 'utm_medium', 'label' => 'Medium'],
+            ['key' => 'utm_campaign', 'label' => 'Campaign'],
+            ['key' => 'utm_content', 'label' => 'Content'],
+            ['key' => 'utm_term', 'label' => 'Term'],
+        ],
+        'locations' => [
+            ['key' => 'country', 'label' => 'Country', 'icon' => 'country'],
+            ['key' => 'region', 'label' => 'Region'],
+            ['key' => 'city', 'label' => 'City'],
+        ],
+        'devices' => [
+            ['key' => 'device', 'label' => 'Device', 'icon' => 'device'],
+            ['key' => 'browser', 'label' => 'Browser', 'icon' => 'browser'],
+            ['key' => 'os', 'label' => 'OS', 'icon' => 'os'],
+            ['key' => 'language', 'label' => 'Language'],
+        ],
+    ];
 
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
-        $start = Carbon::createFromFormat('Y-m-d', $request->start ? $request->start : now()->subDays(30)->format('Y-m-d'))->startOfDay();
-        $end = Carbon::createFromFormat('Y-m-d', $request->end ? $request->end : now()->format('Y-m-d'))->endOfDay();
+        $start = CarbonImmutable::parse($request->start ?: now()->subDays(29))->startOfDay();
+        $end = CarbonImmutable::parse($request->end ?: now())->endOfDay();
 
-        return Inertia::render('Analytics/Index',[
-            'start' => $start->format('Y-m-d'),
-            'end' => $end->format('Y-m-d'),
+        return Inertia::render('Analytics/Index', [
+            'start' => $start->toDateString(),
+            'end' => $end->toDateString(),
         ]);
     }
 
     public function statistics(StatisticsRequest $request)
     {
         $workspace = auth()->user()->currentWorkspace;
+        $timezone = $request->validated('timezone');
 
-        $timezone = $request->timezone;
+        $start = CarbonImmutable::createFromFormat('Y-m-d', $request->validated('start'), $timezone)
+            ->startOfDay()->setTimezone('UTC');
+        $end = CarbonImmutable::createFromFormat('Y-m-d', $request->validated('end'), $timezone)
+            ->endOfDay()->setTimezone('UTC');
 
-        $start = Carbon::createFromFormat('Y-m-d', $request->start, $timezone)->startOfDay()->setTimezone('UTC');
-        $end = Carbon::createFromFormat('Y-m-d', $request->end, $timezone)->endOfDay()->setTimezone('UTC');
-
-        switch ($request->metric) {
-
-            case 'events':
-                $data = $this->stat->events($workspace, $timezone, $start, $end, $request->group);
-                break;
-
-            case 'clicks':
-                $data = $this->stat->clicks($workspace, $timezone, $start, $end, $request->group);
-                break;
-
-            case  'qrScans':
-                $data = $this->stat->qrScans($workspace, $timezone, $start, $end, $request->group);
-                break;
-
-            case 'links':
-                $data = $this->stat->linkStats($workspace->id, $start, $end);
-                break;
-
-            case 'referers':
-                $data = $this->stat->refererStats($workspace->id, $start, $end);
-                break;
-
-            case 'utm-sources':
-                $data = $this->stat->utmSourceStats($workspace->id, $start, $end);
-                break;
-
-            case 'utm-mediums':
-                $data = $this->stat->utmMediumStats($workspace->id, $start, $end);
-                break;
-
-            case 'utm-campaigns':
-                $data = $this->stat->utmCampaignStats($workspace->id, $start, $end);
-                break;
-
-            case 'utm-contents':
-                $data = $this->stat->utmContentStats($workspace->id, $start, $end);
-                break;
-
-            case 'utm-terms':
-                $data = $this->stat->utmTermStats($workspace->id, $start, $end);
-                break;
-
-            case 'browsers':
-                $data = $this->stat->browserStats($workspace->id, $start, $end);
-                break;
-
-            case 'os':
-                $data = $this->stat->osStats($workspace->id, $start, $end);
-                break;
-
-            case 'devices':
-                $data = $this->stat->deviceStats($workspace->id, $start, $end);
-                break;
-
-            case 'languages':
-                $data = $this->stat->languageStats($workspace->id, $start, $end);
-                break;
-
-            case 'countries':
-                $data = $this->stat->countryStats($workspace->id, $start, $end);
-                break;
-
-            case 'regions':
-                $data = $this->stat->regionStats($workspace->id, $start, $end);
-                break;
-
-            case 'cities':
-                $data = $this->stat->cityStats($workspace->id, $start, $end);
-                break;
-
-            default:
-                $data = [];
-                break;
-        }
-
-        return response()->json($data);
+        return response()->json([
+            'overview' => GetOverview::execute($workspace, $start, $end),
+            'timeseries' => GetTimeseries::execute(
+                $workspace,
+                $start,
+                $end,
+                $request->validated('group'),
+                $timezone,
+            ),
+            'links' => GetBreakdown::links($workspace, $start, $end),
+            'breakdowns' => collect(self::CARDS)
+                ->map(fn (array $tabs) => collect($tabs)->map(fn (array $tab) => [
+                    ...$tab,
+                    'rows' => GetBreakdown::execute($workspace, $tab['key'], $start, $end),
+                ])->values())
+                ->all(),
+        ]);
     }
 }

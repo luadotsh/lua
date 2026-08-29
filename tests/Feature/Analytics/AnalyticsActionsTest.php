@@ -138,3 +138,27 @@ it('ranks the busiest links', function () {
     expect($rows->first()['value'])->toBe($this->link->link)
         ->and($rows->first()['events'])->toBe(2);
 });
+
+it('serves the whole dashboard in one call', function () {
+    $user = App\Models\User::factory()->withWorkspace()->create();
+    $link = Link::factory()->create(['workspace_id' => $user->current_workspace_id]);
+
+    hit($user->currentWorkspace, $link, ['country' => 'BR', 'browser' => 'Chrome']);
+
+    $response = Pest\Laravel\actingAs($user)->getJson(route('analytics.statistics', [
+        'start' => CarbonImmutable::now()->subDays(7)->toDateString(),
+        'end' => CarbonImmutable::now()->toDateString(),
+        'group' => 'day',
+        'timezone' => 'UTC',
+    ]));
+
+    $response->assertOk()->assertJsonStructure([
+        'overview' => ['events' => ['value', 'previous', 'change']],
+        'timeseries' => [['bucket', 'events', 'clicks', 'qr_scans', 'visitors']],
+        'links' => [['value', 'url', 'events', 'visitors', 'share']],
+        'breakdowns' => ['sources', 'locations', 'devices'],
+    ]);
+
+    expect($response->json('overview.events.value'))->toBe(1)
+        ->and($response->json('breakdowns.locations.0.rows.0.value'))->toBe('BR');
+});
