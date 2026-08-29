@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Auth;
 
+use App\Actions\Auth\UpdatePassword;
 use App\Http\Requests\Auth\NewPasswordRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Auth\Events\PasswordReset;
@@ -43,10 +44,9 @@ class NewPasswordController extends Controller
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user) use ($request) {
-                $user->forceFill([
-                    'password' => Hash::make($request->password),
-                    'remember_token' => Str::random(60),
-                ])->save();
+                // A reset rotates the remember token, so existing "remember me"
+                // cookies stop working.
+                UpdatePassword::execute($user, $request->password, rotateRememberToken: true);
 
                 event(new PasswordReset($user));
             }

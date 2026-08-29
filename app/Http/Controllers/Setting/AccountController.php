@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Setting;
 
+use App\Actions\Account\DeleteAvatar;
 use App\Actions\Account\UpdateAccount;
 use App\Http\Requests\Account\UpdateRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -39,9 +40,7 @@ class AccountController extends Controller
 
     public function deletePhoto(Request $request)
     {
-        $user = $request->user();
-        $user->photo = null;
-        $user->save();
+        DeleteAvatar::execute($request->user());
 
         session()->flash('flash.banner', 'Photo deleted');
         session()->flash('flash.bannerStyle', 'success');

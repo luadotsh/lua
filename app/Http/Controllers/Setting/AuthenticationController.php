@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Setting;
 
+use App\Actions\Auth\UpdatePassword;
+use App\Actions\Auth\UnlinkSocialAccount;
+use App\Actions\Auth\DestroyOtherSessions;
 use App\Http\Requests\Authentication\UpdatePasswordRequest;
 use App\Http\Requests\Authentication\DestroySessionsRequest;
 use App\Actions\AccessToken\ListConnectedMcpClients;
@@ -41,9 +44,7 @@ class AuthenticationController extends Controller
 
     public function updatePassword(UpdatePasswordRequest $request): RedirectResponse
     {
-        $request->user()->update([
-            'password' => Hash::make($request->validated('password')),
-        ]);
+        UpdatePassword::execute($request->user(), $request->validated('password'));
 
         session()->flash('flash.banner', 'Password updated.');
         session()->flash('flash.bannerStyle', 'success');
@@ -55,10 +56,7 @@ class AuthenticationController extends Controller
     {
         $user = $request->user();
 
-        DB::table(config('session.table', 'sessions'))
-            ->where('user_id', $user->id)
-            ->where('id', '!=', $request->session()->getId())
-            ->delete();
+        DestroyOtherSessions::execute($user, $request->session()->getId());
 
         session()->flash('flash.banner', 'Signed out of your other sessions.');
         session()->flash('flash.bannerStyle', 'success');
@@ -74,15 +72,12 @@ class AuthenticationController extends Controller
 
         $user = $request->user();
 
-        // Disconnecting the only way in would lock the account out.
-        if (! $user->password) {
+        if (! UnlinkSocialAccount::execute($user, $socialProvider)) {
             session()->flash('flash.banner', 'Set a password before disconnecting your only sign-in method.');
             session()->flash('flash.bannerStyle', 'danger');
 
             return back();
         }
-
-        $user->update(["{$socialProvider->value}_id" => null]);
 
         session()->flash('flash.banner', "{$socialProvider->label()} disconnected.");
         session()->flash('flash.bannerStyle', 'success');

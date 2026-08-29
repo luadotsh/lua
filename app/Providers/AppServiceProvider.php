@@ -115,6 +115,24 @@ class AppServiceProvider extends ServiceProvider
      */
     protected function configureRateLimiting(): void
     {
+        // Keyed by the token's workspace so one tenant cannot exhaust another's
+        // budget, falling back to the IP for the unauthenticated routes.
+        RateLimiter::for('api', function (Request $request) {
+            if ($this->app->environment('local')) {
+                return Limit::none();
+            }
+
+            return Limit::perMinute(60)->by($request->workspace?->id ?: $request->ip());
+        });
+
+        RateLimiter::for('mcp', function (Request $request) {
+            if ($this->app->environment('local')) {
+                return Limit::none();
+            }
+
+            return Limit::perMinute(120)->by($request->user()?->id ?: $request->ip());
+        });
+
         RateLimiter::for('mcp-oauth-registration', function (Request $request) {
             return Limit::perMinute(10)->by($request->ip());
         });

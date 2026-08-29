@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Setting;
 
+use App\Actions\Domain\VerifyDomainDns;
 use App\Actions\Domain\GetDomain;
 use App\Actions\Domain\ListDomains;
 use App\Actions\Domain\UpdateDomain;
@@ -85,37 +86,12 @@ class DomainController extends Controller
         $domain = GetDomain::execute($workspace, $id);
         abort_unless($domain, 404);
 
-        // Use dns_get_record to fetch CNAME records
-        $dnsRecords = dns_get_record($domain->domain, DNS_CNAME);
-
-        // Check if dns_get_record returned false (an error occurred)
-        if ($dnsRecords === false) {
-            session()->flash('flash.banner', 'Unable to fetch DNS records for the domain.');
+        if (! VerifyDomainDns::execute($domain)) {
+            session()->flash('flash.banner', 'The domain does not have a CNAME record pointing to '.config('domains.cname').'.');
             session()->flash('flash.bannerStyle', 'danger');
+
             return back();
         }
-
-        // Check if any CNAME record points to 'cname.lua.sh'
-        $valid = false;
-        foreach ($dnsRecords as $record) {
-            if (
-                isset($record['host'], $record['target']) && // Check if 'host' and 'target' keys exist
-                $record['host'] === $domain->domain && // Check if 'host' matches the domain
-                $record['target'] === config('domains.cname') // Check if 'target' matches the CNAME
-            ) {
-                $valid = true;
-                break;
-            }
-        }
-
-        if(!$valid) {
-            session()->flash('flash.banner', 'The domain does not have a CNAME record pointing to cname.lua.sh.');
-            session()->flash('flash.bannerStyle', 'danger');
-            return back();
-        }
-
-        $domain->status = Status::ACTIVE;
-        $domain->save();
 
         session()->flash('flash.banner', 'Domain validated successful.');
         session()->flash('flash.bannerStyle', 'success');

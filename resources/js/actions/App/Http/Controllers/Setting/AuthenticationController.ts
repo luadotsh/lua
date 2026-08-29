@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::edit
-* @see app/Http/Controllers/Setting/AuthenticationController.php:23
+* @see app/Http/Controllers/Setting/AuthenticationController.php:26
 * @route '/settings/authentication'
 */
 export const edit = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::edit
-* @see app/Http/Controllers/Setting/AuthenticationController.php:23
+* @see app/Http/Controllers/Setting/AuthenticationController.php:26
 * @route '/settings/authentication'
 */
 edit.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ edit.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::edit
-* @see app/Http/Controllers/Setting/AuthenticationController.php:23
+* @see app/Http/Controllers/Setting/AuthenticationController.php:26
 * @route '/settings/authentication'
 */
 edit.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ edit.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::edit
-* @see app/Http/Controllers/Setting/AuthenticationController.php:23
+* @see app/Http/Controllers/Setting/AuthenticationController.php:26
 * @route '/settings/authentication'
 */
 edit.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ edit.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::edit
-* @see app/Http/Controllers/Setting/AuthenticationController.php:23
+* @see app/Http/Controllers/Setting/AuthenticationController.php:26
 * @route '/settings/authentication'
 */
 const editForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const editForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::edit
-* @see app/Http/Controllers/Setting/AuthenticationController.php:23
+* @see app/Http/Controllers/Setting/AuthenticationController.php:26
 * @route '/settings/authentication'
 */
 editForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ editForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::edit
-* @see app/Http/Controllers/Setting/AuthenticationController.php:23
+* @see app/Http/Controllers/Setting/AuthenticationController.php:26
 * @route '/settings/authentication'
 */
 editForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ edit.form = editForm
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::updatePassword
-* @see app/Http/Controllers/Setting/AuthenticationController.php:42
+* @see app/Http/Controllers/Setting/AuthenticationController.php:45
 * @route '/settings/authentication/password'
 */
 export const updatePassword = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -97,7 +97,7 @@ updatePassword.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::updatePassword
-* @see app/Http/Controllers/Setting/AuthenticationController.php:42
+* @see app/Http/Controllers/Setting/AuthenticationController.php:45
 * @route '/settings/authentication/password'
 */
 updatePassword.url = (options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ updatePassword.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::updatePassword
-* @see app/Http/Controllers/Setting/AuthenticationController.php:42
+* @see app/Http/Controllers/Setting/AuthenticationController.php:45
 * @route '/settings/authentication/password'
 */
 updatePassword.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -116,7 +116,7 @@ updatePassword.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::updatePassword
-* @see app/Http/Controllers/Setting/AuthenticationController.php:42
+* @see app/Http/Controllers/Setting/AuthenticationController.php:45
 * @route '/settings/authentication/password'
 */
 const updatePasswordForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -131,7 +131,7 @@ const updatePasswordForm = (options?: RouteQueryOptions): RouteFormDefinition<'p
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::updatePassword
-* @see app/Http/Controllers/Setting/AuthenticationController.php:42
+* @see app/Http/Controllers/Setting/AuthenticationController.php:45
 * @route '/settings/authentication/password'
 */
 updatePasswordForm.put = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -148,7 +148,7 @@ updatePassword.form = updatePasswordForm
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::destroyOtherSessions
-* @see app/Http/Controllers/Setting/AuthenticationController.php:54
+* @see app/Http/Controllers/Setting/AuthenticationController.php:55
 * @route '/settings/authentication/sessions'
 */
 export const destroyOtherSessions = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -163,7 +163,7 @@ destroyOtherSessions.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::destroyOtherSessions
-* @see app/Http/Controllers/Setting/AuthenticationController.php:54
+* @see app/Http/Controllers/Setting/AuthenticationController.php:55
 * @route '/settings/authentication/sessions'
 */
 destroyOtherSessions.url = (options?: RouteQueryOptions) => {
@@ -172,7 +172,7 @@ destroyOtherSessions.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::destroyOtherSessions
-* @see app/Http/Controllers/Setting/AuthenticationController.php:54
+* @see app/Http/Controllers/Setting/AuthenticationController.php:55
 * @route '/settings/authentication/sessions'
 */
 destroyOtherSessions.delete = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -182,7 +182,7 @@ destroyOtherSessions.delete = (options?: RouteQueryOptions): RouteDefinition<'de
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::destroyOtherSessions
-* @see app/Http/Controllers/Setting/AuthenticationController.php:54
+* @see app/Http/Controllers/Setting/AuthenticationController.php:55
 * @route '/settings/authentication/sessions'
 */
 const destroyOtherSessionsForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -197,7 +197,7 @@ const destroyOtherSessionsForm = (options?: RouteQueryOptions): RouteFormDefinit
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::destroyOtherSessions
-* @see app/Http/Controllers/Setting/AuthenticationController.php:54
+* @see app/Http/Controllers/Setting/AuthenticationController.php:55
 * @route '/settings/authentication/sessions'
 */
 destroyOtherSessionsForm.delete = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -214,7 +214,7 @@ destroyOtherSessions.form = destroyOtherSessionsForm
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::disconnectProvider
-* @see app/Http/Controllers/Setting/AuthenticationController.php:69
+* @see app/Http/Controllers/Setting/AuthenticationController.php:67
 * @route '/settings/authentication/providers/{provider}'
 */
 export const disconnectProvider = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -229,7 +229,7 @@ disconnectProvider.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::disconnectProvider
-* @see app/Http/Controllers/Setting/AuthenticationController.php:69
+* @see app/Http/Controllers/Setting/AuthenticationController.php:67
 * @route '/settings/authentication/providers/{provider}'
 */
 disconnectProvider.url = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -256,7 +256,7 @@ disconnectProvider.url = (args: { provider: string | number } | [provider: strin
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::disconnectProvider
-* @see app/Http/Controllers/Setting/AuthenticationController.php:69
+* @see app/Http/Controllers/Setting/AuthenticationController.php:67
 * @route '/settings/authentication/providers/{provider}'
 */
 disconnectProvider.delete = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -266,7 +266,7 @@ disconnectProvider.delete = (args: { provider: string | number } | [provider: st
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::disconnectProvider
-* @see app/Http/Controllers/Setting/AuthenticationController.php:69
+* @see app/Http/Controllers/Setting/AuthenticationController.php:67
 * @route '/settings/authentication/providers/{provider}'
 */
 const disconnectProviderForm = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -281,7 +281,7 @@ const disconnectProviderForm = (args: { provider: string | number } | [provider:
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::disconnectProvider
-* @see app/Http/Controllers/Setting/AuthenticationController.php:69
+* @see app/Http/Controllers/Setting/AuthenticationController.php:67
 * @route '/settings/authentication/providers/{provider}'
 */
 disconnectProviderForm.delete = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -298,7 +298,7 @@ disconnectProvider.form = disconnectProviderForm
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::revokeMcpClient
-* @see app/Http/Controllers/Setting/AuthenticationController.php:93
+* @see app/Http/Controllers/Setting/AuthenticationController.php:88
 * @route '/settings/authentication/mcp/{id}'
 */
 export const revokeMcpClient = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -313,7 +313,7 @@ revokeMcpClient.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::revokeMcpClient
-* @see app/Http/Controllers/Setting/AuthenticationController.php:93
+* @see app/Http/Controllers/Setting/AuthenticationController.php:88
 * @route '/settings/authentication/mcp/{id}'
 */
 revokeMcpClient.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -340,7 +340,7 @@ revokeMcpClient.url = (args: { id: string | number } | [id: string | number ] | 
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::revokeMcpClient
-* @see app/Http/Controllers/Setting/AuthenticationController.php:93
+* @see app/Http/Controllers/Setting/AuthenticationController.php:88
 * @route '/settings/authentication/mcp/{id}'
 */
 revokeMcpClient.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -350,7 +350,7 @@ revokeMcpClient.delete = (args: { id: string | number } | [id: string | number ]
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::revokeMcpClient
-* @see app/Http/Controllers/Setting/AuthenticationController.php:93
+* @see app/Http/Controllers/Setting/AuthenticationController.php:88
 * @route '/settings/authentication/mcp/{id}'
 */
 const revokeMcpClientForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -365,7 +365,7 @@ const revokeMcpClientForm = (args: { id: string | number } | [id: string | numbe
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::revokeMcpClient
-* @see app/Http/Controllers/Setting/AuthenticationController.php:93
+* @see app/Http/Controllers/Setting/AuthenticationController.php:88
 * @route '/settings/authentication/mcp/{id}'
 */
 revokeMcpClientForm.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

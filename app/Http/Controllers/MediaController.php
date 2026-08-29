@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Actions\Media\StoreMedia;
+use App\Actions\Media\SortMedia;
+use App\Actions\Media\SetThumbnail;
 use App\Http\Requests\Media\StoreRequest;
 use App\Http\Requests\Media\SortRequest;
 use Illuminate\Http\Request;
@@ -17,65 +20,25 @@ class MediaController extends Controller
 {
     public function store(StoreRequest $request)
     {
-        $model = 'App?Models?'.$request->model;
-        $model = str_replace('?', '\\', $model);
-
-        // check if it's the first media to this model, if so, set it as thumbnail
-        $media = Media::where('model_id', $request->model_id)->first();
-        $thumbnail = $media ? false : true;
-
-        $model = $model::where('id', $request->model_id)->firstOrFail();
-        $upload = $model->addMediaFromRequest('media')
-            ->withCustomProperties(['thumbnail' => $thumbnail])
-            ->addCustomHeaders([
-                'ACL' => $request->visibility === 'public' ? 'public-read' : 'private',
-            ])
-            ->toMediaCollection($request->collection);
-
-        return response()->json($upload);
+        return response()->json(
+            StoreMedia::execute($request, $request->validated()),
+        );
     }
 
     public function sort(SortRequest $request)
     {
-        DB::beginTransaction();
+        SortMedia::execute(
+            $request->validated('model'),
+            $request->validated('collection'),
+            $request->validated('medias'),
+        );
 
-        try {
-            foreach ($request->medias as $sort => $media) {
-
-                $media = Media::where('id', $media['id'])
-                ->where('model_type', $request->model)
-                ->where('collection_name', $request->collection)
-                ->firstOrFail();
-
-                $media->order_column = $sort + 1;
-                $media->save();
-            }
-
-            DB::commit();
-            return response()->json();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error($e);
-            return response()->json(['status' => 'error', 'message' => 'Could not sort update, please try again.'], 500);
-        }
+        return response()->json();
     }
 
     public function thumbnail($modelId, $id)
     {
-        // set all media to not thumbnail
-        $media = Media::where('model_id', $modelId)->get();
-        foreach ($media as $m) {
-            $m->setCustomProperty('thumbnail', false);
-            $m->save();
-        }
-
-        // set media to thumbnail
-        $media = Media::where('id', $id)
-            ->where('model_id', $modelId)
-            ->firstOrFail();
-
-        $media->setCustomProperty('thumbnail', true);
-        $media->save();
+        abort_unless(SetThumbnail::execute($modelId, $id), 404);
 
         return back();
     }

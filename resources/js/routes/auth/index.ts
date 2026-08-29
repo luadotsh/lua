@@ -3,7 +3,7 @@ import invites from './invites'
 import social15fd52 from './social'
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::social
-* @see app/Http/Controllers/Auth/SocialAuthController.php:25
+* @see app/Http/Controllers/Auth/SocialAuthController.php:26
 * @route '/{provider}/login'
 */
 export const social = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -18,7 +18,7 @@ social.definition = {
 
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::social
-* @see app/Http/Controllers/Auth/SocialAuthController.php:25
+* @see app/Http/Controllers/Auth/SocialAuthController.php:26
 * @route '/{provider}/login'
 */
 social.url = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -45,7 +45,7 @@ social.url = (args: { provider: string | number } | [provider: string | number ]
 
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::social
-* @see app/Http/Controllers/Auth/SocialAuthController.php:25
+* @see app/Http/Controllers/Auth/SocialAuthController.php:26
 * @route '/{provider}/login'
 */
 social.get = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -55,7 +55,7 @@ social.get = (args: { provider: string | number } | [provider: string | number ]
 
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::social
-* @see app/Http/Controllers/Auth/SocialAuthController.php:25
+* @see app/Http/Controllers/Auth/SocialAuthController.php:26
 * @route '/{provider}/login'
 */
 social.head = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -65,7 +65,7 @@ social.head = (args: { provider: string | number } | [provider: string | number 
 
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::social
-* @see app/Http/Controllers/Auth/SocialAuthController.php:25
+* @see app/Http/Controllers/Auth/SocialAuthController.php:26
 * @route '/{provider}/login'
 */
 const socialForm = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -75,7 +75,7 @@ const socialForm = (args: { provider: string | number } | [provider: string | nu
 
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::social
-* @see app/Http/Controllers/Auth/SocialAuthController.php:25
+* @see app/Http/Controllers/Auth/SocialAuthController.php:26
 * @route '/{provider}/login'
 */
 socialForm.get = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -85,7 +85,7 @@ socialForm.get = (args: { provider: string | number } | [provider: string | numb
 
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::social
-* @see app/Http/Controllers/Auth/SocialAuthController.php:25
+* @see app/Http/Controllers/Auth/SocialAuthController.php:26
 * @route '/{provider}/login'
 */
 socialForm.head = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

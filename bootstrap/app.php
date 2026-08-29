@@ -27,6 +27,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->trustProxies(at: '*');
+
+        // The api group carries no rate limit of its own in Laravel 11+.
+        $middleware->throttleApi();
         $middleware->preventRequestForgery(except: [
             'stripe/*'
         ]);

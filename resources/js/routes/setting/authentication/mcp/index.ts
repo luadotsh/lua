@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::destroy
-* @see app/Http/Controllers/Setting/AuthenticationController.php:93
+* @see app/Http/Controllers/Setting/AuthenticationController.php:88
 * @route '/settings/authentication/mcp/{id}'
 */
 export const destroy = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -16,7 +16,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::destroy
-* @see app/Http/Controllers/Setting/AuthenticationController.php:93
+* @see app/Http/Controllers/Setting/AuthenticationController.php:88
 * @route '/settings/authentication/mcp/{id}'
 */
 destroy.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -43,7 +43,7 @@ destroy.url = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::destroy
-* @see app/Http/Controllers/Setting/AuthenticationController.php:93
+* @see app/Http/Controllers/Setting/AuthenticationController.php:88
 * @route '/settings/authentication/mcp/{id}'
 */
 destroy.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -53,7 +53,7 @@ destroy.delete = (args: { id: string | number } | [id: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::destroy
-* @see app/Http/Controllers/Setting/AuthenticationController.php:93
+* @see app/Http/Controllers/Setting/AuthenticationController.php:88
 * @route '/settings/authentication/mcp/{id}'
 */
 const destroyForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -68,7 +68,7 @@ const destroyForm = (args: { id: string | number } | [id: string | number ] | st
 
 /**
 * @see \App\Http\Controllers\Setting\AuthenticationController::destroy
-* @see app/Http/Controllers/Setting/AuthenticationController.php:93
+* @see app/Http/Controllers/Setting/AuthenticationController.php:88
 * @route '/settings/authentication/mcp/{id}'
 */
 destroyForm.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

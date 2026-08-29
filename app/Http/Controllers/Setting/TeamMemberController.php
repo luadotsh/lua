@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Setting;
 
+use App\Actions\TeamMember\LeaveWorkspace;
 use App\Actions\TeamMember\UpdateMemberRole;
 use App\Actions\TeamMember\RemoveMember;
 use App\Http\Requests\TeamMember\UpdateUserRoleRequest;
@@ -82,36 +83,22 @@ class TeamMemberController extends Controller
     public function leave()
     {
         $user = auth()->user();
-        $workspace = auth()->user()->currentWorkspace;
+        $workspace = $user->currentWorkspace;
 
-        if ($workspace->users()->count() == 1) {
+        if (LeaveWorkspace::isLastMember($workspace)) {
             session()->flash('flash.banner', 'The Team cannot stay without a user');
             session()->flash('flash.bannerStyle', 'danger');
 
             return back();
         }
 
-        RemoveMember::execute($workspace, $user);
-
-        $userWorkspaces = auth()->user()->workspaces();
-
-        if ($userWorkspaces->count() >= 1) {
-            $newWorkspace = Workspace::findOrFail($userWorkspaces->first()->id);
-            if (!auth()->user()->switchWorkspace($newWorkspace)) {
-                abort(403);
-            }
-
-            session()->flash('flash.banner', 'You leaved from team.');
+        if (LeaveWorkspace::execute($user, $workspace)) {
+            session()->flash('flash.banner', 'You left the team.');
             session()->flash('flash.bannerStyle', 'success');
 
             return redirect(route('links.index'));
-        } else {
-            auth()->user()->forceFill([
-                'current_workspace_id' => null,
-            ])->save();
-
-
-            return redirect(route('workspaces.create'));
         }
+
+        return redirect(route('workspaces.create'));
     }
 }

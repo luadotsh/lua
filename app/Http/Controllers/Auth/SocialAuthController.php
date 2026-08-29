@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Auth;
 
+use App\Actions\Auth\LinkSocialAccount;
 use App\Actions\User\CreateUser;
 use App\Enums\Auth\SocialAuthProvider;
 use App\Http\Controllers\Auth\Concerns\PreservesAttributionParameters;
@@ -53,18 +54,14 @@ class SocialAuthController extends Controller
 
         // Linking an extra provider to the account already signed in.
         if ($request->session()->pull('social_connect') === $socialProvider->value && $request->user()) {
-            $taken = User::where($column, $socialUser->getId())
-                ->where('id', '!=', $request->user()->id)
-                ->exists();
-
-            if ($taken) {
+            if (LinkSocialAccount::isTaken($socialProvider, $socialUser->getId(), $request->user())) {
                 session()->flash('flash.banner', "That {$socialProvider->label()} account is already linked to another user.");
                 session()->flash('flash.bannerStyle', 'danger');
 
                 return redirect(route('setting.authentication.edit'));
             }
 
-            $request->user()->forceFill([$column => $socialUser->getId()])->save();
+            LinkSocialAccount::execute($request->user(), $socialProvider, $socialUser->getId());
 
             session()->flash('flash.banner', "{$socialProvider->label()} connected.");
             session()->flash('flash.bannerStyle', 'success');
@@ -79,7 +76,7 @@ class SocialAuthController extends Controller
         if ($existingUser) {
             // Record the link on first sign-in through this provider.
             if (! $existingUser->{$column}) {
-                $existingUser->forceFill([$column => $socialUser->getId()])->save();
+                LinkSocialAccount::execute($existingUser, $socialProvider, $socialUser->getId());
             }
 
             Auth::login($existingUser, true);
