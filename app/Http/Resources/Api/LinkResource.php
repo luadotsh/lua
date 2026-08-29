@@ -23,6 +23,9 @@ class LinkResource extends JsonResource
             'ios' => $this->ios,
             'android' => $this->android,
             'link' => $this->link,
+            // Absolute on purpose: whoever reads this is not on our origin, so
+            // a path would be useless to them.
+            'qr_code' => route('api.qr-code', $this->id),
             'utm_source' => $this->utm_source,
             'utm_medium' => $this->utm_medium,
             'utm_campaign' => $this->utm_campaign,

@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import HexColorInput from "@/components/HexColorInput.vue";
-import { copyToClipboard } from "@/lib/utils";
+import { absoluteUrl, copyToClipboard } from "@/lib/utils";
 import { qrCode as qrCodeRoute } from "@/routes/api";
 
 interface LinkData {
@@ -54,9 +54,9 @@ watch(
     [color, link],
     () => {
         if (!link.value) return;
-        imageUrl.value = qrCodeRoute.url(link.value.id, {
-            query: { color: color.value },
-        });
+        imageUrl.value = absoluteUrl(
+            qrCodeRoute.url(link.value.id, { query: { color: color.value } }),
+        );
     },
     { immediate: true }
 );
@@ -89,7 +89,7 @@ watch(
                 </Button>
                 <Button as-child>
                     <a
-                        :href="link ? qrCodeRoute.url(link.id, { query: { color, download: '1' } }) : '#'"
+                        :href="link ? absoluteUrl(qrCodeRoute.url(link.id, { query: { color, download: '1' } })) : '#'"
                         target="_blank"
                     >
                         Download

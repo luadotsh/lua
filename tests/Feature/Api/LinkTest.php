@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-
-use App\Models\User;
 use App\Models\Link;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
@@ -195,7 +194,6 @@ it('can not validate password', function () {
         ->assertRedirect(route('links.password', $link->key));
 });
 
-
 it('can not create a new link with invalid domain served by lua', function () {
     $response = $this
         ->withToken($this->token)
@@ -218,4 +216,19 @@ it('can not create a new link with invalid custom domain', function () {
         ]);
 
     $response->assertStatus(422);
+});
+
+it('exposes an absolute qr code url', function () {
+    $link = Link::factory()->create([
+        'workspace_id' => $this->user->current_workspace_id,
+    ]);
+
+    $response = $this
+        ->withToken($this->token)
+        ->getJson(route('api.links.show', $link->id));
+
+    $qr = $response->assertOk()->json('qr_code');
+
+    expect($qr)->toStartWith('http')
+        ->and($qr)->toContain($link->id);
 });

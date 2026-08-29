@@ -30,6 +30,14 @@ export const formatNumberCompact = (value: number | string): string => {
     }).format(numeric);
 };
 
+/**
+ * Wayfinder builds paths, not URLs. That is right for navigating and for an
+ * <img src>, but anything the user copies or hands to another system has to
+ * resolve on its own.
+ */
+export const absoluteUrl = (path: string): string =>
+    new URL(path, window.location.origin).toString();
+
 export const copyToClipboard = async (
     text: string,
     message = 'Copied to clipboard',
