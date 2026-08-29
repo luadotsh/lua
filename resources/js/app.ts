@@ -10,8 +10,6 @@ import { capturePageview, initializePostHog, syncPostHogContext } from './postho
 
 // Third-party plugins still needed
 import { i18nVue } from 'laravel-vue-i18n';
-import Vue3ColorPicker from 'vue3-colorpicker';
-import 'vue3-colorpicker/style.css';
 
 createInertiaApp({
     title: (title) => `${title} - ${import.meta.env.VITE_APP_NAME || 'Lua'}`,
@@ -41,7 +39,6 @@ createInertiaApp({
                     return await langs[`../../lang/php_${lang}.json`]();
                 },
             })
-            .use(Vue3ColorPicker)
             .mount(el);
     },
     progress: {
