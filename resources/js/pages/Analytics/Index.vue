@@ -8,6 +8,7 @@ import BreakdownCard, {
 import { browserIconUrl } from "@/lib/browsers";
 import { countryFlagUrl, countryFor } from "@/lib/countries";
 import { deviceIconUrl } from "@/lib/devices";
+import { languageFlagUrl, languageLabel } from "@/lib/languages";
 import { osIconUrl } from "@/lib/os";
 import { favicon } from "@/lib/utils";
 import StatHeader from "@/components/analytics/StatHeader.vue";
@@ -160,8 +161,8 @@ const setRange = (next: Range) => {
                         </template>
                         <template #row="{ row, tab }">
                             <img
-                                v-if="tab === 'country'"
-                                :src="countryFlagUrl(row.value)"
+                                v-if="tab === 'country' || row.country"
+                                :src="countryFlagUrl(tab === 'country' ? row.value : (row.country ?? ''))"
                                 alt=""
                                 aria-hidden="true"
                                 class="h-3 w-[18px] shrink-0 rounded-[2px] object-cover"
@@ -205,7 +206,18 @@ const setRange = (next: Range) => {
                                 loading="lazy"
                                 @error="(event) => ((event.target as HTMLImageElement).style.display = 'none')"
                             />
-                            <span class="truncate">{{ row.value }}</span>
+                            <img
+                                v-else-if="tab === 'language' && languageFlagUrl(row.value)"
+                                :src="languageFlagUrl(row.value) ?? ''"
+                                alt=""
+                                aria-hidden="true"
+                                class="h-3 w-[18px] shrink-0 rounded-[2px] object-cover"
+                                loading="lazy"
+                                @error="(event) => ((event.target as HTMLImageElement).style.display = 'none')"
+                            />
+                            <span class="truncate">
+                                {{ tab === 'language' ? languageLabel(row.value) : row.value }}
+                            </span>
                         </template>
                     </BreakdownCard>
                 </div>

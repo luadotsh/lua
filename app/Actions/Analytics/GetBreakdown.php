@@ -33,10 +33,18 @@ class GetBreakdown
     ];
 
     /**
+     * Dimensions that sit inside a country, so each row can carry the flag of
+     * the country it belongs to.
+     *
+     * @var list<string>
+     */
+    private const NESTED_IN_COUNTRY = ['region', 'city'];
+
+    /**
      * The top values for one dimension, with the share each holds of the
      * period's total, so a row reads without needing the total beside it.
      *
-     * @return Collection<int, array{value: string, events: int, visitors: int, share: float}>
+     * @return Collection<int, array{value: string, country: string|null, events: int, visitors: int, share: float}>
      */
     public static function execute(
         Workspace $workspace,
@@ -55,16 +63,28 @@ class GetBreakdown
 
         $total = (clone $base)->count();
 
-        return $base
+        // A region or city is shown with its country's flag, so the country
+        // travels with the row. Grouping by it too keeps the aggregate honest
+        // when two countries share a region name.
+        $nested = in_array($dimension, self::NESTED_IN_COUNTRY, true);
+
+        $query = $base
             ->select($column.' as value')
             ->selectRaw('count(*) as events')
             ->selectRaw('count(distinct ip) as visitors')
-            ->groupBy($column)
+            ->groupBy($column);
+
+        if ($nested) {
+            $query->addSelect('country')->groupBy('country');
+        }
+
+        return $query
             ->orderByDesc('events')
             ->limit($limit)
             ->get()
             ->map(fn ($row) => [
                 'value' => (string) $row->value,
+                'country' => $nested ? $row->country : null,
                 'events' => (int) $row->events,
                 'visitors' => (int) $row->visitors,
                 'share' => $total > 0 ? round(((int) $row->events / $total) * 100, 1) : 0.0,

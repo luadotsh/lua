@@ -8,6 +8,8 @@ import { formatCount } from '@/lib/metrics';
 export type BreakdownRow = {
     value: string;
     url?: string;
+    /** The country a region or city belongs to, for its flag. */
+    country?: string | null;
     events: number;
     visitors: number;
     share: number;
