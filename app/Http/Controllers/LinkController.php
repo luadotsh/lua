@@ -4,48 +4,68 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Actions\Tag\ListTags;
-use App\Actions\Link\ListLinks;
-use App\Actions\Link\GetLink;
 use App\Actions\Domain\ListDomains;
-use App\Actions\Link\UpdateLink;
-use App\Actions\Link\DeleteLink;
 use App\Actions\Link\CreateLink;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
+use App\Actions\Link\DeleteLink;
+use App\Actions\Link\GetLink;
+use App\Actions\Link\ListLinks;
+use App\Actions\Link\UpdateLink;
+use App\Actions\Tag\ListTags;
 use App\Http\Requests\Link\CreateRequest;
 use App\Http\Requests\Link\UpdateRequest;
-
 use App\Models\Link;
-use App\Models\Domain;
-use App\Models\Tag;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class LinkController extends Controller
 {
-    public function index(Request $request, $id = null): Response
+    public function index(Request $request): Response
     {
         $workspace = Auth::user()->currentWorkspace;
 
-        // Keeps the 404 the old firstOrFail() produced for an unknown id.
-        $link = $id ? GetLink::execute($workspace, $id) : null;
-        abort_if($id && ! $link, 404);
+        return Inertia::render('Link/Index', [
+            'table' => ListLinks::execute($workspace, ['search' => $request->q]),
+            'hasData' => ListLinks::hasAny($workspace),
+        ]);
+    }
 
-        $links = ListLinks::execute($workspace, ['search' => $request->q]);
+    public function create(): Response
+    {
+        return Inertia::render('Link/Create', $this->formData());
+    }
+
+    public function edit($id): Response
+    {
+        $workspace = Auth::user()->currentWorkspace;
+
+        $link = GetLink::execute($workspace, $id);
+        abort_unless($link, 404);
+
+        return Inertia::render('Link/Edit', [
+            // The owner set this password and may need to read it back.
+            'link' => $link->makeVisible('password'),
+            ...$this->formData(),
+        ]);
+    }
+
+    /**
+     * What the form needs to offer beyond the link itself.
+     *
+     * @return array<string, mixed>
+     */
+    private function formData(): array
+    {
+        $workspace = Auth::user()->currentWorkspace;
 
         $domains = ListDomains::execute($workspace)->pluck('domain')->toArray();
 
-        return Inertia::render('Link/Index', [
-            'table' => $links,
-            'hasData' => ListLinks::hasAny($workspace),
+        return [
             'domains' => array_merge($domains, config('domains.available')),
             'tags' => ListTags::execute($workspace),
-            'link' => $link?->makeVisible('password'),
-        ]);
+        ];
     }
 
     public function store(CreateRequest $request)
@@ -53,9 +73,10 @@ class LinkController extends Controller
         $workspace = Auth::user()->currentWorkspace;
 
         $response = Gate::inspect('reached-link-limit', $workspace);
-        if (!$response->allowed()) {
+        if (! $response->allowed()) {
             session()->flash('flash.banner', 'You have reached the limit of links, please upgrade your plan.');
             session()->flash('flash.bannerStyle', 'danger');
+
             return back();
         }
 

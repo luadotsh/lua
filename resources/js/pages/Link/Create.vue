@@ -1,17 +1,12 @@
 <script setup lang="ts">
-import { useForm, usePage } from "@inertiajs/vue3";
+import { Head, Link, useForm, usePage } from "@inertiajs/vue3";
 import { ref } from "vue";
-import dayjs from "@/dayjs";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogFooter,
-} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import LinkForm from "./LinkForm.vue";
+import AppLayout from "@/layouts/AppLayout.vue";
+import dayjs from "@/dayjs";
 import * as linksRoute from "@/routes/links";
+import type { BreadcrumbItem } from "@/types";
+import LinkForm from "./LinkForm.vue";
 
 const domains = usePage().props.domains as string[];
 
@@ -32,55 +27,35 @@ const form = useForm({
     utm_content: "",
 });
 
-const show = ref(false);
 const expiresAtDate = ref("");
 
-const open = () => {
-    form.reset();
-    form.clearErrors();
-    expiresAtDate.value = "";
-    show.value = true;
-};
-
-const close = () => {
-    form.reset();
-    form.clearErrors();
-    expiresAtDate.value = "";
-    show.value = false;
-};
-
-defineExpose({ open });
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: "Links", href: linksRoute.index.url() },
+    { title: "New link" },
+];
 
 const store = () => {
-    if (expiresAtDate.value) {
-        form.expires_at = dayjs(expiresAtDate.value).utc().format("YYYY-MM-DD HH:mm:ss");
-    }
-    form.post(linksRoute.store.url(), {
-        preserveScroll: true,
-        onSuccess: () => {
-            form.reset();
-            form.clearErrors();
-            expiresAtDate.value = "";
-            show.value = false;
-        },
-    });
+    form.expires_at = expiresAtDate.value
+        ? dayjs(expiresAtDate.value).utc().format("YYYY-MM-DD HH:mm:ss")
+        : "";
+
+    form.post(linksRoute.store.url());
 };
 </script>
 
 <template>
-    <Dialog :open="show" @update:open="(val) => !val && close()">
-        <DialogContent class="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-                <DialogTitle>New Link</DialogTitle>
-            </DialogHeader>
+    <Head title="New link" />
 
+    <AppLayout :breadcrumbs="breadcrumbs">
+        <template #header-actions>
+            <Button variant="ghost" as-child>
+                <Link :href="linksRoute.index.url()">Cancel</Link>
+            </Button>
+            <Button :disabled="form.processing" @click="store">Create link</Button>
+        </template>
+
+        <div class="mx-auto w-full max-w-3xl p-4 sm:p-6">
             <LinkForm :form="form" v-model:expires-at-date="expiresAtDate" />
-
-            <DialogFooter>
-                <Button @click="store" :disabled="form.processing" :class="{ 'opacity-25': form.processing }">
-                    Generate Link
-                </Button>
-            </DialogFooter>
-        </DialogContent>
-    </Dialog>
+        </div>
+    </AppLayout>
 </template>

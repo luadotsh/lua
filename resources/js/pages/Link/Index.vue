@@ -43,8 +43,6 @@ import { formatCount, formatNumber } from "@/lib/metrics";
 import date from "@/date";
 import debounce from "@/debounce";
 
-import CreateModal from "./Create.vue";
-import Edit from "./Edit.vue";
 
 interface Tag {
     id: string | number;
@@ -86,11 +84,9 @@ const faviconFailed = ref<Record<string, boolean>>({});
 const props = defineProps<{
     table: Table;
     hasData: boolean;
-    link?: LinkData | null;
 }>();
 
 const qrcodeModal = ref<InstanceType<typeof Qrcode> | null>(null);
-const createModal = ref<InstanceType<typeof CreateModal> | null>(null);
 const confirmDeleteModal = ref<InstanceType<typeof ConfirmDeleteModal> | null>(null);
 
 const searchForm = useForm({
@@ -124,8 +120,6 @@ onMounted(() => {
 <template>
     <Head title="Links" />
 
-    <CreateModal ref="createModal" />
-    <Edit v-if="link" :link="link" />
     <Qrcode ref="qrcodeModal" />
 
     <AppLayout :title="title" :total="total">
@@ -142,7 +136,9 @@ onMounted(() => {
                         @keyup="searchDebounce"
                     />
                 </div>
-                <Button @click="createModal?.open()">New Link</Button>
+                <Button as-child>
+                    <Link :href="linksRoute.create.url()">New Link</Link>
+                </Button>
             </div>
         </template>
 
@@ -165,7 +161,7 @@ onMounted(() => {
                         controls simply stack above it.
                     -->
                     <Link
-                        :href="linksRoute.index.url(data.id)"
+                        :href="linksRoute.edit.url(data.id)"
                         class="absolute inset-0 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                         :aria-label="`Edit ${data.link}`"
                     />
@@ -280,7 +276,7 @@ onMounted(() => {
                                         class="h-7 w-7 text-muted-foreground group-hover:text-foreground"
                                         as-child
                                     >
-                                        <Link :href="linksRoute.index.url(data.id)">
+                                        <Link :href="linksRoute.edit.url(data.id)">
                                             <IconPencil class="h-3.5 w-3.5" />
                                             <span class="sr-only">Edit link</span>
                                         </Link>
@@ -320,7 +316,7 @@ onMounted(() => {
                             </Tooltip>
                             <DropdownMenuContent align="end" class="w-52">
                                 <DropdownMenuItem as-child>
-                                    <Link :href="linksRoute.index.url(data.id)" class="flex items-center cursor-pointer">
+                                    <Link :href="linksRoute.edit.url(data.id)" class="flex items-center cursor-pointer">
                                         <IconPencil class="mr-2 h-4 w-4" />
                                         Edit
                                     </Link>

@@ -1,17 +1,15 @@
 <script setup lang="ts">
-import { useForm, usePage, router } from "@inertiajs/vue3";
+import { Head, Link, router, useForm } from "@inertiajs/vue3";
+import { IconQrcode, IconTrash } from "@tabler/icons-vue";
 import { ref } from "vue";
-import dayjs from "@/dayjs";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogFooter,
-} from "@/components/ui/dialog";
+import ConfirmDeleteModal from "@/components/ConfirmDeleteModal.vue";
+import Qrcode from "@/components/Qrcode.vue";
 import { Button } from "@/components/ui/button";
-import LinkForm from "./LinkForm.vue";
+import AppLayout from "@/layouts/AppLayout.vue";
+import dayjs from "@/dayjs";
 import * as linksRoute from "@/routes/links";
+import type { BreadcrumbItem } from "@/types";
+import LinkForm from "./LinkForm.vue";
 
 interface Tag {
     id: string | number;
@@ -20,6 +18,7 @@ interface Tag {
 
 interface LinkData {
     id: string | number;
+    link: string;
     url: string;
     domain: string;
     key: string;
@@ -60,39 +59,61 @@ const form = useForm({
 });
 
 const expiresAtDate = ref(
-    link.expires_at ? dayjs(link.expires_at).format("YYYY-MM-DDTHH:mm") : ""
+    link.expires_at ? dayjs(link.expires_at).format("YYYY-MM-DDTHH:mm") : "",
 );
 
-const store = () => {
-    if (expiresAtDate.value) {
-        form.expires_at = dayjs(expiresAtDate.value).utc().format("YYYY-MM-DD HH:mm:ss");
-    } else {
-        form.expires_at = "";
-    }
-    form.put(linksRoute.update.url(link.id), {
-        preserveScroll: true,
-        onSuccess: () => {
-            form.reset();
-            form.clearErrors();
-        },
-    });
+// The link itself is the leaf: it says which one you are editing, which the
+// word "Edit" on its own does not.
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: "Links", href: linksRoute.index.url() },
+    { title: link.link },
+];
+
+const qrcodeModal = ref<InstanceType<typeof Qrcode> | null>(null);
+const confirmDeleteModal = ref<InstanceType<typeof ConfirmDeleteModal> | null>(null);
+
+const update = () => {
+    form.expires_at = expiresAtDate.value
+        ? dayjs(expiresAtDate.value).utc().format("YYYY-MM-DD HH:mm:ss")
+        : "";
+
+    form.put(linksRoute.update.url(link.id));
 };
 </script>
 
 <template>
-    <Dialog :open="true" @update:open="(val) => !val && router.visit(linksRoute.index.url())">
-        <DialogContent class="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-                <DialogTitle>Edit Link</DialogTitle>
-            </DialogHeader>
+    <Head :title="link.link" />
 
+    <Qrcode ref="qrcodeModal" />
+    <ConfirmDeleteModal
+        ref="confirmDeleteModal"
+        description="Are you sure you want to delete this link?"
+        @deleted="router.visit(linksRoute.index.url())"
+    />
+
+    <AppLayout :breadcrumbs="breadcrumbs">
+        <template #header-actions>
+            <Button variant="ghost" size="icon" @click="qrcodeModal?.open(link)">
+                <IconQrcode class="size-4" />
+                <span class="sr-only">QR code</span>
+            </Button>
+            <Button
+                variant="ghost"
+                size="icon"
+                class="text-destructive hover:text-destructive"
+                @click="confirmDeleteModal?.open({ url: linksRoute.destroy.url(link.id) })"
+            >
+                <IconTrash class="size-4" />
+                <span class="sr-only">Delete link</span>
+            </Button>
+            <Button variant="ghost" as-child>
+                <Link :href="linksRoute.index.url()">Cancel</Link>
+            </Button>
+            <Button :disabled="form.processing" @click="update">Save changes</Button>
+        </template>
+
+        <div class="mx-auto w-full max-w-3xl p-4 sm:p-6">
             <LinkForm :form="form" v-model:expires-at-date="expiresAtDate" />
-
-            <DialogFooter>
-                <Button @click="store" :disabled="form.processing" :class="{ 'opacity-25': form.processing }">
-                    Update Link
-                </Button>
-            </DialogFooter>
-        </DialogContent>
-    </Dialog>
+        </div>
+    </AppLayout>
 </template>
