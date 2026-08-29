@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Actions\Link\ListLinks;
 use App\Models\Link;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -84,4 +85,18 @@ it('rejects a back-half with unicode letters', function () {
             'key' => 'promoção',
         ])
         ->assertSessionHasErrors('key');
+});
+
+it('finds a link regardless of the case typed into search', function () {
+    Link::factory()->create([
+        'workspace_id' => $this->user->current_workspace_id,
+        'url' => 'https://github.com/luadotsh',
+    ]);
+
+    $found = ListLinks::execute(
+        $this->user->currentWorkspace,
+        ['search' => 'GITHUB'],
+    );
+
+    expect($found->total())->toBe(1);
 });

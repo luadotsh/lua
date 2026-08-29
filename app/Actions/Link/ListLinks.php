@@ -40,12 +40,14 @@ class ListLinks
 
         return Link::where('workspace_id', $workspace->id)
             ->with('tags')
+            // whereLike is case-insensitive by default, which a raw LIKE is
+            // not on Postgres: searching "GitHub" used to miss "github.com".
             ->when(filled($search), fn ($query) => $query->where(
                 function ($query) use ($search): void {
                     foreach (self::SEARCHABLE as $i => $column) {
                         $i === 0
-                            ? $query->where($column, 'LIKE', "%{$search}%")
-                            : $query->orWhere($column, 'LIKE', "%{$search}%");
+                            ? $query->whereLike($column, "%{$search}%")
+                            : $query->orWhereLike($column, "%{$search}%");
                     }
                 },
             ))
