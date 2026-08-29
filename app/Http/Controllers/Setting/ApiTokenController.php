@@ -4,50 +4,65 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Setting;
 
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use App\Actions\AccessToken\ListConnectedMcpClients;
+use App\Actions\AccessToken\ListWorkspaceApiKeys;
+use App\Actions\AccessToken\RevokeAccessToken;
+use App\Actions\ApiKey\CreateApiKey;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-
-use App\Models\ApiToken;
 
 class ApiTokenController extends Controller
 {
     public function index()
     {
-        $tokens = ApiToken::where('workspace_id', auth()->user()->current_workspace_id)->get();
+        $workspace = auth()->user()->currentWorkspace;
+
+        $tokens = ListWorkspaceApiKeys::execute($workspace);
 
         return Inertia::render('Setting/ApiToken/Index', [
-            'tokens' => $tokens,
-            'hasData' => $tokens->count() === 0 ? false : true
+            'tokens' => $tokens->map(fn ($token) => [
+                'id' => $token->id,
+                'name' => $token->name,
+                'last_used_at' => $token->last_used_at?->toIso8601String(),
+                'expires_at' => $token->expires_at?->toIso8601String(),
+                'created_at' => $token->created_at?->toIso8601String(),
+            ])->values(),
+            'mcpClients' => ListConnectedMcpClients::execute($workspace)->map(fn ($token) => [
+                'id' => $token->id,
+                'name' => $token->client?->name,
+                'last_used_at' => $token->last_used_at?->toIso8601String(),
+                'created_at' => $token->created_at?->toIso8601String(),
+            ])->values(),
+            'mcpUrl' => route('mcp'),
+            'hasData' => $tokens->isNotEmpty(),
         ]);
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string'
+            'name' => ['required', 'string', 'max:255'],
+            'expires_at' => CreateApiKey::expiresAtRules(),
         ]);
 
-        $token = ApiToken::create([
-            'workspace_id' => auth()->user()->current_workspace_id,
-            'name' => $request->name,
-            'token' => Str::uuid()
-        ]);
+        $result = CreateApiKey::execute(
+            auth()->user(),
+            auth()->user()->currentWorkspace,
+            $request->only('name', 'expires_at'),
+        );
 
+        // The plain token is shown once and never stored in readable form.
         return back()->with('flash', [
-            'token' => $token->token
+            'token' => $result['plain_token'],
         ]);
     }
 
     public function destroy($id)
     {
-        $token = ApiToken::where('workspace_id', auth()->user()->current_workspace_id)->findOrFail($id);
-        $token->delete();
+        $revoked = RevokeAccessToken::execute(auth()->user()->currentWorkspace, $id);
 
-        session()->flash('flash.banner', 'API Token deleted successful.');
-        session()->flash('flash.bannerStyle', 'success');
+        session()->flash('flash.banner', $revoked ? 'API token revoked.' : 'Token not found.');
+        session()->flash('flash.bannerStyle', $revoked ? 'success' : 'danger');
 
         return back();
     }

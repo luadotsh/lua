@@ -6,15 +6,12 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use App\Models\Domain;
 use App\Models\User;
-use App\Models\ApiToken;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->user = User::factory()->withWorkspace()->create();
-    $this->token = ApiToken::factory()->create([
-        'workspace_id' => $this->user->current_workspace_id,
-    ]);
+    $this->token = apiTokenFor($this->user);
 });
 
 it('can validate a domain', function () {
@@ -43,7 +40,7 @@ it('can list domains', function () {
     ]);
 
     $response = $this
-        ->withToken($this->token->token)
+        ->withToken($this->token)
         ->get(route('api.domains.index'));
 
     $response->assertStatus(200)
@@ -52,7 +49,7 @@ it('can list domains', function () {
 
 it('can create a new domain', function () {
     $response = $this
-        ->withToken($this->token->token)
+        ->withToken($this->token)
         ->post(route('api.domains.store'), [
             'domain' => 'new-domain.com',
             'not_found_url' => 'https://new-domain.com/404',
@@ -68,7 +65,7 @@ it('can update a domain', function () {
     ]);
 
     $response = $this
-        ->withToken($this->token->token)
+        ->withToken($this->token)
         ->put(route('api.domains.update', $domain->id), [
             'domain' => 'updated-domain.com',
             'not_found_url' => 'https://updated-domain.com/404',
@@ -84,7 +81,7 @@ it('can delete a domain', function () {
     ]);
 
     $response = $this
-        ->withToken($this->token->token)
+        ->withToken($this->token)
         ->delete(route('api.domains.destroy', $domain->id));
 
     $response->assertStatus(200);

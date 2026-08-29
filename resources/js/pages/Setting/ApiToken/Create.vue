@@ -18,6 +18,8 @@ const displayToken = ref(false);
 
 const form = useForm({
     name: "",
+    // Empty means the key never expires.
+    expires_at: "",
 });
 
 const show = ref(false);
@@ -60,6 +62,17 @@ const store = () => {
                         placeholder=""
                     />
                     <p v-if="form.errors.name" class="mt-2 text-sm text-red-600">{{ form.errors.name }}</p>
+                </div>
+
+                <div class="sm:col-span-6 grid gap-2">
+                    <Label for="expires_at">Expires on</Label>
+                    <Input
+                        id="expires_at"
+                        type="date"
+                        v-model="form.expires_at"
+                    />
+                    <p class="text-xs text-muted-foreground">Leave empty for a key that never expires.</p>
+                    <p v-if="form.errors.expires_at" class="mt-2 text-sm text-red-600">{{ form.errors.expires_at }}</p>
                 </div>
             </div>
 

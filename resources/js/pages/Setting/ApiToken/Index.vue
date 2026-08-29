@@ -12,21 +12,28 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { IconX, IconKey } from "@tabler/icons-vue";
+import { IconX, IconKey, IconCopy } from "@tabler/icons-vue";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { copyToClipboard } from "@/lib/utils";
 import date from "@/date";
 import AppLayout from "@/layouts/AppLayout.vue";
 import SettingsLayout from "@/layouts/settings/Layout.vue";
 import CreateModal from "./Create.vue";
 import * as apiTokensRoutes from "@/routes/setting/api-tokens";
-import type { ApiToken } from "@/types";
+import type { ApiToken, McpClient } from "@/types";
 
 const createModal = ref<InstanceType<typeof CreateModal> | null>(null);
 const tokenToDelete = ref<{ id: string | number } | null>(null);
 
-defineProps<{
+const props = defineProps<{
     tokens: ApiToken[];
+    mcpClients: McpClient[];
+    mcpUrl: string;
     hasData: boolean;
 }>();
+
+const copyMcpUrl = () => copyToClipboard(props.mcpUrl, "MCP server URL copied");
 
 const confirmDelete = (token: { id: string | number }) => {
     tokenToDelete.value = token;
@@ -101,6 +108,12 @@ const deleteToken = () => {
                                                 : "Never used"
                                         }}
                                     </div>
+                                    <div
+                                        v-if="token.expires_at"
+                                        class="text-sm text-zinc-500 dark:text-zinc-400"
+                                    >
+                                        Expires {{ date.formatDate(token.expires_at) }}
+                                    </div>
                                     <Button
                                         variant="outline"
                                         size="sm"
@@ -124,6 +137,62 @@ const deleteToken = () => {
                 <IconKey class="h-12 w-12 text-zinc-300 mb-4" />
                 <h3 class="text-sm font-semibold text-zinc-800 dark:text-zinc-200">You don't have any API Tokens yet.</h3>
                 <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">API Tokens are required to use the API, so you can manage your links, tags, and domains programmatically.</p>
+            </div>
+            <div class="mt-10 border-t border-zinc-200 dark:border-zinc-700 pt-8">
+                <div class="sm:flex sm:items-center">
+                    <div class="sm:flex-auto">
+                        <h2 class="text-base font-semibold text-zinc-800 dark:text-zinc-200">MCP Server</h2>
+                        <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+                            Connect an AI assistant to this workspace. It authenticates with
+                            OAuth and can only act on the workspace it was connected from.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mt-4 grid gap-2">
+                    <Label for="mcp-url">Server URL</Label>
+                    <div class="flex items-center gap-2">
+                        <Input id="mcp-url" :model-value="mcpUrl" readonly class="font-mono text-sm" />
+                        <Button variant="outline" size="sm" @click="copyMcpUrl">
+                            <IconCopy class="h-4 w-4" />
+                        </Button>
+                    </div>
+                </div>
+
+                <div v-if="mcpClients.length" class="mt-6 space-y-2">
+                    <h3 class="text-sm font-medium text-zinc-800 dark:text-zinc-200">Connected clients</h3>
+                    <div
+                        v-for="client in mcpClients"
+                        :key="client.id"
+                        class="flex items-center justify-between rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-4"
+                    >
+                        <div class="text-sm font-medium text-zinc-600 dark:text-white">
+                            {{ client.name ?? "Unnamed client" }}
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <div class="text-sm text-zinc-800 dark:text-zinc-300">
+                                {{
+                                    client.last_used_at
+                                        ? `Last used ${date.diffForHumans(client.last_used_at)}`
+                                        : "Never used"
+                                }}
+                            </div>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                class="space-x-1"
+                                @click="confirmDelete(client)"
+                            >
+                                <IconX class="h-3 w-3" />
+                                <span>Revoke</span>
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+
+                <p v-else class="mt-4 text-sm text-zinc-500 dark:text-zinc-400">
+                    No assistant is connected yet.
+                </p>
             </div>
         </SettingsLayout>
     </AppLayout>

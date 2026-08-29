@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Http\Controllers\Api\WebsiteController::__invoke
 * @see app/Http/Controllers/Api/WebsiteController.php:11
-* @route '/api/v1/websites/favicon'
+* @route '/api/websites/favicon'
 */
 export const favicon = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: favicon.url(options),
@@ -11,13 +11,13 @@ export const favicon = (options?: RouteQueryOptions): RouteDefinition<'get'> => 
 
 favicon.definition = {
     methods: ["get","head"],
-    url: '/api/v1/websites/favicon',
+    url: '/api/websites/favicon',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\Api\WebsiteController::__invoke
 * @see app/Http/Controllers/Api/WebsiteController.php:11
-* @route '/api/v1/websites/favicon'
+* @route '/api/websites/favicon'
 */
 favicon.url = (options?: RouteQueryOptions) => {
     return favicon.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ favicon.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Http\Controllers\Api\WebsiteController::__invoke
 * @see app/Http/Controllers/Api/WebsiteController.php:11
-* @route '/api/v1/websites/favicon'
+* @route '/api/websites/favicon'
 */
 favicon.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: favicon.url(options),
@@ -36,7 +36,7 @@ favicon.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Http\Controllers\Api\WebsiteController::__invoke
 * @see app/Http/Controllers/Api/WebsiteController.php:11
-* @route '/api/v1/websites/favicon'
+* @route '/api/websites/favicon'
 */
 favicon.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: favicon.url(options),
@@ -46,7 +46,7 @@ favicon.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \App\Http\Controllers\Api\WebsiteController::__invoke
 * @see app/Http/Controllers/Api/WebsiteController.php:11
-* @route '/api/v1/websites/favicon'
+* @route '/api/websites/favicon'
 */
 const faviconForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: favicon.url(options),
@@ -56,7 +56,7 @@ const faviconForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =>
 /**
 * @see \App\Http\Controllers\Api\WebsiteController::__invoke
 * @see app/Http/Controllers/Api/WebsiteController.php:11
-* @route '/api/v1/websites/favicon'
+* @route '/api/websites/favicon'
 */
 faviconForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: favicon.url(options),
@@ -66,7 +66,7 @@ faviconForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 /**
 * @see \App\Http\Controllers\Api\WebsiteController::__invoke
 * @see app/Http/Controllers/Api/WebsiteController.php:11
-* @route '/api/v1/websites/favicon'
+* @route '/api/websites/favicon'
 */
 faviconForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: favicon.url({

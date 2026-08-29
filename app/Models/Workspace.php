@@ -146,6 +146,6 @@ class Workspace extends Model implements HasMedia
 
     public function apiTokens(): HasMany
     {
-        return $this->hasMany(ApiToken::class);
+        return $this->hasMany(AccessToken::class);
     }
 }

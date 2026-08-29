@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Http\Controllers\Api\WebsiteController::__invoke
 * @see app/Http/Controllers/Api/WebsiteController.php:11
-* @route '/api/v1/websites/favicon'
+* @route '/api/websites/favicon'
 */
 const WebsiteController = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: WebsiteController.url(options),
@@ -11,13 +11,13 @@ const WebsiteController = (options?: RouteQueryOptions): RouteDefinition<'get'> 
 
 WebsiteController.definition = {
     methods: ["get","head"],
-    url: '/api/v1/websites/favicon',
+    url: '/api/websites/favicon',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\Api\WebsiteController::__invoke
 * @see app/Http/Controllers/Api/WebsiteController.php:11
-* @route '/api/v1/websites/favicon'
+* @route '/api/websites/favicon'
 */
 WebsiteController.url = (options?: RouteQueryOptions) => {
     return WebsiteController.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ WebsiteController.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Http\Controllers\Api\WebsiteController::__invoke
 * @see app/Http/Controllers/Api/WebsiteController.php:11
-* @route '/api/v1/websites/favicon'
+* @route '/api/websites/favicon'
 */
 WebsiteController.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: WebsiteController.url(options),
@@ -36,7 +36,7 @@ WebsiteController.get = (options?: RouteQueryOptions): RouteDefinition<'get'> =>
 /**
 * @see \App\Http\Controllers\Api\WebsiteController::__invoke
 * @see app/Http/Controllers/Api/WebsiteController.php:11
-* @route '/api/v1/websites/favicon'
+* @route '/api/websites/favicon'
 */
 WebsiteController.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: WebsiteController.url(options),
@@ -46,7 +46,7 @@ WebsiteController.head = (options?: RouteQueryOptions): RouteDefinition<'head'> 
 /**
 * @see \App\Http\Controllers\Api\WebsiteController::__invoke
 * @see app/Http/Controllers/Api/WebsiteController.php:11
-* @route '/api/v1/websites/favicon'
+* @route '/api/websites/favicon'
 */
 const WebsiteControllerForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: WebsiteController.url(options),
@@ -56,7 +56,7 @@ const WebsiteControllerForm = (options?: RouteQueryOptions): RouteFormDefinition
 /**
 * @see \App\Http\Controllers\Api\WebsiteController::__invoke
 * @see app/Http/Controllers/Api/WebsiteController.php:11
-* @route '/api/v1/websites/favicon'
+* @route '/api/websites/favicon'
 */
 WebsiteControllerForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: WebsiteController.url(options),
@@ -66,7 +66,7 @@ WebsiteControllerForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'
 /**
 * @see \App\Http\Controllers\Api\WebsiteController::__invoke
 * @see app/Http/Controllers/Api/WebsiteController.php:11
-* @route '/api/v1/websites/favicon'
+* @route '/api/websites/favicon'
 */
 WebsiteControllerForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: WebsiteController.url({

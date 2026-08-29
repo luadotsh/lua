@@ -11,7 +11,10 @@ use Laravel\Cashier\Cashier;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Notifications\Messages\MailMessage;
 
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
@@ -23,7 +26,6 @@ use App\Policies\WorkspacePolicy;
 
 use App\Models\Workspace;
 use App\Models\User;
-use App\Models\ApiToken;
 use App\Models\Domain;
 use App\Models\Invite;
 use App\Models\Link;
@@ -57,6 +59,8 @@ class AppServiceProvider extends ServiceProvider
         // Analytics
         $this->configurePostHog();
 
+        $this->configureRateLimiting();
+
         // Vite configuration
         Vite::prefetch(concurrency: 3);
 
@@ -77,7 +81,6 @@ class AppServiceProvider extends ServiceProvider
 
         // Morph map for polymorphic relationships
         Relation::enforceMorphMap([
-            'apiToken' => ApiToken::class,
             'domain' => Domain::class,
             'invite' => Invite::class,
             'link' => Link::class,
@@ -104,5 +107,16 @@ class AppServiceProvider extends ServiceProvider
         PostHog::init(config('services.posthog.api_key'), [
             'host' => config('services.posthog.host'),
         ]);
+    }
+
+    /**
+     * Dynamic client registration is unauthenticated by design, so it gets a
+     * tight limit of its own rather than sharing the global API budget.
+     */
+    protected function configureRateLimiting(): void
+    {
+        RateLimiter::for('mcp-oauth-registration', function (Request $request) {
+            return Limit::perMinute(10)->by($request->ip());
+        });
     }
 }

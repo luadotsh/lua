@@ -8,15 +8,12 @@ use App\Enums\Tag\Color;
 
 use App\Models\User;
 use App\Models\Tag;
-use App\Models\ApiToken;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->user = User::factory()->withWorkspace()->create();
-    $this->token = ApiToken::factory()->create([
-        'workspace_id' => $this->user->current_workspace_id,
-    ]);
+    $this->token = apiTokenFor($this->user);
 });
 
 
@@ -27,7 +24,7 @@ it('can list tags', function () {
     ]);
 
     $response = $this
-        ->withToken($this->token->token)
+        ->withToken($this->token)
         ->get(route('api.tags.index'));
 
     $response->assertStatus(200)
@@ -36,7 +33,7 @@ it('can list tags', function () {
 
 it('can create a new tag', function () {
     $response = $this
-        ->withToken($this->token->token)
+        ->withToken($this->token)
         ->post(route('api.tags.store'), [
             'name' => 'New Tag',
             'color' => Color::BLUE->value,
@@ -51,7 +48,7 @@ it('can update a tag', function () {
     ]);
 
     $response = $this
-        ->withToken($this->token->token)
+        ->withToken($this->token)
         ->put(route('api.tags.update', $tag->id), [
             'name' => 'Updated Tag',
             'color' => Color::GREEN->value,
@@ -70,7 +67,7 @@ it('can delete a tag', function () {
     ]);
 
     $response = $this
-        ->withToken($this->token->token)
+        ->withToken($this->token)
         ->delete(route('api.tags.destroy', $tag->id));
 
     $response->assertStatus(200);

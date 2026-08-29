@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Laravel\Passport\HasApiTokens;
 
 use App\Models\Traits\HasWorkspaces;
 use App\Enums\User\Theme;
@@ -18,7 +19,7 @@ use App\Enums\User\Theme;
 class User extends Authenticatable implements MustVerifyEmail, HasMedia
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasWorkspaces, HasUuids, InteractsWithMedia;
+    use HasFactory, Notifiable, HasWorkspaces, HasUuids, InteractsWithMedia, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.

@@ -10,10 +10,11 @@ use App\Http\Controllers\Api\TagController;
 use App\Http\Controllers\Api\DomainController;
 use App\Http\Controllers\Api\QrcodeController;
 
-Route::group(['middleware' => ['api.auth']], function () {
+// Passport personal access tokens, each bound to one workspace.
+Route::group(['middleware' => ['auth:api', 'workspace.token']], function () {
 
         // favicon
-        Route::get('/websites/favicon', WebsiteController::class)->name('websites.favicon')->withoutMiddleware('api.auth');
+        Route::get('/websites/favicon', WebsiteController::class)->name('websites.favicon')->withoutMiddleware(['auth:api', 'workspace.token']);
 
         // links
         Route::get('/links', [LinkController::class, 'index'])->name('api.links.index');
@@ -23,7 +24,7 @@ Route::group(['middleware' => ['api.auth']], function () {
         Route::delete('/links/{id}', [LinkController::class, 'destroy'])->name('api.links.destroy');
 
         // qr-code
-        Route::get('/links/{id}/qr-code', QrcodeController::class)->name('api.qr-code')->withoutMiddleware('api.auth');
+        Route::get('/links/{id}/qr-code', QrcodeController::class)->name('api.qr-code')->withoutMiddleware(['auth:api', 'workspace.token']);
 
         // tags
         Route::get('/tags', [TagController::class, 'index'])->name('api.tags.index');
@@ -32,7 +33,7 @@ Route::group(['middleware' => ['api.auth']], function () {
         Route::delete('/tags/{id}', [TagController::class, 'destroy'])->name('api.tags.destroy');
 
         // domains
-        Route::get('/domains/validate', [DomainController::class, 'validate'])->name('api.domains.validate')->withoutMiddleware('api.auth');
+        Route::get('/domains/validate', [DomainController::class, 'validate'])->name('api.domains.validate')->withoutMiddleware(['auth:api', 'workspace.token']);
         Route::get('/domains', [DomainController::class, 'index'])->name('api.domains.index');
         Route::post('/domains', [DomainController::class, 'store'])->name('api.domains.store');
         Route::put('/domains/{id}', [DomainController::class, 'update'])->name('api.domains.update');

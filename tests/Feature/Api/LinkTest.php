@@ -6,15 +6,12 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use App\Models\User;
 use App\Models\Link;
-use App\Models\ApiToken;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->user = User::factory()->withWorkspace()->create();
-    $this->token = ApiToken::factory()->create([
-        'workspace_id' => $this->user->current_workspace_id,
-    ]);
+    $this->token = apiTokenFor($this->user);
 });
 
 it('can list links', function () {
@@ -23,7 +20,7 @@ it('can list links', function () {
     ]);
 
     $response = $this
-        ->withToken($this->token->token)
+        ->withToken($this->token)
         ->json('GET', route('api.links.index'));
 
     $response->assertStatus(200)
@@ -32,7 +29,7 @@ it('can list links', function () {
 
 it('can create a new link', function () {
     $response = $this
-        ->withToken($this->token->token)
+        ->withToken($this->token)
         ->json('POST', route('api.links.store'), [
             'key' => 'new-link',
             'domain' => config('domains.main'),
@@ -44,7 +41,7 @@ it('can create a new link', function () {
 
 it('can create a new link with ios and android', function () {
     $response = $this
-        ->withToken($this->token->token)
+        ->withToken($this->token)
         ->json('POST', route('api.links.store'), [
             'key' => 'new-link',
             'domain' => config('domains.main'),
@@ -65,7 +62,7 @@ it('can create a new link with expires_at', function () {
     $expiresAt = now()->addDay()->format('Y-m-d H:i:s');
 
     $response = $this
-        ->withToken($this->token->token)
+        ->withToken($this->token)
         ->json('POST', route('api.links.store'), [
             'key' => 'new-link',
             'domain' => config('domains.main'),
@@ -86,7 +83,7 @@ it('can update a link', function () {
     ]);
 
     $response = $this
-        ->withToken($this->token->token)
+        ->withToken($this->token)
         ->json('PUT', route('api.links.update', $link->id), [
             'key' => 'updated-link',
             'domain' => config('domains.main'),
@@ -98,7 +95,7 @@ it('can update a link', function () {
 
 it('can not update a link with invalid domain served by lua', function () {
     $response = $this
-        ->withToken($this->token->token)
+        ->withToken($this->token)
         ->json('PUT', route('api.links.update', '00000000-0000-0000-0000-000000000000'), [
             'key' => 'updated-link',
             'domain' => 'lua.com',
@@ -110,7 +107,7 @@ it('can not update a link with invalid domain served by lua', function () {
 
 it('can not update a link with invalid custom domain', function () {
     $response = $this
-        ->withToken($this->token->token)
+        ->withToken($this->token)
         ->json('PUT', route('api.links.update', '00000000-0000-0000-0000-000000000000'), [
             'key' => 'updated-link',
             'domain' => 'track.company.com',
@@ -122,7 +119,7 @@ it('can not update a link with invalid custom domain', function () {
 
 it('can not update a link that does not exist', function () {
     $response = $this
-        ->withToken($this->token->token)
+        ->withToken($this->token)
         ->json('PUT', route('api.links.update', '00000000-0000-0000-0000-000000000000'), [
             'key' => 'updated-link',
             'domain' => config('domains.main'),
@@ -138,7 +135,7 @@ it('can delete a link', function () {
     ]);
 
     $response = $this
-        ->withToken($this->token->token)
+        ->withToken($this->token)
         ->json('DELETE', route('api.links.destroy', $link->id));
 
     $response->assertStatus(200);
@@ -146,7 +143,7 @@ it('can delete a link', function () {
 
 it('can not delete a link that does not exist', function () {
     $response = $this
-        ->withToken($this->token->token)
+        ->withToken($this->token)
         ->json('DELETE', route('api.links.destroy', '00000000-0000-0000-0000-000000000000'));
 
     $response->assertStatus(404);
@@ -154,7 +151,7 @@ it('can not delete a link that does not exist', function () {
 
 it('can create a new link with password', function () {
     $response = $this
-        ->withToken($this->token->token)
+        ->withToken($this->token)
         ->json('POST', route('api.links.store'), [
             'key' => 'new-link',
             'domain' => config('domains.main'),
@@ -172,7 +169,7 @@ it('can validate password', function () {
     ]);
 
     $response = $this
-        ->withToken($this->token->token)
+        ->withToken($this->token)
         ->json('POST', route('links.password.validate', $link->key), [
             'password' => 'password',
         ]);
@@ -187,7 +184,7 @@ it('can not validate password', function () {
     ]);
 
     $response = $this
-        ->withToken($this->token->token)
+        ->withToken($this->token)
         ->from(route('links.password', $link->key))
         ->json('POST', route('links.password.validate', $link->key), [
             'password' => 'wrong-password',
@@ -201,7 +198,7 @@ it('can not validate password', function () {
 
 it('can not create a new link with invalid domain served by lua', function () {
     $response = $this
-        ->withToken($this->token->token)
+        ->withToken($this->token)
         ->json('POST', route('api.links.store'), [
             'key' => 'new-link',
             'domain' => 'lua.com',
@@ -213,7 +210,7 @@ it('can not create a new link with invalid domain served by lua', function () {
 
 it('can not create a new link with invalid custom domain', function () {
     $response = $this
-        ->withToken($this->token->token)
+        ->withToken($this->token)
         ->json('POST', route('api.links.store'), [
             'key' => 'new-link',
             'domain' => 'track.company.com',

@@ -1,5 +1,56 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../wayfinder'
 /**
+* @see vendor/laravel/mcp/src/Server/Registrar.php:49
+* @route '/mcp'
+*/
+export const mcp = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: mcp.url(options),
+    method: 'post',
+})
+
+mcp.definition = {
+    methods: ["post"],
+    url: '/mcp',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see vendor/laravel/mcp/src/Server/Registrar.php:49
+* @route '/mcp'
+*/
+mcp.url = (options?: RouteQueryOptions) => {
+    return mcp.definition.url + queryParams(options)
+}
+
+/**
+* @see vendor/laravel/mcp/src/Server/Registrar.php:49
+* @route '/mcp'
+*/
+mcp.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: mcp.url(options),
+    method: 'post',
+})
+
+/**
+* @see vendor/laravel/mcp/src/Server/Registrar.php:49
+* @route '/mcp'
+*/
+const mcpForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: mcp.url(options),
+    method: 'post',
+})
+
+/**
+* @see vendor/laravel/mcp/src/Server/Registrar.php:49
+* @route '/mcp'
+*/
+mcpForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: mcp.url(options),
+    method: 'post',
+})
+
+mcp.form = mcpForm
+
+/**
 * @see \App\Http\Controllers\Auth\RegisteredUserController::register
 * @see app/Http/Controllers/Auth/RegisteredUserController.php:29
 * @route '/register'

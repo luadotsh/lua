@@ -16,14 +16,22 @@ export type TagColor =
     | 'pink'
     | 'zinc';
 
-// Mirrors App\Models\ApiToken ('token' is hidden on serialization)
+// A Passport personal access token, as shipped by ApiTokenController.
+// The token value itself is only ever returned once, at creation.
 export type ApiToken = {
-    id: string | number;
-    workspace_id: string;
-    name: string;
+    id: string;
+    name: string | null;
     last_used_at: string | null;
-    created_at: string;
-    updated_at: string;
+    expires_at: string | null;
+    created_at: string | null;
+};
+
+// An OAuth grant an MCP client currently holds against this workspace.
+export type McpClient = {
+    id: string;
+    name: string | null;
+    last_used_at: string | null;
+    created_at: string | null;
 };
 
 // Mirrors App\Models\Domain

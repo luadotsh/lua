@@ -45,3 +45,33 @@ function something()
 {
     // ..
 }
+
+/*
+|--------------------------------------------------------------------------
+| Helpers
+|--------------------------------------------------------------------------
+*/
+
+/**
+ * Issue a Passport personal access token bound to the user's current
+ * workspace, the same way the settings screen does, and return the plain
+ * token to send as a bearer.
+ */
+function apiTokenFor(App\Models\User $user, ?string $name = 'Test key'): string
+{
+    // Personal access grants need a client; create one per test database.
+    if (! Laravel\Passport\Passport::client()->newQuery()
+        ->whereJsonContains('grant_types', 'personal_access')
+        ->exists()) {
+        app(Laravel\Passport\ClientRepository::class)->createPersonalAccessGrantClient(
+            'Test Personal Access Client',
+            'users',
+        );
+    }
+
+    return App\Actions\ApiKey\CreateApiKey::execute(
+        $user,
+        $user->currentWorkspace,
+        ['name' => $name],
+    )['plain_token'];
+}

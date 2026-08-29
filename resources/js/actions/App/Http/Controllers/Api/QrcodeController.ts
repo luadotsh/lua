@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Http\Controllers\Api\QrcodeController::__invoke
 * @see app/Http/Controllers/Api/QrcodeController.php:19
-* @route '/api/v1/links/{id}/qr-code'
+* @route '/api/links/{id}/qr-code'
 */
 const QrcodeController = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: QrcodeController.url(args, options),
@@ -11,13 +11,13 @@ const QrcodeController = (args: { id: string | number } | [id: string | number ]
 
 QrcodeController.definition = {
     methods: ["get","head"],
-    url: '/api/v1/links/{id}/qr-code',
+    url: '/api/links/{id}/qr-code',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\Api\QrcodeController::__invoke
 * @see app/Http/Controllers/Api/QrcodeController.php:19
-* @route '/api/v1/links/{id}/qr-code'
+* @route '/api/links/{id}/qr-code'
 */
 QrcodeController.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -44,7 +44,7 @@ QrcodeController.url = (args: { id: string | number } | [id: string | number ] |
 /**
 * @see \App\Http\Controllers\Api\QrcodeController::__invoke
 * @see app/Http/Controllers/Api/QrcodeController.php:19
-* @route '/api/v1/links/{id}/qr-code'
+* @route '/api/links/{id}/qr-code'
 */
 QrcodeController.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: QrcodeController.url(args, options),
@@ -54,7 +54,7 @@ QrcodeController.get = (args: { id: string | number } | [id: string | number ] |
 /**
 * @see \App\Http\Controllers\Api\QrcodeController::__invoke
 * @see app/Http/Controllers/Api/QrcodeController.php:19
-* @route '/api/v1/links/{id}/qr-code'
+* @route '/api/links/{id}/qr-code'
 */
 QrcodeController.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: QrcodeController.url(args, options),
@@ -64,7 +64,7 @@ QrcodeController.head = (args: { id: string | number } | [id: string | number ] 
 /**
 * @see \App\Http\Controllers\Api\QrcodeController::__invoke
 * @see app/Http/Controllers/Api/QrcodeController.php:19
-* @route '/api/v1/links/{id}/qr-code'
+* @route '/api/links/{id}/qr-code'
 */
 const QrcodeControllerForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: QrcodeController.url(args, options),
@@ -74,7 +74,7 @@ const QrcodeControllerForm = (args: { id: string | number } | [id: string | numb
 /**
 * @see \App\Http\Controllers\Api\QrcodeController::__invoke
 * @see app/Http/Controllers/Api/QrcodeController.php:19
-* @route '/api/v1/links/{id}/qr-code'
+* @route '/api/links/{id}/qr-code'
 */
 QrcodeControllerForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: QrcodeController.url(args, options),
@@ -84,7 +84,7 @@ QrcodeControllerForm.get = (args: { id: string | number } | [id: string | number
 /**
 * @see \App\Http\Controllers\Api\QrcodeController::__invoke
 * @see app/Http/Controllers/Api/QrcodeController.php:19
-* @route '/api/v1/links/{id}/qr-code'
+* @route '/api/links/{id}/qr-code'
 */
 QrcodeControllerForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: QrcodeController.url(args, {
