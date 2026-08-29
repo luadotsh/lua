@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Auth;
 
+use App\Actions\User\CreateUser;
+use App\Http\Controllers\Auth\Concerns\PreservesAttributionParameters;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
@@ -13,13 +15,17 @@ use Laravel\Socialite\Facades\Socialite;
 
 class GoogleController extends Controller
 {
+    use PreservesAttributionParameters;
+
     /**
      * Redirect the user to the Google authentication page.
      *
      * @return \Illuminate\Http\Response
      */
-    public function redirectToProvider()
+    public function redirectToProvider(Request $request)
     {
+        $this->storeAttributionParameters($request);
+
         return Inertia::location(Socialite::driver('google')->redirect());
     }
 
@@ -47,16 +53,16 @@ class GoogleController extends Controller
         }
 
         // create user
-        $user = User::create([
+        $user = CreateUser::execute([
             'name' => $googleUser->name,
             'email' => $googleUser->email,
             'email_verified_at' => now(),
-        ]);
+        ], $this->retrieveAttributionParameters());
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('workspaces.create'));
+        return redirect(route('links.index'));
     }
 }

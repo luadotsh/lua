@@ -3,7 +3,7 @@ import invites from './invites'
 import google723582 from './google'
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::google
-* @see app/Http/Controllers/Auth/GoogleController.php:21
+* @see app/Http/Controllers/Auth/GoogleController.php:25
 * @route '/google/login'
 */
 export const google = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -18,7 +18,7 @@ google.definition = {
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::google
-* @see app/Http/Controllers/Auth/GoogleController.php:21
+* @see app/Http/Controllers/Auth/GoogleController.php:25
 * @route '/google/login'
 */
 google.url = (options?: RouteQueryOptions) => {
@@ -27,7 +27,7 @@ google.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::google
-* @see app/Http/Controllers/Auth/GoogleController.php:21
+* @see app/Http/Controllers/Auth/GoogleController.php:25
 * @route '/google/login'
 */
 google.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -37,7 +37,7 @@ google.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::google
-* @see app/Http/Controllers/Auth/GoogleController.php:21
+* @see app/Http/Controllers/Auth/GoogleController.php:25
 * @route '/google/login'
 */
 google.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -47,7 +47,7 @@ google.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::google
-* @see app/Http/Controllers/Auth/GoogleController.php:21
+* @see app/Http/Controllers/Auth/GoogleController.php:25
 * @route '/google/login'
 */
 const googleForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -57,7 +57,7 @@ const googleForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::google
-* @see app/Http/Controllers/Auth/GoogleController.php:21
+* @see app/Http/Controllers/Auth/GoogleController.php:25
 * @route '/google/login'
 */
 googleForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -67,7 +67,7 @@ googleForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::google
-* @see app/Http/Controllers/Auth/GoogleController.php:21
+* @see app/Http/Controllers/Auth/GoogleController.php:25
 * @route '/google/login'
 */
 googleForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

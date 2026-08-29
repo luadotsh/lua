@@ -4,19 +4,15 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 use Inertia\Inertia;
 use Inertia\Response;
 
-use App\Enums\User\Role;
+use App\Actions\Workspace\CreateWorkspace;
 
 use App\Models\Workspace;
-use App\Models\Plan;
 
 class WorkspaceController extends Controller
 {
@@ -31,32 +27,14 @@ class WorkspaceController extends Controller
             'name' => ['required', 'string', 'max:255'],
         ]);
 
-        DB::beginTransaction();
-
         try {
-            $user = auth()->user();
-
-            $workspace = Workspace::create([
+            CreateWorkspace::execute(auth()->user(), [
                 'name' => $request->name,
-                'plan_id' => Plan::where('internal_id', 'free')->first()->id,
-                'billing_cycle_start' => now()->day,
             ]);
-
-            // attach user to project
-            $user->workspaces()->attach($workspace->id, [
-                'role' => Role::ROLE_OWNER,
-            ]);
-
-            $user->forceFill([
-                'current_workspace_id' => $workspace->id,
-            ])->save();
-
-            DB::commit();
 
             return redirect(route('links.index'));
         } catch (\Exception $e) {
             Log::error($e);
-            DB::rollBack();
 
             session()->flash('flash.banner', 'Error creating workspace');
             session()->flash('flash.bannerStyle', 'danger');

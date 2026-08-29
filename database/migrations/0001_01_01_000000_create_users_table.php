@@ -22,6 +22,21 @@ return new class extends Migration
             $table->string('photo')->nullable();
             $table->foreignUuid('current_workspace_id')->nullable();
             $table->string('theme')->default(Theme::SYSTEM);
+
+            // Signup attribution. UTMs are our own campaign values, so 255 is
+            // plenty; ad click IDs are opaque provider tokens with no
+            // documented max length (Google warns gclid grows over time).
+            $table->string('utm_source')->nullable();
+            $table->string('utm_medium')->nullable();
+            $table->string('utm_campaign')->nullable();
+            $table->string('utm_term')->nullable();
+            $table->string('utm_content')->nullable();
+            $table->text('gclid')->nullable();
+            $table->text('fbclid')->nullable();
+            $table->text('li_fat_id')->nullable();
+            $table->text('ttclid')->nullable();
+            $table->text('rdt_cid')->nullable();
+            $table->text('epik')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

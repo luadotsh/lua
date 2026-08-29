@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::callback
-* @see app/Http/Controllers/Auth/GoogleController.php:31
+* @see app/Http/Controllers/Auth/GoogleController.php:37
 * @route '/google/callback'
 */
 export const callback = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ callback.definition = {
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::callback
-* @see app/Http/Controllers/Auth/GoogleController.php:31
+* @see app/Http/Controllers/Auth/GoogleController.php:37
 * @route '/google/callback'
 */
 callback.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ callback.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::callback
-* @see app/Http/Controllers/Auth/GoogleController.php:31
+* @see app/Http/Controllers/Auth/GoogleController.php:37
 * @route '/google/callback'
 */
 callback.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ callback.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::callback
-* @see app/Http/Controllers/Auth/GoogleController.php:31
+* @see app/Http/Controllers/Auth/GoogleController.php:37
 * @route '/google/callback'
 */
 callback.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ callback.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::callback
-* @see app/Http/Controllers/Auth/GoogleController.php:31
+* @see app/Http/Controllers/Auth/GoogleController.php:37
 * @route '/google/callback'
 */
 const callbackForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const callbackForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::callback
-* @see app/Http/Controllers/Auth/GoogleController.php:31
+* @see app/Http/Controllers/Auth/GoogleController.php:37
 * @route '/google/callback'
 */
 callbackForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ callbackForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::callback
-* @see app/Http/Controllers/Auth/GoogleController.php:31
+* @see app/Http/Controllers/Auth/GoogleController.php:37
 * @route '/google/callback'
 */
 callbackForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

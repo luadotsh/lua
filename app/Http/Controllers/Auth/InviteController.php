@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Auth;
 
+use App\Actions\User\CreateUser;
 use App\Models\Invite;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -49,14 +50,15 @@ class InviteController extends Controller
             return redirect(route('auth.invites.show', $invite->id));
         }
 
-        // user
-        $user = new User();
-        $user->name = $request->name;
-        $user->email = $invite->email;
-        $user->password = Hash::make($request->password);
-        $user->current_workspace_id = $invite->workspace_id;
-        $user->email_verified_at = now();
-        $user->save();
+        // user — is_invite keeps CreateUser from also making a personal
+        // workspace, since this user joins the one that invited them
+        $user = CreateUser::execute([
+            'name' => $request->name,
+            'email' => $invite->email,
+            'password' => Hash::make($request->password),
+            'current_workspace_id' => $invite->workspace_id,
+            'is_invite' => true,
+        ]);
 
         // attach user to store
         $user->workspaces()->attach($invite->workspace_id, [

@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::redirectToProvider
-* @see app/Http/Controllers/Auth/GoogleController.php:21
+* @see app/Http/Controllers/Auth/GoogleController.php:25
 * @route '/google/login'
 */
 export const redirectToProvider = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ redirectToProvider.definition = {
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::redirectToProvider
-* @see app/Http/Controllers/Auth/GoogleController.php:21
+* @see app/Http/Controllers/Auth/GoogleController.php:25
 * @route '/google/login'
 */
 redirectToProvider.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ redirectToProvider.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::redirectToProvider
-* @see app/Http/Controllers/Auth/GoogleController.php:21
+* @see app/Http/Controllers/Auth/GoogleController.php:25
 * @route '/google/login'
 */
 redirectToProvider.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ redirectToProvider.get = (options?: RouteQueryOptions): RouteDefinition<'get'> =
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::redirectToProvider
-* @see app/Http/Controllers/Auth/GoogleController.php:21
+* @see app/Http/Controllers/Auth/GoogleController.php:25
 * @route '/google/login'
 */
 redirectToProvider.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ redirectToProvider.head = (options?: RouteQueryOptions): RouteDefinition<'head'>
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::redirectToProvider
-* @see app/Http/Controllers/Auth/GoogleController.php:21
+* @see app/Http/Controllers/Auth/GoogleController.php:25
 * @route '/google/login'
 */
 const redirectToProviderForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const redirectToProviderForm = (options?: RouteQueryOptions): RouteFormDefinitio
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::redirectToProvider
-* @see app/Http/Controllers/Auth/GoogleController.php:21
+* @see app/Http/Controllers/Auth/GoogleController.php:25
 * @route '/google/login'
 */
 redirectToProviderForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ redirectToProviderForm.get = (options?: RouteQueryOptions): RouteFormDefinition<
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::redirectToProvider
-* @see app/Http/Controllers/Auth/GoogleController.php:21
+* @see app/Http/Controllers/Auth/GoogleController.php:25
 * @route '/google/login'
 */
 redirectToProviderForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ redirectToProvider.form = redirectToProviderForm
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::handleProviderCallback
-* @see app/Http/Controllers/Auth/GoogleController.php:31
+* @see app/Http/Controllers/Auth/GoogleController.php:37
 * @route '/google/callback'
 */
 export const handleProviderCallback = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -97,7 +97,7 @@ handleProviderCallback.definition = {
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::handleProviderCallback
-* @see app/Http/Controllers/Auth/GoogleController.php:31
+* @see app/Http/Controllers/Auth/GoogleController.php:37
 * @route '/google/callback'
 */
 handleProviderCallback.url = (options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ handleProviderCallback.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::handleProviderCallback
-* @see app/Http/Controllers/Auth/GoogleController.php:31
+* @see app/Http/Controllers/Auth/GoogleController.php:37
 * @route '/google/callback'
 */
 handleProviderCallback.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -116,7 +116,7 @@ handleProviderCallback.get = (options?: RouteQueryOptions): RouteDefinition<'get
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::handleProviderCallback
-* @see app/Http/Controllers/Auth/GoogleController.php:31
+* @see app/Http/Controllers/Auth/GoogleController.php:37
 * @route '/google/callback'
 */
 handleProviderCallback.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -126,7 +126,7 @@ handleProviderCallback.head = (options?: RouteQueryOptions): RouteDefinition<'he
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::handleProviderCallback
-* @see app/Http/Controllers/Auth/GoogleController.php:31
+* @see app/Http/Controllers/Auth/GoogleController.php:37
 * @route '/google/callback'
 */
 const handleProviderCallbackForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -136,7 +136,7 @@ const handleProviderCallbackForm = (options?: RouteQueryOptions): RouteFormDefin
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::handleProviderCallback
-* @see app/Http/Controllers/Auth/GoogleController.php:31
+* @see app/Http/Controllers/Auth/GoogleController.php:37
 * @route '/google/callback'
 */
 handleProviderCallbackForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -146,7 +146,7 @@ handleProviderCallbackForm.get = (options?: RouteQueryOptions): RouteFormDefinit
 
 /**
 * @see \App\Http\Controllers\Auth\GoogleController::handleProviderCallback
-* @see app/Http/Controllers/Auth/GoogleController.php:31
+* @see app/Http/Controllers/Auth/GoogleController.php:37
 * @route '/google/callback'
 */
 handleProviderCallbackForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

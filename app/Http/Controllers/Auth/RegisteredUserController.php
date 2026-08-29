@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Auth;
 
+use App\Actions\User\CreateUser;
+use App\Http\Controllers\Auth\Concerns\PreservesAttributionParameters;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Auth\Events\Registered;
@@ -19,11 +21,15 @@ use App\Models\User;
 
 class RegisteredUserController extends Controller
 {
+    use PreservesAttributionParameters;
+
     /**
      * Display the registration view.
      */
-    public function create(): Response
+    public function create(Request $request): Response
     {
+        $this->storeAttributionParameters($request);
+
         return Inertia::render('Auth/Register');
     }
 
@@ -40,16 +46,16 @@ class RegisteredUserController extends Controller
             'password' => ['required', Rules\Password::defaults()],
         ]);
 
-        $user = User::create([
+        $user = CreateUser::execute([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-        ]);
+        ], $this->retrieveAttributionParameters());
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('workspaces.create', absolute: false));
+        return redirect(route('links.index', absolute: false));
     }
 }
