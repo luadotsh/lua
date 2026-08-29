@@ -29,6 +29,12 @@ const full = new Intl.NumberFormat('en-US');
 export const formatCount = (value: number): string =>
     value >= 10_000 ? compact.format(value) : full.format(value);
 
+/**
+ * Never compacted. Quota figures have to stay exact: 99,996 remaining rounded
+ * to "100K" next to "4 used" reads as though nothing has been spent.
+ */
+export const formatNumber = (value: number): string => full.format(value);
+
 export const formatChange = (change: number | null): string =>
     change === null ? '—' : `${Math.abs(change).toFixed(1)}%`;
 

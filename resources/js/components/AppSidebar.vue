@@ -38,6 +38,7 @@ import { index as domainsIndex } from '@/routes/setting/domains';
 import { index as mcpIndex } from '@/routes/setting/mcp';
 import { index as tagsIndex } from '@/routes/setting/tags';
 import { index as teamMembersIndex } from '@/routes/setting/team-members';
+import { formatNumber } from '@/lib/metrics';
 import { type NavItem } from '@/types';
 
 const page = usePage();
@@ -161,7 +162,7 @@ const workspaceNavItems: NavItem[] = [
                             <IconLink class="size-3.5 text-sidebar-foreground/60" />
                             <span class="text-xs font-medium text-sidebar-foreground/60">Links</span>
                         </div>
-                        <span class="text-xs font-medium text-sidebar-foreground/60">{{ usage.links.used }} of {{ usage.links.limit }}</span>
+                        <span class="text-xs font-medium text-sidebar-foreground/60">{{ formatNumber(usage.links.used) }} of {{ formatNumber(usage.links.limit) }}</span>
                     </div>
                     <div class="overflow-hidden rounded-full bg-sidebar-accent">
                         <div
@@ -177,7 +178,7 @@ const workspaceNavItems: NavItem[] = [
                             <IconClick class="size-3.5 text-sidebar-foreground/60" />
                             <span class="text-xs font-medium text-sidebar-foreground/60">Events</span>
                         </div>
-                        <span class="text-xs font-medium text-sidebar-foreground/60">{{ usage.events.used }} of {{ usage.events.limit }}</span>
+                        <span class="text-xs font-medium text-sidebar-foreground/60">{{ formatNumber(usage.events.used) }} of {{ formatNumber(usage.events.limit) }}</span>
                     </div>
                     <div class="overflow-hidden rounded-full bg-sidebar-accent">
                         <div

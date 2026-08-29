@@ -1,15 +1,16 @@
 // Mirrors App\Models\Traits\WorkspaceUsage::usage()
-// Counts are number_format()'d strings on the PHP side, percentages are numbers.
+// Counts come over as raw integers: a thousands separator is a rendering
+// decision, and pre-formatting them made every consumer parse the string back.
 export type UsageMetric = {
-    used: string;
-    limit: string;
+    used: number;
+    limit: number;
     percent: number;
-    remaining: string;
+    remaining: number;
     reached_limit: boolean;
 };
 
 export type UsageChart = {
-    total: string;
+    total: number;
     chart: {
         data: number[];
         label: string;
