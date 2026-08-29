@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\RedirectController::validate
-* @see app/Http/Controllers/RedirectController.php:100
+* @see app/Http/Controllers/RedirectController.php:102
 * @route '/{key}/password'
 */
 export const validate = (args: { key: string | number } | [key: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ validate.definition = {
 
 /**
 * @see \App\Http\Controllers\RedirectController::validate
-* @see app/Http/Controllers/RedirectController.php:100
+* @see app/Http/Controllers/RedirectController.php:102
 * @route '/{key}/password'
 */
 validate.url = (args: { key: string | number } | [key: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -43,7 +43,7 @@ validate.url = (args: { key: string | number } | [key: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\RedirectController::validate
-* @see app/Http/Controllers/RedirectController.php:100
+* @see app/Http/Controllers/RedirectController.php:102
 * @route '/{key}/password'
 */
 validate.post = (args: { key: string | number } | [key: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -53,7 +53,7 @@ validate.post = (args: { key: string | number } | [key: string | number ] | stri
 
 /**
 * @see \App\Http\Controllers\RedirectController::validate
-* @see app/Http/Controllers/RedirectController.php:100
+* @see app/Http/Controllers/RedirectController.php:102
 * @route '/{key}/password'
 */
 const validateForm = (args: { key: string | number } | [key: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -63,7 +63,7 @@ const validateForm = (args: { key: string | number } | [key: string | number ] |
 
 /**
 * @see \App\Http\Controllers\RedirectController::validate
-* @see app/Http/Controllers/RedirectController.php:100
+* @see app/Http/Controllers/RedirectController.php:102
 * @route '/{key}/password'
 */
 validateForm.post = (args: { key: string | number } | [key: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

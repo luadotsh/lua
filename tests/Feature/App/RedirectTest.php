@@ -156,3 +156,42 @@ it('redirects to the expired redirect URL if the link is expired', function () {
     $response->assertStatus(302);
     $response->assertRedirect($link->expired_redirect_url);
 });
+
+it('resolves the link by host as well as key', function () {
+    // The same key on two domains. Matching on the key alone would resolve to
+    // whichever row came back first, sending the visitor to the wrong place.
+    $host = parse_url((string) config('app.url'), PHP_URL_HOST);
+
+    $mine = Link::factory()->create([
+        'domain' => $host,
+        'key' => 'shared-key',
+        'link' => "https://{$host}/shared-key",
+        'url' => 'https://example.com/mine',
+    ]);
+
+    Link::factory()->create([
+        'domain' => 'someone-else.test',
+        'key' => 'shared-key',
+        'link' => 'https://someone-else.test/shared-key',
+        'url' => 'https://example.com/theirs',
+    ]);
+
+    $this->get(route('links.redirect', 'shared-key'))
+        ->assertRedirect($mine->url);
+});
+
+it('does not leak a password gate across domains', function () {
+    $host = parse_url((string) config('app.url'), PHP_URL_HOST);
+
+    Link::factory()->create([
+        'domain' => 'someone-else.test',
+        'key' => 'gated',
+        'link' => 'https://someone-else.test/gated',
+        'password' => 'secret',
+    ]);
+
+    // The key exists, but not on this host.
+    $this->get(route('links.password', 'gated'))->assertNotFound();
+    $this->post(route('links.password.validate', 'gated'), ['password' => 'secret'])
+        ->assertNotFound();
+});

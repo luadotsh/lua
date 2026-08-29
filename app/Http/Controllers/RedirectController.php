@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Actions\Link\ResolveLinkByKey;
 use App\Services\UserAgentService;
 
 use Illuminate\Support\Facades\Gate;
@@ -22,9 +23,9 @@ class RedirectController extends Controller
 {
     public function redirect(Request $request, $key = null): RedirectResponse
     {
-        $link = Link::where('link', $request->url())
-            ->with('workspace')
-            ->firstOrFail();
+        $link = ResolveLinkByKey::execute($request->getHost(), $key);
+
+        abort_unless($link, 404);
 
         $reachEventLimit = Gate::inspect('reached-event-limit', $link->workspace);
 
@@ -89,8 +90,9 @@ class RedirectController extends Controller
 
     public function password(Request $request, $key)
     {
-        $link = Link::where('key', $key)
-            ->firstOrFail();
+        $link = ResolveLinkByKey::execute($request->getHost(), $key);
+
+        abort_unless($link, 404);
 
         return Inertia::render('Link/Password', [
             'link' => $link,
@@ -99,7 +101,9 @@ class RedirectController extends Controller
 
     public function validatePassword(Request $request, $key)
     {
-        $link = Link::where('key', $key)->firstOrFail();
+        $link = ResolveLinkByKey::execute($request->getHost(), $key);
+
+        abort_unless($link, 404);
 
         if ($request->password === $link->password) {
             return Inertia::location($link->url);

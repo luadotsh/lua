@@ -23,15 +23,15 @@ class LinkFactory extends Factory
     public function definition(): array
     {
         $slug = Str::random(7);
-        $domain = config('domains.main');
-        $appUrl = config('app.url');
+        // The host requests actually arrive on, so `domain` and `link` agree.
+        $domain = parse_url((string) config('app.url'), PHP_URL_HOST) ?: config('domains.main');
 
         return [
             'workspace_id' => Workspace::factory(),
             'domain' => $domain,
             'key' => $slug,
             'url' => $this->faker->url,
-            'link' => "{$appUrl}/{$slug}",
+            'link' => "https://{$domain}/{$slug}",
             'ios' => $this->faker->url,
             'android' => $this->faker->url,
             'utm_source' => $this->faker->word,
