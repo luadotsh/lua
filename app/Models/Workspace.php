@@ -19,20 +19,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Cashier\Billable;
 
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
 
 use App\Observers\WorkspaceObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 
 #[ObservedBy(WorkspaceObserver::class)]
-class Workspace extends Model implements HasMedia
+class Workspace extends Model
 {
     use HasFactory;
     use HasUuids;
     use SoftDeletes;
     use Billable;
-    use InteractsWithMedia;
+    use \App\Models\Traits\HasMedia;
     use WorkspaceUsage;
 
     /**
@@ -99,16 +97,10 @@ class Workspace extends Model implements HasMedia
         return $this->users()->where('role', Role::ROLE_OWNER)->first()->email;
     }
 
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('logos');
-    }
-
     public function getLogoUrlAttribute()
     {
-        return $this->hasMedia('logos')
-        ? $this->getFirstMediaUrl('logos')
-        : "https://api.dicebear.com/7.x/initials/svg?backgroundType=gradientLinear&fontFamily=Helvetica&fontSize=40&seed=url". urlencode($this->name);
+        return $this->getFirstMediaUrl('logo')
+            ?? 'https://api.dicebear.com/7.x/initials/svg?backgroundType=gradientLinear&fontFamily=Helvetica&fontSize=40&seed=url'.urlencode($this->name);
     }
 
     public function users(): BelongsToMany

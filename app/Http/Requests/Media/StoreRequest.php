@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Requests\Media;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreRequest extends FormRequest
 {
@@ -14,11 +15,10 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'media' => ['required', 'file'],
-            'collection' => ['required'],
-            'model' => ['required'],
-            'model_id' => ['required'],
-            'visibility' => ['required', 'in:public,private'],
+            'media' => ['required', 'image', 'max:2048'],
+            // The owner is derived from the collection, so the client never
+            // names the model it is uploading to.
+            'collection' => ['required', Rule::in(['avatar', 'logo'])],
         ];
     }
 }

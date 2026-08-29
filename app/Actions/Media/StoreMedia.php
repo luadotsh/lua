@@ -5,29 +5,31 @@ declare(strict_types=1);
 namespace App\Actions\Media;
 
 use App\Models\Media;
-use Illuminate\Http\Request;
-use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
+use App\Models\User;
+use App\Models\Workspace;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Gate;
 
 class StoreMedia
 {
     /**
-     * @param  array{model: string, model_id: string, collection: string, visibility: string}  $data
+     * A person may only upload to their own avatar, or to the logo of a
+     * workspace they belong to.
      */
-    public static function execute(Request $request, array $data): SpatieMedia
+    public static function execute(User $user, string $collection, UploadedFile $file): Media
     {
-        $class = 'App\\Models\\'.data_get($data, 'model');
-        $modelId = data_get($data, 'model_id');
+        $owner = match ($collection) {
+            'avatar' => $user,
+            'logo' => $user->currentWorkspace,
+            default => null,
+        };
 
-        $model = $class::where('id', $modelId)->firstOrFail();
+        abort_unless($owner !== null, 404);
+        abort_unless(
+            $owner instanceof Workspace ? $user->belongsToWorkspace($owner) : true,
+            403,
+        );
 
-        // The first upload for a model becomes its thumbnail.
-        $isFirst = ! Media::where('model_id', $modelId)->exists();
-
-        return $model->addMediaFromRequest('media')
-            ->withCustomProperties(['thumbnail' => $isFirst])
-            ->addCustomHeaders([
-                'ACL' => data_get($data, 'visibility') === 'public' ? 'public-read' : 'private',
-            ])
-            ->toMediaCollection(data_get($data, 'collection'));
+        return $owner->addMedia($file, $collection);
     }
 }

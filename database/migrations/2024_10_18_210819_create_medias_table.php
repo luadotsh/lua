@@ -12,23 +12,24 @@ return new class() extends Migration
     {
         Schema::create('medias', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuidMorphs('model');
-            $table->uuid()->nullable()->unique();
-            $table->string('collection_name');
-            $table->string('name');
-            $table->string('file_name');
-            $table->string('mime_type')->nullable();
-            $table->string('disk');
-            $table->string('visibility');
-            $table->string('conversions_disk')->nullable();
+
+            // Polymorphic: a media belongs to whatever model owns it.
+            $table->uuidMorphs('mediable');
+
+            // One named bucket per model, e.g. avatar or logo.
+            $table->string('collection');
+
+            $table->string('path');
+            $table->string('original_filename');
+            $table->string('mime_type');
             $table->unsignedBigInteger('size');
-            $table->json('manipulations');
-            $table->json('custom_properties');
-            $table->json('generated_conversions');
-            $table->json('responsive_images');
-            $table->unsignedInteger('order_column')->nullable()->index();
-            $table->nullableTimestamps();
-            $table->softDeletes();
+
+            // Width and height for images.
+            $table->json('meta')->nullable();
+
+            $table->timestamps();
+
+            $table->index(['mediable_type', 'mediable_id', 'collection']);
         });
     }
 };

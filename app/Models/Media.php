@@ -4,113 +4,54 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Models\Scopes\MediaScope;
-
-use App\Enums\Media\Visibility;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\MediaLibrary\MediaCollections\Models\Media as BaseMedia;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Facades\Storage;
 
-class Media extends BaseMedia
+class Media extends Model
 {
     use HasFactory;
     use HasUuids;
-    use SoftDeletes;
 
     protected $table = 'medias';
 
+    protected $appends = ['url'];
+
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
-        'model_id',
-        'model_type',
-        'collection_name',
-        'name',
-        'file_name',
+        'mediable_id',
+        'mediable_type',
+        'collection',
+        'path',
+        'original_filename',
         'mime_type',
-        'disk',
-        'visibility',
-        'conversions_disk',
         'size',
-        'manipulations',
-        'custom_properties',
-        'generated_conversions',
-        'responsive_images',
-        'order_column'
+        'meta',
     ];
 
     /**
-     * The accessors to append to the model's array form.
-     *
-     * @var array<int, string>
-     */
-    protected $appends = [
-        'size_formatted',
-        'url',
-    ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
+     * @return array<string, string>
      */
     protected function casts(): array
     {
         return [
-            'manipulations' => 'array',
-            'custom_properties' => 'array',
-            'generated_conversions' => 'array',
-            'responsive_images' => 'array',
-            'visibility' => Visibility::class
+            'size' => 'integer',
+            'meta' => 'array',
         ];
     }
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'deleted_at',
-    ];
-
-    public static function boot(): void
+    public function mediable(): MorphTo
     {
-        static::creating(function (Media $media) {
-            $media->visibility = $media->custom_properties['custom_headers']['ACL'] === 'public-read' ? Visibility::PUBLIC : Visibility::PRIVATE;
-        });
-        parent::boot();
+        return $this->morphTo();
     }
 
-    /**
-     * The "booted" method of the model.x5m
-     */
-    protected static function booted(): void
+    protected function url(): Attribute
     {
-        static::addGlobalScope(new MediaScope());
-    }
-
-    /**
-     * Get the size of the media file in a human readable format.
-     *
-     * @return string
-     */
-    public function getSizeFormattedAttribute()
-    {
-        return $this->human_readable_size;
-    }
-
-    /**
-     * Get the URL of the media file.
-     *
-     * @return string
-     */
-    public function getUrlAttribute()
-    {
-        return $this->getUrl();
+        return Attribute::make(get: fn (): string => Storage::url($this->path));
     }
 }

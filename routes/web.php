@@ -53,11 +53,8 @@ Route::group(
         Route::get('/events', [EventController::class, 'index'])->name('events.index');
 
         // medias
-        Route::get('/medias/{id}/download', [MediaController::class, 'download'])->name('medias.download')->withoutMiddleware('*');
         Route::post('/medias', [MediaController::class, 'store'])->name('medias.store');
-        Route::post('/medias/sort', [MediaController::class, 'sort'])->name('medias.sort');
-        Route::post('/medias/{modelId}/thumbnail/{id}', [MediaController::class, 'thumbnail'])->name('medias.thumbmail');
-        Route::delete('/medias/{modelId}/{id}', [MediaController::class, 'destroy'])->name('medias.destroy');
+        Route::delete('/medias/{media}', [MediaController::class, 'destroy'])->name('medias.destroy');
 
         // settings
         Route::prefix('settings')->group(function () {

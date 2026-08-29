@@ -20,10 +20,7 @@ const upload = async () => {
 
         const formData = new FormData();
         formData.append("media", (event.target as HTMLInputElement).files![0]);
-        formData.append("model", "User");
-        formData.append("model_id", user.value.id);
-        formData.append("collection", "photos");
-        formData.append("visibility", "public");
+        formData.append("collection", "avatar");
 
         await axios
             .post(mediasRoutes.store.url(), formData)
@@ -49,10 +46,7 @@ const destroy = () => {
     }
 
     router.delete(
-        mediasRoutes.destroy.url({
-            modelId: media.model_id,
-            id: media.id,
-        }),
+        mediasRoutes.destroy.url(media.id),
         {
             onSuccess: () => {
                 router.reload();

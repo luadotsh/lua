@@ -9,16 +9,15 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
 use Laravel\Passport\HasApiTokens;
 
+use App\Models\Traits\HasMedia;
 use App\Models\Traits\HasWorkspaces;
 
-class User extends Authenticatable implements MustVerifyEmail, HasMedia
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasWorkspaces, HasUuids, InteractsWithMedia, HasApiTokens;
+    use HasFactory, Notifiable, HasWorkspaces, HasUuids, HasMedia, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -70,15 +69,9 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
         'photo_url'
     ];
 
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('photos');
-    }
-
     public function getPhotoUrlAttribute()
     {
-        return $this->hasMedia('photos')
-        ? $this->getFirstMediaUrl('photos')
-        : "https://api.dicebear.com/7.x/initials/svg?backgroundType=gradientLinear&fontFamily=Helvetica&fontSize=40&seed=".urlencode($this->name);
+        return $this->getFirstMediaUrl('avatar')
+            ?? 'https://api.dicebear.com/7.x/initials/svg?backgroundType=gradientLinear&fontFamily=Helvetica&fontSize=40&seed='.urlencode($this->name);
     }
 }

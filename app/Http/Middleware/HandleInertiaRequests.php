@@ -45,6 +45,9 @@ class HandleInertiaRequests extends Middleware
                     $currentWorkspace = $request->user()->current_workspace_id ? $request->user()->currentWorkspace : null;
                     $currentWorkspace ? $currentWorkspace->role = $request->user()->workspaceRole($currentWorkspace) : null;
 
+                    $request->user()->loadMissing('media');
+                    $currentWorkspace?->loadMissing('media');
+
                     return array_merge($request->user()->toArray(), array_filter([
                         'current_workspace' => $currentWorkspace,
                         'workspaces' => $request->user()->workspaces,

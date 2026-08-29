@@ -7,14 +7,13 @@ export const WorkspaceRole = {
 
 export type WorkspaceRole = (typeof WorkspaceRole)[keyof typeof WorkspaceRole];
 
-// Subset of a spatie/laravel-medialibrary Media record as serialized to the client.
+// Mirrors App\Models\Media.
 export type Media = {
-    id: string | number;
-    model_id: string | number;
-    model_type: string;
-    collection_name: string;
-    file_name: string;
-    mime_type: string | null;
+    id: string;
+    collection: string;
+    url: string;
+    original_filename: string;
+    mime_type: string;
     size: number;
 };
 
