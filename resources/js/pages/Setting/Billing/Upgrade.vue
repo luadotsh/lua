@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { usePage } from "@inertiajs/vue3";
+import { Head, usePage } from "@inertiajs/vue3";
 import { IconCircleCheck } from "@tabler/icons-vue";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import AppLayout from "@/layouts/AppLayout.vue";
 import SettingsLayout from "@/layouts/settings/Layout.vue";
 import * as billingRoutes from "@/routes/setting/billing";
@@ -102,108 +104,92 @@ const frequency = ref(frequencies[0]);
 </script>
 
 <template>
+    <Head title="Upgrade" />
+
     <AppLayout>
         <SettingsLayout
             title="Choose your plan"
             description="Find a plan that fits your needs and start tracking your links."
+            wide
         >
-            <div>
-                <div class="flex justify-center">
-                    <fieldset aria-label="Payment frequency">
-                        <div
-                            class="grid grid-cols-2 gap-x-1 rounded-full bg-zinc-100 dark:bg-white/5 p-1 text-center text-xs font-semibold leading-5 dark:text-white"
+            <div class="flex flex-col gap-8">
+                <fieldset aria-label="Payment frequency" class="flex justify-center">
+                    <div
+                        class="grid grid-cols-2 gap-1 rounded-full bg-muted p-1 text-center text-xs font-semibold"
+                    >
+                        <button
+                            v-for="option in frequencies"
+                            :key="option.value"
+                            type="button"
+                            :aria-pressed="frequency.value === option.value"
+                            :class="cn(
+                                'cursor-pointer rounded-full px-3 py-1 transition-colors',
+                                frequency.value === option.value
+                                    ? 'bg-violet-500 text-white'
+                                    : 'text-muted-foreground hover:text-foreground',
+                            )"
+                            @click="frequency = option"
                         >
-                            <button
-                                v-for="option in frequencies"
-                                :key="option.value"
-                                type="button"
-                                :class="[
-                                    frequency.value === option.value ? 'bg-violet-500 text-white' : '',
-                                    'cursor-pointer rounded-full px-2.5 py-1',
-                                ]"
-                                @click="frequency = option"
-                            >
-                                {{ option.label }}
-                            </button>
-                        </div>
-                    </fieldset>
-                </div>
-                <div
-                    class="isolate mx-auto mt-10 grid max-w-md grid-cols-1 gap-4 xl:gap-8 lg:mx-0 lg:max-w-none lg:grid-cols-4"
-                >
+                            {{ option.label }}
+                        </button>
+                    </div>
+                </fieldset>
+
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <div
                         v-for="tier in tiers"
                         :key="tier.id"
-                        :class="[
+                        :class="cn(
+                            'flex flex-col rounded-lg border bg-card p-5',
                             tier.mostPopular
-                                ? 'bg-violet-800/5 dark:bg-white/5 ring-2 ring-violet-500'
-                                : 'ring-1 ring-zinc-200 dark:ring-white/10',
-                            'rounded-lg p-4 xl:p-6',
-                        ]"
+                                ? 'border-violet-500 ring-1 ring-violet-500'
+                                : 'border-border',
+                        )"
                     >
-                        <div class="flex items-center justify-between gap-x-4">
-                            <h3
-                                :id="tier.id"
-                                class="text-lg font-semibold leading-8 text-zinc-800 dark:text-white"
-                            >
+                        <div class="flex items-center justify-between gap-2">
+                            <h3 :id="tier.id" class="text-lg font-semibold text-foreground">
                                 {{ tier.name }}
                             </h3>
-                            <p
+                            <span
                                 v-if="tier.mostPopular"
-                                class="rounded-full bg-violet-500 px-2.5 py-1 text-xs font-semibold leading-5 text-white"
+                                class="rounded-full bg-violet-500 px-2 py-0.5 text-xs font-semibold whitespace-nowrap text-white"
                             >
                                 Most popular
-                            </p>
+                            </span>
                         </div>
 
-                        <div class="mt-6 flex items-baseline gap-x-1">
-                            <div
-                                class="text-4xl font-semibold tracking-tight dark:text-white"
-                            >
+                        <div class="mt-5 flex items-baseline gap-1.5">
+                            <span class="text-4xl font-semibold tracking-tight tabular-nums text-foreground">
                                 {{ tier.price[frequency.value] }}
-                            </div>
-                            <div
-                                class="text-sm font-medium text-zinc-800 dark:text-zinc-300"
-                            >
+                            </span>
+                            <span class="text-sm text-muted-foreground">
                                 {{ frequency.priceSuffix }}
-                            </div>
+                            </span>
                         </div>
-                        <div class="my-4 spacep-y-2">
-                            <div
-                                v-if="frequency.value == 'annually'"
-                                class="text-sm text-zinc-800 dark:text-zinc-300 font-medium"
-                            >
-                                Billed annually
-                            </div>
-                        </div>
-                        <a
-                            :href="
-                                frequency.value == 'monthly'
-                                    ? tier.linkMonthly
-                                    : tier.linkAnnually
-                            "
+
+                        <!-- Kept in flow rather than v-if so the cards stay aligned
+                             when the toggle flips. -->
+                        <p class="mt-1 h-5 text-sm text-muted-foreground">
+                            {{ frequency.value === 'annually' ? 'Billed annually' : '' }}
+                        </p>
+
+                        <Button
+                            as="a"
+                            class="mt-5 w-full"
+                            :variant="tier.mostPopular ? 'default' : 'outline'"
+                            :href="frequency.value === 'monthly' ? tier.linkMonthly : tier.linkAnnually"
                             :aria-describedby="tier.id"
-                            :class="[
-                                tier.mostPopular
-                                    ? 'bg-violet-500 text-white shadow-sm hover:bg-violet-400 focus-visible:outline-violet-500'
-                                    : 'bg-zinc-800 dark:bg-white/10 text-white hover:bg-zinc-700 dark:hover:bg-white/20 focus-visible:outline-white',
-                                'mt-6 block rounded-md px-3 py-2 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
-                            ]"
                         >
                             {{ tier.btn }}
-                        </a>
-                        <ul
-                            role="list"
-                            class="mt-8 space-y-3 text-sm leading-6 text-zinc-800 dark:text-zinc-300 xl:mt-10"
-                        >
+                        </Button>
+
+                        <ul role="list" class="mt-6 flex flex-col gap-3 text-sm text-muted-foreground">
                             <li
                                 v-for="feature in tier.features"
                                 :key="feature"
-                                class="flex gap-x-3"
+                                class="flex gap-2"
                             >
-                                <IconCircleCheck
-                                    class="h-6 w-5 flex-none text-violet-500"
-                                />
+                                <IconCircleCheck class="mt-0.5 size-4 shrink-0 text-violet-500" />
                                 {{ feature }}
                             </li>
                         </ul>
