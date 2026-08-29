@@ -4,55 +4,67 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Enums\Link\Browser;
+use App\Enums\Link\Device;
 use App\Enums\Link\Os;
 
 class UserAgentService
 {
     /**
-     * Get the browser from the User-Agent.
+     * Browsers, most specific first. Edge, Opera, Vivaldi, Brave and the rest
+     * all carry "Chrome" in their user agent, so matching Chrome first would
+     * swallow every one of them — which is exactly what used to happen.
      *
-     * @param string $userAgent
-     * @return string
+     * @var array<string, string>
      */
+    private const BROWSERS = [
+        Browser::EDGE->value => 'Edg[A-Z]?\/|Edge\/',
+        Browser::OPERA->value => 'OPR\/|Opera',
+        Browser::SAMSUNG_INTERNET->value => 'SamsungBrowser',
+        Browser::YANDEX->value => 'YaBrowser',
+        Browser::UC->value => 'UCBrowser',
+        Browser::HUAWEI->value => 'HuaweiBrowser',
+        Browser::DUCKDUCKGO->value => 'DuckDuckGo',
+        Browser::VIVALDI->value => 'Vivaldi',
+        Browser::BRAVE->value => 'Brave',
+        Browser::FIREFOX->value => 'Firefox|FxiOS',
+        Browser::CHROME->value => 'Chrome|CriOS',
+        Browser::SAFARI->value => 'Safari',
+        Browser::CURL->value => 'curl',
+    ];
+
+    /**
+     * Operating systems, most specific first: an iPad reports "like Mac OS X",
+     * so macOS has to be checked after it.
+     *
+     * @var array<string, string>
+     */
+    private const OPERATING_SYSTEMS = [
+        Os::IPADOS->value => 'iPad',
+        Os::IOS->value => 'iPhone|iPod',
+        Os::ANDROID->value => 'Android',
+        Os::CHROME_OS->value => 'CrOS',
+        Os::WINDOWS->value => 'Windows',
+        Os::MACOS->value => 'Mac_PowerPC|Macintosh|Mac OS X',
+        Os::LINUX->value => 'Linux|X11',
+    ];
+
     public function getBrowser(string $userAgent): string
     {
-        $browserArray = [
-            'Chrome' => 'Chrome',
-            'Firefox' => 'Firefox',
-            'Safari' => 'Safari',
-            'Edge' => 'Edge',
-            'Opera' => 'Opera',
-            'Internet Explorer' => 'MSIE|Trident',
-        ];
-
-        foreach ($browserArray as $key => $pattern) {
-            if (preg_match("/$pattern/i", $userAgent)) {
-                return $key;
+        foreach (self::BROWSERS as $name => $pattern) {
+            if (preg_match("/{$pattern}/i", $userAgent)) {
+                return $name;
             }
         }
 
-        return 'Unknown Browser';
+        return Browser::UNKNOWN->value;
     }
 
-    /**
-     * Get the OS from the User-Agent.
-     *
-     * @param string $userAgent
-     * @return string
-     */
     public function getOS(string $userAgent): string
     {
-        $osArray = [
-            Os::ANDROID->value => 'Android',
-            Os::IOS->value => 'iPhone|iPad',
-            Os::WINDOWS->value => 'Windows',
-            Os::MACOS->value => '(Mac_PowerPC)|(Macintosh)',
-            Os::LINUX->value => 'Linux',
-        ];
-
-        foreach ($osArray as $key => $pattern) {
-            if (preg_match("/$pattern/i", $userAgent)) {
-                return $key;
+        foreach (self::OPERATING_SYSTEMS as $name => $pattern) {
+            if (preg_match("/{$pattern}/i", $userAgent)) {
+                return $name;
             }
         }
 
@@ -60,20 +72,20 @@ class UserAgentService
     }
 
     /**
-     * Get the device type from the User-Agent.
-     *
-     * @param string $userAgent
-     * @return string
+     * Tablets are checked first: an iPad's user agent also contains "Mobile",
+     * so the old order made Tablet unreachable.
      */
     public function getDevice(string $userAgent): string
     {
-        if (preg_match("/Mobile|Android|iPhone|iPad/i", $userAgent)) {
-            return 'Mobile';
-        } elseif (preg_match("/Tablet|iPad/i", $userAgent)) {
-            return 'Tablet';
+        if (preg_match('/iPad|Tablet|PlayBook|Silk|(Android(?!.*Mobile))/i', $userAgent)) {
+            return Device::TABLET->value;
         }
 
-        return 'Desktop';
+        if (preg_match('/Mobile|Android|iPhone|iPod/i', $userAgent)) {
+            return Device::MOBILE->value;
+        }
+
+        return Device::DESKTOP->value;
     }
 
     /**

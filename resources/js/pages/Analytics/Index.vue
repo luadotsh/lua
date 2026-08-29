@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, usePage } from "@inertiajs/vue3";
 import axios from "axios";
-import { onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import BreakdownCard, {
     type BreakdownTab,
 } from "@/components/analytics/BreakdownCard.vue";
@@ -9,6 +9,7 @@ import StatHeader from "@/components/analytics/StatHeader.vue";
 import TimeseriesChart, {
     type TimeseriesPoint,
 } from "@/components/analytics/TimeseriesChart.vue";
+import VisitorsMap from "@/components/analytics/VisitorsMap.vue";
 import RangePicker from "@/components/RangePicker.vue";
 import { Skeleton } from "@/components/ui/skeleton";
 import date from "@/date";
@@ -57,6 +58,11 @@ const load = async () => {
 onMounted(load);
 watch(range, load, { deep: true });
 
+// The map and the Locations card read the same country rows.
+const countryRows = computed(
+    () => breakdowns.value.locations?.find((tab) => tab.key === "country")?.rows ?? [],
+);
+
 const setRange = (next: Range) => {
     range.value = { ...next, timezone: date.getUserTimezone() };
 };
@@ -80,6 +86,8 @@ const setRange = (next: Range) => {
             <template v-if="loading && !overview">
                 <Skeleton class="h-[104px] w-full rounded-lg" />
                 <Skeleton class="h-[324px] w-full rounded-lg" />
+                <Skeleton class="h-[368px] w-full rounded-lg" />
+                <Skeleton class="h-[300px] w-full rounded-lg" />
                 <div class="grid gap-4 lg:grid-cols-2">
                     <Skeleton v-for="i in 4" :key="i" class="h-64 w-full rounded-lg" />
                 </div>
@@ -93,6 +101,8 @@ const setRange = (next: Range) => {
                     :metric="metric"
                     :group="range.group"
                 />
+
+                <VisitorsMap :rows="countryRows" />
 
                 <div class="grid gap-4 lg:grid-cols-2">
                     <BreakdownCard

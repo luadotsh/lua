@@ -59,6 +59,9 @@ class HandleInertiaRequests extends Middleware
                     'provider' => $provider->value,
                     'label' => $provider->label(),
                 ])->values(),
+            // The analytics map needs this in the browser; sharing it here
+            // keeps the token in config rather than in a VITE_ mirror.
+            'mapboxToken' => config('services.mapbox.token'),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'flash' => $request->session()->get('flash', []),
             'env' => config('app.env'),
