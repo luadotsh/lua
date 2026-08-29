@@ -32,12 +32,14 @@ class LoadWorkspaceFromToken
             return response()->json(['message' => 'Token expired.'], Response::HTTP_UNAUTHORIZED);
         }
 
-        // Personal API keys and MCP OAuth grants both bind to a workspace when
-        // they are issued. Resolve from the token, never from the user's
-        // workspace switcher — otherwise an agent could silently act on a
-        // different tenant than the one the token was granted for.
-        $workspace = $token->workspace_id
-            ? Workspace::query()->find($token->workspace_id)
+        // A token is for the workspace the user had selected when it was
+        // created. REST keys get that written by CreateApiKey; an MCP grant is
+        // stamped the first time it is used, and from then on the binding
+        // holds even if the user switches workspace in the browser.
+        $workspaceId = $token->workspace_id ?: $user->current_workspace_id;
+
+        $workspace = $workspaceId
+            ? Workspace::query()->find($workspaceId)
             : null;
 
         if (! $workspace) {
@@ -61,7 +63,10 @@ class LoadWorkspaceFromToken
 
         $request->merge(['workspace' => $workspace]);
 
-        $token->forceFill(['last_used_at' => now()])->saveQuietly();
+        $token->forceFill([
+            'workspace_id' => $workspace->id,
+            'last_used_at' => now(),
+        ])->saveQuietly();
 
         return $next($request);
     }

@@ -15,9 +15,6 @@ return new class extends Migration
             $table->char('id', 80)->primary();
             $table->foreignUuid('user_id')->index();
             $table->foreignUuid('client_id');
-            // Captured when the user consents, then carried onto the access
-            // token the code is exchanged for.
-            $table->foreignUuid('workspace_id')->nullable()->index();
             $table->text('scopes')->nullable();
             $table->boolean('revoked');
             $table->dateTime('expires_at')->nullable();
