@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mcp\Tools\TeamMember;
 
+use App\Actions\TeamMember\ListMembers;
 use App\Mcp\Concerns\ResolvesWorkspace;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -20,7 +21,7 @@ class ListMembersTool extends Tool
 
     public function handle(Request $request): Response|ResponseFactory
     {
-        $members = $this->workspace($request)->users()->get();
+        $members = ListMembers::execute($this->workspace($request));
 
         return Response::structured(
             $members->map(fn ($member) => [

@@ -61,6 +61,9 @@ class Link extends Model
     protected function casts(): array
     {
         return [
+            // Encrypted, not hashed: the owner has to be able to read back the
+            // password they set in order to share it.
+            'password' => 'encrypted',
             'last_click' => 'datetime',
             'expires_at' => 'datetime',
             'os' => Os::class,

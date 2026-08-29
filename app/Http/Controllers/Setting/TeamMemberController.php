@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Setting;
 
+use App\Actions\TeamMember\ListMembers;
+use App\Actions\Invite\ListInvites;
 use App\Actions\TeamMember\LeaveWorkspace;
 use App\Actions\TeamMember\UpdateMemberRole;
 use App\Actions\TeamMember\RemoveMember;
@@ -24,21 +26,9 @@ class TeamMemberController extends Controller
     {
         $workspace = auth()->user()->currentWorkspace;
 
-        $workspace = Workspace::where('id', $workspace->id)
-            ->with('users', function ($query) use ($request) {
-                $query->orderBy('name', 'asc');
-                if($request->q) {
-                    $query->where('name', 'like', '%'.$request->q.'%');
-                    $query->orWhere('email', 'like', '%'.$request->q.'%');
-                }
-            })->first();
-
-        $invites = Invite::where('workspace_id', $workspace->id)
-        ->get();
-
         return Inertia::render('Setting/TeamMember/Index', [
-            'users' => $workspace->users,
-            'invites' => $invites
+            'users' => ListMembers::execute($workspace, ['search' => $request->q]),
+            'invites' => ListInvites::execute($workspace),
         ]);
     }
 

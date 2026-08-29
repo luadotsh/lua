@@ -32,7 +32,9 @@ return new class extends Migration
             $table->dateTime('last_click')->nullable();
 
             $table->string('external_id')->nullable();
-            $table->string('password')->nullable();
+            // Encrypted at rest, so the column holds ciphertext rather than
+            // the 255 characters a password would need.
+            $table->text('password')->nullable();
             $table->timestamps();
 
             $table->unique(['domain', 'key']);

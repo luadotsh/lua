@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Models\Link;
+use Illuminate\Support\Facades\DB;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -194,4 +195,41 @@ it('does not leak a password gate across domains', function () {
     $this->get(route('links.password', 'gated'))->assertNotFound();
     $this->post(route('links.password.validate', 'gated'), ['password' => 'secret'])
         ->assertNotFound();
+});
+
+it('stores the link password encrypted but reads it back', function () {
+    $host = parse_url((string) config('app.url'), PHP_URL_HOST);
+
+    $link = Link::factory()->create([
+        'domain' => $host,
+        'key' => 'locked',
+        'link' => "https://{$host}/locked",
+        'password' => 'correct-horse',
+    ]);
+
+    // Ciphertext on disk, plaintext through the model.
+    $stored = DB::table('links')->where('id', $link->id)->value('password');
+
+    expect($stored)->not->toBe('correct-horse')
+        ->and($link->fresh()->password)->toBe('correct-horse');
+});
+
+it('gates a protected link and accepts only the right password', function () {
+    $host = parse_url((string) config('app.url'), PHP_URL_HOST);
+
+    $link = Link::factory()->create([
+        'domain' => $host,
+        'key' => 'locked-2',
+        'link' => "https://{$host}/locked-2",
+        'password' => 'correct-horse',
+    ]);
+
+    $this->get(route('links.redirect', 'locked-2'))
+        ->assertRedirect(route('links.password', 'locked-2'));
+
+    $this->post(route('links.password.validate', 'locked-2'), ['password' => 'wrong'])
+        ->assertSessionHasErrors('password');
+
+    $this->post(route('links.password.validate', 'locked-2'), ['password' => 'correct-horse'])
+        ->assertSessionHasNoErrors();
 });

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Setting;
 
+use App\Actions\Invite\GetInvite;
 use App\Actions\Invite\DeleteInvite;
 use App\Actions\Invite\CreateInvite;
 use App\Http\Requests\Invite\InviteRequest;
@@ -58,7 +59,9 @@ class InviteController extends Controller
     {
         $workspace = auth()->user()->currentWorkspace;
 
-        $invite = Invite::where('id', $id)->where('workspace_id', $workspace->id)->firstOrFail();
+        $invite = GetInvite::execute($workspace, $id);
+
+        abort_unless($invite, 404);
 
         DeleteInvite::execute($invite);
 

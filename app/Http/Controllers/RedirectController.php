@@ -105,7 +105,9 @@ class RedirectController extends Controller
 
         abort_unless($link, 404);
 
-        if ($request->password === $link->password) {
+        // hash_equals compares in constant time, so a wrong guess cannot be
+        // narrowed down by how long the response took.
+        if (is_string($link->password) && hash_equals($link->password, (string) $request->password)) {
             return Inertia::location($link->url);
         }
 

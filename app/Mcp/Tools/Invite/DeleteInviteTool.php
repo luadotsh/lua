@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mcp\Tools\Invite;
 
+use App\Actions\Invite\GetInvite;
 use App\Actions\Invite\DeleteInvite;
 use App\Mcp\Concerns\ResolvesWorkspace;
 use App\Models\Invite;
@@ -35,8 +36,7 @@ class DeleteInviteTool extends Tool
 
     public function handle(Request $request): Response|ResponseFactory
     {
-        $invite = Invite::where('workspace_id', $this->workspace($request)->id)
-            ->find($request->get('id'));
+        $invite = GetInvite::execute($this->workspace($request), (string) $request->get('id'));
 
         if (! $invite) {
             return Response::error('Invite not found in this workspace.');

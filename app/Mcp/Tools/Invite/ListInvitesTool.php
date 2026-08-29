@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mcp\Tools\Invite;
 
+use App\Actions\Invite\ListInvites;
 use App\Mcp\Concerns\ResolvesWorkspace;
 use App\Models\Invite;
 use Laravel\Mcp\Request;
@@ -21,7 +22,7 @@ class ListInvitesTool extends Tool
 
     public function handle(Request $request): Response|ResponseFactory
     {
-        $invites = Invite::where('workspace_id', $this->workspace($request)->id)->get();
+        $invites = ListInvites::execute($this->workspace($request));
 
         return Response::structured(
             $invites->map(fn (Invite $invite) => [
