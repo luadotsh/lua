@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { IconDots, IconWorld } from "@tabler/icons-vue";
 import DomainStatus from "@/components/DomainStatus.vue";
+import EmptyState from "@/components/EmptyState.vue";
 import AppLayout from "@/layouts/AppLayout.vue";
 import CreateModal from "./Create.vue";
 import EditModal from "./Edit.vue";
@@ -147,15 +148,12 @@ const deleteDomain = () => {
                 </div>
             </div>
 
-            <div
+            <EmptyState
                 v-if="!hasData"
-                class="flex flex-col items-center justify-center py-12 text-center"
-            >
-                <IconWorld class="h-12 w-12 text-zinc-300 mb-4" />
-                <h3 class="text-sm font-semibold text-zinc-800 dark:text-zinc-200">You don't have any domains yet.</h3>
-                <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Domains are used to create branded short links. e.g. link.yourdomain.com/short-link</p>
-                <Button class="mt-4" @click="createModal?.open()">Add Domain</Button>
-            </div>
+                :icon="IconWorld"
+                title="No domains yet"
+                description="Domains are used to create branded short links. e.g. link.yourdomain.com/short-link"
+            />
         </div>
     </AppLayout>
 </template>

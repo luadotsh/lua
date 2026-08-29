@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { IconX, IconKey } from "@tabler/icons-vue";
 import date from "@/date";
+import EmptyState from "@/components/EmptyState.vue";
 import AppLayout from "@/layouts/AppLayout.vue";
 import CreateModal from "./Create.vue";
 import * as apiTokensRoutes from "@/routes/setting/api-tokens";
@@ -120,14 +121,12 @@ const deleteToken = () => {
                 </div>
             </div>
 
-            <div
+            <EmptyState
                 v-if="!hasData"
-                class="flex flex-col items-center justify-center py-12 text-center"
-            >
-                <IconKey class="h-12 w-12 text-zinc-300 mb-4" />
-                <h3 class="text-sm font-semibold text-zinc-800 dark:text-zinc-200">You don't have any API Tokens yet.</h3>
-                <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">API Tokens are required to use the API, so you can manage your links, tags, and domains programmatically.</p>
-            </div>
+                :icon="IconKey"
+                title="No API tokens yet"
+                description="API tokens are required to use the API, so you can manage your links, tags and domains programmatically."
+            />
         </div>
     </AppLayout>
 </template>
