@@ -15,15 +15,15 @@ import Location from "./Location/Index.vue";
 interface Range {
     timezone: string;
     group: string;
-    start: string | null;
-    end: string | null;
+    start: string;
+    end: string;
 }
 
 const range = ref<Range>({
     timezone: date.getUserTimezone(),
     group: "day",
-    start: usePage().props.start as string | null,
-    end: usePage().props.end as string | null,
+    start: usePage().props.start as string,
+    end: usePage().props.end as string,
 });
 
 const setRange = (data: Range) => {

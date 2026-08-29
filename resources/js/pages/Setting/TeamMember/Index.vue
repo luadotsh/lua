@@ -219,7 +219,7 @@ onMounted(() => {
                                     <DropdownMenu
                                         v-if="
                                             member.id === user.id ||
-                                            user.current_workspace.role !== 'USER'
+                                            user.current_workspace?.role !== 'USER'
                                         "
                                     >
                                         <DropdownMenuTrigger as-child>
@@ -231,7 +231,7 @@ onMounted(() => {
                                             <DropdownMenuItem
                                                 v-if="
                                                     member.id !== user.id &&
-                                                    user.current_workspace.role !== 'USER'
+                                                    user.current_workspace?.role !== 'USER'
                                                 "
                                                 @click="changeUserRole(member, member.membership.role == 'USER' ? 'ADMIN' : 'USER')"
                                             >
@@ -244,12 +244,12 @@ onMounted(() => {
                                             <DropdownMenuSeparator
                                                 v-if="
                                                     member.id !== user.id &&
-                                                    user.current_workspace.role !== 'USER'
+                                                    user.current_workspace?.role !== 'USER'
                                                 "
                                             />
                                             <DropdownMenuItem
                                                 v-if="
-                                                    user.current_workspace.role !== 'USER' &&
+                                                    user.current_workspace?.role !== 'USER' &&
                                                     member.id !== user.id
                                                 "
                                                 class="text-red-600 focus:text-red-600"
@@ -274,7 +274,7 @@ onMounted(() => {
             </div>
 
             <InviteIndex
-                v-if="user.current_workspace.role !== 'USER'"
+                v-if="user.current_workspace?.role !== 'USER'"
                 :invites="invites"
             />
 

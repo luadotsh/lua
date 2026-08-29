@@ -22,7 +22,7 @@ import { Label } from "@/components/ui/label";
 import * as invitesRoutes from "@/routes/setting/invites";
 
 const form = useForm({
-    email: null as string | null,
+    email: "",
     role: "ADMIN",
 });
 

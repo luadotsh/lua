@@ -14,13 +14,14 @@ import SettingsLayout from "@/layouts/settings/Layout.vue";
 import { Button } from "@/components/ui/button";
 import Chart from "@/components/Chart.vue";
 import * as billingRoutes from "@/routes/setting/billing";
+import type { WorkspaceUsage } from "@/types";
 
-const usage = computed(() => usePage().props.usage);
+const usage = computed(() => usePage().props.usage as WorkspaceUsage);
 
 const currentChart = ref("links");
 
 const chartDataLinks = reactive({
-    total: 0,
+    total: "",
     chart: {
         label: "",
         data: [] as number[],
@@ -29,7 +30,7 @@ const chartDataLinks = reactive({
 });
 
 const chartDataEvents = reactive({
-    total: 0,
+    total: "",
     chart: {
         label: "",
         data: [] as number[],
@@ -291,7 +292,7 @@ const tags = computed(() => {
                                 class="text-sm font-medium text-zinc-800 dark:text-white"
                             >
                                 For higher limits, upgrade to the
-                                {{ usage.plan.next_tier.name }} plan.
+                                {{ usage.plan.next_tier?.name }} plan.
                             </div>
                             <div>
                                 <a

@@ -18,12 +18,13 @@ import AppLayout from "@/layouts/AppLayout.vue";
 import SettingsLayout from "@/layouts/settings/Layout.vue";
 import CreateModal from "./Create.vue";
 import * as apiTokensRoutes from "@/routes/setting/api-tokens";
+import type { ApiToken } from "@/types";
 
 const createModal = ref<InstanceType<typeof CreateModal> | null>(null);
 const tokenToDelete = ref<{ id: string | number } | null>(null);
 
 defineProps<{
-    tokens: object;
+    tokens: ApiToken[];
     hasData: boolean;
 }>();
 

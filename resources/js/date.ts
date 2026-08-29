@@ -1,23 +1,25 @@
 import dayjs from "@/dayjs";
 
+type DateInput = string | number | Date | null | undefined;
+
 export default {
     getUserTimezone() {
         return Intl.DateTimeFormat().resolvedOptions().timeZone;
     },
 
-    formatDate(date) {
+    formatDate(date: DateInput) {
         return dayjs(date).format("MMM D, YYYY");
     },
 
-    formatDateTime(date) {
+    formatDateTime(date: DateInput) {
         return dayjs.utc(date).format("MMM D, YYYY h:mm A");
     },
 
-    formatDateTimeForApi(date) {
+    formatDateTimeForApi(date: DateInput) {
         return dayjs.utc(date).tz("utc").format("YYYY-MM-DD HH:mm:ss");
     },
 
-    diffForHumans(date) {
+    diffForHumans(date: DateInput) {
         // Convert UTC date to local timezone
         const localDate = dayjs.utc(date).local();
 

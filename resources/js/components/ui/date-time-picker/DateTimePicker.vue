@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { CalendarDate, getLocalTimeZone } from "@internationalized/date"
+import type { DateValue } from "reka-ui"
 import { IconCalendar, IconX } from "@tabler/icons-vue"
-import { computed, ref, watch } from "vue"
+import { computed, ref, shallowRef, watch } from "vue"
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
@@ -19,7 +20,7 @@ const emit = defineEmits<{
 
 const isOpen = ref(false)
 
-const selectedDate = ref<CalendarDate | undefined>(
+const selectedDate = shallowRef<DateValue | undefined>(
     props.modelValue ? toCalendarDate(props.modelValue) : undefined
 )
 const timeValue = ref<string>(

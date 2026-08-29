@@ -26,13 +26,15 @@ import SettingsLayout from "@/layouts/settings/Layout.vue";
 import CreateModal from "./Create.vue";
 import EditModal from "./Edit.vue";
 import * as domainsRoutes from "@/routes/setting/domains";
+import * as websitesRoutes from "@/routes/websites";
+import type { Domain } from "@/types";
 
 const createModal = ref<InstanceType<typeof CreateModal> | null>(null);
 const editModal = ref<InstanceType<typeof EditModal> | null>(null);
 const domainToDelete = ref<{ id: string | number } | null>(null);
 
 const props = defineProps<{
-    domains: object;
+    domains: Domain[];
     hasData: boolean;
 }>();
 
@@ -98,7 +100,7 @@ const deleteDomain = () => {
                                 class="rounded-full hidden lg:flex border border-zinc-200 dark:border-zinc-700 dark:bg-white/5 p-0.5"
                             >
                                 <img
-                                    :src="route('websites.favicon', { url: domain.domain })"
+                                    :src="websitesRoutes.favicon.url({ query: { url: domain.domain } })"
                                     alt="favicon"
                                     class="h-8 w-8 rounded-full"
                                 />

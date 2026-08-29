@@ -5,15 +5,16 @@ import { IconCircleCheck } from "@tabler/icons-vue";
 import AppLayout from "@/layouts/AppLayout.vue";
 import SettingsLayout from "@/layouts/settings/Layout.vue";
 import * as billingRoutes from "@/routes/setting/billing";
+import type { BillingFrequency, Plan } from "@/types";
 
-const plans = usePage().props.plans;
+const plans = usePage().props.plans as Plan[];
 
 const getPlanLink = (id: string) => {
-    const plan = plans.filter((plan: { internal_id: string; id: string | number }) => plan.internal_id == id)[0];
+    const plan = plans.find((plan) => plan.internal_id == id)!;
     return billingRoutes.checkout.url(plan.id);
 };
 
-const frequencies = [
+const frequencies: { value: BillingFrequency; label: string; priceSuffix: string }[] = [
     { value: "monthly", label: "Monthly", priceSuffix: "per month" },
     {
         value: "annually",

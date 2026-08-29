@@ -15,12 +15,19 @@ export const formatNumber = (value: number): string => {
     return value.toLocaleString('en-US');
 };
 
-export const formatNumberCompact = (value: number): string => {
+export const formatNumberCompact = (value: number | string): string => {
+    // Some endpoints send counts already run through PHP's number_format(), e.g. "1,234".
+    const numeric = typeof value === 'number' ? value : Number(value.replace(/,/g, ''));
+
+    if (!Number.isFinite(numeric)) {
+        return String(value);
+    }
+
     return new Intl.NumberFormat('en-US', {
         notation: 'compact',
         compactDisplay: 'short',
         maximumFractionDigits: 1,
-    }).format(value);
+    }).format(numeric);
 };
 
 export const copyToClipboard = async (

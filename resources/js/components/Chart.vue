@@ -22,7 +22,7 @@ const props = defineProps<{
     type?: string;
     title: string;
     data: {
-        total: number;
+        total: number | string;
         chart: {
             labels: string[];
             data: number[];

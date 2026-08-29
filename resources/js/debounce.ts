@@ -1,7 +1,10 @@
-let timeoutId = null;
+let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
-export default function debounce(callback, wait = 1000) {
-  return (...args) => {
+export default function debounce<T extends unknown[]>(
+  callback: (...args: T) => void,
+  wait = 1000,
+) {
+  return (...args: T) => {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => {
       callback.apply(null, args);

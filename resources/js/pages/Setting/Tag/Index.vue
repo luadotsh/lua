@@ -19,6 +19,7 @@ import SettingsLayout from "@/layouts/settings/Layout.vue";
 import CreateModal from "./Create.vue";
 import EditModal from "./Edit.vue";
 import * as tagsRoutes from "@/routes/setting/tags";
+import type { Tag } from "@/types";
 import axios from "axios";
 
 const createModal = ref<InstanceType<typeof CreateModal> | null>(null);
@@ -26,7 +27,7 @@ const editModal = ref<InstanceType<typeof EditModal> | null>(null);
 const tagToDelete = ref<{ id: string | number } | null>(null);
 
 const props = defineProps<{
-    tags: object;
+    tags: Tag[];
 }>();
 
 const list = ref(props.tags);

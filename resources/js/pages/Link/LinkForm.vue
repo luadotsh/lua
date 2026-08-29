@@ -33,11 +33,11 @@ interface FormData {
     domain: string;
     key: string;
     tags: (string | number)[];
-    ios: string;
-    android: string;
-    expires_at: string;
-    expired_redirect_url: string;
-    password: string;
+    ios?: string;
+    android?: string;
+    expires_at?: string;
+    expired_redirect_url?: string;
+    password?: string;
     errors: Record<string, string>;
     [key: string]: any;
 }

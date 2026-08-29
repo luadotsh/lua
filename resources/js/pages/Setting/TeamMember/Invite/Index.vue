@@ -99,7 +99,7 @@ const deleteInvite = () => {
                         <TableCell>{{ formatDate(invite.created_at) }}</TableCell>
                         <TableCell>
                             <a
-                                v-if="$page.props.auth.user.role != 'user'"
+                                v-if="$page.props.auth.user.current_workspace?.role !== 'USER'"
                                 href="#"
                                 @click.prevent="confirmDeletion(invite)"
                                 class="text-red-600 hover:underline font-medium"

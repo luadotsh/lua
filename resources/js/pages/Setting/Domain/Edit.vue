@@ -12,13 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import * as domainsRoutes from "@/routes/setting/domains";
-
-interface Domain {
-    id: string | number;
-    domain: string;
-    not_found_url: string;
-    expired_url: string;
-}
+import type { Domain } from "@/types";
 
 const form = useForm({
     id: "" as string | number,
@@ -33,8 +27,8 @@ const open = (domain: Domain) => {
 
     form.id = domain.id;
     form.domain = domain.domain;
-    form.not_found_url = domain.not_found_url;
-    form.expired_url = domain.expired_url;
+    form.not_found_url = domain.not_found_url ?? "";
+    form.expired_url = domain.expired_url ?? "";
 
     show.value = true;
 };

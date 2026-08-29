@@ -6,23 +6,23 @@ import { IconTrash } from "@tabler/icons-vue";
 import axios from "axios";
 import * as mediasRoutes from "@/routes/medias";
 
-const inputRef = ref<HTMLInputElement | null>(null);
+const input = ref<HTMLInputElement | null>(null);
 const uploadHasErrors = ref<string | null>(null);
 const isLoading = ref(false);
 
-const workspace = computed(() => usePage().props.auth.user.current_workspace);
+const user = computed(() => usePage().props.auth.user);
 
 const upload = async () => {
-    inputRef.value!.click();
+    input.value!.click();
 
-    inputRef.value!.onchange = async (event: Event) => {
+    input.value!.onchange = async (event: Event) => {
         isLoading.value = true;
 
         const formData = new FormData();
         formData.append("media", (event.target as HTMLInputElement).files![0]);
-        formData.append("model", "Workspace");
-        formData.append("model_id", workspace.value.id);
-        formData.append("collection", "logos");
+        formData.append("model", "User");
+        formData.append("model_id", user.value.id);
+        formData.append("collection", "photos");
         formData.append("visibility", "public");
 
         await axios
@@ -36,16 +36,22 @@ const upload = async () => {
             })
             .finally(() => {
                 isLoading.value = false;
-                inputRef.value!.value = "";
+                input.value!.value = "";
             });
     };
 };
 
 const destroy = () => {
+    const media = user.value.media?.[0];
+
+    if (!media) {
+        return;
+    }
+
     router.delete(
         mediasRoutes.destroy.url({
-            modelId: workspace.value.media?.[0].model_id,
-            id: workspace.value.media?.[0].id,
+            modelId: media.model_id,
+            id: media.id,
         }),
         {
             onSuccess: () => {
@@ -57,14 +63,14 @@ const destroy = () => {
 </script>
 
 <template>
-    <input type="file" ref="inputRef" class="hidden" />
+    <input type="file" class="hidden" ref="input" />
 
     <div class="flex items-center justify-between">
         <div class="flex items-center space-x-4">
             <div>
                 <img
-                    :src="workspace.logo_url"
-                    :alt="workspace.name"
+                    :src="user.photo_url ?? undefined"
+                    :alt="user.name"
                     class="h-10 w-10 rounded-full"
                 />
             </div>
@@ -85,7 +91,7 @@ const destroy = () => {
         </div>
 
         <div
-            v-if="workspace.media?.length >= 1"
+            v-if="(user.media?.length ?? 0) >= 1"
             @click="destroy"
             class="p-2 hover:bg-zinc-100 rounded-md cursor-pointer"
         >

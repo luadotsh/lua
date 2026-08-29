@@ -25,7 +25,7 @@ declare module '@inertiajs/core' {
         sharedPageProps: {
             name: string;
             auth: Auth;
-            flash: { banner?: string; bannerStyle?: string };
+            flash: { banner?: string; bannerStyle?: string; token?: string };
             sidebarOpen: boolean;
             env: string;
             locale: string;
