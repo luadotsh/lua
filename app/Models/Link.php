@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\Link\Os;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-
-use App\Enums\Link\Os;
 
 class Link extends Model
 {
@@ -41,7 +41,7 @@ class Link extends Model
         'external_id',
         'password',
         'expires_at',
-        'expired_redirect_url'
+        'expired_redirect_url',
     ];
 
     /**
@@ -50,7 +50,17 @@ class Link extends Model
      * @var array<int, string>
      */
     protected $hidden = [
-        'password'
+        'password',
+    ];
+
+    /**
+     * The password itself stays hidden; whether there is one is not a secret,
+     * and the list needs it to show the lock.
+     *
+     * @var array<int, string>
+     */
+    protected $appends = [
+        'has_password',
     ];
 
     /**
@@ -68,6 +78,11 @@ class Link extends Model
             'expires_at' => 'datetime',
             'os' => Os::class,
         ];
+    }
+
+    public function hasPassword(): Attribute
+    {
+        return Attribute::get(fn (): bool => filled($this->password));
     }
 
     public function isExpired(): bool

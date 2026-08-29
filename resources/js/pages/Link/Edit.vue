@@ -24,18 +24,39 @@ interface LinkData {
     domain: string;
     key: string;
     tags: Tag[];
-    ios?: string;
-    android?: string;
-    password?: string;
-    expires_at?: string;
-    expired_redirect_url?: string;
+    // Nullable rather than optional: these come straight off the model, where
+    // an unset column is null, not absent.
+    ios?: string | null;
+    android?: string | null;
+    password?: string | null;
+    expires_at?: string | null;
+    expired_redirect_url?: string | null;
+    utm_source?: string | null;
+    utm_medium?: string | null;
+    utm_campaign?: string | null;
+    utm_term?: string | null;
+    utm_content?: string | null;
 }
 
 const { link } = defineProps<{ link: LinkData }>();
 
+// The model hands over null for every column left unset, but the inputs bind to
+// strings — an unfilled field would otherwise render the word "null".
+const text = (value: string | null | undefined): string => value ?? "";
+
 const form = useForm({
     ...link,
     tags: link.tags.map((t) => t.id),
+    ios: text(link.ios),
+    android: text(link.android),
+    password: text(link.password),
+    expired_redirect_url: text(link.expired_redirect_url),
+    utm_source: text(link.utm_source),
+    utm_medium: text(link.utm_medium),
+    utm_campaign: text(link.utm_campaign),
+    utm_term: text(link.utm_term),
+    utm_content: text(link.utm_content),
+    expires_at: text(link.expires_at),
 });
 
 const expiresAtDate = ref(
