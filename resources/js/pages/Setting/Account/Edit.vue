@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { usePage, useForm, Head, Link } from "@inertiajs/vue3";
+import { usePage, useForm, Head } from "@inertiajs/vue3";
 import AppLayout from "@/layouts/AppLayout.vue";
 import SettingsLayout from "@/layouts/settings/Layout.vue";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Avatar from "./Avatar.vue";
 import * as accountRoutes from "@/routes/setting/account";
-import { edit as authenticationEdit } from "@/routes/setting/authentication";
 
 defineProps<{
     mustVerifyEmail?: boolean;
@@ -94,25 +93,6 @@ const update = () => {
                     </div>
                 </div>
 
-                <div
-                    class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6"
-                >
-                    <div>
-                        <Label>Password</Label>
-                        <p class="text-sm text-zinc-500 dark:text-zinc-400">
-                            Passwords, connected accounts and sessions live on
-                            their own page.
-                        </p>
-                    </div>
-                    <div class="mt-2 sm:col-span-2 sm:mt-0">
-                        <Link
-                            :href="authenticationEdit().url"
-                            class="text-sm underline underline-offset-4 hover:text-foreground"
-                        >
-                            Go to authentication settings
-                        </Link>
-                    </div>
-                </div>
 
             </div>
         </SettingsLayout>

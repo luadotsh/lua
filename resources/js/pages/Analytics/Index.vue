@@ -5,6 +5,11 @@ import { computed, onMounted, ref, watch } from "vue";
 import BreakdownCard, {
     type BreakdownTab,
 } from "@/components/analytics/BreakdownCard.vue";
+import { browserIconUrl } from "@/lib/browsers";
+import { countryFlagUrl, countryFor } from "@/lib/countries";
+import { deviceIconUrl } from "@/lib/devices";
+import { osIconUrl } from "@/lib/os";
+import { favicon } from "@/lib/utils";
 import StatHeader from "@/components/analytics/StatHeader.vue";
 import TimeseriesChart, {
     type TimeseriesPoint,
@@ -58,10 +63,15 @@ const load = async () => {
 onMounted(load);
 watch(range, load, { deep: true });
 
-// The map and the Locations card read the same country rows.
 const countryRows = computed(
     () => breakdowns.value.locations?.find((tab) => tab.key === "country")?.rows ?? [],
 );
+
+// The map is the first tab but not the one that opens, matching clickbase.
+const locationTabs = computed<BreakdownTab[]>(() => [
+    { key: "map", label: "Map" },
+    ...(breakdowns.value.locations ?? []),
+]);
 
 const setRange = (next: Range) => {
     range.value = { ...next, timezone: date.getUserTimezone() };
@@ -86,8 +96,6 @@ const setRange = (next: Range) => {
             <template v-if="loading && !overview">
                 <Skeleton class="h-[104px] w-full rounded-lg" />
                 <Skeleton class="h-[324px] w-full rounded-lg" />
-                <Skeleton class="h-[368px] w-full rounded-lg" />
-                <Skeleton class="h-[300px] w-full rounded-lg" />
                 <div class="grid gap-4 lg:grid-cols-2">
                     <Skeleton v-for="i in 4" :key="i" class="h-64 w-full rounded-lg" />
                 </div>
@@ -102,29 +110,104 @@ const setRange = (next: Range) => {
                     :group="range.group"
                 />
 
-                <VisitorsMap :rows="countryRows" />
-
                 <div class="grid gap-4 lg:grid-cols-2">
                     <BreakdownCard
                         title="Links"
                         empty-label="No clicks in this period."
-                        :tabs="[{ key: 'links', label: 'Links', rows: links, icon: 'favicon' }]"
-                    />
+                        :tabs="[{ key: 'links', label: 'Links', rows: links }]"
+                        persist-title
+                    >
+                        <template #row="{ row }">
+                            <img
+                                :src="favicon(row.url ?? row.value)"
+                                alt=""
+                                aria-hidden="true"
+                                class="size-4 shrink-0 rounded-sm"
+                                loading="lazy"
+                                @error="(event) => ((event.target as HTMLImageElement).style.display = 'none')"
+                            />
+                            <span class="truncate">{{ row.value }}</span>
+                        </template>
+                    </BreakdownCard>
+
                     <BreakdownCard
                         title="Sources"
                         empty-label="No referrers or campaigns yet."
                         :tabs="breakdowns.sources ?? []"
-                    />
+                    >
+                        <template #row="{ row, tab }">
+                            <img
+                                v-if="tab === 'referer' && row.value !== 'Direct'"
+                                :src="favicon(row.value)"
+                                alt=""
+                                aria-hidden="true"
+                                class="size-4 shrink-0 rounded-sm"
+                                loading="lazy"
+                                @error="(event) => ((event.target as HTMLImageElement).style.display = 'none')"
+                            />
+                            <span class="truncate">{{ row.value }}</span>
+                        </template>
+                    </BreakdownCard>
+
                     <BreakdownCard
                         title="Locations"
                         empty-label="No location data yet."
-                        :tabs="breakdowns.locations ?? []"
-                    />
+                        :tabs="locationTabs"
+                        default-tab="country"
+                    >
+                        <template #content-map>
+                            <VisitorsMap :rows="countryRows" />
+                        </template>
+                        <template #row="{ row, tab }">
+                            <img
+                                v-if="tab === 'country'"
+                                :src="countryFlagUrl(row.value)"
+                                alt=""
+                                aria-hidden="true"
+                                class="h-3 w-[18px] shrink-0 rounded-[2px] object-cover"
+                                loading="lazy"
+                                @error="(event) => ((event.target as HTMLImageElement).style.display = 'none')"
+                            />
+                            <span class="truncate">
+                                {{ tab === 'country' ? countryFor(row.value).name : row.value }}
+                            </span>
+                        </template>
+                    </BreakdownCard>
+
                     <BreakdownCard
                         title="Devices"
                         empty-label="No device data yet."
                         :tabs="breakdowns.devices ?? []"
-                    />
+                    >
+                        <template #row="{ row, tab }">
+                            <img
+                                v-if="tab === 'browser'"
+                                :src="browserIconUrl(row.value)"
+                                alt=""
+                                aria-hidden="true"
+                                class="size-4 shrink-0"
+                                loading="lazy"
+                            />
+                            <img
+                                v-else-if="tab === 'os'"
+                                :src="osIconUrl(row.value)"
+                                alt=""
+                                aria-hidden="true"
+                                class="size-4 shrink-0"
+                                loading="lazy"
+                            />
+                            <img
+                                v-else-if="tab === 'device' && deviceIconUrl(row.value)"
+                                :src="deviceIconUrl(row.value) ?? ''"
+                                alt=""
+                                aria-hidden="true"
+                                class="size-4 shrink-0"
+                                loading="lazy"
+                                @error="(event) => ((event.target as HTMLImageElement).style.display = 'none')"
+                            />
+                            <span class="truncate">{{ row.value }}</span>
+                        </template>
+                    </BreakdownCard>
                 </div>
             </template>
         </div>

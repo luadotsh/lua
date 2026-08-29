@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\AnalyticsController::index
-* @see app/Http/Controllers/AnalyticsController.php:44
+* @see app/Http/Controllers/AnalyticsController.php:47
 * @route '/analytics'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::index
-* @see app/Http/Controllers/AnalyticsController.php:44
+* @see app/Http/Controllers/AnalyticsController.php:47
 * @route '/analytics'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::index
-* @see app/Http/Controllers/AnalyticsController.php:44
+* @see app/Http/Controllers/AnalyticsController.php:47
 * @route '/analytics'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::index
-* @see app/Http/Controllers/AnalyticsController.php:44
+* @see app/Http/Controllers/AnalyticsController.php:47
 * @route '/analytics'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::index
-* @see app/Http/Controllers/AnalyticsController.php:44
+* @see app/Http/Controllers/AnalyticsController.php:47
 * @route '/analytics'
 */
 const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::index
-* @see app/Http/Controllers/AnalyticsController.php:44
+* @see app/Http/Controllers/AnalyticsController.php:47
 * @route '/analytics'
 */
 indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::index
-* @see app/Http/Controllers/AnalyticsController.php:44
+* @see app/Http/Controllers/AnalyticsController.php:47
 * @route '/analytics'
 */
 indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::statistics
-* @see app/Http/Controllers/AnalyticsController.php:55
+* @see app/Http/Controllers/AnalyticsController.php:58
 * @route '/analytics/statistics'
 */
 export const statistics = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -97,7 +97,7 @@ statistics.definition = {
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::statistics
-* @see app/Http/Controllers/AnalyticsController.php:55
+* @see app/Http/Controllers/AnalyticsController.php:58
 * @route '/analytics/statistics'
 */
 statistics.url = (options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ statistics.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::statistics
-* @see app/Http/Controllers/AnalyticsController.php:55
+* @see app/Http/Controllers/AnalyticsController.php:58
 * @route '/analytics/statistics'
 */
 statistics.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -116,7 +116,7 @@ statistics.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::statistics
-* @see app/Http/Controllers/AnalyticsController.php:55
+* @see app/Http/Controllers/AnalyticsController.php:58
 * @route '/analytics/statistics'
 */
 statistics.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -126,7 +126,7 @@ statistics.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::statistics
-* @see app/Http/Controllers/AnalyticsController.php:55
+* @see app/Http/Controllers/AnalyticsController.php:58
 * @route '/analytics/statistics'
 */
 const statisticsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -136,7 +136,7 @@ const statisticsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'>
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::statistics
-* @see app/Http/Controllers/AnalyticsController.php:55
+* @see app/Http/Controllers/AnalyticsController.php:58
 * @route '/analytics/statistics'
 */
 statisticsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -146,7 +146,7 @@ statisticsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =
 
 /**
 * @see \App\Http\Controllers\AnalyticsController::statistics
-* @see app/Http/Controllers/AnalyticsController.php:55
+* @see app/Http/Controllers/AnalyticsController.php:58
 * @route '/analytics/statistics'
 */
 statisticsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

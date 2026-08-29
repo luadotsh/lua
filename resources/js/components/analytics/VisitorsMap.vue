@@ -30,6 +30,7 @@ const mapboxToken = computed(
 const mapContainer = ref<HTMLElement | null>(null);
 const map = shallowRef<mapboxgl.Map | null>(null);
 const styleReady = ref(false);
+let resizeObserver: ResizeObserver | null = null;
 
 const { resolvedAppearance } = useAppearance();
 
@@ -101,6 +102,7 @@ const applyData = () => {
     }
 
     instance.setPaintProperty('lua-country-fills', 'fill-opacity', opacityExpression.value);
+
 };
 
 const bindInteractions = (instance: mapboxgl.Map) => {
@@ -138,14 +140,23 @@ const bindInteractions = (instance: mapboxgl.Map) => {
 };
 
 const initializeMap = () => {
-    if (!mapboxToken.value || !mapContainer.value || map.value) {
+    const container = mapContainer.value;
+
+    if (!mapboxToken.value || !container || map.value) {
+        return;
+    }
+
+    // The card renders this inside a tab, so on the first paint the container
+    // exists with no dimensions. Mapbox measures once at creation and never
+    // recovers from a zero-sized start, so wait for real dimensions instead.
+    if (container.clientWidth === 0 || container.clientHeight === 0) {
         return;
     }
 
     mapboxgl.accessToken = mapboxToken.value;
 
     const instance = new mapboxgl.Map({
-        container: mapContainer.value,
+        container,
         style: mapStyle.value,
         center: [0, 24],
         zoom: 0.3,
@@ -162,14 +173,41 @@ const initializeMap = () => {
 
     bindInteractions(instance);
 
+    // Keep following the container so the map re-measures when the layout
+    // changes, for instance when the window is resized.
+    resizeObserver?.disconnect();
+    resizeObserver = new ResizeObserver(() => instance.resize());
+    resizeObserver.observe(container);
+
     map.value = instance;
 };
 
-onMounted(initializeMap);
+/**
+ * Watches the container until it has dimensions, then builds the map. Runs on
+ * mount and whenever the container enters the DOM.
+ */
+const watchForSize = () => {
+    const container = mapContainer.value;
 
-// The container sits behind a v-if while the data loads, so it may not exist
-// at mount; initialise as soon as it enters the DOM.
-watch(mapContainer, () => initializeMap());
+    if (!container || map.value) {
+        return;
+    }
+
+    initializeMap();
+
+    if (map.value) {
+        return;
+    }
+
+    resizeObserver?.disconnect();
+    resizeObserver = new ResizeObserver(() => initializeMap());
+    resizeObserver.observe(container);
+};
+
+onMounted(watchForSize);
+
+// The container sits inside a tab, so it may not exist at mount.
+watch(mapContainer, () => watchForSize());
 
 watch(mapStyle, (style) => {
     styleReady.value = false;
@@ -179,23 +217,20 @@ watch(mapStyle, (style) => {
 watch(() => props.rows, () => applyData());
 
 onBeforeUnmount(() => {
+    resizeObserver?.disconnect();
+    resizeObserver = null;
     map.value?.remove();
     map.value = null;
 });
 </script>
 
 <template>
-    <section class="flex flex-col rounded-lg border border-border bg-card">
-        <header class="flex items-center justify-between gap-4 border-b border-border px-4 py-3">
-            <h2 class="text-sm font-medium text-foreground">Where clicks come from</h2>
-            <span class="text-xs tabular-nums text-muted-foreground">
-                {{ rows.length }} {{ rows.length === 1 ? 'country' : 'countries' }}
-            </span>
-        </header>
-
+    <!-- Rendered inside the Locations card's Map tab, so it carries no header
+         or border of its own. -->
+    <div>
         <p
             v-if="!mapboxToken"
-            class="px-4 py-12 text-center text-sm text-muted-foreground"
+            class="py-6 text-center text-sm text-muted-foreground"
         >
             Set <code class="font-mono text-xs">MAPBOX_TOKEN</code> to show the map.
         </p>
@@ -203,10 +238,10 @@ onBeforeUnmount(() => {
         <div
             v-else
             ref="mapContainer"
-            class="h-80 w-full overflow-hidden rounded-b-lg"
+            class="h-64 w-full overflow-hidden rounded-md"
             data-test="visitors-map"
         />
-    </section>
+    </div>
 </template>
 
 <style scoped>

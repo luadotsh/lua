@@ -21,22 +21,25 @@ class AnalyticsController extends Controller
      */
     private const CARDS = [
         'sources' => [
-            ['key' => 'referer', 'label' => 'Referrer', 'icon' => 'favicon'],
+            ['key' => 'referer', 'label' => 'Referrer'],
             ['key' => 'utm_source', 'label' => 'Source'],
             ['key' => 'utm_medium', 'label' => 'Medium'],
             ['key' => 'utm_campaign', 'label' => 'Campaign'],
             ['key' => 'utm_content', 'label' => 'Content'],
             ['key' => 'utm_term', 'label' => 'Term'],
         ],
+        // Order and labels follow the clickbase dashboard. The map is a tab of
+        // the Locations card, not a card of its own, and it renders through a
+        // slot rather than from rows.
         'locations' => [
-            ['key' => 'country', 'label' => 'Country', 'icon' => 'country'],
-            ['key' => 'region', 'label' => 'Region'],
-            ['key' => 'city', 'label' => 'City'],
+            ['key' => 'country', 'label' => 'Countries'],
+            ['key' => 'region', 'label' => 'Regions'],
+            ['key' => 'city', 'label' => 'Cities'],
         ],
         'devices' => [
-            ['key' => 'device', 'label' => 'Device', 'icon' => 'device'],
-            ['key' => 'browser', 'label' => 'Browser', 'icon' => 'browser'],
-            ['key' => 'os', 'label' => 'OS', 'icon' => 'os'],
+            ['key' => 'browser', 'label' => 'Browser'],
+            ['key' => 'os', 'label' => 'Operating systems'],
+            ['key' => 'device', 'label' => 'Device'],
             ['key' => 'language', 'label' => 'Language'],
         ],
     ];

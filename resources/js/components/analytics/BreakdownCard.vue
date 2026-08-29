@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { browserIconUrl } from '@/lib/browsers';
-import { countryFlagUrl, countryFor } from '@/lib/countries';
-import { deviceIconUrl } from '@/lib/devices';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { formatCount } from '@/lib/metrics';
-import { osIconUrl } from '@/lib/os';
-import { favicon } from '@/lib/utils';
 
 export type BreakdownRow = {
     value: string;
@@ -19,101 +16,116 @@ export type BreakdownRow = {
 export type BreakdownTab = {
     key: string;
     label: string;
-    rows: BreakdownRow[];
-    /** Which icon set, if any, sits beside each row. */
-    icon?: 'country' | 'browser' | 'os' | 'device' | 'favicon';
+    /** Undefined while loading; a tab rendering its own content leaves it unset. */
+    rows?: BreakdownRow[];
 };
 
-const props = defineProps<{
-    title: string;
-    tabs: BreakdownTab[];
-    emptyLabel: string;
-}>();
-
-const active = ref(props.tabs[0]?.key ?? '');
-
-const current = computed(
-    () => props.tabs.find((tab) => tab.key === active.value) ?? props.tabs[0],
+const props = withDefaults(
+    defineProps<{
+        title: string;
+        emptyLabel: string;
+        tabs: BreakdownTab[];
+        /** Which tab opens first, when it should not be the first listed. */
+        defaultTab?: string;
+        /** Keep the title visible even when the tab list could stand in for it. */
+        persistTitle?: boolean;
+        skeletonRows?: number;
+    }>(),
+    { skeletonRows: 5 },
 );
 
-const iconFor = (row: BreakdownRow, kind?: BreakdownTab['icon']): string | null => {
-    switch (kind) {
-        case 'country':
-            return countryFlagUrl(row.value);
-        case 'browser':
-            return browserIconUrl(row.value);
-        case 'os':
-            return osIconUrl(row.value);
-        case 'device':
-            return deviceIconUrl(row.value);
-        case 'favicon':
-            return favicon(row.url ?? row.value);
-        default:
-            return null;
-    }
-};
+const activeTab = ref(props.defaultTab ?? props.tabs[0]?.key ?? '');
 
-// Country codes are not readable on their own.
-const labelFor = (row: BreakdownRow, kind?: BreakdownTab['icon']): string =>
-    kind === 'country' ? countryFor(row.value).name : row.value;
+// A single tab needs no tab list — the title carries the card instead.
+const showTabList = computed(() => props.tabs.length > 1);
 </script>
 
 <template>
-    <section class="flex flex-col rounded-lg border border-border bg-card">
-        <header class="flex items-center justify-between gap-4 border-b border-border px-4 py-3">
-            <h2 class="text-sm font-medium text-foreground">{{ title }}</h2>
+    <Card class="gap-0 py-3">
+        <!-- With tabs visible the list plays the title's role, so the heading
+             only stays for screen readers. -->
+        <CardHeader v-if="!showTabList || persistTitle" class="px-3">
+            <CardTitle>{{ title }}</CardTitle>
+        </CardHeader>
 
-            <Tabs v-if="tabs.length > 1" v-model="active">
-                <TabsList class="h-7">
-                    <TabsTrigger
-                        v-for="tab in tabs"
-                        :key="tab.key"
-                        :value="tab.key"
-                        class="px-2 text-xs"
-                    >
-                        {{ tab.label }}
-                    </TabsTrigger>
-                </TabsList>
-            </Tabs>
-        </header>
-
-        <div v-if="current?.rows.length" class="flex flex-col">
-            <div
-                v-for="row in current.rows"
-                :key="row.value"
-                class="relative flex items-center gap-3 px-4 py-2 text-sm"
-            >
-                <!-- The share reads as a bar behind the row, so scanning the
-                     column shows the distribution without a second chart. -->
+        <CardContent class="px-3">
+            <Tabs v-model="activeTab">
                 <div
-                    class="absolute inset-y-0 left-0 bg-violet-500/10"
-                    :style="{ width: `${row.share}%` }"
-                    aria-hidden="true"
-                />
+                    v-if="showTabList"
+                    class="mb-3 flex h-9 items-center justify-between gap-2"
+                >
+                    <TabsList :aria-label="title">
+                        <TabsTrigger
+                            v-for="tab in tabs"
+                            :key="tab.key"
+                            :value="tab.key"
+                        >
+                            {{ tab.label }}
+                        </TabsTrigger>
+                    </TabsList>
+                </div>
 
-                <img
-                    v-if="iconFor(row, current.icon)"
-                    :src="iconFor(row, current.icon) ?? undefined"
-                    :alt="''"
-                    class="relative size-4 shrink-0 rounded-sm object-contain"
-                    loading="lazy"
-                />
+                <TabsContent v-for="tab in tabs" :key="tab.key" :value="tab.key">
+                    <slot
+                        v-if="$slots[`content-${tab.key}`]"
+                        :name="`content-${tab.key}`"
+                        :rows="tab.rows"
+                    />
 
-                <span class="relative min-w-0 flex-1 truncate text-foreground" :title="labelFor(row, current.icon)">
-                    {{ labelFor(row, current.icon) }}
-                </span>
+                    <ol v-else-if="tab.rows === undefined" class="space-y-1">
+                        <li v-for="n in skeletonRows" :key="n">
+                            <Skeleton class="h-8 w-full" />
+                        </li>
+                    </ol>
 
-                <span class="relative shrink-0 tabular-nums text-muted-foreground">
-                    {{ formatCount(row.visitors) }}
-                </span>
-                <span class="relative w-14 shrink-0 text-right tabular-nums font-medium text-foreground">
-                    {{ formatCount(row.events) }}
-                </span>
-            </div>
-        </div>
+                    <p
+                        v-else-if="tab.rows.length === 0"
+                        class="py-6 text-center text-sm text-muted-foreground"
+                    >
+                        {{ emptyLabel }}
+                    </p>
 
-        <p v-else class="px-4 py-8 text-center text-sm text-muted-foreground">
-            {{ emptyLabel }}
-        </p>
-    </section>
+                    <!-- group/report: hovering anywhere in the list reveals every
+                         row's share at once, rather than one at a time. -->
+                    <ol v-else class="group/report space-y-1">
+                        <li
+                            v-for="row in tab.rows"
+                            :key="row.value"
+                            class="group relative flex h-8 min-h-8 items-center justify-between gap-3 overflow-hidden rounded-md px-2 text-sm transition-colors hover:bg-muted"
+                        >
+                            <span
+                                class="absolute inset-y-0 left-0 bg-primary/10"
+                                :style="{ width: `${row.share}%` }"
+                                aria-hidden="true"
+                            />
+
+                            <span class="relative z-10 flex min-w-0 items-center gap-2">
+                                <slot name="row" :row="row" :tab="tab.key">
+                                    <span class="truncate">{{ row.value }}</span>
+                                </slot>
+                            </span>
+
+                            <span
+                                class="relative z-10 flex shrink-0 items-center justify-end tabular-nums"
+                            >
+                                <!-- The count sits flush right, translated over the
+                                     hidden share cell, and slides back to reveal it
+                                     when the list is hovered. -->
+                                <span
+                                    class="pointer-events-none translate-x-[3rem] text-muted-foreground transition-transform duration-200 ease-out group-hover/report:translate-x-0"
+                                >
+                                    {{ formatCount(row.events) }}
+                                </span>
+                                <span
+                                    class="pointer-events-none w-12 shrink-0 pl-2 text-right text-xs text-muted-foreground opacity-0 transition-opacity duration-200 group-hover/report:opacity-100"
+                                >
+                                    {{ row.share }}%
+                                </span>
+                            </span>
+                        </li>
+                    </ol>
+                </TabsContent>
+            </Tabs>
+        </CardContent>
+    </Card>
 </template>
