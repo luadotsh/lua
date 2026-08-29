@@ -100,3 +100,38 @@ it('finds a link regardless of the case typed into search', function () {
 
     expect($found->total())->toBe(1);
 });
+
+it('can still edit a link whose domain has left the workspace', function () {
+    $link = Link::factory()->create([
+        'workspace_id' => $this->user->current_workspace_id,
+        'domain' => 'retired.example',
+        'key' => 'keeper',
+        'link' => 'https://retired.example/keeper',
+    ]);
+
+    $this
+        ->actingAs($this->user)
+        ->put(route('links.update', $link->id), [
+            'domain' => 'retired.example',
+            'key' => 'keeper',
+            'url' => 'https://example.com/new-destination',
+        ])
+        ->assertSessionHasNoErrors();
+
+    expect($link->fresh()->url)->toBe('https://example.com/new-destination');
+});
+
+it('still refuses a domain that belongs to nobody', function () {
+    $link = Link::factory()->create([
+        'workspace_id' => $this->user->current_workspace_id,
+    ]);
+
+    $this
+        ->actingAs($this->user)
+        ->put(route('links.update', $link->id), [
+            'domain' => 'someone-elses.example',
+            'key' => $link->key,
+            'url' => 'https://example.com',
+        ])
+        ->assertSessionHasErrors('domain');
+});

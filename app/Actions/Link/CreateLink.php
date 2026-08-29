@@ -71,6 +71,18 @@ class CreateLink
             config('domains.available'),
         );
 
+        // A link keeps the domain it was created on even after that domain
+        // leaves the workspace. Without this, removing a custom domain makes
+        // every link on it uneditable — you could not even fix its destination,
+        // because the unchanged domain would fail the check.
+        if ($ignoreId !== null && $workspace !== null) {
+            $current = Link::where('workspace_id', $workspace->id)->find($ignoreId);
+
+            if ($current) {
+                $domains[] = $current->domain;
+            }
+        }
+
         $domain = data_get($input, 'domain');
         $key = data_get($input, 'key');
 
