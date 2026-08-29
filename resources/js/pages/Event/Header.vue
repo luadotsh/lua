@@ -48,49 +48,41 @@ const setColumn = (status: Column) => {
 </script>
 
 <template>
-    <div
-        class="w-full flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0"
-    >
-        <div>
-            <h1 class="page-title">Events</h1>
-        </div>
-        <div class="flex items-center justify-between space-x-2">
-            <RangePicker
-                v-model:range="range"
-                @update:range="$emit('update:range', $event)"
-                placement="bottom-end"
-                class="w-full"
-            />
-            <DropdownMenu>
-                <DropdownMenuTrigger as-child>
-                    <Button variant="outline" size="icon">
-                        <IconSettings
-                            class="h-5 w-5 text-zinc-500 dark:text-zinc-300"
-                            aria-hidden="true"
-                        />
-                    </Button>
-                </DropdownMenuTrigger>
+    <div class="flex items-center gap-2">
+        <RangePicker
+            v-model:range="range"
+            @update:range="$emit('update:range', $event)"
+            placement="bottom-end"
+        />
+        <DropdownMenu>
+            <DropdownMenuTrigger as-child>
+                <Button variant="outline" size="icon">
+                    <IconSettings
+                        class="h-5 w-5 text-zinc-500 dark:text-zinc-300"
+                        aria-hidden="true"
+                    />
+                </Button>
+            </DropdownMenuTrigger>
 
-                <DropdownMenuContent align="end" class="w-52">
-                    <DropdownMenuLabel>Columns</DropdownMenuLabel>
-                    <DropdownMenuItem
-                        v-for="column in props.columns"
-                        :key="column.key"
-                        @click.prevent="setColumn(column)"
-                        class="cursor-pointer flex items-center space-x-2"
-                    >
-                        <IconCircleCheck
-                            v-if="column.show"
-                            class="h-5 w-5 text-zinc-800 dark:text-zinc-300"
-                        />
-                        <IconCircle
-                            v-else
-                            class="h-5 w-5 text-zinc-800 dark:text-zinc-300"
-                        />
-                        <span class="truncate">{{ column.label }}</span>
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        </div>
+            <DropdownMenuContent align="end" class="w-52">
+                <DropdownMenuLabel>Columns</DropdownMenuLabel>
+                <DropdownMenuItem
+                    v-for="column in props.columns"
+                    :key="column.key"
+                    @click.prevent="setColumn(column)"
+                    class="cursor-pointer flex items-center space-x-2"
+                >
+                    <IconCircleCheck
+                        v-if="column.show"
+                        class="h-5 w-5 text-zinc-800 dark:text-zinc-300"
+                    />
+                    <IconCircle
+                        v-else
+                        class="h-5 w-5 text-zinc-800 dark:text-zinc-300"
+                    />
+                    <span class="truncate">{{ column.label }}</span>
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
     </div>
 </template>

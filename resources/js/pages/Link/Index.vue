@@ -83,15 +83,13 @@ const searchDebounce = debounce(function () {
     });
 }, 300);
 
-const title = computed(() => {
-    if (searchForm.q) {
-        return `Search results for "${searchForm.q}"`;
-    }
-    if (props.table.total <= 1) {
-        return `Links`;
-    }
-    return `Links (${props.table.total})`;
-});
+const title = computed(() =>
+    searchForm.q ? `Search results for "${searchForm.q}"` : "Links",
+);
+
+// The count belongs to the list, not to a search — "Search results (3)" would be
+// counting the page, and the header already says what was searched for.
+const total = computed(() => (searchForm.q ? null : props.table.total));
 
 onMounted(() => {
     const url = new URL(window.location.href);
@@ -109,8 +107,8 @@ onMounted(() => {
     <Edit v-if="link" :link="link" />
     <Qrcode ref="qrcodeModal" />
 
-    <AppLayout>
-        <template #header-right>
+    <AppLayout :title="title" :total="total">
+        <template #header-actions>
             <div class="flex items-center gap-2">
                 <div class="relative">
                     <IconSearch class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />

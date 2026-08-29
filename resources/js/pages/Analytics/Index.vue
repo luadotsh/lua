@@ -82,8 +82,8 @@ const setRange = (next: Range) => {
 <template>
     <Head title="Analytics" />
 
-    <AppLayout>
-        <template #header-right>
+    <AppLayout title="Analytics">
+        <template #header-actions>
             <RangePicker
                 v-model:range="range"
                 @update:range="setRange"
@@ -92,8 +92,6 @@ const setRange = (next: Range) => {
         </template>
 
         <div class="flex flex-col gap-4 p-4 lg:p-6">
-            <h1 class="page-title">Analytics</h1>
-
             <template v-if="loading && !overview">
                 <Skeleton class="h-[104px] w-full rounded-lg" />
                 <Skeleton class="h-[324px] w-full rounded-lg" />

@@ -12,11 +12,17 @@ const isOpen = page.props.sidebarOpen;
 type Props = {
     breadcrumbs?: BreadcrumbItem[];
     fullWidth?: boolean;
+    /** Rendered in the header. Screens with a plain title need nothing else. */
+    title?: string;
+    /** Item count shown in brackets next to the title. Hidden when 0 or null. */
+    total?: number | null;
 };
 
 withDefaults(defineProps<Props>(), {
     breadcrumbs: () => [],
     fullWidth: false,
+    title: '',
+    total: null,
 });
 </script>
 
@@ -24,9 +30,12 @@ withDefaults(defineProps<Props>(), {
     <SidebarProvider :default-open="isOpen">
         <AppSidebar />
         <SidebarInset class="overflow-x-hidden">
-            <AppSidebarHeader :breadcrumbs="breadcrumbs">
-                <template v-if="$slots['header-right']" #right>
-                    <slot name="header-right" />
+            <AppSidebarHeader :breadcrumbs="breadcrumbs" :title="title" :total="total">
+                <template v-if="$slots.header" #header>
+                    <slot name="header" />
+                </template>
+                <template v-if="$slots['header-actions']" #header-actions>
+                    <slot name="header-actions" />
                 </template>
             </AppSidebarHeader>
             <div

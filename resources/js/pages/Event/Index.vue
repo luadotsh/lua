@@ -105,8 +105,8 @@ const refresh = (value: typeof range.value) => {
 </script>
 
 <template>
-    <AppLayout>
-        <template #header-right>
+    <AppLayout title="Events">
+        <template #header-actions>
             <Header
                 :columns="columns"
                 :range="range"
