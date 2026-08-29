@@ -15,10 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
         api: __DIR__ . '/../routes/api.php',
-        apiPrefix: '/api/v1',
+        apiPrefix: '/api',
         commands: __DIR__.'/../routes/console.php',
         channels: __DIR__.'/../routes/channels.php',
-        health: '/api/v1/health',
+        health: 'up',
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->trustProxies(at: '*');
