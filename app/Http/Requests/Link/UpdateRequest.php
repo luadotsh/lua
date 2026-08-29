@@ -28,4 +28,12 @@ class UpdateRequest extends FormRequest
 
         return CreateLink::rules($workspace, $this->all(), $this->route('id'));
     }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return CreateLink::messages();
+    }
 }

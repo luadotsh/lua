@@ -48,3 +48,40 @@ it('cannot create a link without url', function () {
 
     $response->assertInvalid(['url']);
 });
+
+it('accepts a mixed case custom back-half', function () {
+    $this
+        ->actingAs($this->user)
+        ->post(route('links.store'), [
+            'url' => 'https://example.com',
+            'domain' => config('domains.main'),
+            'key' => 'MyLink-01',
+        ])
+        ->assertSessionHasNoErrors();
+
+    expect(Link::where('key', 'MyLink-01')->exists())->toBeTrue();
+});
+
+it('rejects a back-half with characters that cannot sit in a path', function () {
+    $this
+        ->actingAs($this->user)
+        ->post(route('links.store'), [
+            'url' => 'https://example.com',
+            'domain' => config('domains.main'),
+            'key' => 'my link/01',
+        ])
+        ->assertSessionHasErrors('key');
+});
+
+it('rejects a back-half with unicode letters', function () {
+    // alpha_dash without :ascii would let this through, and a path cannot
+    // carry it without percent-encoding.
+    $this
+        ->actingAs($this->user)
+        ->post(route('links.store'), [
+            'url' => 'https://example.com',
+            'domain' => config('domains.main'),
+            'key' => 'promoção',
+        ])
+        ->assertSessionHasErrors('key');
+});

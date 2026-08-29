@@ -18,7 +18,7 @@ class CreateLink
     public static function execute(Workspace $workspace, array $data): Link
     {
         $domain = data_get($data, 'domain') ?: config('domains.main');
-        $key = data_get($data, 'key') ?: Str::lower(Str::random(7));
+        $key = data_get($data, 'key') ?: Str::random(7);
 
         return DB::transaction(function () use ($workspace, $data, $domain, $key): Link {
             $link = Link::create([
@@ -47,6 +47,16 @@ class CreateLink
     }
 
     /**
+     * @return array<string, string>
+     */
+    public static function messages(): array
+    {
+        return [
+            'key.alpha_dash' => 'The custom back-half may only contain letters, numbers, hyphens and underscores.',
+        ];
+    }
+
+    /**
      * Shared by the REST form requests and the MCP tools, so both surfaces
      * enforce the same thing. Context is passed in rather than read off a
      * request, because a tool call is not an HTTP request.
@@ -69,8 +79,12 @@ class CreateLink
         return [
             'key' => $optional($key, [
                 'required', 'string', 'max:255',
-                // Only lowercase letters, numbers and hyphens.
-                'regex:/^[a-z0-9-]+$/',
+                // Letters, numbers, hyphens and underscores. `:ascii` is the
+                // point: without it alpha_dash also accepts unicode letters,
+                // which cannot sit in a path without percent-encoding.
+                // Case is significant — lookups match the column exactly, so
+                // `/AbC` and `/abc` are two different links.
+                'alpha_dash:ascii',
                 Rule::unique('links')->where('domain', $domain)->ignore($ignoreId),
             ]),
             'domain' => [

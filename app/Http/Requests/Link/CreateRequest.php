@@ -8,9 +8,6 @@ use App\Actions\Link\CreateLink;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-use App\Models\Domain;
-use App\Enums\DomainStatus;
-
 class CreateRequest extends FormRequest
 {
     /**
@@ -30,5 +27,13 @@ class CreateRequest extends FormRequest
         $workspace = $this->workspace ?? $this->user()?->currentWorkspace;
 
         return CreateLink::rules($workspace, $this->all(), null);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return CreateLink::messages();
     }
 }
