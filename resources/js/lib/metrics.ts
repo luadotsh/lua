@@ -1,10 +1,6 @@
-export type MetricKey =
-    | 'events'
-    | 'clicks'
-    | 'qr_scans'
-    | 'visitors'
-    | 'links'
-    | 'countries';
+// Every metric here is plottable over time, so every card in the header
+// selects the series the chart draws.
+export type MetricKey = 'events' | 'clicks' | 'qr_scans' | 'visitors';
 
 export type Metric = {
     value: number;
@@ -20,17 +16,7 @@ export const metricLabels: Record<MetricKey, string> = {
     clicks: 'Clicks',
     qr_scans: 'QR scans',
     visitors: 'Visitors',
-    links: 'Links',
-    countries: 'Countries',
 };
-
-/** Only these are plottable over time; the rest are period totals. */
-export const plottableMetrics: MetricKey[] = [
-    'events',
-    'clicks',
-    'qr_scans',
-    'visitors',
-];
 
 const compact = new Intl.NumberFormat('en-US', {
     notation: 'compact',

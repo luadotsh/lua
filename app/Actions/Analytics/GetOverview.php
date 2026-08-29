@@ -54,8 +54,6 @@ class GetOverview
             // A visitor is one address inside the window. Without a cookie
             // this is the closest the click data gets to a person.
             ->selectRaw('count(distinct ip) as visitors')
-            ->selectRaw('count(distinct link_id) as links')
-            ->selectRaw('count(distinct country) filter (where country is not null) as countries')
             ->first();
 
         return [
@@ -63,8 +61,6 @@ class GetOverview
             'clicks' => (int) $row->clicks,
             'qr_scans' => (int) $row->qr_scans,
             'visitors' => (int) $row->visitors,
-            'links' => (int) $row->links,
-            'countries' => (int) $row->countries,
         ];
     }
 

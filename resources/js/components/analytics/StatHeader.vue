@@ -5,37 +5,31 @@ import {
     formatChange,
     formatCount,
     metricLabels,
-    plottableMetrics,
     type MetricKey,
     type Overview,
 } from '@/lib/metrics';
 import { cn } from '@/lib/utils';
 
-const props = defineProps<{
+defineProps<{
     overview: Overview;
-    /** Metrics that are period totals rather than series, shown but not selectable. */
-    summaryMetrics?: MetricKey[];
 }>();
 
 const selected = defineModel<MetricKey>({ required: true });
-
-const isSelectable = (metric: MetricKey) => plottableMetrics.includes(metric);
 </script>
 
 <template>
-    <div class="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-3 lg:grid-cols-6">
-        <component
+    <div class="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-border bg-border lg:grid-cols-4">
+        <button
             v-for="(metric, key) in overview"
             :key="key"
-            :is="isSelectable(key as MetricKey) ? 'button' : 'div'"
-            :type="isSelectable(key as MetricKey) ? 'button' : undefined"
-            :aria-pressed="isSelectable(key as MetricKey) ? selected === key : undefined"
+            type="button"
+            :aria-pressed="selected === key"
             :class="cn(
-                'flex flex-col gap-1 bg-card p-4 text-left transition-colors',
-                isSelectable(key as MetricKey) && 'cursor-pointer hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                'flex cursor-pointer flex-col gap-1 bg-card p-4 text-left transition-colors',
+                'hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset',
                 selected === key && 'bg-accent',
             )"
-            @click="isSelectable(key as MetricKey) && (selected = key as MetricKey)"
+            @click="selected = key as MetricKey"
         >
             <span class="text-xs font-medium tracking-wide text-muted-foreground uppercase">
                 {{ metricLabels[key as MetricKey] }}
@@ -60,6 +54,6 @@ const isSelectable = (metric: MetricKey) => plottableMetrics.includes(metric);
                 {{ formatChange(metric.change) }}
                 <span class="text-muted-foreground">vs previous</span>
             </span>
-        </component>
+        </button>
     </div>
 </template>
