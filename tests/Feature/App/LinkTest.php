@@ -135,3 +135,12 @@ it('still refuses a domain that belongs to nobody', function () {
         ])
         ->assertSessionHasErrors('domain');
 });
+
+it('sends you to the edit screen after creating, to finish the link', function () {
+    $this
+        ->actingAs($this->user)
+        ->post(route('links.store'), [
+            'url' => 'https://example.com/just-created',
+        ])
+        ->assertRedirect(route('links.edit', Link::latest()->first()->id));
+});

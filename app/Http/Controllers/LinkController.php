@@ -82,10 +82,12 @@ class LinkController extends Controller
 
         $link = CreateLink::execute($workspace, $request->validated());
 
-        session()->flash('flash.banner', 'Link created successfully.');
+        session()->flash('flash.banner', 'Link created. Add the rest below.');
         session()->flash('flash.bannerStyle', 'success');
 
-        return redirect(route('links.index'));
+        // Creating asks for the minimum; the edit screen is where the link gets
+        // its tags, campaign, targeting and the rest.
+        return redirect(route('links.edit', $link->id));
     }
 
     public function update($id, UpdateRequest $request)
