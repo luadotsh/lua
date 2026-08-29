@@ -232,3 +232,17 @@ it('exposes an absolute qr code url', function () {
     expect($qr)->toStartWith('http')
         ->and($qr)->toContain($link->id);
 });
+
+it('creates a link from a url alone', function () {
+    $response = $this
+        ->withToken($this->token)
+        ->postJson(route('api.links.store'), [
+            'url' => 'https://example.com/only-a-url',
+        ]);
+
+    $response->assertStatus(201)
+        ->assertJsonPath('domain', config('domains.main'));
+
+    // The back-half is generated when the caller does not choose one.
+    expect($response->json('key'))->toHaveLength(7);
+});
