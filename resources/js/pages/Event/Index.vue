@@ -149,14 +149,15 @@ const refresh = (value: typeof range.value) => {
             </template>
 
             <!--
-                No scroller of its own: the page is what scrolls, so the sticky
-                header anchors just below the app header. A wrapper with
-                overflow here would give `top-0` the wrong thing to stick to.
+                The sideways scroll belongs to the table alone: sixteen columns
+                do not fit, but the metrics and the chart above should stay put
+                while you reach the last of them.
 
                 `items-element` is required — without it Inertia has nowhere to
                 append the next page and it replaces the rows instead.
             -->
             <InfiniteScroll data="table" items-element="#events-body" preserve-url>
+                <div class="w-full overflow-x-auto">
                 <Table>
                     <TableHeader sticky>
                         <TableRow>
@@ -192,6 +193,7 @@ const refresh = (value: typeof range.value) => {
                         </TableRow>
                     </TableBody>
                 </Table>
+                </div>
             </InfiniteScroll>
         </div>
     </AppLayout>
