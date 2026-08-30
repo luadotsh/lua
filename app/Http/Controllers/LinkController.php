@@ -97,7 +97,9 @@ class LinkController extends Controller
         session()->flash('flash.banner', 'Link updated successfully.');
         session()->flash('flash.bannerStyle', 'success');
 
-        return redirect(route('links.index'));
+        // Stay on the link being edited. Saving one field is not a reason to
+        // lose the screen and scroll back to find it again.
+        return back();
     }
 
     public function destroy($id, Request $request)

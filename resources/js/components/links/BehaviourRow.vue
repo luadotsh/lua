@@ -69,7 +69,11 @@ const open = defineModel<boolean>('open', { default: false });
             />
         </CollapsibleTrigger>
 
-        <CollapsibleContent>
+        <!-- The height animation comes from tw-animate-css, the same classes
+             trypost uses. Without them the panel snaps open. -->
+        <CollapsibleContent
+            class="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down motion-reduce:data-[state=closed]:animate-none motion-reduce:data-[state=open]:animate-none"
+        >
             <div class="flex flex-col gap-4 border-t border-border px-3.5 py-4 sm:pl-[3.4rem]">
                 <slot />
             </div>

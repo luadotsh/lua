@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link, router, useForm } from "@inertiajs/vue3";
+import { Head, router, useForm } from "@inertiajs/vue3";
 import { IconQrcode, IconTrash } from "@tabler/icons-vue";
 import { ref } from "vue";
 import ConfirmDeleteModal from "@/components/ConfirmDeleteModal.vue";
@@ -105,9 +105,6 @@ const update = () => {
             >
                 <IconTrash class="size-4" />
                 <span class="sr-only">Delete link</span>
-            </Button>
-            <Button variant="ghost" as-child>
-                <Link :href="linksRoute.index.url()">Cancel</Link>
             </Button>
             <Button :disabled="form.processing" @click="update">Save changes</Button>
         </template>
