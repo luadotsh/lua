@@ -2,8 +2,14 @@
 import axios from "axios";
 import { onMounted, ref, watch } from "vue";
 import { InfiniteScroll, router } from "@inertiajs/vue3";
+import { IconClick, IconQrcode } from "@tabler/icons-vue";
 import AppLayout from "@/layouts/AppLayout.vue";
 import date from "@/date";
+import { browserIconUrl } from "@/lib/browsers";
+import { countryFlagUrl, countryFor } from "@/lib/countries";
+import { deviceIconUrl } from "@/lib/devices";
+import { languageFlagUrl, languageLabel } from "@/lib/languages";
+import { osIconUrl } from "@/lib/os";
 
 import * as eventsRoute from "@/routes/events";
 
@@ -87,6 +93,10 @@ const COLUMNS = [
     { key: "utm_term", label: "UTM term" },
     { key: "referer", label: "Referrer" },
 ] as const;
+
+// A scan and a click are the two things a link can receive, and the icon says
+// which at a glance far better than the word does.
+const eventIcon = (event: string) => (event === "qr-scan" ? IconQrcode : IconClick);
 
 // The same endpoint the analytics screen reads, so the two never disagree
 // about what a click or a scan is.
@@ -172,18 +182,101 @@ const refresh = (value: typeof range.value) => {
                     </TableHeader>
                     <TableBody id="events-body">
                         <TableRow v-for="event in table.data" :key="event.id">
-                            <TableCell class="whitespace-nowrap">{{ event.event }}</TableCell>
-                            <TableCell class="whitespace-nowrap">{{ event.link.link }}</TableCell>
-                            <TableCell>{{ event.country }}</TableCell>
+                            <TableCell class="whitespace-nowrap">
+                                <span class="flex items-center gap-1.5">
+                                    <component
+                                        :is="eventIcon(event.event)"
+                                        class="size-3.5 shrink-0 text-muted-foreground"
+                                    />
+                                    {{ event.event }}
+                                </span>
+                            </TableCell>
+
+                            <TableCell class="whitespace-nowrap">
+                                <a
+                                    :href="event.link.link"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="hover:underline"
+                                >
+                                    {{ event.link.link }}
+                                </a>
+                            </TableCell>
+
+                            <TableCell class="whitespace-nowrap">
+                                <span v-if="event.country" class="flex items-center gap-1.5">
+                                    <img
+                                        :src="countryFlagUrl(event.country)"
+                                        alt=""
+                                        aria-hidden="true"
+                                        class="h-3 w-[18px] shrink-0 rounded-[2px] object-cover"
+                                        loading="lazy"
+                                        @error="(e) => ((e.target as HTMLImageElement).style.display = 'none')"
+                                    />
+                                    {{ countryFor(event.country).name }}
+                                </span>
+                            </TableCell>
+
                             <TableCell class="whitespace-nowrap">{{ event.region }}</TableCell>
                             <TableCell class="whitespace-nowrap">{{ event.city }}</TableCell>
-                            <TableCell>{{ event.device }}</TableCell>
-                            <TableCell class="whitespace-nowrap">{{ event.browser }}</TableCell>
-                            <TableCell class="whitespace-nowrap">{{ event.os }}</TableCell>
+
+                            <TableCell class="whitespace-nowrap">
+                                <span class="flex items-center gap-1.5">
+                                    <img
+                                        v-if="deviceIconUrl(event.device)"
+                                        :src="deviceIconUrl(event.device) ?? ''"
+                                        alt=""
+                                        aria-hidden="true"
+                                        class="size-4 shrink-0"
+                                        loading="lazy"
+                                        @error="(e) => ((e.target as HTMLImageElement).style.display = 'none')"
+                                    />
+                                    {{ event.device }}
+                                </span>
+                            </TableCell>
+
+                            <TableCell class="whitespace-nowrap">
+                                <span class="flex items-center gap-1.5">
+                                    <img
+                                        :src="browserIconUrl(event.browser)"
+                                        alt=""
+                                        aria-hidden="true"
+                                        class="size-4 shrink-0"
+                                        loading="lazy"
+                                    />
+                                    {{ event.browser }}
+                                </span>
+                            </TableCell>
+
+                            <TableCell class="whitespace-nowrap">
+                                <span class="flex items-center gap-1.5">
+                                    <img
+                                        :src="osIconUrl(event.os)"
+                                        alt=""
+                                        aria-hidden="true"
+                                        class="size-4 shrink-0"
+                                        loading="lazy"
+                                    />
+                                    {{ event.os }}
+                                </span>
+                            </TableCell>
                             <TableCell class="whitespace-nowrap">
                                 {{ date.formatDateTime(event.created_at) }}
                             </TableCell>
-                            <TableCell>{{ event.language }}</TableCell>
+                            <TableCell class="whitespace-nowrap">
+                                <span v-if="event.language" class="flex items-center gap-1.5">
+                                    <img
+                                        v-if="languageFlagUrl(event.language)"
+                                        :src="languageFlagUrl(event.language) ?? ''"
+                                        alt=""
+                                        aria-hidden="true"
+                                        class="h-3 w-[18px] shrink-0 rounded-[2px] object-cover"
+                                        loading="lazy"
+                                        @error="(e) => ((e.target as HTMLImageElement).style.display = 'none')"
+                                    />
+                                    {{ languageLabel(event.language) }}
+                                </span>
+                            </TableCell>
                             <TableCell class="whitespace-nowrap">{{ event.utm_source }}</TableCell>
                             <TableCell class="whitespace-nowrap">{{ event.utm_medium }}</TableCell>
                             <TableCell class="whitespace-nowrap">{{ event.utm_campaign }}</TableCell>
