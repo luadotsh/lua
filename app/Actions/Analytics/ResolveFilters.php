@@ -9,12 +9,12 @@ class ResolveFilters
     /**
      * Read the dashboard filters out of a raw query bag.
      *
-     * Every key is a dimension from GetBreakdown, taken as a scalar or a list.
+     * Every key is one of ApplyFilters::COLUMNS, taken as a scalar or a list.
      * Unknown keys, empty strings and values that are not valid UTF-8 are
      * dropped rather than rejected: a filtered dashboard is a URL people share
      * and edit by hand, and a stale one should show everything, not a 422.
      *
-     * The result is ordered by DIMENSIONS rather than by the query string, so
+     * The result is ordered by COLUMNS rather than by the query string, so
      * the pills never reshuffle between two requests carrying the same filters.
      *
      * @param  array<string, mixed>  $query
@@ -24,7 +24,7 @@ class ResolveFilters
     {
         $filters = [];
 
-        foreach (array_keys(GetBreakdown::DIMENSIONS) as $dimension) {
+        foreach (array_keys(ApplyFilters::COLUMNS) as $dimension) {
             $values = self::values(data_get($query, $dimension));
 
             if ($values !== []) {

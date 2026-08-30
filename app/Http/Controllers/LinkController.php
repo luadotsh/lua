@@ -15,6 +15,8 @@ use App\Actions\TeamMember\ListMembers;
 use App\Http\Requests\Link\CreateRequest;
 use App\Http\Requests\Link\UpdateRequest;
 use App\Models\Link;
+use App\Models\LinkStat;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -45,6 +47,37 @@ class LinkController extends Controller
                 'user' => $request->array('user'),
             ])),
             'hasData' => ListLinks::hasAny($workspace),
+        ]);
+    }
+
+    /**
+     * A link's own dashboard: what it received, where from, and every event in
+     * the period. The statistics come from the same endpoint the workspace
+     * dashboard reads, narrowed to this link, so the two can never disagree
+     * about what a click is.
+     */
+    public function show(Request $request, $id): Response
+    {
+        $workspace = Auth::user()->currentWorkspace;
+
+        $link = GetLink::execute($workspace, $id);
+        abort_unless($link, 404);
+
+        $start = CarbonImmutable::parse($request->start ?: now()->subDays(29))->startOfDay();
+        $end = CarbonImmutable::parse($request->end ?: now())->endOfDay();
+
+        $events = LinkStat::where('workspace_id', $workspace->id)
+            ->where('link_id', $link->id)
+            ->whereBetween('created_at', [$start, $end])
+            ->latest()
+            ->paginate((int) config('app.pagination.default'))
+            ->withQueryString();
+
+        return Inertia::render('Link/Show', [
+            'link' => $link,
+            'start' => $start->toDateString(),
+            'end' => $end->toDateString(),
+            'table' => Inertia::scroll(fn () => $events),
         ]);
     }
 

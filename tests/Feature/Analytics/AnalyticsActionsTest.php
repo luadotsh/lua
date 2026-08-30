@@ -273,3 +273,22 @@ it('refuses to guess a bucket expression for an unknown driver', function () {
     expect(fn () => GetTimeseries::bucketExpression('day', 'UTC', 'sqlite'))
         ->toThrow(RuntimeException::class, 'sqlite');
 });
+
+it('narrows the dashboard to a single link', function () {
+    $other = Link::factory()->create(['workspace_id' => $this->workspace->id]);
+
+    hit($this->workspace, $this->link, ['country' => 'BR']);
+    hit($this->workspace, $this->link, ['country' => 'PT']);
+    hit($this->workspace, $other, ['country' => 'ES']);
+
+    // `link` is a filter like any other, which is what lets a link's own screen
+    // reuse the workspace dashboard's endpoint rather than reimplement it.
+    $filters = ResolveFilters::execute(['link' => $this->link->id]);
+
+    expect($filters)->toBe(['link' => [$this->link->id]])
+        ->and(GetOverview::execute($this->workspace, $this->start, $this->end, $filters)['events']['value'])
+        ->toBe(2)
+        ->and(GetBreakdown::execute($this->workspace, 'country', $this->start, $this->end, $filters)
+            ->pluck('value')->sort()->values()->all())
+        ->toBe(['BR', 'PT']);
+});

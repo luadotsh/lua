@@ -266,9 +266,13 @@ onMounted(() => {
                                             />
                                             <IconLink v-else class="size-4 shrink-0 text-muted-foreground" />
 
+                                            <!-- The name opens the link's own
+                                                 dashboard; the pencil beside the
+                                                 row still opens the form. -->
                                             <Link
-                                                :href="linksRoute.edit.url(data.id)"
+                                                :href="linksRoute.show.url(data.id)"
                                                 class="font-medium hover:underline"
+                                                :data-testid="`link-name-${data.id}`"
                                             >
                                                 {{ data.link }}
                                             </Link>

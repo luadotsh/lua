@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 use App\Actions\Link\ListLinks;
 use App\Models\Link;
+use App\Models\LinkStat;
 use App\Models\Tag;
 use App\Models\User;
+use App\Models\Workspace;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 
 uses(RefreshDatabase::class);
 
@@ -199,4 +202,48 @@ it('widens the list when a filter holds several values', function () {
 
     expect($ids)->toHaveCount(2)
         ->and($ids)->toContain($mine->id, $theirs->id);
+});
+
+it('shows a link its own dashboard', function () {
+    $workspace = $this->user->currentWorkspace;
+    $link = Link::factory()->create(['workspace_id' => $workspace->id]);
+
+    $this->actingAs($this->user)
+        ->get(route('links.show', $link->id))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('Link/Show')
+            ->where('link.id', $link->id)
+            ->has('table')
+        );
+});
+
+it('never shows a link belonging to another workspace', function () {
+    $link = Link::factory()->create([
+        'workspace_id' => Workspace::factory()->create()->id,
+    ]);
+
+    $this->actingAs($this->user)
+        ->get(route('links.show', $link->id))
+        ->assertNotFound();
+});
+
+it('lists only that link events on its dashboard', function () {
+    $workspace = $this->user->currentWorkspace;
+
+    $mine = Link::factory()->create(['workspace_id' => $workspace->id]);
+    $theirs = Link::factory()->create(['workspace_id' => $workspace->id]);
+
+    LinkStat::factory()->count(2)->create([
+        'workspace_id' => $workspace->id,
+        'link_id' => $mine->id,
+    ]);
+    LinkStat::factory()->create([
+        'workspace_id' => $workspace->id,
+        'link_id' => $theirs->id,
+    ]);
+
+    $this->actingAs($this->user)
+        ->get(route('links.show', $mine->id))
+        ->assertInertia(fn (Assert $page) => $page->has('table.data', 2));
 });

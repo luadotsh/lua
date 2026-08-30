@@ -37,6 +37,16 @@ function nearestScrollerTestId(string $itemsElement): string
     JS;
 }
 
+function scrollsDown(string $testId): string
+{
+    return "document.querySelector('[data-testid=\"{$testId}\"]').scrollHeight > document.querySelector('[data-testid=\"{$testId}\"]').clientHeight";
+}
+
+function scrollsSideways(string $testId): string
+{
+    return "document.querySelector('[data-testid=\"{$testId}\"]').scrollWidth > document.querySelector('[data-testid=\"{$testId}\"]').clientWidth";
+}
+
 test('the events table scrolls inside itself, not inside the app shell', function () {
     $user = User::factory()->withWorkspace()->create();
     $workspace = $user->currentWorkspace;
@@ -71,5 +81,28 @@ test('the links table scrolls inside itself, not inside the app shell', function
 
     $page->assertScript(nearestScrollerTestId('#links-body'), 'links-scroll')
         ->assertScript('document.documentElement.scrollWidth <= document.documentElement.clientWidth')
+        ->assertNoJavaScriptErrors();
+});
+
+test("a link's own dashboard scrolls the page, but only the table sideways", function () {
+    $user = User::factory()->withWorkspace()->create();
+    $workspace = $user->currentWorkspace;
+    $link = Link::factory()->create(['workspace_id' => $workspace->id]);
+
+    LinkStat::factory()->count(40)->create([
+        'workspace_id' => $workspace->id,
+        'link_id' => $link->id,
+    ]);
+
+    $this->actingAs($user);
+
+    $page = visit(route('links.show', $link->id));
+
+    // The blocks above the table come to more than a viewport, so here the page
+    // is what scrolls down. It must never scroll sideways: that would drag the
+    // metrics and the chart along with the table's last columns.
+    $page->assertScript(scrollsDown('link-events-scroll'))
+        ->assertScript(scrollsSideways('link-events-scroll'), false)
+        ->assertScript(scrollsSideways('link-events-table'))
         ->assertNoJavaScriptErrors();
 });

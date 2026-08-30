@@ -41,6 +41,7 @@ Route::group(
         // links
         Route::get('/links', [LinkController::class, 'index'])->name('links.index');
         Route::post('/links', [LinkController::class, 'store'])->name('links.store');
+        Route::get('/links/{id}', [LinkController::class, 'show'])->name('links.show');
         Route::get('/links/{id}/edit', [LinkController::class, 'edit'])->name('links.edit');
         Route::put('/links/{id}', [LinkController::class, 'update'])->name('links.update');
         Route::delete('/links/{id}', [LinkController::class, 'destroy'])->name('links.destroy');
