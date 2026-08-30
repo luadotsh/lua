@@ -119,7 +119,7 @@ defineExpose({
 
 <template>
     <Dialog :open="isOpen" @update:open="onOpenChange">
-        <DialogContent :show-close-button="false" dusk="confirm-delete-modal">
+        <DialogContent :show-close-button="false" data-testid="confirm-delete-modal">
             <Button
                 variant="ghost"
                 size="icon"
@@ -175,21 +175,21 @@ defineExpose({
                 <Input
                     v-model="confirmInput"
                     autocomplete="off"
-                    dusk="confirm-delete-input"
+                    data-testid="confirm-delete-input"
                 />
             </div>
             <DialogFooter>
                 <Button
                     variant="destructive"
                     :disabled="processing || !isConfirmed"
-                    dusk="confirm-delete-button"
+                    data-testid="confirm-delete-button"
                     @click="remove"
                 >
                     {{ action }}
                 </Button>
                 <Button
                     variant="secondary"
-                    dusk="confirm-delete-cancel"
+                    data-testid="confirm-delete-cancel"
                     @click="close"
                 >
                     {{ cancel }}

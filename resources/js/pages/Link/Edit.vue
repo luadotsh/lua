@@ -87,7 +87,8 @@ const update = () => {
     <Qrcode ref="qrcodeModal" />
     <ConfirmDeleteModal
         ref="confirmDeleteModal"
-        description="Are you sure you want to delete this link?"
+        title="Delete link"
+        description="The short link stops resolving and its click history goes with it."
         @deleted="router.visit(linksRoute.index.url())"
     />
 
@@ -101,7 +102,13 @@ const update = () => {
                 variant="ghost"
                 size="icon"
                 class="text-destructive hover:text-destructive"
-                @click="confirmDeleteModal?.open({ url: linksRoute.destroy.url(link.id) })"
+                data-testid="link-delete"
+                @click="
+                    confirmDeleteModal?.open({
+                        url: linksRoute.destroy.url(link.id),
+                        confirmText: link.link,
+                    })
+                "
             >
                 <IconTrash class="size-4" />
                 <span class="sr-only">Delete link</span>

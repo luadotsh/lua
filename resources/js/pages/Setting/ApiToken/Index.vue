@@ -1,17 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { Head, router } from "@inertiajs/vue3";
+import { Head } from "@inertiajs/vue3";
 import { Button } from "@/components/ui/button";
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import ConfirmDeleteModal from "@/components/ConfirmDeleteModal.vue";
 import { IconKey, IconTrash } from "@tabler/icons-vue";
 import date from "@/date";
 import EmptyState from "@/components/EmptyState.vue";
@@ -34,29 +25,24 @@ import {
 import type { ApiToken } from "@/types";
 
 const createModal = ref<InstanceType<typeof CreateModal> | null>(null);
-const tokenToDelete = ref<{ id: string | number } | null>(null);
+const deleteModal = ref<InstanceType<typeof ConfirmDeleteModal> | null>(null);
 
 defineProps<{
     tokens: ApiToken[];
     hasData: boolean;
 }>();
 
-const confirmDelete = (token: { id: string | number }) => {
-    tokenToDelete.value = token;
-};
-
-const deleteToken = () => {
-    if (!tokenToDelete.value) {
-        return;
-    }
-
-    router.delete(apiTokensRoutes.destroy.url(tokenToDelete.value.id), {
-        preserveScroll: true,
-        onSuccess: () => {
-            tokenToDelete.value = null;
-        },
+// Anything still authenticating with this token stops working the moment it
+// goes, so you type the token's own name.
+const confirmDelete = (token: ApiToken) => {
+    deleteModal.value?.open({
+        url: apiTokensRoutes.destroy.url(token.id),
+        // A token created without a name falls back to the generic keyword;
+        // there is nothing specific to read back.
+        confirmText: token.name ?? "delete",
     });
 };
+
 </script>
 
 <template>
@@ -64,29 +50,11 @@ const deleteToken = () => {
 
     <CreateModal ref="createModal" />
 
-    <AlertDialog
-        :open="!!tokenToDelete"
-        @update:open="(open) => !open && (tokenToDelete = null)"
-    >
-        <AlertDialogContent>
-            <AlertDialogHeader>
-                <AlertDialogTitle>Delete API token</AlertDialogTitle>
-                <AlertDialogDescription>
-                    Anything still authenticating with this token stops working
-                    immediately.
-                </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-                <AlertDialogAction
-                    class="bg-destructive text-white hover:bg-destructive/90"
-                    @click="deleteToken"
-                >
-                    Delete
-                </AlertDialogAction>
-                <AlertDialogCancel @click="tokenToDelete = null">Cancel</AlertDialogCancel>
-            </AlertDialogFooter>
-        </AlertDialogContent>
-    </AlertDialog>
+    <ConfirmDeleteModal
+        ref="deleteModal"
+        title="Delete API token"
+        description="Anything still authenticating with this token stops working immediately."
+    />
 
     <AppLayout title="API Tokens" :total="tokens.length" full-width>
         <template #header-actions>

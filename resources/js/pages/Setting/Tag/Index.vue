@@ -1,17 +1,8 @@
 <script setup lang="ts">
-import { Head, router } from "@inertiajs/vue3";
+import { Head } from "@inertiajs/vue3";
 import { IconPencil, IconTrash } from "@tabler/icons-vue";
 import { ref } from "vue";
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import ConfirmDeleteModal from "@/components/ConfirmDeleteModal.vue";
 import { Button } from "@/components/ui/button";
 import {
     Table,
@@ -39,18 +30,14 @@ const props = defineProps<{
 
 const createModal = ref<InstanceType<typeof CreateModal> | null>(null);
 const editModal = ref<InstanceType<typeof EditModal> | null>(null);
-const tagToDelete = ref<Tag | null>(null);
+const deleteModal = ref<InstanceType<typeof ConfirmDeleteModal> | null>(null);
 
-const deleteTag = () => {
-    if (!tagToDelete.value) {
-        return;
-    }
-
-    router.delete(tagsRoutes.destroy.url(tagToDelete.value.id), {
-        preserveScroll: true,
-        onSuccess: () => {
-            tagToDelete.value = null;
-        },
+// Typing the tag's own name, not a generic keyword: it is what makes you read
+// which tag you are about to remove from every link carrying it.
+const confirmDelete = (tag: Tag) => {
+    deleteModal.value?.open({
+        url: tagsRoutes.destroy.url(tag.id),
+        confirmText: tag.name,
     });
 };
 </script>
@@ -61,29 +48,11 @@ const deleteTag = () => {
     <CreateModal ref="createModal" />
     <EditModal ref="editModal" />
 
-    <AlertDialog
-        :open="!!tagToDelete"
-        @update:open="(open) => !open && (tagToDelete = null)"
-    >
-        <AlertDialogContent>
-            <AlertDialogHeader>
-                <AlertDialogTitle>Delete tag</AlertDialogTitle>
-                <AlertDialogDescription>
-                    Links carrying <strong>{{ tagToDelete?.name }}</strong> keep
-                    working; they simply lose the tag.
-                </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-                <AlertDialogAction
-                    class="bg-destructive text-white hover:bg-destructive/90"
-                    @click="deleteTag"
-                >
-                    Delete
-                </AlertDialogAction>
-                <AlertDialogCancel @click="tagToDelete = null">Cancel</AlertDialogCancel>
-            </AlertDialogFooter>
-        </AlertDialogContent>
-    </AlertDialog>
+    <ConfirmDeleteModal
+        ref="deleteModal"
+        title="Delete tag"
+        description="Links carrying this tag keep working; they simply lose the tag."
+    />
 
     <AppLayout title="Tags" :total="tags.length" full-width>
         <template #header-actions>
@@ -146,7 +115,7 @@ const deleteTag = () => {
                                                 size="icon"
                                                 class="size-8 text-muted-foreground hover:text-destructive"
                                                 :data-testid="`tag-delete-${tag.id}`"
-                                                @click="tagToDelete = tag"
+                                                @click="confirmDelete(tag)"
                                             >
                                                 <IconTrash class="size-3.5" />
                                                 <span class="sr-only">Delete</span>

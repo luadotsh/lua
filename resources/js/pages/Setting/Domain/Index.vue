@@ -1,17 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { Head, router } from "@inertiajs/vue3";
+import { Head } from "@inertiajs/vue3";
 import { Button } from "@/components/ui/button";
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import ConfirmDeleteModal from "@/components/ConfirmDeleteModal.vue";
 import { IconPencil, IconTrash, IconWorld } from "@tabler/icons-vue";
 import DomainStatus from "@/components/DomainStatus.vue";
 import EmptyState from "@/components/EmptyState.vue";
@@ -37,27 +28,19 @@ import type { Domain } from "@/types";
 
 const createModal = ref<InstanceType<typeof CreateModal> | null>(null);
 const editModal = ref<InstanceType<typeof EditModal> | null>(null);
-const domainToDelete = ref<{ id: string | number } | null>(null);
+const deleteModal = ref<InstanceType<typeof ConfirmDeleteModal> | null>(null);
 
 const props = defineProps<{
     domains: Domain[];
     hasData: boolean;
 }>();
 
-const confirmDelete = (domain: { id: string | number }) => {
-    domainToDelete.value = domain;
-};
-
-const deleteDomain = () => {
-    if (!domainToDelete.value) {
-        return;
-    }
-
-    router.delete(domainsRoutes.destroy.url(domainToDelete.value.id), {
-        preserveScroll: true,
-        onSuccess: () => {
-            domainToDelete.value = null;
-        },
+// The domain itself is what you type: every short link already created on it
+// stops resolving, so the name is worth reading twice.
+const confirmDelete = (domain: Domain) => {
+    deleteModal.value?.open({
+        url: domainsRoutes.destroy.url(domain.id),
+        confirmText: domain.domain,
     });
 };
 </script>
@@ -68,28 +51,11 @@ const deleteDomain = () => {
     <CreateModal ref="createModal" />
     <EditModal ref="editModal" />
 
-    <AlertDialog
-        :open="!!domainToDelete"
-        @update:open="(open) => !open && (domainToDelete = null)"
-    >
-        <AlertDialogContent>
-            <AlertDialogHeader>
-                <AlertDialogTitle>Delete domain</AlertDialogTitle>
-                <AlertDialogDescription>
-                    Short links already created on this domain stop resolving.
-                </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-                <AlertDialogAction
-                    class="bg-destructive text-white hover:bg-destructive/90"
-                    @click="deleteDomain"
-                >
-                    Delete
-                </AlertDialogAction>
-                <AlertDialogCancel @click="domainToDelete = null">Cancel</AlertDialogCancel>
-            </AlertDialogFooter>
-        </AlertDialogContent>
-    </AlertDialog>
+    <ConfirmDeleteModal
+        ref="deleteModal"
+        title="Delete domain"
+        description="Short links already created on this domain stop resolving."
+    />
 
     <AppLayout title="Domains" :total="domains.length" full-width>
         <template #header-actions>
