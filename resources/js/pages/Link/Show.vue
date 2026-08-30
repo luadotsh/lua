@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Head, InfiniteScroll, router } from "@inertiajs/vue3";
-import { IconPencil } from "@tabler/icons-vue";
 import axios from "axios";
 import { computed, onMounted, ref, watch } from "vue";
 import BreakdownCard, {
@@ -122,10 +121,7 @@ const setRange = (value: typeof range.value) => {
                     @update:range="setRange"
                 />
                 <Button variant="outline" as-child>
-                    <a :href="linksRoute.edit.url(link.id)">
-                        <IconPencil class="size-4" />
-                        Edit
-                    </a>
+                    <a :href="linksRoute.edit.url(link.id)">Edit</a>
                 </Button>
             </div>
         </template>
