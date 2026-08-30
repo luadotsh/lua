@@ -3,6 +3,11 @@ import axios from "axios";
 import { onMounted, ref, watch } from "vue";
 import { InfiniteScroll, router } from "@inertiajs/vue3";
 import { IconClick, IconQrcode } from "@tabler/icons-vue";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 import AppLayout from "@/layouts/AppLayout.vue";
 import date from "@/date";
 import { browserIconUrl } from "@/lib/browsers";
@@ -94,9 +99,13 @@ const COLUMNS = [
     { key: "referer", label: "Referrer" },
 ] as const;
 
-// A scan and a click are the two things a link can receive, and the icon says
-// which at a glance far better than the word does.
+// A scan and a click are the two things a link can receive. The icon carries it
+// on its own — the word repeated down every row was a column of noise — and the
+// tooltip names it for anyone who does not know the glyph yet.
 const eventIcon = (event: string) => (event === "qr-scan" ? IconQrcode : IconClick);
+
+const eventLabel = (event: string) =>
+    event === "qr-scan" ? "QR code scan" : "Click";
 
 // The same endpoint the analytics screen reads, so the two never disagree
 // about what a click or a scan is.
@@ -175,6 +184,7 @@ const refresh = (value: typeof range.value) => {
                                 v-for="column in COLUMNS"
                                 :key="column.key"
                                 class="whitespace-nowrap"
+                                :class="column.key === 'event' ? 'w-10' : ''"
                             >
                                 {{ column.label }}
                             </TableHead>
@@ -182,14 +192,19 @@ const refresh = (value: typeof range.value) => {
                     </TableHeader>
                     <TableBody id="events-body">
                         <TableRow v-for="event in table.data" :key="event.id">
-                            <TableCell class="whitespace-nowrap">
-                                <span class="flex items-center gap-1.5">
-                                    <component
-                                        :is="eventIcon(event.event)"
-                                        class="size-3.5 shrink-0 text-muted-foreground"
-                                    />
-                                    {{ event.event }}
-                                </span>
+                            <TableCell class="w-10">
+                                <Tooltip>
+                                    <TooltipTrigger as-child>
+                                        <span class="inline-flex">
+                                            <component
+                                                :is="eventIcon(event.event)"
+                                                class="size-4 text-muted-foreground"
+                                            />
+                                            <span class="sr-only">{{ eventLabel(event.event) }}</span>
+                                        </span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>{{ eventLabel(event.event) }}</TooltipContent>
+                                </Tooltip>
                             </TableCell>
 
                             <TableCell class="whitespace-nowrap">

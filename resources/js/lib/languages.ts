@@ -25,12 +25,15 @@ const displayNames = (() => {
 })();
 
 /**
- * "pt-BR" reads as "Brazilian Portuguese" rather than as a code. Falls back to
- * the raw value when the runtime cannot name it.
+ * The language alone — "Japanese", not "Japanese (Japan)". The region is
+ * already on the flag beside it, so naming it twice only makes the column wide.
+ * Falls back to the raw value when the runtime cannot name it.
  */
 export const languageLabel = (locale: string): string => {
+    const language = locale.trim().split(/[-_]/)[0];
+
     try {
-        return displayNames?.of(locale.trim()) ?? locale;
+        return displayNames?.of(language) ?? locale;
     } catch {
         return locale;
     }
