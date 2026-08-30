@@ -65,6 +65,18 @@ const svgDefs = computed(
 // At most six labels on the x axis, however many points are plotted.
 const xNumTicks = computed(() => Math.min(6, chartData.value.length || 1));
 
+/**
+ * Pinned to the data. Left to itself the container derives the y extent from
+ * every component in it, and the area and the line each contributing the same
+ * series stacked the domain to twice the total — which flattened the line onto
+ * the axis while the ticks still read 0–39.
+ */
+const yDomain = computed<[number, number]>(() => {
+    const max = Math.max(...chartData.value.map((point) => point.value), 0);
+
+    return [0, max === 0 ? 1 : max];
+});
+
 // Hours and minutes need the time of day; days and months do not.
 const bucketFormat = computed(() =>
     props.group === 'minute' || props.group === 'hour'
@@ -114,7 +126,7 @@ const tooltipTemplate = (d: { bucket: string; value: number }): string =>
         >
             <!-- No margin override: the plot runs edge to edge and unovis still
                  reserves the gutter the y labels need. -->
-            <VisXYContainer :data="chartData" :svg-defs="svgDefs">
+            <VisXYContainer :data="chartData" :svg-defs="svgDefs" :y-domain="yDomain">
                 <VisArea
                     :x="xAccessor"
                     :y="yAccessors"

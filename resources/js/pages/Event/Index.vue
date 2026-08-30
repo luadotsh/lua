@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import axios from "axios";
+import { onMounted, ref, watch } from "vue";
 import { router } from "@inertiajs/vue3";
 import AppLayout from "@/layouts/AppLayout.vue";
 import date from "@/date";
@@ -15,9 +16,14 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import Pagination from "@/components/Pagination.vue";
+import StatHeader from "@/components/analytics/StatHeader.vue";
+import TimeseriesChart, {
+    type TimeseriesPoint,
+} from "@/components/analytics/TimeseriesChart.vue";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { MetricKey, Overview } from "@/lib/metrics";
+import { statistics } from "@/routes/analytics";
 import Header from "./Header.vue";
-import ChartClick from "./ChartClick.vue";
-import ChartQR from "./ChartQR.vue";
 
 interface Column {
     key: string;
@@ -87,6 +93,25 @@ const columns = ref<Column[]>([
     { key: "referer", label: "Referer", show: false },
 ]);
 
+// The same endpoint the analytics screen reads, so the two never disagree
+// about what a click or a scan is.
+const metric = ref<MetricKey>("events");
+const overview = ref<Overview | null>(null);
+const timeseries = ref<TimeseriesPoint[]>([]);
+
+const loadChart = async () => {
+    const { data } = await axios.get(statistics.url({ query: range.value }));
+
+    overview.value = data.overview;
+    timeseries.value = data.timeseries;
+};
+
+// Mounted, not immediate: unovis measures its container on mount, and a series
+// that arrives before there is a container to draw into leaves the line pinned
+// flat at zero.
+onMounted(loadChart);
+watch(range, loadChart, { deep: true });
+
 const refresh = (value: typeof range.value) => {
     range.value = value;
     router.visit(
@@ -115,17 +140,19 @@ const refresh = (value: typeof range.value) => {
             />
         </template>
 
-        <div class="space-y-4">
-            <div class="grid grid-cols-1 gap-4 mx-auto sm:grid-cols-2">
-                <ChartClick
-                    :range="range"
-                    class="flex flex-wrap items-baseline justify-between px-4 py-4 bg-white gap-x-4 gap-y-2 dark:bg-zinc-800"
+        <div class="flex flex-col gap-4 p-4 lg:p-6">
+            <template v-if="overview">
+                <StatHeader v-model="metric" :overview="overview" />
+                <TimeseriesChart
+                    :series="timeseries"
+                    :metric="metric"
+                    :group="range.group"
                 />
-                <ChartQR
-                    :range="range"
-                    class="flex flex-wrap items-baseline justify-between px-4 py-4 bg-white gap-x-4 gap-y-2 dark:bg-zinc-800"
-                />
-            </div>
+            </template>
+            <template v-else>
+                <Skeleton class="h-[104px] w-full rounded-lg" />
+                <Skeleton class="h-[324px] w-full rounded-lg" />
+            </template>
 
             <div class="rounded-md border">
                 <Table>

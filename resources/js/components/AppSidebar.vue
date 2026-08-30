@@ -50,19 +50,16 @@ const navItems: NavItem[] = [
         title: 'Analytics',
         href: analyticsIndex().url,
         icon: IconChartBar,
-        activePattern: '/analytics',
     },
     {
         title: 'Links',
         href: linksIndex().url,
         icon: IconClick,
-        activePattern: '/links',
     },
     {
         title: 'Events',
         href: eventsIndex().url,
         icon: IconCalendarEvent,
-        activePattern: '/events',
     },
 ];
 
@@ -74,31 +71,26 @@ const workspaceNavItems: NavItem[] = [
         title: 'Domains',
         href: domainsIndex().url,
         icon: IconWorld,
-        activePattern: '/settings/domains',
     },
     {
         title: 'Tags',
         href: tagsIndex().url,
         icon: IconTag,
-        activePattern: '/settings/tags',
     },
     {
         title: 'Members',
         href: teamMembersIndex().url,
         icon: IconUsers,
-        activePattern: '/settings/team-members',
     },
     {
         title: 'API Tokens',
         href: apiTokensIndex().url,
         icon: IconKey,
-        activePattern: '/settings/api-tokens',
     },
     {
         title: 'MCP',
         href: mcpIndex().url,
         icon: IconPlugConnected,
-        activePattern: '/settings/mcp',
     },
 ];
 </script>
