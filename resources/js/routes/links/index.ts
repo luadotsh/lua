@@ -83,7 +83,7 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\LinkController::store
-* @see app/Http/Controllers/LinkController.php:66
+* @see app/Http/Controllers/LinkController.php:68
 * @route '/links'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -98,7 +98,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\LinkController::store
-* @see app/Http/Controllers/LinkController.php:66
+* @see app/Http/Controllers/LinkController.php:68
 * @route '/links'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -107,7 +107,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\LinkController::store
-* @see app/Http/Controllers/LinkController.php:66
+* @see app/Http/Controllers/LinkController.php:68
 * @route '/links'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -117,7 +117,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\LinkController::store
-* @see app/Http/Controllers/LinkController.php:66
+* @see app/Http/Controllers/LinkController.php:68
 * @route '/links'
 */
 const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -127,7 +127,7 @@ const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => 
 
 /**
 * @see \App\Http\Controllers\LinkController::store
-* @see app/Http/Controllers/LinkController.php:66
+* @see app/Http/Controllers/LinkController.php:68
 * @route '/links'
 */
 storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -139,7 +139,7 @@ store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\LinkController::edit
-* @see app/Http/Controllers/LinkController.php:35
+* @see app/Http/Controllers/LinkController.php:37
 * @route '/links/{id}/edit'
 */
 export const edit = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -154,7 +154,7 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\LinkController::edit
-* @see app/Http/Controllers/LinkController.php:35
+* @see app/Http/Controllers/LinkController.php:37
 * @route '/links/{id}/edit'
 */
 edit.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -181,7 +181,7 @@ edit.url = (args: { id: string | number } | [id: string | number ] | string | nu
 
 /**
 * @see \App\Http\Controllers\LinkController::edit
-* @see app/Http/Controllers/LinkController.php:35
+* @see app/Http/Controllers/LinkController.php:37
 * @route '/links/{id}/edit'
 */
 edit.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -191,7 +191,7 @@ edit.get = (args: { id: string | number } | [id: string | number ] | string | nu
 
 /**
 * @see \App\Http\Controllers\LinkController::edit
-* @see app/Http/Controllers/LinkController.php:35
+* @see app/Http/Controllers/LinkController.php:37
 * @route '/links/{id}/edit'
 */
 edit.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -201,7 +201,7 @@ edit.head = (args: { id: string | number } | [id: string | number ] | string | n
 
 /**
 * @see \App\Http\Controllers\LinkController::edit
-* @see app/Http/Controllers/LinkController.php:35
+* @see app/Http/Controllers/LinkController.php:37
 * @route '/links/{id}/edit'
 */
 const editForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -211,7 +211,7 @@ const editForm = (args: { id: string | number } | [id: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\LinkController::edit
-* @see app/Http/Controllers/LinkController.php:35
+* @see app/Http/Controllers/LinkController.php:37
 * @route '/links/{id}/edit'
 */
 editForm.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -221,7 +221,7 @@ editForm.get = (args: { id: string | number } | [id: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\LinkController::edit
-* @see app/Http/Controllers/LinkController.php:35
+* @see app/Http/Controllers/LinkController.php:37
 * @route '/links/{id}/edit'
 */
 editForm.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -238,7 +238,7 @@ edit.form = editForm
 
 /**
 * @see \App\Http\Controllers\LinkController::update
-* @see app/Http/Controllers/LinkController.php:88
+* @see app/Http/Controllers/LinkController.php:90
 * @route '/links/{id}'
 */
 export const update = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -253,7 +253,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\LinkController::update
-* @see app/Http/Controllers/LinkController.php:88
+* @see app/Http/Controllers/LinkController.php:90
 * @route '/links/{id}'
 */
 update.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -280,7 +280,7 @@ update.url = (args: { id: string | number } | [id: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\LinkController::update
-* @see app/Http/Controllers/LinkController.php:88
+* @see app/Http/Controllers/LinkController.php:90
 * @route '/links/{id}'
 */
 update.put = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -290,7 +290,7 @@ update.put = (args: { id: string | number } | [id: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\LinkController::update
-* @see app/Http/Controllers/LinkController.php:88
+* @see app/Http/Controllers/LinkController.php:90
 * @route '/links/{id}'
 */
 const updateForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -305,7 +305,7 @@ const updateForm = (args: { id: string | number } | [id: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\LinkController::update
-* @see app/Http/Controllers/LinkController.php:88
+* @see app/Http/Controllers/LinkController.php:90
 * @route '/links/{id}'
 */
 updateForm.put = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -322,7 +322,7 @@ update.form = updateForm
 
 /**
 * @see \App\Http\Controllers\LinkController::destroy
-* @see app/Http/Controllers/LinkController.php:105
+* @see app/Http/Controllers/LinkController.php:107
 * @route '/links/{id}'
 */
 export const destroy = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -337,7 +337,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\LinkController::destroy
-* @see app/Http/Controllers/LinkController.php:105
+* @see app/Http/Controllers/LinkController.php:107
 * @route '/links/{id}'
 */
 destroy.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -364,7 +364,7 @@ destroy.url = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\LinkController::destroy
-* @see app/Http/Controllers/LinkController.php:105
+* @see app/Http/Controllers/LinkController.php:107
 * @route '/links/{id}'
 */
 destroy.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -374,7 +374,7 @@ destroy.delete = (args: { id: string | number } | [id: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\LinkController::destroy
-* @see app/Http/Controllers/LinkController.php:105
+* @see app/Http/Controllers/LinkController.php:107
 * @route '/links/{id}'
 */
 const destroyForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -389,7 +389,7 @@ const destroyForm = (args: { id: string | number } | [id: string | number ] | st
 
 /**
 * @see \App\Http\Controllers\LinkController::destroy
-* @see app/Http/Controllers/LinkController.php:105
+* @see app/Http/Controllers/LinkController.php:107
 * @route '/links/{id}'
 */
 destroyForm.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

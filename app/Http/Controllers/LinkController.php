@@ -27,7 +27,9 @@ class LinkController extends Controller
         $workspace = Auth::user()->currentWorkspace;
 
         return Inertia::render('Link/Index', [
-            'table' => ListLinks::execute($workspace, ['search' => $request->q]),
+            // `Inertia::scroll()` marks the prop as one `<InfiniteScroll>` may
+            // extend; the pagination underneath is unchanged.
+            'table' => Inertia::scroll(fn () => ListLinks::execute($workspace, ['search' => $request->q])),
             'hasData' => ListLinks::hasAny($workspace),
         ]);
     }
