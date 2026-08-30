@@ -19,6 +19,18 @@ export default {
         return dayjs.utc(date).tz("utc").format("YYYY-MM-DD HH:mm:ss");
     },
 
+    /**
+     * The viewer's timezone, short form — "GMT-3", "PST". Derived from Intl
+     * rather than dayjs's `z`, which needs the advancedFormat plugin.
+     */
+    getTimezoneAbbr(): string {
+        const parts = new Intl.DateTimeFormat(undefined, {
+            timeZoneName: "short",
+        }).formatToParts(new Date());
+
+        return parts.find((part) => part.type === "timeZoneName")?.value ?? "";
+    },
+
     diffForHumans(date: DateInput) {
         // Convert UTC date to local timezone
         const localDate = dayjs.utc(date).local();
