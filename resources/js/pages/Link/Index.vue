@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from "vue";
-import { Head, InfiniteScroll, Link, useForm } from "@inertiajs/vue3";
+import { Head, InfiniteScroll, Link, router, useForm } from "@inertiajs/vue3";
 import {
     IconSearch,
+    IconTag,
+    IconUser,
+    IconWorld,
     IconCopy,
     IconClick,
     IconPencil,
@@ -17,6 +20,11 @@ import { Input } from "@/components/ui/input";
 import AppLayout from "@/layouts/AppLayout.vue";
 import EmptyState from "@/components/EmptyState.vue";
 import Qrcode from "@/components/Qrcode.vue";
+import FilterMenu from "@/components/filters/FilterMenu.vue";
+import type {
+    FilterCategory,
+    FilterSelection,
+} from "@/components/filters/filter-types";
 import {
     Table,
     TableBody,
@@ -81,6 +89,10 @@ const faviconFailed = ref<Record<string, boolean>>({});
 const props = defineProps<{
     table: Table;
     hasData: boolean;
+    filters: Record<string, string | string[] | null>;
+    tags: { id: string | number; name: string; color?: string }[];
+    domains: string[];
+    members: { id: string; name: string }[];
 }>();
 
 const qrcodeModal = ref<InstanceType<typeof Qrcode> | null>(null);
@@ -90,11 +102,69 @@ const searchForm = useForm({
     q: "",
 });
 
-const searchDebounce = debounce(function () {
-    searchForm.get(linksRoute.index.url(), {
-        preserveScroll: true,
+// Every filter is a query parameter, so a filtered list is a URL you can
+// bookmark or hand to a teammate.
+const selection = ref<FilterSelection>({
+    tag: (props.filters.tag as unknown as string[]) ?? [],
+    domain: (props.filters.domain as unknown as string[]) ?? [],
+    user: (props.filters.user as unknown as string[]) ?? [],
+});
+
+const categories = computed<FilterCategory[]>(() => [
+    {
+        key: "tag",
+        label: "Tag",
+        icon: IconTag,
+        options: props.tags.map((tag) => ({
+            value: String(tag.id),
+            label: tag.name,
+            color: tag.color ?? null,
+        })),
+    },
+    {
+        key: "domain",
+        label: "Domain",
+        icon: IconWorld,
+        options: props.domains.map((domain) => ({ value: domain, label: domain })),
+    },
+    {
+        key: "user",
+        label: "Created by",
+        icon: IconUser,
+        options: props.members.map((member) => ({
+            value: member.id,
+            label: member.name,
+        })),
+    },
+]);
+
+const query = () => {
+    const params: Record<string, string | string[]> = {};
+
+    if (searchForm.q) {
+        params.q = searchForm.q;
+    }
+
+    for (const [key, values] of Object.entries(selection.value)) {
+        if (values.length) {
+            params[key] = values;
+        }
+    }
+
+    return params;
+};
+
+const applyFilters = () => {
+    router.get(linksRoute.index.url({ query: query() }), {}, {
         preserveState: true,
+        preserveScroll: true,
     });
+};
+
+const searchDebounce = debounce(function () {
+    // Carries the active filters along: a search that silently cleared them
+    // would make the result look wrong rather than filtered.
+    applyFilters();
 }, 300);
 
 const title = computed(() =>
@@ -134,6 +204,11 @@ onMounted(() => {
                         @keyup="searchDebounce"
                     />
                 </div>
+                <FilterMenu
+                    v-model="selection"
+                    :categories="categories"
+                    @change="applyFilters"
+                />
                 <Button @click="createModal?.open()">New Link</Button>
             </div>
         </template>

@@ -11,6 +11,7 @@ use App\Actions\Link\GetLink;
 use App\Actions\Link\ListLinks;
 use App\Actions\Link\UpdateLink;
 use App\Actions\Tag\ListTags;
+use App\Actions\TeamMember\ListMembers;
 use App\Http\Requests\Link\CreateRequest;
 use App\Http\Requests\Link\UpdateRequest;
 use App\Models\Link;
@@ -26,10 +27,23 @@ class LinkController extends Controller
     {
         $workspace = Auth::user()->currentWorkspace;
 
+        $domains = ListDomains::execute($workspace)->pluck('domain')->toArray();
+
         return Inertia::render('Link/Index', [
+            // What the filters can offer, so the controls are built from what
+            // the workspace actually has rather than from free text.
+            'filters' => $request->only(['q', 'tag', 'domain', 'user']),
+            'tags' => ListTags::execute($workspace),
+            'domains' => array_merge($domains, config('domains.available')),
+            'members' => ListMembers::execute($workspace),
             // `Inertia::scroll()` marks the prop as one `<InfiniteScroll>` may
             // extend; the pagination underneath is unchanged.
-            'table' => Inertia::scroll(fn () => ListLinks::execute($workspace, ['search' => $request->q])),
+            'table' => Inertia::scroll(fn () => ListLinks::execute($workspace, [
+                'search' => $request->q,
+                'tag' => $request->array('tag'),
+                'domain' => $request->array('domain'),
+                'user' => $request->array('user'),
+            ])),
             'hasData' => ListLinks::hasAny($workspace),
         ]);
     }
@@ -77,7 +91,7 @@ class LinkController extends Controller
             return back();
         }
 
-        $link = CreateLink::execute($workspace, $request->validated());
+        $link = CreateLink::execute($workspace, $request->validated(), Auth::user());
 
         session()->flash('flash.banner', 'Link created. Add the rest below.');
         session()->flash('flash.bannerStyle', 'success');

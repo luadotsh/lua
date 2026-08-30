@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Link;
 
 use App\Models\Link;
+use App\Models\User;
 use App\Models\Workspace;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -13,16 +14,21 @@ use Illuminate\Validation\Rule;
 class CreateLink
 {
     /**
+     * The creator is passed in rather than read from `auth()`: an MCP tool call
+     * and an API request are not the web session, and the action has to work
+     * the same for all three.
+     *
      * @param  array<string, mixed>  $data
      */
-    public static function execute(Workspace $workspace, array $data): Link
+    public static function execute(Workspace $workspace, array $data, ?User $creator = null): Link
     {
         $domain = data_get($data, 'domain') ?: config('domains.main');
         $key = data_get($data, 'key') ?: Str::random(7);
 
-        return DB::transaction(function () use ($workspace, $data, $domain, $key): Link {
+        return DB::transaction(function () use ($workspace, $data, $domain, $key, $creator): Link {
             $link = Link::create([
                 'workspace_id' => $workspace->id,
+                'user_id' => $creator?->id,
                 'domain' => $domain,
                 'key' => $key,
                 'url' => data_get($data, 'url'),

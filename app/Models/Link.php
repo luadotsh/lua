@@ -25,6 +25,7 @@ class Link extends Model
      */
     protected $fillable = [
         'workspace_id',
+        'user_id',
         'domain',
         'key',
         'url',
@@ -93,6 +94,12 @@ class Link extends Model
     public function workspace(): BelongsTo
     {
         return $this->belongsTo(Workspace::class);
+    }
+
+    /** Whoever created the link. Null for links made before it was recorded. */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function linkStats(): HasMany

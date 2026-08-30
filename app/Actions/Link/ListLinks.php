@@ -29,12 +29,18 @@ class ListLinks
      * Newest first, always scoped to one workspace — the scoping lives here so
      * no caller can forget it.
      *
-     * @param  array{search?: string|null, per_page?: int|null}  $filters
+     * Tag, domain and user each accept a list: picking two tags widens the
+     * result rather than narrowing it to links carrying both.
+     *
+     * @param  array{search?: string|null, tag?: list<string>|null, domain?: list<string>|null, user?: list<string>|null, per_page?: int|null}  $filters
      * @return LengthAwarePaginator<int, Link>
      */
     public static function execute(Workspace $workspace, array $filters = []): LengthAwarePaginator
     {
         $search = data_get($filters, 'search');
+        $tags = array_filter((array) (data_get($filters, 'tag') ?? []));
+        $domains = array_filter((array) (data_get($filters, 'domain') ?? []));
+        $users = array_filter((array) (data_get($filters, 'user') ?? []));
         $perPage = (int) (data_get($filters, 'per_page') ?: config('app.pagination.default'));
         $perPage = min(max($perPage, 1), 100);
 
@@ -51,6 +57,14 @@ class ListLinks
                     }
                 },
             ))
+            // Scoped to the workspace already, so the ids cannot reach across
+            // into another workspace's tags or members.
+            ->when($tags !== [], fn ($query) => $query->whereHas(
+                'tags',
+                fn ($related) => $related->whereIn('tags.id', $tags),
+            ))
+            ->when($domains !== [], fn ($query) => $query->whereIn('domain', $domains))
+            ->when($users !== [], fn ($query) => $query->whereIn('user_id', $users))
             ->latest()
             ->paginate($perPage);
     }

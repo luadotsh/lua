@@ -62,7 +62,7 @@ class CreateLinkTool extends Tool
             return Response::error($validator->errors()->first());
         }
 
-        $link = CreateLink::execute($workspace, $validator->validated());
+        $link = CreateLink::execute($workspace, $validator->validated(), $request->user());
 
         return Response::structured((new LinkResource($link))->resolve());
     }

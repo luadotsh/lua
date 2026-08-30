@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Actions\Link\ListLinks;
 use App\Models\Link;
+use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -143,4 +144,59 @@ it('sends you to the edit screen after creating, to finish the link', function (
             'url' => 'https://example.com/just-created',
         ])
         ->assertRedirect(route('links.edit', Link::latest()->first()->id));
+});
+
+it('records who created a link', function () {
+    $this
+        ->actingAs($this->user)
+        ->post(route('links.store'), ['url' => 'https://example.com/mine']);
+
+    expect(Link::where('url', 'https://example.com/mine')->first()->user_id)
+        ->toBe($this->user->id);
+});
+
+it('filters the list by tag, domain and creator', function () {
+    $workspace = $this->user->currentWorkspace;
+    $tag = Tag::factory()->create(['workspace_id' => $workspace->id]);
+
+    $mine = Link::factory()->create([
+        'workspace_id' => $workspace->id,
+        'user_id' => $this->user->id,
+        'domain' => 'mine.example',
+    ]);
+    $mine->tags()->sync([$tag->id]);
+
+    $theirs = Link::factory()->create([
+        'workspace_id' => $workspace->id,
+        'user_id' => null,
+        'domain' => 'theirs.example',
+    ]);
+
+    $by = fn (array $filters) => ListLinks::execute($workspace, $filters)
+        ->pluck('id')->all();
+
+    expect($by(['tag' => [$tag->id]]))->toBe([$mine->id])
+        ->and($by(['domain' => ['theirs.example']]))->toBe([$theirs->id])
+        ->and($by(['user' => [$this->user->id]]))->toBe([$mine->id]);
+});
+
+it('widens the list when a filter holds several values', function () {
+    $workspace = $this->user->currentWorkspace;
+
+    $mine = Link::factory()->create([
+        'workspace_id' => $workspace->id,
+        'domain' => 'mine.example',
+    ]);
+
+    $theirs = Link::factory()->create([
+        'workspace_id' => $workspace->id,
+        'domain' => 'theirs.example',
+    ]);
+
+    $ids = ListLinks::execute($workspace, [
+        'domain' => ['mine.example', 'theirs.example'],
+    ])->pluck('id')->all();
+
+    expect($ids)->toHaveCount(2)
+        ->and($ids)->toContain($mine->id, $theirs->id);
 });

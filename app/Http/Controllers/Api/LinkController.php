@@ -4,20 +4,16 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
-use App\Actions\Link\ListLinks;
-use App\Actions\Link\GetLink;
-use App\Actions\Link\UpdateLink;
-use App\Actions\Link\DeleteLink;
 use App\Actions\Link\CreateLink;
-use App\Http\Resources\Api\LinkResource;
-
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
-
+use App\Actions\Link\DeleteLink;
+use App\Actions\Link\GetLink;
+use App\Actions\Link\ListLinks;
+use App\Actions\Link\UpdateLink;
 use App\Http\Requests\Link\CreateRequest;
 use App\Http\Requests\Link\UpdateRequest;
-
-use App\Models\Link;
+use App\Http\Resources\Api\LinkResource;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class LinkController extends Controller
 {
@@ -34,7 +30,7 @@ class LinkController extends Controller
     public function show($id, Request $request)
     {
         $link = GetLink::execute($request->workspace, $id);
-        if (!$link) {
+        if (! $link) {
             return response()->json(['message' => 'Link not found'], 404);
         }
 
@@ -44,11 +40,11 @@ class LinkController extends Controller
     public function store(CreateRequest $request)
     {
         $response = Gate::inspect('reached-link-limit', $request->workspace);
-        if (!$response->allowed()) {
+        if (! $response->allowed()) {
             return response()->json(['message' => 'You have reached the link limit'], 403);
         }
 
-        $link = CreateLink::execute($request->workspace, $request->validated());
+        $link = CreateLink::execute($request->workspace, $request->validated(), $request->user());
 
         return response()->json(new LinkResource($link), 201);
     }
@@ -56,7 +52,7 @@ class LinkController extends Controller
     public function update($id, UpdateRequest $request)
     {
         $link = GetLink::execute($request->workspace, $id);
-        if (!$link) {
+        if (! $link) {
             return response()->json(['message' => 'Link not found'], 404);
         }
 
@@ -68,7 +64,7 @@ class LinkController extends Controller
     public function destroy($id, Request $request)
     {
         $link = GetLink::execute($request->workspace, $id);
-        if(!$link) {
+        if (! $link) {
             return response()->json(['message' => 'Link not found'], 404);
         }
 
