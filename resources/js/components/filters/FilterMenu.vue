@@ -128,7 +128,12 @@ watch(open, (value) => {
     <Popover v-if="categories.length > 0" v-model:open="open">
         <PopoverTrigger as-child>
             <slot name="trigger" :total="totalSelected">
-                <Button variant="outline" size="icon" class="relative bg-card">
+                <Button
+                    variant="outline"
+                    size="icon"
+                    class="relative bg-card"
+                    data-testid="filter-menu"
+                >
                     <IconFilter class="size-4" />
                     <span
                         v-if="totalSelected > 0"
@@ -169,6 +174,7 @@ watch(open, (value) => {
                     v-for="category in filteredCategories"
                     :key="category.key"
                     type="button"
+                    :data-testid="`filter-category-${category.key}`"
                     class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground transition-colors hover:bg-accent"
                     @click="openCategory(category.key)"
                 >
@@ -203,6 +209,7 @@ watch(open, (value) => {
                     v-for="option in filteredOptions"
                     :key="option.value"
                     type="button"
+                    :data-testid="`filter-option-${option.value}`"
                     class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground transition-colors hover:bg-accent"
                     @click="toggle(activeCategory.key, option.value)"
                 >
@@ -239,6 +246,7 @@ watch(open, (value) => {
             <div v-if="totalSelected > 0" class="border-t border-border p-1">
                 <button
                     type="button"
+                    data-testid="filter-clear"
                     class="flex w-full items-center justify-center rounded-md px-2 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
                     @click="clear"
                 >

@@ -1,5 +1,13 @@
 <?php
 
+use App\Actions\ApiKey\CreateApiKey;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Passport\ClientRepository;
+use Laravel\Passport\Passport;
+use Tests\BrowserTestCase;
+use Tests\TestCase;
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -11,9 +19,13 @@
 |
 */
 
-pest()->extend(Tests\TestCase::class)
-    ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
+pest()->extend(TestCase::class)
+    ->use(RefreshDatabase::class)
     ->in('Feature');
+
+pest()->extend(BrowserTestCase::class)
+    ->use(RefreshDatabase::class)
+    ->in('Browser');
 
 /*
 |--------------------------------------------------------------------------
@@ -57,19 +69,19 @@ function something()
  * workspace, the same way the settings screen does, and return the plain
  * token to send as a bearer.
  */
-function apiTokenFor(App\Models\User $user, ?string $name = 'Test key'): string
+function apiTokenFor(User $user, ?string $name = 'Test key'): string
 {
     // Personal access grants need a client; create one per test database.
-    if (! Laravel\Passport\Passport::client()->newQuery()
+    if (! Passport::client()->newQuery()
         ->whereJsonContains('grant_types', 'personal_access')
         ->exists()) {
-        app(Laravel\Passport\ClientRepository::class)->createPersonalAccessGrantClient(
+        app(ClientRepository::class)->createPersonalAccessGrantClient(
             'Test Personal Access Client',
             'users',
         );
     }
 
-    return App\Actions\ApiKey\CreateApiKey::execute(
+    return CreateApiKey::execute(
         $user,
         $user->currentWorkspace,
         ['name' => $name],

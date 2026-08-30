@@ -284,10 +284,11 @@ Browser tests live in `tests/Browser` and run on `pestphp/pest-plugin-browser` d
 - ALWAYS target elements by `data-testid`. NEVER use CSS classes (`.text-red-600`), tag names, or text strings.
     - `@my-element` resolves to `[data-testid="my-element"]`, so add `data-testid="my-element"` in the Vue component and use `$page->click('@my-element')`.
     - Bind it for repeated elements: `:data-testid="`connect-${platform.value}`"`.
-- Assertions do NOT auto-wait on SPA paint. Wait for the element to mount and lay out first — see the `waitFor*TestId()` helper at the top of `tests/Browser/WelcomeConnectTest.php` and copy the pattern under a file-unique name (these helpers are global functions; a duplicated name collides across test files).
-- `BrowserTestCase` sets `$fakesVite = false` on purpose: these tests load real built assets, so faking Vite blanks the app.
+- `click()`, `type()` and friends go through Playwright locators, which wait for the target to become actionable — a drill-down of clicks needs no manual waiting between steps. `waitForFunction()` does not exist here; the waits available are `wait()`, `waitForText()`, `waitForKey()` and `waitForEvent()`.
+- `BrowserTestCase` sets `$fakesVite = false` on purpose: these tests load real built assets, so faking Vite blanks the app. Run `npm run build` before running them locally after a frontend change.
 - End page assertions with `->assertNoJavaScriptErrors()`.
-- CI runs them un-parallelised (`php artisan test tests/Browser --compact`) against `npm run build` output, so keep them independent of a running dev server.
+- `tests/Browser` is NOT a `phpunit.xml` testsuite, so `php artisan test` and `vendor/bin/pest` skip it. Run it explicitly: `php artisan test tests/Browser --compact`. CI does the same, in its own step after `npm run build`.
+- Failure screenshots land in `tests/Browser/Screenshots` (gitignored) and are uploaded as a CI artifact.
 
 ## Array Data Access
 
