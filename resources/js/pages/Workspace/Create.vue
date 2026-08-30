@@ -35,7 +35,6 @@ const submit = () => {
                     v-model="form.name"
                     type="text"
                     autofocus
-                    required
                     placeholder="Enter the workspace name"
                 />
                 <p v-if="form.errors.name" class="text-sm text-destructive">{{ form.errors.name }}</p>

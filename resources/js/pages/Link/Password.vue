@@ -44,7 +44,6 @@ const submit = () => {
                         type="password"
                         name="password"
                         v-model="form.password"
-                        required
                         autofocus
                         placeholder="Enter the password"
                         autocomplete="password"

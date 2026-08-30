@@ -49,7 +49,6 @@ const submit = () => {
                     v-model="form.password"
                     type="password"
                     autocomplete="new-password"
-                    required
                     placeholder="Password with 8+ characters"
                 />
                 <p v-if="form.errors.password" class="text-sm text-destructive">{{ form.errors.password }}</p>
@@ -62,7 +61,6 @@ const submit = () => {
                     v-model="form.password_confirmation"
                     type="password"
                     autocomplete="new-password"
-                    required
                     placeholder="Password with 8+ characters"
                 />
                 <p v-if="form.errors.password_confirmation" class="text-sm text-destructive">{{ form.errors.password_confirmation }}</p>

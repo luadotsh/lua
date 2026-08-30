@@ -44,7 +44,6 @@ const submit = () => {
                     v-model="form.name"
                     type="text"
                     autofocus
-                    required
                     autocomplete="off"
                 />
                 <p v-if="form.errors.name" class="text-sm text-destructive">{{ form.errors.name }}</p>
@@ -67,7 +66,6 @@ const submit = () => {
                     id="password"
                     v-model="form.password"
                     type="password"
-                    required
                     placeholder="Create your password"
                     autocomplete="off"
                 />
@@ -80,7 +78,6 @@ const submit = () => {
                     id="password_confirmation"
                     v-model="form.password_confirmation"
                     type="password"
-                    required
                     placeholder="Repeat your password"
                     autocomplete="off"
                 />

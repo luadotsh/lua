@@ -10,7 +10,6 @@ import { request as forgotPasswordRoute } from '@/routes/password';
 import Social from '@/pages/Auth/Partial/Social.vue';
 
 defineProps<{
-    canResetPassword?: boolean;
     status?: string;
 }>();
 
@@ -54,7 +53,6 @@ const submit = () => {
                 <div class="flex items-center">
                     <Label for="password">Password</Label>
                     <Link
-                        v-if="canResetPassword"
                         :href="forgotPasswordRoute()"
                         class="ml-auto text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground"
                     >

@@ -15,7 +15,6 @@ const props = defineProps<{
     id?: string;
     autocomplete?: string;
     placeholder?: string;
-    required?: boolean;
     autofocus?: boolean;
     class?: HTMLAttributes['class'];
 }>();
@@ -33,7 +32,6 @@ const showPassword = ref(false);
             :type="showPassword ? 'text' : 'password'"
             :autocomplete="autocomplete"
             :placeholder="placeholder"
-            :required="required"
             :autofocus="autofocus"
             :class="cn('pe-9', props.class)"
         />

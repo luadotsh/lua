@@ -36,7 +36,6 @@ const submit = () => {
                     type="email"
                     autocomplete="username"
                     autofocus
-                    required
                 />
                 <p v-if="form.errors.email" class="text-sm text-destructive">{{ form.errors.email }}</p>
             </div>

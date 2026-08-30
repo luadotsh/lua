@@ -30,7 +30,6 @@ const submit = () => {
                     type="password"
                     autocomplete="current-password"
                     autofocus
-                    required
                 />
                 <p v-if="form.errors.password" class="text-sm text-destructive">{{ form.errors.password }}</p>
             </div>

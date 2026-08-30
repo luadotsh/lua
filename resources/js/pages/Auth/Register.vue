@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import PasswordInput from '@/components/PasswordInput.vue';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/AuthLayout.vue';
-import { register as registerRoute } from '@/routes';
+import { login as loginRoute, register as registerRoute } from '@/routes';
 import Social from '@/pages/Auth/Partial/Social.vue';
 
 const form = useForm({
@@ -36,7 +36,6 @@ const submit = () => {
                     type="text"
                     autocomplete="name"
                     autofocus
-                    required
                     placeholder="Your name"
                 />
                 <p v-if="form.errors.name" class="text-sm text-destructive">{{ form.errors.name }}</p>
@@ -49,7 +48,6 @@ const submit = () => {
                     v-model="form.email"
                     type="email"
                     autocomplete="email"
-                    required
                     placeholder="Your email"
                 />
                 <p v-if="form.errors.email" class="text-sm text-destructive">{{ form.errors.email }}</p>
@@ -61,20 +59,28 @@ const submit = () => {
                     id="password"
                     v-model="form.password"
                     autocomplete="new-password"
-                    required
                     placeholder="Min. 8 characters"
                 />
                 <p v-if="form.errors.password" class="text-sm text-destructive">{{ form.errors.password }}</p>
             </div>
 
-            <Button type="submit" class="w-full" :disabled="form.processing">
+            <Button
+                type="submit"
+                class="w-full"
+                data-testid="register-submit"
+                :disabled="form.processing"
+            >
                 Create Account
             </Button>
         </form>
 
         <div class="text-center text-sm text-muted-foreground">
             Already have an account?
-            <Link href="/login" class="underline underline-offset-4 hover:text-foreground">
+            <Link
+                :href="loginRoute()"
+                data-testid="register-login-link"
+                class="underline underline-offset-4 hover:text-foreground"
+            >
                 Sign in
             </Link>
         </div>
