@@ -268,6 +268,8 @@ TryPost runs on **both PostgreSQL and MySQL**. Cloud runs PostgreSQL; a self-hos
     - **Identifier quoting differs** — PostgreSQL emits `"post_platforms"`, MySQL emits backticks. Never match logged SQL (`DB::listen`) against a quoted identifier.
     - **MySQL refuses to drop the only index backing a foreign key** (SQLSTATE `1553`). A migration `down()` that drops a unique whose leftmost prefix is an FK column must create a standalone index for that column first.
     - **DDL implicitly commits**, which defeats `RefreshDatabase`'s rollback: schema changes made inside a test leak into the tests that follow. Keep them idempotent.
+- **Aggregates and date maths are where this bites hardest.** `count(*) filter (where ...)` is PostgreSQL-only — write `count(case when ... then 1 end)`, which both engines accept. `date_trunc` and `AT TIME ZONE` are PostgreSQL-only too, and MySQL's `DATE_FORMAT`/`CONVERT_TZ` are the other half of the same problem: neither is portable, so an expression that needs them lives behind a `match (DB::connection()->getDriverName())` and throws on a driver it has no expression for. See `GetTimeseries::bucketExpression()`. A self-hosted MySQL needs its timezone tables loaded (`mysql_tzinfo_to_sql`) for `CONVERT_TZ` to resolve a named zone.
+- Group by the **output alias**, not by a repeat of the raw expression: both engines accept `group by bucket`, and repeating a parameterised expression makes PostgreSQL treat the two as different and reject the query.
 
 ## Pest / Feature Tests
 

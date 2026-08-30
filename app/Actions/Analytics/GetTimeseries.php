@@ -9,11 +9,13 @@ use App\Models\LinkStat;
 use App\Models\Workspace;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use RuntimeException;
 
 class GetTimeseries
 {
     /**
-     * Postgres truncation units, keyed by the grouping the client asks for.
+     * PostgreSQL date_trunc units, keyed by the grouping the client asks for.
      */
     private const UNITS = [
         'minute' => 'minute',
@@ -23,10 +25,23 @@ class GetTimeseries
     ];
 
     /**
+     * MySQL has no date_trunc, so the bucket is built with DATE_FORMAT: the
+     * parts below the unit are frozen rather than truncated away, which comes
+     * out to the same instant.
+     */
+    private const MYSQL_FORMATS = [
+        'minute' => '%Y-%m-%d %H:%i:00',
+        'hour' => '%Y-%m-%d %H:00:00',
+        'day' => '%Y-%m-%d 00:00:00',
+        'month' => '%Y-%m-01 00:00:00',
+    ];
+
+    /**
      * One row per bucket across the whole period, including the buckets with
      * no traffic — a chart with holes in it reads as missing data rather than
      * as a quiet day.
      *
+     * @param  array<string, list<string>>  $filters
      * @return Collection<int, array{bucket: string, events: int, clicks: int, qr_scans: int, visitors: int}>
      */
     public static function execute(
@@ -35,16 +50,25 @@ class GetTimeseries
         CarbonImmutable $end,
         string $group,
         string $timezone,
+        array $filters = [],
     ): Collection {
-        $unit = self::UNITS[$group] ?? 'day';
+        [$bucket, $bindings] = self::bucketExpression($group, $timezone);
 
-        $rows = LinkStat::where('workspace_id', $workspace->id)
-            ->whereBetween('created_at', [$start, $end])
-            ->selectRaw("date_trunc(?, created_at at time zone 'UTC' at time zone ?) as bucket", [$unit, $timezone])
+        $query = LinkStat::where('workspace_id', $workspace->id)
+            ->whereBetween('created_at', [$start, $end]);
+
+        ApplyFilters::execute($query->getQuery(), $filters);
+
+        // `count(*) filter (where ...)` is PostgreSQL-only; the CASE form says
+        // the same thing on both engines.
+        $rows = $query
+            ->selectRaw("{$bucket} as bucket", $bindings)
             ->selectRaw('count(*) as events')
-            ->selectRaw('count(*) filter (where event = ?) as clicks', [Event::CLICK->value])
-            ->selectRaw('count(*) filter (where event = ?) as qr_scans', [Event::QR_SCAN->value])
+            ->selectRaw('count(case when event = ? then 1 end) as clicks', [Event::CLICK->value])
+            ->selectRaw('count(case when event = ? then 1 end) as qr_scans', [Event::QR_SCAN->value])
             ->selectRaw('count(distinct ip) as visitors')
+            // Grouped by the output alias, which both engines accept and
+            // which keeps the expression's bindings in one place.
             ->groupBy('bucket')
             ->orderBy('bucket')
             ->get()
@@ -63,6 +87,35 @@ class GetTimeseries
                 ];
             })
             ->values();
+    }
+
+    /**
+     * The SQL that rounds a UTC timestamp down to the viewer's local bucket.
+     *
+     * Both halves of this are engine-specific: PostgreSQL has date_trunc and
+     * `AT TIME ZONE`, MySQL has DATE_FORMAT and CONVERT_TZ. A self-hosted MySQL
+     * needs its timezone tables loaded (`mysql_tzinfo_to_sql`) for CONVERT_TZ
+     * to resolve a named zone.
+     *
+     * @return array{0: string, 1: list<string>}
+     */
+    private static function bucketExpression(string $group, string $timezone): array
+    {
+        $driver = DB::connection()->getDriverName();
+
+        return match ($driver) {
+            'pgsql' => [
+                "date_trunc(?, created_at at time zone 'UTC' at time zone ?)",
+                [self::UNITS[$group] ?? 'day', $timezone],
+            ],
+            'mysql', 'mariadb' => [
+                "date_format(convert_tz(created_at, '+00:00', ?), ?)",
+                [$timezone, self::MYSQL_FORMATS[$group] ?? self::MYSQL_FORMATS['day']],
+            ],
+            default => throw new RuntimeException(
+                "Analytics has no bucket expression for the [{$driver}] driver.",
+            ),
+        };
     }
 
     /**

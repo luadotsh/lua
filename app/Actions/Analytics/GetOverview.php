@@ -8,7 +8,6 @@ use App\Enums\LinkStat\Event;
 use App\Models\LinkStat;
 use App\Models\Workspace;
 use Carbon\CarbonImmutable;
-use Illuminate\Support\Facades\DB;
 
 class GetOverview
 {
@@ -16,12 +15,14 @@ class GetOverview
      * Headline numbers for a period, each against the same span immediately
      * before it, so every figure carries a direction as well as a value.
      *
+     * @param  array<string, list<string>>  $filters
      * @return array<string, array{value: int, previous: int, change: float|null}>
      */
     public static function execute(
         Workspace $workspace,
         CarbonImmutable $start,
         CarbonImmutable $end,
+        array $filters = [],
     ): array {
         // The comparison window is the same length, ending where this one
         // begins, so a 7-day view is compared with the 7 days before it.
@@ -29,8 +30,8 @@ class GetOverview
         $previousEnd = $start->subSecond();
         $previousStart = $previousEnd->subSeconds($length);
 
-        $current = self::totals($workspace, $start, $end);
-        $previous = self::totals($workspace, $previousStart, $previousEnd);
+        $current = self::totals($workspace, $start, $end, $filters);
+        $previous = self::totals($workspace, $previousStart, $previousEnd, $filters);
 
         return collect($current)
             ->map(fn (int $value, string $key) => [
@@ -42,15 +43,26 @@ class GetOverview
     }
 
     /**
+     * @param  array<string, list<string>>  $filters
      * @return array<string, int>
      */
-    private static function totals(Workspace $workspace, CarbonImmutable $start, CarbonImmutable $end): array
-    {
-        $row = LinkStat::where('workspace_id', $workspace->id)
-            ->whereBetween('created_at', [$start, $end])
+    private static function totals(
+        Workspace $workspace,
+        CarbonImmutable $start,
+        CarbonImmutable $end,
+        array $filters,
+    ): array {
+        $query = LinkStat::where('workspace_id', $workspace->id)
+            ->whereBetween('created_at', [$start, $end]);
+
+        ApplyFilters::execute($query->getQuery(), $filters);
+
+        // `count(*) filter (where ...)` is PostgreSQL-only; the CASE form says
+        // the same thing on both engines.
+        $row = $query
             ->selectRaw('count(*) as events')
-            ->selectRaw('count(*) filter (where event = ?) as clicks', [Event::CLICK->value])
-            ->selectRaw('count(*) filter (where event = ?) as qr_scans', [Event::QR_SCAN->value])
+            ->selectRaw('count(case when event = ? then 1 end) as clicks', [Event::CLICK->value])
+            ->selectRaw('count(case when event = ? then 1 end) as qr_scans', [Event::QR_SCAN->value])
             // A visitor is one address inside the window. Without a cookie
             // this is the closest the click data gets to a person.
             ->selectRaw('count(distinct ip) as visitors')
