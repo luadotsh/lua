@@ -20,7 +20,14 @@
 
         <title data-inertia>{{ config('app.name', 'Lua') }}</title>
 
-        <link rel="icon" type="image/x-icon" href="/favicon.ico">
+        {{-- The .ico is a PNG in disguise, and Herd's nginx has an exact-match
+             location for /favicon.ico that answers 404. Both are why the SVG and
+             the PNG are listed: browsers prefer them and they load from an
+             ordinary path. --}}
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+        <link rel="icon" href="/favicon.png" type="image/png" sizes="278x278">
+        <link rel="icon" href="/favicon.ico" sizes="any">
+        <link rel="apple-touch-icon" href="/favicon.png">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
