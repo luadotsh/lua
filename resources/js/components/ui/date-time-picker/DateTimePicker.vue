@@ -33,12 +33,25 @@ const isOpen = ref(false)
  * `PickTimePopover` in `~/Herd/trypost`.
  */
 const selectedDate = shallowRef<DateValue | undefined>()
-const selectedHour = ref("00")
+
+// Twelve-hour, because that is how the date reads back on the trigger and in
+// every summary. The 24-hour value only exists at the edges, when parsing what
+// was stored and when handing a value back.
+const selectedHour = ref("12")
 const selectedMinute = ref("00")
+const selectedMeridiem = ref<"AM" | "PM">("AM")
 
 const timezoneAbbr = date.getTimezoneAbbr()
 
-const hours = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, "0"))
+const hours = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, "0"))
+const meridiems = ["AM", "PM"] as const
+
+/** 12-hour clock plus meridiem back to the 0–23 the rest of the app speaks. */
+const toHour24 = (hour12: string, meridiem: string): number => {
+    const h = Number(hour12) % 12
+
+    return meridiem === "PM" ? h + 12 : h
+}
 
 /**
  * Five-minute steps, plus whatever the stored value happens to be. A link can
@@ -62,16 +75,20 @@ const toCalendarDate = (value: string) => {
 
 const seed = () => {
     if (props.modelValue) {
+        const d = dayjs(props.modelValue)
+
         selectedDate.value = toCalendarDate(props.modelValue)
-        selectedHour.value = dayjs(props.modelValue).format("HH")
-        selectedMinute.value = dayjs(props.modelValue).format("mm")
+        selectedHour.value = d.format("hh")
+        selectedMinute.value = d.format("mm")
+        selectedMeridiem.value = d.format("A") as "AM" | "PM"
 
         return
     }
 
     selectedDate.value = undefined
-    selectedHour.value = "00"
+    selectedHour.value = "12"
     selectedMinute.value = "00"
+    selectedMeridiem.value = "AM"
 }
 
 seed()
@@ -86,7 +103,7 @@ watch(isOpen, (open) => {
 watch(() => props.modelValue, seed)
 
 const displayLabel = computed(() =>
-    props.modelValue ? dayjs(props.modelValue).format("MMM D, YYYY HH:mm") : null,
+    props.modelValue ? dayjs(props.modelValue).format("MMM D, YYYY h:mm A") : null,
 )
 
 const staged = computed(() => {
@@ -97,7 +114,7 @@ const staged = computed(() => {
     const d = selectedDate.value.toDate(getLocalTimeZone())
 
     return dayjs(d)
-        .hour(Number(selectedHour.value))
+        .hour(toHour24(selectedHour.value, selectedMeridiem.value))
         .minute(Number(selectedMinute.value))
 })
 
@@ -145,7 +162,7 @@ const remove = () => {
                 <div class="flex flex-wrap items-center gap-2">
                     <span class="shrink-0 text-sm text-muted-foreground">Time</span>
                     <Select v-model="selectedHour">
-                        <SelectTrigger class="w-[84px]">
+                        <SelectTrigger class="w-[76px]">
                             <SelectValue placeholder="HH" />
                         </SelectTrigger>
                         <SelectContent>
@@ -154,11 +171,19 @@ const remove = () => {
                     </Select>
                     <span class="text-muted-foreground">:</span>
                     <Select v-model="selectedMinute">
-                        <SelectTrigger class="w-[84px]">
+                        <SelectTrigger class="w-[76px]">
                             <SelectValue placeholder="MM" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem v-for="m in minutes" :key="m" :value="m">{{ m }}</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <Select v-model="selectedMeridiem">
+                        <SelectTrigger class="w-[76px]">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem v-for="m in meridiems" :key="m" :value="m">{{ m }}</SelectItem>
                         </SelectContent>
                     </Select>
                     <span v-if="timezoneAbbr" class="ml-1 shrink-0 text-xs text-muted-foreground">
