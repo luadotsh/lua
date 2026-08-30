@@ -28,6 +28,7 @@ import ConfirmDeleteModal from "@/components/ConfirmDeleteModal.vue";
 import EmptyState from "@/components/EmptyState.vue";
 import Pagination from "@/components/Pagination.vue";
 import Qrcode from "@/components/Qrcode.vue";
+import CreateModal from "./Create.vue";
 import LinkStatus from "@/components/links/LinkStatus.vue";
 import {
     Tooltip,
@@ -87,6 +88,7 @@ const props = defineProps<{
 }>();
 
 const qrcodeModal = ref<InstanceType<typeof Qrcode> | null>(null);
+const createModal = ref<InstanceType<typeof CreateModal> | null>(null);
 const confirmDeleteModal = ref<InstanceType<typeof ConfirmDeleteModal> | null>(null);
 
 const searchForm = useForm({
@@ -120,6 +122,7 @@ onMounted(() => {
 <template>
     <Head title="Links" />
 
+    <CreateModal ref="createModal" />
     <Qrcode ref="qrcodeModal" />
 
     <AppLayout :title="title" :total="total">
@@ -136,9 +139,7 @@ onMounted(() => {
                         @keyup="searchDebounce"
                     />
                 </div>
-                <Button as-child>
-                    <Link :href="linksRoute.create.url()">New Link</Link>
-                </Button>
+                <Button @click="createModal?.open()">New Link</Button>
             </div>
         </template>
 

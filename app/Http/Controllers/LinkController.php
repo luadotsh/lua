@@ -32,11 +32,6 @@ class LinkController extends Controller
         ]);
     }
 
-    public function create(): Response
-    {
-        return Inertia::render('Link/Create', $this->formData());
-    }
-
     public function edit($id): Response
     {
         $workspace = Auth::user()->currentWorkspace;
@@ -52,7 +47,7 @@ class LinkController extends Controller
     }
 
     /**
-     * What the form needs to offer beyond the link itself.
+     * What the edit form needs to offer beyond the link itself.
      *
      * @return array<string, mixed>
      */
