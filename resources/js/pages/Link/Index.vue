@@ -6,25 +6,15 @@ import {
     IconCopy,
     IconClick,
     IconPencil,
-    IconDots,
-    IconTrash,
     IconQrcode,
     IconLink,
     IconExternalLink,
 } from "@tabler/icons-vue";
 
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import AppLayout from "@/layouts/AppLayout.vue";
-import ConfirmDeleteModal from "@/components/ConfirmDeleteModal.vue";
 import EmptyState from "@/components/EmptyState.vue";
 import Qrcode from "@/components/Qrcode.vue";
 import {
@@ -95,7 +85,6 @@ const props = defineProps<{
 
 const qrcodeModal = ref<InstanceType<typeof Qrcode> | null>(null);
 const createModal = ref<InstanceType<typeof CreateModal> | null>(null);
-const confirmDeleteModal = ref<InstanceType<typeof ConfirmDeleteModal> | null>(null);
 
 const searchForm = useForm({
     q: "",
@@ -149,11 +138,6 @@ onMounted(() => {
             </div>
         </template>
 
-        <ConfirmDeleteModal
-            ref="confirmDeleteModal"
-            description="Are you sure you want to delete this link?"
-        />
-
         <div class="flex min-h-0 flex-1 flex-col">
             <template v-if="hasData">
                 <!-- The table owns its scrolling, both ways: that keeps the
@@ -168,19 +152,29 @@ onMounted(() => {
                 >
                         <Table>
                             <TableHeader sticky>
+                                <!--
+                                    `w-px` on a cell in an auto-layout table is
+                                    read as "as narrow as the content allows",
+                                    so every column shrinks to fit and the one
+                                    marked `w-full` — the destination, the only
+                                    one that benefits from room — absorbs what
+                                    is left. Without this the browser split the
+                                    slack evenly and Tags sat in a wide empty
+                                    gap.
+                                -->
                                 <TableRow>
-                                    <TableHead class="whitespace-nowrap">Short link</TableHead>
-                                    <TableHead class="whitespace-nowrap">Destination</TableHead>
-                                    <TableHead class="whitespace-nowrap">Tags</TableHead>
-                                    <TableHead class="whitespace-nowrap text-right">Clicks</TableHead>
-                                    <TableHead class="whitespace-nowrap">Created</TableHead>
-                                    <TableHead class="w-28"><span class="sr-only">Actions</span></TableHead>
+                                    <TableHead class="w-px whitespace-nowrap">Short link</TableHead>
+                                    <TableHead class="w-full whitespace-nowrap">Destination</TableHead>
+                                    <TableHead class="w-px whitespace-nowrap">Tags</TableHead>
+                                    <TableHead class="w-px whitespace-nowrap text-right">Clicks</TableHead>
+                                    <TableHead class="w-px whitespace-nowrap">Created</TableHead>
+                                    <TableHead class="w-px"><span class="sr-only">Actions</span></TableHead>
                                 </TableRow>
                             </TableHeader>
 
                             <TableBody id="links-body">
                                 <TableRow v-for="data in table.data" :key="data.id" class="group">
-                                    <TableCell class="whitespace-nowrap">
+                                    <TableCell class="w-px whitespace-nowrap">
                                         <span class="flex items-center gap-2">
                                             <img
                                                 v-if="!faviconFailed[data.id]"
@@ -228,7 +222,7 @@ onMounted(() => {
                                         </span>
                                     </TableCell>
 
-                                    <TableCell class="max-w-sm">
+                                    <TableCell class="w-full max-w-0">
                                         <a
                                             :href="data.url"
                                             target="_blank"
@@ -240,8 +234,8 @@ onMounted(() => {
                                         </a>
                                     </TableCell>
 
-                                    <TableCell>
-                                        <span v-if="data.tags.length" class="flex flex-wrap items-center gap-1">
+                                    <TableCell class="w-px whitespace-nowrap">
+                                        <span v-if="data.tags.length" class="flex items-center gap-1">
                                             <Badge
                                                 v-for="tag in data.tags"
                                                 :key="tag.id"
@@ -258,7 +252,7 @@ onMounted(() => {
                                         </span>
                                     </TableCell>
 
-                                    <TableCell class="text-right whitespace-nowrap tabular-nums">
+                                    <TableCell class="w-px text-right whitespace-nowrap tabular-nums">
                                         <Tooltip>
                                             <TooltipTrigger as-child>
                                                 <span class="inline-flex items-center gap-1">
@@ -276,7 +270,7 @@ onMounted(() => {
                                         </Tooltip>
                                     </TableCell>
 
-                                    <TableCell class="whitespace-nowrap text-muted-foreground">
+                                    <TableCell class="w-px whitespace-nowrap text-muted-foreground">
                                         <Tooltip>
                                             <TooltipTrigger as-child>
                                                 <span>{{ date.diffForHumans(data.created_at) }}</span>
@@ -287,7 +281,7 @@ onMounted(() => {
                                         </Tooltip>
                                     </TableCell>
 
-                                    <TableCell class="w-28">
+                                    <TableCell class="w-px">
                                         <div class="flex items-center justify-end gap-1">
                                             <Tooltip>
                                                 <TooltipTrigger as-child>
@@ -321,49 +315,6 @@ onMounted(() => {
                                                 <TooltipContent>QR code</TooltipContent>
                                             </Tooltip>
 
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger as-child>
-                                                    <Button variant="ghost" size="icon" class="size-7">
-                                                        <IconDots class="size-4 text-muted-foreground" />
-                                                        <span class="sr-only">More actions</span>
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end" class="w-52">
-                                                    <DropdownMenuItem as-child>
-                                                        <Link :href="linksRoute.edit.url(data.id)" class="flex cursor-pointer items-center">
-                                                            <IconPencil class="mr-2 size-4" />
-                                                            Edit
-                                                        </Link>
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem class="cursor-pointer" @click="qrcodeModal?.open(data)">
-                                                        <IconQrcode class="mr-2 size-4" />
-                                                        QR Code
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuSeparator />
-                                                    <DropdownMenuItem
-                                                        class="cursor-pointer"
-                                                        @click="copyToClipboard(data.link, 'Link copied')"
-                                                    >
-                                                        <IconCopy class="mr-2 size-4" />
-                                                        Copy Link
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem
-                                                        class="cursor-pointer"
-                                                        @click="copyToClipboard(data.id, 'Link ID copied')"
-                                                    >
-                                                        <IconCopy class="mr-2 size-4" />
-                                                        Copy Link ID
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuSeparator />
-                                                    <DropdownMenuItem
-                                                        class="cursor-pointer text-destructive focus:text-destructive"
-                                                        @click="confirmDeleteModal?.open({ url: linksRoute.destroy.url(data.id) })"
-                                                    >
-                                                        <IconTrash class="mr-2 size-4" />
-                                                        Delete
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
                                         </div>
                                     </TableCell>
                                 </TableRow>
