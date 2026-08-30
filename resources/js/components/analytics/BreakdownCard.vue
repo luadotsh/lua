@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { formatCount } from '@/lib/metrics';
@@ -31,6 +32,12 @@ const props = withDefaults(
         defaultTab?: string;
         /** Keep the title visible even when the tab list could stand in for it. */
         persistTitle?: boolean;
+        /**
+         * Edge to edge, with only the dividers between cards. For screens whose
+         * content already sits inside the app's own card, where a second rounded
+         * border around this one is a border too many.
+         */
+        flush?: boolean;
         skeletonRows?: number;
     }>(),
     { skeletonRows: 5 },
@@ -43,14 +50,22 @@ const showTabList = computed(() => props.tabs.length > 1);
 </script>
 
 <template>
-    <Card class="gap-0 py-3">
+    <Card
+        :class="cn(
+            'gap-0 py-3',
+            flush && 'rounded-none border-0 py-4 shadow-none',
+        )"
+    >
         <!-- With tabs visible the list plays the title's role, so the heading
              only stays for screen readers. -->
-        <CardHeader v-if="!showTabList || persistTitle" class="px-3">
+        <CardHeader
+            v-if="!showTabList || persistTitle"
+            :class="flush ? 'px-4' : 'px-3'"
+        >
             <CardTitle>{{ title }}</CardTitle>
         </CardHeader>
 
-        <CardContent class="px-3">
+        <CardContent :class="flush ? 'px-4' : 'px-3'">
             <Tabs v-model="activeTab">
                 <div
                     v-if="showTabList"

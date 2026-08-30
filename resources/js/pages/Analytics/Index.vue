@@ -82,7 +82,7 @@ const setRange = (next: Range) => {
 <template>
     <Head title="Analytics" />
 
-    <AppLayout title="Analytics">
+    <AppLayout title="Analytics" full-width>
         <template #header-actions>
             <RangePicker
                 v-model:range="range"
@@ -91,30 +91,43 @@ const setRange = (next: Range) => {
             />
         </template>
 
-        <div class="flex flex-col gap-4 p-4 lg:p-6">
+        <!--
+            No padding and no rounded borders: the app already draws the card
+            these blocks sit in, so they run edge to edge and are separated by
+            rules rather than by a second set of borders — the same language as
+            the events screen.
+
+            The shell stops scrolling for a full-width screen, so the content
+            owns its own scrolling here. Everything scrolls together: unlike the
+            events table there is no header row to pin, and freezing the metrics
+            and chart would leave the breakdowns a few hundred pixels to live in.
+        -->
+        <div class="flex min-h-0 min-w-0 flex-1 flex-col overflow-auto">
             <template v-if="loading && !overview">
-                <Skeleton class="h-[104px] w-full rounded-lg" />
-                <Skeleton class="h-[324px] w-full rounded-lg" />
-                <div class="grid gap-4 lg:grid-cols-2">
-                    <Skeleton v-for="i in 4" :key="i" class="h-64 w-full rounded-lg" />
+                <Skeleton class="h-[104px] w-full" />
+                <Skeleton class="h-[324px] w-full" />
+                <div class="grid gap-px bg-border lg:grid-cols-2">
+                    <Skeleton v-for="i in 4" :key="i" class="h-64 w-full" />
                 </div>
             </template>
 
             <template v-else-if="overview">
-                <StatHeader v-model="metric" :overview="overview" />
+                <StatHeader v-model="metric" :overview="overview" flush />
 
                 <TimeseriesChart
                     :series="timeseries"
                     :metric="metric"
                     :group="range.group"
+                    flush
                 />
 
-                <div class="grid gap-4 lg:grid-cols-2">
+                <div class="grid gap-px bg-border lg:grid-cols-2">
                     <BreakdownCard
                         title="Links"
                         empty-label="No clicks in this period."
                         :tabs="[{ key: 'links', label: 'Links', rows: links }]"
                         persist-title
+                        flush
                     >
                         <template #row="{ row }">
                             <img
@@ -133,6 +146,7 @@ const setRange = (next: Range) => {
                         title="Sources"
                         empty-label="No referrers or campaigns yet."
                         :tabs="breakdowns.sources ?? []"
+                        flush
                     >
                         <template #row="{ row, tab }">
                             <img
@@ -153,6 +167,7 @@ const setRange = (next: Range) => {
                         empty-label="No location data yet."
                         :tabs="locationTabs"
                         default-tab="country"
+                        flush
                     >
                         <template #content-map>
                             <VisitorsMap :rows="countryRows" />
@@ -177,6 +192,7 @@ const setRange = (next: Range) => {
                         title="Devices"
                         empty-label="No device data yet."
                         :tabs="breakdowns.devices ?? []"
+                        flush
                     >
                         <template #row="{ row, tab }">
                             <img
