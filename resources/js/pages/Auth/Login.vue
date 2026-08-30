@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import PasswordInput from '@/components/PasswordInput.vue';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/AuthLayout.vue';
-import { login as loginRoute } from '@/routes';
+import { login as loginRoute, register as registerRoute } from '@/routes';
 import { request as forgotPasswordRoute } from '@/routes/password';
 import Social from '@/pages/Auth/Partial/Social.vue';
 
@@ -29,7 +29,7 @@ const submit = () => {
 
 <template>
     <AuthLayout title="Sign in" description="Enter your email and password to sign in">
-        <Head title="Log in" />
+        <Head title="Sign in" />
 
         <Social />
 
@@ -46,7 +46,6 @@ const submit = () => {
                     type="email"
                     autocomplete="username"
                     autofocus
-                    required
                 />
                 <p v-if="form.errors.email" class="text-sm text-destructive">{{ form.errors.email }}</p>
             </div>
@@ -55,6 +54,7 @@ const submit = () => {
                 <div class="flex items-center">
                     <Label for="password">Password</Label>
                     <Link
+                        v-if="canResetPassword"
                         :href="forgotPasswordRoute()"
                         class="ml-auto text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground"
                     >
@@ -65,19 +65,27 @@ const submit = () => {
                     id="password"
                     v-model="form.password"
                     autocomplete="current-password"
-                    required
                 />
                 <p v-if="form.errors.password" class="text-sm text-destructive">{{ form.errors.password }}</p>
             </div>
 
-            <Button type="submit" class="w-full" :disabled="form.processing">
+            <Button
+                type="submit"
+                class="w-full"
+                data-testid="login-submit"
+                :disabled="form.processing"
+            >
                 Sign in
             </Button>
         </form>
 
         <div class="text-center text-sm text-muted-foreground">
             Don't have an account?
-            <Link href="/register" class="underline underline-offset-4 hover:text-foreground">
+            <Link
+                :href="registerRoute()"
+                data-testid="login-register-link"
+                class="underline underline-offset-4 hover:text-foreground"
+            >
                 Sign up
             </Link>
         </div>
