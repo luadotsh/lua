@@ -23,9 +23,12 @@ class ListMembers
 
         return $workspace->users()
             ->orderBy('name')
+            // whereLike keeps the search case-insensitive on both engines:
+            // Laravel emits `ilike` on PostgreSQL and a plain `like` on MySQL,
+            // where the default collation already ignores case.
             ->when(filled($search), fn ($query) => $query->where(
-                fn ($q) => $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%"),
+                fn ($q) => $q->whereLike('name', "%{$search}%")
+                    ->orWhereLike('email', "%{$search}%"),
             ))
             ->get();
     }
