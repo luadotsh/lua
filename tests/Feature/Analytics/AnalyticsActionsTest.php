@@ -247,3 +247,29 @@ it('widens a dimension when it holds several values', function () {
 
     expect($overview['events']['value'])->toBe(2);
 });
+
+it('buckets timestamps with the expression its database driver understands', function (string $driver, string $expected) {
+    // The driver is passed in, so this asserts the MySQL arm without a MySQL
+    // server — the arm no local run would otherwise reach.
+    [$sql] = GetTimeseries::bucketExpression('day', 'America/Sao_Paulo', $driver);
+
+    expect($sql)->toBe($expected);
+})->with([
+    ['pgsql', "date_trunc(?, created_at at time zone 'UTC' at time zone ?)"],
+    ['mysql', "date_format(convert_tz(created_at, '+00:00', ?), ?)"],
+    ['mariadb', "date_format(convert_tz(created_at, '+00:00', ?), ?)"],
+]);
+
+it('binds the unit each driver needs for the requested grouping', function () {
+    expect(GetTimeseries::bucketExpression('hour', 'UTC', 'mysql')[1])
+        ->toBe(['UTC', '%Y-%m-%d %H:00:00'])
+        ->and(GetTimeseries::bucketExpression('month', 'UTC', 'pgsql')[1])
+        ->toBe(['month', 'UTC']);
+});
+
+it('refuses to guess a bucket expression for an unknown driver', function () {
+    // Better a clear failure here than SQL that only breaks once it reaches
+    // the database.
+    expect(fn () => GetTimeseries::bucketExpression('day', 'UTC', 'sqlite'))
+        ->toThrow(RuntimeException::class, 'sqlite');
+});

@@ -222,7 +222,7 @@ onMounted(() => {
                      `items-element`. `min-w-0` is what makes the sideways part
                      work — without it the flex child sizes to the table and
                      pushes the overflow back out to the page. -->
-                <div class="min-h-0 min-w-0 flex-1 overflow-auto pb-px">
+                <div class="min-h-0 min-w-0 flex-1 overflow-auto pb-px" data-testid="links-scroll">
                 <InfiniteScroll
                     data="table"
                     items-element="#links-body"

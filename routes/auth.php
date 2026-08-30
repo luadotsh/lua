@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -15,6 +13,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use Illuminate\Support\Facades\Route;
 
 /**
  * Auth
@@ -22,7 +21,7 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 Route::group(
     [
         'middleware' => [
-            'guest'
+            'guest',
         ],
     ],
     function () {
@@ -59,7 +58,7 @@ Route::group(
 Route::group(
     [
         'middleware' => [
-            'auth'
+            'auth',
         ],
     ],
     function () {
@@ -67,7 +66,7 @@ Route::group(
         Route::get('/verify-email/{id}/{hash}', VerifyEmailController::class)->name('verification.verify')->middleware(['signed', 'throttle:6,1']);
         Route::post('/email/verification-notification', [EmailVerificationNotificationController::class, 'store'])->name('verification.send')->middleware('throttle:6,1');
         Route::get('/confirm-password', [ConfirmablePasswordController::class, 'show'])->name('password.confirm');
-        Route::post('/confirm-password', [ConfirmablePasswordController::class, 'store']);
+        Route::post('/confirm-password', [ConfirmablePasswordController::class, 'store'])->name('password.confirm.store');
         Route::put('/password', [PasswordController::class, 'update'])->name('password.update');
         Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
     }

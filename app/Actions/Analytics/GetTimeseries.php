@@ -92,6 +92,9 @@ class GetTimeseries
     /**
      * The SQL that rounds a UTC timestamp down to the viewer's local bucket.
      *
+     * The driver is a parameter so the mapping can be asserted without standing
+     * up every engine — the MySQL arm is the one no local run ever reaches.
+     *
      * Both halves of this are engine-specific: PostgreSQL has date_trunc and
      * `AT TIME ZONE`, MySQL has DATE_FORMAT and CONVERT_TZ. A self-hosted MySQL
      * needs its timezone tables loaded (`mysql_tzinfo_to_sql`) for CONVERT_TZ
@@ -99,9 +102,9 @@ class GetTimeseries
      *
      * @return array{0: string, 1: list<string>}
      */
-    private static function bucketExpression(string $group, string $timezone): array
+    public static function bucketExpression(string $group, string $timezone, ?string $driver = null): array
     {
-        $driver = DB::connection()->getDriverName();
+        $driver ??= DB::connection()->getDriverName();
 
         return match ($driver) {
             'pgsql' => [

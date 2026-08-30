@@ -180,7 +180,7 @@ const refresh = (value: typeof range.value) => {
                 `items-element` is required — without it Inertia has nowhere to
                 append the next page and it replaces the rows instead.
             -->
-            <div class="min-h-0 min-w-0 flex-1 overflow-auto pb-px">
+            <div class="min-h-0 min-w-0 flex-1 overflow-auto pb-px" data-testid="events-scroll">
                 <InfiniteScroll
                     data="table"
                     items-element="#events-body"

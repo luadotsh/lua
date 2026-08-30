@@ -1,4 +1,5 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
+import confirmD7e05f from './confirm'
 /**
 * @see \App\Http\Controllers\Auth\PasswordResetLinkController::request
 * @see app/Http/Controllers/Auth/PasswordResetLinkController.php:21
@@ -443,7 +444,7 @@ const password = {
     email: Object.assign(email, email),
     reset: Object.assign(reset, reset),
     store: Object.assign(store, store),
-    confirm: Object.assign(confirm, confirm),
+    confirm: Object.assign(confirm, confirmD7e05f),
     update: Object.assign(update, update),
 }
 
