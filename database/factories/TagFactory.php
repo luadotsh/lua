@@ -24,7 +24,6 @@ class TagFactory extends Factory
             'workspace_id' => Workspace::factory(),
             'name' => $this->faker->word,
             'color' => $this->faker->hexColor(),
-            'sort' => $this->faker->randomNumber(),
         ];
     }
 }

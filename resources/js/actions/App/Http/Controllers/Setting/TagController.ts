@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Setting\TagController::index
-* @see app/Http/Controllers/Setting/TagController.php:26
+* @see app/Http/Controllers/Setting/TagController.php:19
 * @route '/settings/tags'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\TagController::index
-* @see app/Http/Controllers/Setting/TagController.php:26
+* @see app/Http/Controllers/Setting/TagController.php:19
 * @route '/settings/tags'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Setting\TagController::index
-* @see app/Http/Controllers/Setting/TagController.php:26
+* @see app/Http/Controllers/Setting/TagController.php:19
 * @route '/settings/tags'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\TagController::index
-* @see app/Http/Controllers/Setting/TagController.php:26
+* @see app/Http/Controllers/Setting/TagController.php:19
 * @route '/settings/tags'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\TagController::index
-* @see app/Http/Controllers/Setting/TagController.php:26
+* @see app/Http/Controllers/Setting/TagController.php:19
 * @route '/settings/tags'
 */
 const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\Setting\TagController::index
-* @see app/Http/Controllers/Setting/TagController.php:26
+* @see app/Http/Controllers/Setting/TagController.php:19
 * @route '/settings/tags'
 */
 indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\TagController::index
-* @see app/Http/Controllers/Setting/TagController.php:26
+* @see app/Http/Controllers/Setting/TagController.php:19
 * @route '/settings/tags'
 */
 indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\Setting\TagController::store
-* @see app/Http/Controllers/Setting/TagController.php:35
+* @see app/Http/Controllers/Setting/TagController.php:28
 * @route '/settings/tags'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -97,7 +97,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\TagController::store
-* @see app/Http/Controllers/Setting/TagController.php:35
+* @see app/Http/Controllers/Setting/TagController.php:28
 * @route '/settings/tags'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Setting\TagController::store
-* @see app/Http/Controllers/Setting/TagController.php:35
+* @see app/Http/Controllers/Setting/TagController.php:28
 * @route '/settings/tags'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -116,7 +116,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\TagController::store
-* @see app/Http/Controllers/Setting/TagController.php:35
+* @see app/Http/Controllers/Setting/TagController.php:28
 * @route '/settings/tags'
 */
 const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -126,7 +126,7 @@ const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => 
 
 /**
 * @see \App\Http\Controllers\Setting\TagController::store
-* @see app/Http/Controllers/Setting/TagController.php:35
+* @see app/Http/Controllers/Setting/TagController.php:28
 * @route '/settings/tags'
 */
 storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -137,64 +137,8 @@ storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => (
 store.form = storeForm
 
 /**
-* @see \App\Http\Controllers\Setting\TagController::sort
-* @see app/Http/Controllers/Setting/TagController.php:81
-* @route '/settings/tags/sort'
-*/
-export const sort = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: sort.url(options),
-    method: 'post',
-})
-
-sort.definition = {
-    methods: ["post"],
-    url: '/settings/tags/sort',
-} satisfies RouteDefinition<["post"]>
-
-/**
-* @see \App\Http\Controllers\Setting\TagController::sort
-* @see app/Http/Controllers/Setting/TagController.php:81
-* @route '/settings/tags/sort'
-*/
-sort.url = (options?: RouteQueryOptions) => {
-    return sort.definition.url + queryParams(options)
-}
-
-/**
-* @see \App\Http\Controllers\Setting\TagController::sort
-* @see app/Http/Controllers/Setting/TagController.php:81
-* @route '/settings/tags/sort'
-*/
-sort.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: sort.url(options),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\Setting\TagController::sort
-* @see app/Http/Controllers/Setting/TagController.php:81
-* @route '/settings/tags/sort'
-*/
-const sortForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: sort.url(options),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\Setting\TagController::sort
-* @see app/Http/Controllers/Setting/TagController.php:81
-* @route '/settings/tags/sort'
-*/
-sortForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: sort.url(options),
-    method: 'post',
-})
-
-sort.form = sortForm
-
-/**
 * @see \App\Http\Controllers\Setting\TagController::update
-* @see app/Http/Controllers/Setting/TagController.php:55
+* @see app/Http/Controllers/Setting/TagController.php:49
 * @route '/settings/tags/{id}'
 */
 export const update = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -209,7 +153,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\TagController::update
-* @see app/Http/Controllers/Setting/TagController.php:55
+* @see app/Http/Controllers/Setting/TagController.php:49
 * @route '/settings/tags/{id}'
 */
 update.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -236,7 +180,7 @@ update.url = (args: { id: string | number } | [id: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\Setting\TagController::update
-* @see app/Http/Controllers/Setting/TagController.php:55
+* @see app/Http/Controllers/Setting/TagController.php:49
 * @route '/settings/tags/{id}'
 */
 update.put = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -246,7 +190,7 @@ update.put = (args: { id: string | number } | [id: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\Setting\TagController::update
-* @see app/Http/Controllers/Setting/TagController.php:55
+* @see app/Http/Controllers/Setting/TagController.php:49
 * @route '/settings/tags/{id}'
 */
 const updateForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -261,7 +205,7 @@ const updateForm = (args: { id: string | number } | [id: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\Setting\TagController::update
-* @see app/Http/Controllers/Setting/TagController.php:55
+* @see app/Http/Controllers/Setting/TagController.php:49
 * @route '/settings/tags/{id}'
 */
 updateForm.put = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -278,7 +222,7 @@ update.form = updateForm
 
 /**
 * @see \App\Http\Controllers\Setting\TagController::destroy
-* @see app/Http/Controllers/Setting/TagController.php:68
+* @see app/Http/Controllers/Setting/TagController.php:62
 * @route '/settings/tags/{id}'
 */
 export const destroy = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -293,7 +237,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\TagController::destroy
-* @see app/Http/Controllers/Setting/TagController.php:68
+* @see app/Http/Controllers/Setting/TagController.php:62
 * @route '/settings/tags/{id}'
 */
 destroy.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -320,7 +264,7 @@ destroy.url = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\Setting\TagController::destroy
-* @see app/Http/Controllers/Setting/TagController.php:68
+* @see app/Http/Controllers/Setting/TagController.php:62
 * @route '/settings/tags/{id}'
 */
 destroy.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -330,7 +274,7 @@ destroy.delete = (args: { id: string | number } | [id: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\Setting\TagController::destroy
-* @see app/Http/Controllers/Setting/TagController.php:68
+* @see app/Http/Controllers/Setting/TagController.php:62
 * @route '/settings/tags/{id}'
 */
 const destroyForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -345,7 +289,7 @@ const destroyForm = (args: { id: string | number } | [id: string | number ] | st
 
 /**
 * @see \App\Http\Controllers\Setting\TagController::destroy
-* @see app/Http/Controllers/Setting/TagController.php:68
+* @see app/Http/Controllers/Setting/TagController.php:62
 * @route '/settings/tags/{id}'
 */
 destroyForm.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -360,6 +304,6 @@ destroyForm.delete = (args: { id: string | number } | [id: string | number ] | s
 
 destroy.form = destroyForm
 
-const TagController = { index, store, sort, update, destroy }
+const TagController = { index, store, update, destroy }
 
 export default TagController

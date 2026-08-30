@@ -12,14 +12,15 @@ use Illuminate\Database\Eloquent\Collection;
 class ListTags
 {
     /**
-     * In the workspace's own display order.
+     * By name. Tags used to carry a hand-set order, which meant every workspace
+     * had to curate a list most people never looked at twice.
      *
      * @return Collection<int, Tag>
      */
     public static function execute(Workspace $workspace): Collection
     {
         return Tag::where('workspace_id', $workspace->id)
-            ->orderBy('sort')
+            ->orderBy('name')
             ->get();
     }
 

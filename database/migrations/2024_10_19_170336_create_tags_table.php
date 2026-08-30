@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignUuid('workspace_id')->constrained();
             $table->string('name');
             $table->string('color');
-            $table->integer('sort')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

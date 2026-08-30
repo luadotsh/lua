@@ -109,7 +109,6 @@ Route::group(
             // tags
             Route::get('/tags', [TagController::class, 'index'])->name('setting.tags.index');
             Route::post('/tags', [TagController::class, 'store'])->name('setting.tags.store');
-            Route::post('/tags/sort', [TagController::class, 'sort'])->name('setting.tags.sort');
             Route::put('/tags/{id}', [TagController::class, 'update'])->name('setting.tags.update');
             Route::delete('/tags/{id}', [TagController::class, 'destroy'])->name('setting.tags.destroy');
 

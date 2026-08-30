@@ -4,22 +4,15 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Setting;
 
+use App\Actions\Tag\CreateTag;
+use App\Actions\Tag\DeleteTag;
 use App\Actions\Tag\GetTag;
 use App\Actions\Tag\ListTags;
-use App\Actions\Tag\SortTags;
 use App\Actions\Tag\UpdateTag;
-use App\Actions\Tag\DeleteTag;
-use App\Actions\Tag\CreateTag;
-use App\Http\Requests\Tag\UpdateRequest;
 use App\Http\Requests\Tag\CreateRequest;
-use App\Http\Requests\Tag\SortRequest;
+use App\Http\Requests\Tag\UpdateRequest;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
-
-use App\Models\Tag;
 
 class TagController extends Controller
 {
@@ -38,9 +31,10 @@ class TagController extends Controller
         $workspace = auth()->user()->currentWorkspace;
 
         $response = Gate::inspect('reached-tag-limit', $workspace);
-        if (!$response->allowed()) {
+        if (! $response->allowed()) {
             session()->flash('flash.banner', 'You have reached the limit of tags, please upgrade your plan.');
             session()->flash('flash.bannerStyle', 'danger');
+
             return back();
         }
 
@@ -74,16 +68,6 @@ class TagController extends Controller
 
         session()->flash('flash.banner', 'Tag deleted successful.');
         session()->flash('flash.bannerStyle', 'success');
-
-        return back();
-    }
-
-    public function sort(SortRequest $request)
-    {
-        SortTags::execute(
-            auth()->user()->currentWorkspace,
-            $request->validated('tags'),
-        );
 
         return back();
     }

@@ -12,12 +12,25 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { IconX, IconKey } from "@tabler/icons-vue";
+import { IconKey, IconTrash } from "@tabler/icons-vue";
 import date from "@/date";
 import EmptyState from "@/components/EmptyState.vue";
 import AppLayout from "@/layouts/AppLayout.vue";
 import CreateModal from "./Create.vue";
 import * as apiTokensRoutes from "@/routes/setting/api-tokens";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { ApiToken } from "@/types";
 
 const createModal = ref<InstanceType<typeof CreateModal> | null>(null);
@@ -49,83 +62,100 @@ const deleteToken = () => {
 <template>
     <Head title="API Tokens" />
 
-    <AppLayout title="API Tokens">
+    <CreateModal ref="createModal" />
+
+    <AlertDialog
+        :open="!!tokenToDelete"
+        @update:open="(open) => !open && (tokenToDelete = null)"
+    >
+        <AlertDialogContent>
+            <AlertDialogHeader>
+                <AlertDialogTitle>Delete API token</AlertDialogTitle>
+                <AlertDialogDescription>
+                    Anything still authenticating with this token stops working
+                    immediately.
+                </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+                <AlertDialogAction
+                    class="bg-destructive text-white hover:bg-destructive/90"
+                    @click="deleteToken"
+                >
+                    Delete
+                </AlertDialogAction>
+                <AlertDialogCancel @click="tokenToDelete = null">Cancel</AlertDialogCancel>
+            </AlertDialogFooter>
+        </AlertDialogContent>
+    </AlertDialog>
+
+    <AppLayout title="API Tokens" :total="tokens.length" full-width>
         <template #header-actions>
             <Button @click="createModal?.open()">New API Token</Button>
         </template>
 
-        <div class="p-4 sm:p-6">
-            <CreateModal ref="createModal" />
+        <div class="flex min-h-0 min-w-0 flex-1 flex-col">
+            <div
+                v-if="hasData"
+                class="min-h-0 min-w-0 flex-1 overflow-auto pb-px"
+                data-testid="api-tokens-scroll"
+            >
+                <Table>
+                    <TableHeader sticky>
+                        <TableRow>
+                            <TableHead class="w-full">Name</TableHead>
+                            <TableHead class="w-px whitespace-nowrap">Last used</TableHead>
+                            <TableHead class="w-px whitespace-nowrap">Expires</TableHead>
+                            <TableHead class="w-px">
+                                <span class="sr-only">Actions</span>
+                            </TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody id="api-tokens-body">
+                        <TableRow v-for="token in tokens" :key="token.id">
+                            <TableCell class="font-medium">{{ token.name }}</TableCell>
 
-            <AlertDialog :open="!!tokenToDelete" @update:open="(val) => !val && (tokenToDelete = null)">
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Delete API Token</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            Are you sure you want to delete this api token?
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel @click="tokenToDelete = null">Cancel</AlertDialogCancel>
-                        <AlertDialogAction @click="deleteToken" class="bg-red-600 hover:bg-red-700">Delete</AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+                            <TableCell class="w-px whitespace-nowrap text-muted-foreground">
+                                {{
+                                    token.last_used_at
+                                        ? date.diffForHumans(token.last_used_at)
+                                        : "Never"
+                                }}
+                            </TableCell>
 
+                            <TableCell class="w-px whitespace-nowrap text-muted-foreground">
+                                {{ token.expires_at ? date.formatDate(token.expires_at) : "—" }}
+                            </TableCell>
 
-            <div>
-                <div class="px-4 sm:px-0 space-y-2">
-                    <template v-for="token in tokens" :key="token.id">
-                        <div class="flex flex-1 items-center space-x-1">
-                            <div
-                                class="flex flex-1 items-center justify-between rounded-md px-4 py-2 border border-zinc-100 dark:border-zinc-700"
-                            >
-                                <div class="flex flex-1 items-center space-x-4">
-                                    <div class="flex items-center space-x-2">
-                                        <div
-                                            class="font-medium text-sm text-zinc-600 dark:text-white"
-                                        >
-                                            {{ token.name }}
-                                        </div>
-                                    </div>
+                            <TableCell class="w-px">
+                                <div class="flex items-center justify-end">
+                                    <Tooltip>
+                                        <TooltipTrigger as-child>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                class="size-8 text-muted-foreground hover:text-destructive"
+                                                :data-testid="`api-token-delete-${token.id}`"
+                                                @click="confirmDelete(token)"
+                                            >
+                                                <IconTrash class="size-3.5" />
+                                                <span class="sr-only">Delete</span>
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>Delete</TooltipContent>
+                                    </Tooltip>
                                 </div>
-                                <div class="flex items-center space-x-4">
-                                    <div
-                                        class="text-sm text-zinc-800 dark:text-zinc-300"
-                                    >
-                                        {{
-                                            token.last_used_at
-                                                ? `Last used ${date.diffForHumans(token.last_used_at)}`
-                                                : "Never used"
-                                        }}
-                                    </div>
-                                    <div
-                                        v-if="token.expires_at"
-                                        class="text-sm text-zinc-500 dark:text-zinc-400"
-                                    >
-                                        Expires {{ date.formatDate(token.expires_at) }}
-                                    </div>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        class="space-x-1"
-                                        @click="confirmDelete(token)"
-                                    >
-                                        <IconX class="h-3 w-3" />
-                                        <span>Delete</span>
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
-                </div>
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
             </div>
 
             <EmptyState
-                v-if="!hasData"
+                v-else
                 :icon="IconKey"
                 title="No API tokens yet"
                 description="API tokens are required to use the API, so you can manage your links, tags and domains programmatically."
+                class="p-4 sm:p-6"
             />
         </div>
     </AppLayout>

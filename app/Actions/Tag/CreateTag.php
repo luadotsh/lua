@@ -18,8 +18,6 @@ class CreateTag
             'workspace_id' => $workspace->id,
             'name' => data_get($data, 'name'),
             'color' => data_get($data, 'color'),
-            // New tags go to the end of the workspace's ordering.
-            'sort' => Tag::where('workspace_id', $workspace->id)->count() + 1,
         ]);
     }
 }

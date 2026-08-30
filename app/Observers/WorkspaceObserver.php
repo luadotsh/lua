@@ -17,21 +17,18 @@ class WorkspaceObserver
         // tags
         Tag::create([
             'workspace_id' => $workspace->id,
-            'sort' => 1,
             'name' => 'Marketing',
             'color' => '#f87171',
         ]);
 
         Tag::create([
             'workspace_id' => $workspace->id,
-            'sort' => 2,
             'name' => 'Sales',
             'color' => '#60a5fa',
         ]);
 
         Tag::create([
             'workspace_id' => $workspace->id,
-            'sort' => 3,
             'name' => 'Development',
             'color' => '#4ade80',
         ]);

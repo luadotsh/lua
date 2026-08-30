@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Models\Scopes\TagScope;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -30,14 +29,8 @@ class Tag extends Model
     protected $fillable = [
         'workspace_id',
         'name',
-        'sort',
         'color',
     ];
-
-    protected static function booted()
-    {
-        static::addGlobalScope(new TagScope);
-    }
 
     public function workspace(): BelongsTo
     {

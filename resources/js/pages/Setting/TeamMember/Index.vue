@@ -128,7 +128,7 @@ onMounted(() => {
 
 <template>
     <Head title="Team Members" />
-    <AppLayout title="Members">
+    <AppLayout title="Members" :total="users.length" full-width>
         <template #header-actions>
             <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -147,7 +147,7 @@ onMounted(() => {
             <Button @click="inviteCreateDialog?.open()">Invite</Button>
         </template>
 
-        <div class="p-4 sm:p-6">
+        <div class="flex min-h-0 min-w-0 flex-1 flex-col">
             <AlertDialog :open="beingLeaving" @update:open="(val) => (beingLeaving = val)">
                 <AlertDialogContent>
                     <AlertDialogHeader>
@@ -190,86 +190,87 @@ onMounted(() => {
                 </AlertDialogContent>
             </AlertDialog>
 
-            <div class="flex flex-col">
-                <div class="rounded-md border">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Name</TableHead>
-                                <TableHead>E-mail</TableHead>
-                                <TableHead>Role</TableHead>
-                                <TableHead>Sign up</TableHead>
-                                <TableHead><span class="sr-only">Actions</span></TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            <TableRow v-for="member in users" :key="member.id">
-                                <TableCell>{{ member.name }}</TableCell>
-                                <TableCell>{{ member.email }}</TableCell>
-                                <TableCell>{{ member.membership.role }}</TableCell>
-                                <TableCell>{{ date.formatDateTime(member.created_at) }}</TableCell>
-                                <TableCell>
-                                    <DropdownMenu
-                                        v-if="
-                                            member.id === user.id ||
-                                            user.current_workspace?.role !== 'USER'
-                                        "
-                                    >
-                                        <DropdownMenuTrigger as-child>
-                                            <Button variant="ghost" size="icon">
-                                                <IconDots class="h-4 w-4 text-zinc-500" />
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end">
-                                            <DropdownMenuItem
-                                                v-if="
-                                                    member.id !== user.id &&
-                                                    user.current_workspace?.role !== 'USER'
-                                                "
-                                                @click="changeUserRole(member, member.membership.role == 'USER' ? 'ADMIN' : 'USER')"
-                                            >
-                                                {{
-                                                    member.membership.role == "USER"
-                                                        ? "Change Role to Admin"
-                                                        : "Change Role to User"
-                                                }}
-                                            </DropdownMenuItem>
-                                            <DropdownMenuSeparator
-                                                v-if="
-                                                    member.id !== user.id &&
-                                                    user.current_workspace?.role !== 'USER'
-                                                "
-                                            />
-                                            <DropdownMenuItem
-                                                v-if="
-                                                    user.current_workspace?.role !== 'USER' &&
-                                                    member.id !== user.id
-                                                "
-                                                class="text-red-600 focus:text-red-600"
-                                                @click="confirmRemoveFromTeam(member.id)"
-                                            >
-                                                Remove From Team
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem
-                                                v-if="member.id === user.id"
-                                                class="text-red-600 focus:text-red-600"
-                                                @click="confirmLeaveTeam"
-                                            >
-                                                Leave Team
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                </div>
-            </div>
+            <div
+                class="min-h-0 min-w-0 flex-1 overflow-auto pb-px"
+                data-testid="members-scroll"
+            >
+                <Table>
+                    <TableHeader sticky>
+                        <TableRow>
+                            <TableHead>Name</TableHead>
+                            <TableHead>E-mail</TableHead>
+                            <TableHead>Role</TableHead>
+                            <TableHead>Sign up</TableHead>
+                            <TableHead><span class="sr-only">Actions</span></TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        <TableRow v-for="member in users" :key="member.id">
+                            <TableCell>{{ member.name }}</TableCell>
+                            <TableCell>{{ member.email }}</TableCell>
+                            <TableCell>{{ member.membership.role }}</TableCell>
+                            <TableCell>{{ date.formatDateTime(member.created_at) }}</TableCell>
+                            <TableCell>
+                                <DropdownMenu
+                                    v-if="
+                                        member.id === user.id ||
+                                        user.current_workspace?.role !== 'USER'
+                                    "
+                                >
+                                    <DropdownMenuTrigger as-child>
+                                        <Button variant="ghost" size="icon">
+                                            <IconDots class="h-4 w-4 text-zinc-500" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        <DropdownMenuItem
+                                            v-if="
+                                                member.id !== user.id &&
+                                                user.current_workspace?.role !== 'USER'
+                                            "
+                                            @click="changeUserRole(member, member.membership.role == 'USER' ? 'ADMIN' : 'USER')"
+                                        >
+                                            {{
+                                                member.membership.role == "USER"
+                                                    ? "Change Role to Admin"
+                                                    : "Change Role to User"
+                                            }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator
+                                            v-if="
+                                                member.id !== user.id &&
+                                                user.current_workspace?.role !== 'USER'
+                                            "
+                                        />
+                                        <DropdownMenuItem
+                                            v-if="
+                                                user.current_workspace?.role !== 'USER' &&
+                                                member.id !== user.id
+                                            "
+                                            class="text-red-600 focus:text-red-600"
+                                            @click="confirmRemoveFromTeam(member.id)"
+                                        >
+                                            Remove From Team
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            v-if="member.id === user.id"
+                                            class="text-red-600 focus:text-red-600"
+                                            @click="confirmLeaveTeam"
+                                        >
+                                            Leave Team
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
 
-            <InviteIndex
-                v-if="user.current_workspace?.role !== 'USER'"
-                :invites="invites"
-            />
+                <InviteIndex
+                    v-if="user.current_workspace?.role !== 'USER'"
+                    :invites="invites"
+                />
+            </div>
 
             <InviteCreate ref="inviteCreateDialog" />
         </div>

@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
 import { Head, router } from "@inertiajs/vue3";
-import draggable from "vuedraggable";
-import { Button } from "@/components/ui/button";
+import { IconPencil, IconTrash } from "@tabler/icons-vue";
+import { ref } from "vue";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -13,40 +12,34 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { IconX, IconSettings, IconGripVertical } from "@tabler/icons-vue";
+import { Button } from "@/components/ui/button";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
+import date from "@/date";
 import AppLayout from "@/layouts/AppLayout.vue";
-import CreateModal from "./Create.vue";
-import EditModal from "./Edit.vue";
 import * as tagsRoutes from "@/routes/setting/tags";
 import type { Tag } from "@/types";
-import axios from "axios";
-
-const createModal = ref<InstanceType<typeof CreateModal> | null>(null);
-const editModal = ref<InstanceType<typeof EditModal> | null>(null);
-const tagToDelete = ref<{ id: string | number } | null>(null);
+import CreateModal from "./Create.vue";
+import EditModal from "./Edit.vue";
 
 const props = defineProps<{
     tags: Tag[];
 }>();
 
-const list = ref(props.tags);
-
-const updateOrder = () => {
-    axios.post(tagsRoutes.sort.url(), {
-        tags: list.value,
-    });
-};
-
-watch(
-    () => props.tags,
-    (value) => {
-        list.value = value;
-    }
-);
-
-const confirmDelete = (tag: { id: string | number }) => {
-    tagToDelete.value = tag;
-};
+const createModal = ref<InstanceType<typeof CreateModal> | null>(null);
+const editModal = ref<InstanceType<typeof EditModal> | null>(null);
+const tagToDelete = ref<Tag | null>(null);
 
 const deleteTag = () => {
     if (!tagToDelete.value) {
@@ -65,87 +58,116 @@ const deleteTag = () => {
 <template>
     <Head title="Tags" />
 
-    <AppLayout title="Tags">
+    <CreateModal ref="createModal" />
+    <EditModal ref="editModal" />
+
+    <AlertDialog
+        :open="!!tagToDelete"
+        @update:open="(open) => !open && (tagToDelete = null)"
+    >
+        <AlertDialogContent>
+            <AlertDialogHeader>
+                <AlertDialogTitle>Delete tag</AlertDialogTitle>
+                <AlertDialogDescription>
+                    Links carrying <strong>{{ tagToDelete?.name }}</strong> keep
+                    working; they simply lose the tag.
+                </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+                <AlertDialogAction
+                    class="bg-destructive text-white hover:bg-destructive/90"
+                    @click="deleteTag"
+                >
+                    Delete
+                </AlertDialogAction>
+                <AlertDialogCancel @click="tagToDelete = null">Cancel</AlertDialogCancel>
+            </AlertDialogFooter>
+        </AlertDialogContent>
+    </AlertDialog>
+
+    <AppLayout title="Tags" :total="tags.length" full-width>
         <template #header-actions>
             <Button @click="createModal?.open()">New Tag</Button>
         </template>
 
-        <div class="p-4 sm:p-6">
-            <CreateModal ref="createModal" />
-            <EditModal ref="editModal" />
+        <div class="flex min-h-0 min-w-0 flex-1 flex-col">
+            <div
+                class="min-h-0 min-w-0 flex-1 overflow-auto pb-px"
+                data-testid="tags-scroll"
+            >
+                <Table>
+                    <TableHeader sticky>
+                        <TableRow>
+                            <TableHead class="w-full">Name</TableHead>
+                            <TableHead class="w-px whitespace-nowrap">Created</TableHead>
+                            <TableHead class="w-px">
+                                <span class="sr-only">Actions</span>
+                            </TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody id="tags-body">
+                        <TableRow v-for="tag in tags" :key="tag.id">
+                            <TableCell>
+                                <span class="flex items-center gap-2">
+                                    <span
+                                        class="size-2.5 shrink-0 rounded-full"
+                                        :style="{ backgroundColor: tag.color }"
+                                    />
+                                    <span class="font-medium">{{ tag.name }}</span>
+                                </span>
+                            </TableCell>
 
-            <AlertDialog :open="!!tagToDelete" @update:open="(val) => !val && (tagToDelete = null)">
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Delete Tag</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            Are you sure you want to delete this tag?
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel @click="tagToDelete = null">Cancel</AlertDialogCancel>
-                        <AlertDialogAction @click="deleteTag" class="bg-red-600 hover:bg-red-700">Delete</AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+                            <TableCell class="w-px whitespace-nowrap text-muted-foreground">
+                                {{ date.diffForHumans(tag.created_at) }}
+                            </TableCell>
 
+                            <TableCell class="w-px">
+                                <div class="flex items-center justify-end gap-1">
+                                    <Tooltip>
+                                        <TooltipTrigger as-child>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                class="size-8"
+                                                :data-testid="`tag-edit-${tag.id}`"
+                                                @click="editModal?.open(tag)"
+                                            >
+                                                <IconPencil class="size-3.5" />
+                                                <span class="sr-only">Edit</span>
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>Edit</TooltipContent>
+                                    </Tooltip>
 
-            <div>
-                <draggable
-                    @end="updateOrder"
-                    v-model="list"
-                    ghost-class="opacity-30"
-                    tag="div"
-                    item-key="id"
-                    class="px-4 sm:px-0 space-y-2"
-                >
-                    <template #item="{ element }">
-                        <div class="flex flex-1 items-center space-x-1">
-                            <div class="flex-none">
-                                <IconGripVertical
-                                    class="text-zinc-800 dark:text-zinc-300 cursor-move h-5 w-5"
-                                />
-                            </div>
-                            <div
-                                class="flex flex-1 items-center justify-between rounded-md px-4 py-2 border border-zinc-100 dark:border-zinc-700"
+                                    <Tooltip>
+                                        <TooltipTrigger as-child>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                class="size-8 text-muted-foreground hover:text-destructive"
+                                                :data-testid="`tag-delete-${tag.id}`"
+                                                @click="tagToDelete = tag"
+                                            >
+                                                <IconTrash class="size-3.5" />
+                                                <span class="sr-only">Delete</span>
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>Delete</TooltipContent>
+                                    </Tooltip>
+                                </div>
+                            </TableCell>
+                        </TableRow>
+
+                        <TableRow v-if="tags.length === 0">
+                            <TableCell
+                                colspan="3"
+                                class="py-10 text-center text-muted-foreground"
                             >
-                                <div class="flex flex-1 items-center space-x-4">
-                                    <div class="flex items-center space-x-2">
-                                        <div
-                                            class="h-2.5 w-2.5 shrink-0 rounded-full"
-                                            :style="{ backgroundColor: element.color }"
-                                        ></div>
-                                        <div
-                                            class="font-medium text-sm text-zinc-600 dark:text-white"
-                                        >
-                                            {{ element.name }}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        class="space-x-1"
-                                        @click="editModal?.open(element)"
-                                    >
-                                        <IconSettings class="h-3 w-3" />
-                                        <span>Edit</span>
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        class="space-x-1"
-                                        @click="confirmDelete(element)"
-                                    >
-                                        <IconX class="h-3 w-3" />
-                                        <span>Delete</span>
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
-                </draggable>
+                                No tags yet. Create one to group your links.
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
             </div>
         </div>
     </AppLayout>
