@@ -44,9 +44,8 @@ import {
 } from "@/components/ui/tooltip";
 
 import * as linksRoute from "@/routes/links";
-import * as websitesRoute from "@/routes/websites";
 
-import { copyToClipboard } from "@/lib/utils";
+import { copyToClipboard, favicon } from "@/lib/utils";
 import { formatCount, formatNumber } from "@/lib/metrics";
 import date from "@/date";
 import debounce from "@/debounce";
@@ -155,13 +154,18 @@ onMounted(() => {
             description="Are you sure you want to delete this link?"
         />
 
-        <div class="flex flex-col">
+        <div class="flex min-h-0 flex-1 flex-col">
             <template v-if="hasData">
-                <!-- The sideways scroll belongs to the table alone, and
-                     `items-element` is what tells Inertia where to append the
-                     next page instead of replacing the rows. -->
-                <InfiniteScroll data="table" items-element="#links-body" preserve-url>
-                    <div class="w-full overflow-x-auto">
+                <!-- The table owns its scrolling, both ways: that keeps the
+                     header row above it still, and Inertia finds the scroll
+                     container by walking up from `items-element`, so it has to
+                     be one that scrolls vertically. -->
+                <InfiniteScroll
+                    data="table"
+                    items-element="#links-body"
+                    preserve-url
+                    :buffer="300"
+                >
                         <Table>
                             <TableHeader sticky>
                                 <TableRow>
@@ -180,7 +184,7 @@ onMounted(() => {
                                         <span class="flex items-center gap-2">
                                             <img
                                                 v-if="!faviconFailed[data.id]"
-                                                :src="websitesRoute.favicon.url({ query: { url: data.url } })"
+                                                :src="favicon(data.url)"
                                                 alt=""
                                                 aria-hidden="true"
                                                 class="size-4 shrink-0 rounded-sm"
@@ -365,7 +369,6 @@ onMounted(() => {
                                 </TableRow>
                             </TableBody>
                         </Table>
-                    </div>
                 </InfiniteScroll>
             </template>
 

@@ -4,20 +4,42 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Enums\LinkStat\Event;
+use App\Models\Link;
+use App\Models\LinkStat;
+use App\Models\Workspace;
+use App\Services\UserAgentService;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-use App\Services\UserAgentService;
-
-use App\Enums\LinkStat\Event;
-
-use App\Models\Link;
-use App\Models\Workspace;
-
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\LinkStat>
+ * @extends Factory<LinkStat>
  */
 class LinkStatFactory extends Factory
 {
+    /**
+     * Real places, so a seeded row reads like a visit rather than like noise.
+     * The three fields have to agree — "Tokyo, Scotland, JP" would make the
+     * location breakdowns nonsense to look at.
+     *
+     * @var array<int, array{0: string, 1: string, 2: string}>
+     */
+    private const PLACES = [
+        ['US', 'California', 'San Francisco'],
+        ['US', 'New York', 'Buffalo'],
+        ['GB', 'England', 'London'],
+        ['GB', 'Scotland', 'Glasgow'],
+        ['BR', 'Sao Paulo', 'Sao Paulo'],
+        ['BR', 'Rio de Janeiro', 'Niteroi'],
+        ['DE', 'Bavaria', 'Munich'],
+        ['FR', 'Ile-de-France', 'Versailles'],
+        ['ES', 'Catalonia', 'Barcelona'],
+        ['PT', 'Porto', 'Porto'],
+        ['JP', 'Tokyo', 'Tokyo'],
+        ['IN', 'Karnataka', 'Bengaluru'],
+        ['CA', 'Ontario', 'Toronto'],
+        ['AU', 'Victoria', 'Melbourne'],
+    ];
+
     /**
      * Define the model's default state.
      *
@@ -25,25 +47,24 @@ class LinkStatFactory extends Factory
      */
     public function definition(): array
     {
-        $service = new UserAgentService();
+        $service = new UserAgentService;
 
         $userAgents = json_decode(file_get_contents(database_path('factories/data/userAgent.json')));
         $languages = json_decode(file_get_contents(database_path('factories/data/languages.json')));
 
         $userAgent = collect($userAgents)->random();
 
-        $ip = $this->faker->ipv4;
-
-        // user geo
-        $geo = geoip($ip);
+        // Was a live `geoip()` lookup on a random IP — a package the app no
+        // longer has, which made every call to this factory throw.
+        [$country, $region, $city] = $this->faker->randomElement(self::PLACES);
 
         return [
             'workspace_id' => Workspace::factory(),
             'link_id' => Link::factory(),
             'event' => $this->faker->randomElement([Event::CLICK, Event::QR_SCAN]),
-            'country' => $geo->iso_code,
-            'region' => $geo->state_name,
-            'city' => $geo->city,
+            'country' => $country,
+            'region' => $region,
+            'city' => $city,
 
             'browser' => $service->getBrowser($userAgent),
             'os' => $service->getOS($userAgent),

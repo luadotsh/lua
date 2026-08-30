@@ -152,7 +152,7 @@ const refresh = (value: typeof range.value) => {
         <!-- No padding: the app already draws the card these sit in, so the
              blocks run edge to edge and are separated by rules rather than by
              a second set of rounded borders. -->
-        <div class="flex flex-col">
+        <div class="flex min-h-0 flex-1 flex-col">
             <template v-if="overview">
                 <StatHeader v-model="metric" :overview="overview" flush />
                 <TimeseriesChart
@@ -168,15 +168,21 @@ const refresh = (value: typeof range.value) => {
             </template>
 
             <!--
-                The sideways scroll belongs to the table alone: sixteen columns
-                do not fit, but the metrics and the chart above should stay put
-                while you reach the last of them.
+                The table owns its scrolling, both ways. That keeps the metrics
+                and the chart above still while you reach the last column, and
+                it is also what makes the infinite scroll work: Inertia finds
+                the scroll container by walking up from `items-element`, so a
+                wrapper that scrolls sideways but not down would swallow it.
 
                 `items-element` is required — without it Inertia has nowhere to
                 append the next page and it replaces the rows instead.
             -->
-            <InfiniteScroll data="table" items-element="#events-body" preserve-url>
-                <div class="w-full overflow-x-auto">
+            <InfiniteScroll
+                    data="table"
+                    items-element="#events-body"
+                    preserve-url
+                    :buffer="300"
+                >
                 <Table>
                     <TableHeader sticky>
                         <TableRow>
@@ -330,7 +336,6 @@ const refresh = (value: typeof range.value) => {
                         </TableRow>
                     </TableBody>
                 </Table>
-                </div>
             </InfiniteScroll>
         </div>
     </AppLayout>

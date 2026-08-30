@@ -40,7 +40,13 @@ const hasHeader = computed(
 <template>
     <SidebarProvider :default-open="isOpen">
         <AppSidebar />
-        <SidebarInset class="overflow-x-hidden">
+        <!--
+            The header is a fixed strip and the content scrolls beneath it, so
+            the screen's own title stays put while a long list moves. It is also
+            what lets a sticky table header pin directly below it rather than
+            fighting it for the top of the page.
+        -->
+        <SidebarInset class="flex min-h-0 flex-1 flex-col overflow-hidden">
             <!--
                 Screens that carry their own heading in the content — settings —
                 pass nothing here, and get no empty bar. They still need a way to
@@ -63,14 +69,25 @@ const hasHeader = computed(
                 v-else
                 class="absolute left-4 top-3 z-30 size-9 rounded-md border border-border bg-card text-foreground shadow-xs md:hidden"
             />
-            <div
-                :class="
-                    fullWidth
-                        ? 'flex min-h-0 flex-1 flex-col'
-                        : 'mx-auto w-full max-w-7xl'
-                "
-            >
-                <slot />
+            <!--
+                Scrolls both ways: a table wider than the viewport would
+                otherwise be clipped with no way to reach its last columns.
+
+                `pb-px` is not decoration. Inertia's InfiniteScroll watches a
+                zero-height element after the list, and an element flush with
+                the scrollport's bottom edge never counts as intersecting — so
+                the next page never loaded. The padding leaves it just inside.
+            -->
+            <div class="min-h-0 flex-1 overflow-auto pb-px">
+                <div
+                    :class="
+                        fullWidth
+                            ? 'flex min-h-full flex-col'
+                            : 'mx-auto w-full max-w-7xl'
+                    "
+                >
+                    <slot />
+                </div>
             </div>
         </SidebarInset>
     </SidebarProvider>

@@ -1,4 +1,5 @@
 import type { InertiaLinkProps } from '@inertiajs/vue3';
+import { favicon as faviconRoute } from '@/routes/websites';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { toast } from 'vue-sonner';
@@ -66,11 +67,19 @@ export const kFormatter = (value: number): string => {
     return String(value);
 };
 
+/**
+ * Through our own endpoint, which fetches the icon server-side.
+ *
+ * Pointing an <img> straight at Google's favicon service would hand them the
+ * destination domain of every link in the list, along with the viewer's IP and
+ * referrer — from the browser of everyone who opens the page. For a link
+ * shortener, where the destination is the private part, that is the wrong
+ * direction for the request to travel.
+ */
 export const favicon = (url: string): string => {
-    try {
-        const domain = new URL(url).hostname;
-        return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
-    } catch {
+    if (!url) {
         return '';
     }
+
+    return faviconRoute.url({ query: { url } });
 };
