@@ -2,7 +2,9 @@
 import { Head, router, useForm } from "@inertiajs/vue3";
 import { IconQrcode, IconTrash } from "@tabler/icons-vue";
 import { ref } from "vue";
-import ConfirmDeleteModal from "@/components/ConfirmDeleteModal.vue";
+import ConfirmDeleteModal, {
+    DELETE_KEYWORD,
+} from "@/components/ConfirmDeleteModal.vue";
 import Qrcode from "@/components/Qrcode.vue";
 import { Button } from "@/components/ui/button";
 import AppLayout from "@/layouts/AppLayout.vue";
@@ -106,7 +108,7 @@ const update = () => {
                 @click="
                     confirmDeleteModal?.open({
                         url: linksRoute.destroy.url(link.id),
-                        confirmText: link.link,
+                        confirmText: DELETE_KEYWORD,
                     })
                 "
             >

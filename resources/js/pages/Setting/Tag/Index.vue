@@ -2,7 +2,9 @@
 import { Head } from "@inertiajs/vue3";
 import { IconPencil, IconTrash } from "@tabler/icons-vue";
 import { ref } from "vue";
-import ConfirmDeleteModal from "@/components/ConfirmDeleteModal.vue";
+import ConfirmDeleteModal, {
+    DELETE_KEYWORD,
+} from "@/components/ConfirmDeleteModal.vue";
 import { Button } from "@/components/ui/button";
 import {
     Table,
@@ -32,12 +34,10 @@ const createModal = ref<InstanceType<typeof CreateModal> | null>(null);
 const editModal = ref<InstanceType<typeof EditModal> | null>(null);
 const deleteModal = ref<InstanceType<typeof ConfirmDeleteModal> | null>(null);
 
-// Typing the tag's own name, not a generic keyword: it is what makes you read
-// which tag you are about to remove from every link carrying it.
 const confirmDelete = (tag: Tag) => {
     deleteModal.value?.open({
         url: tagsRoutes.destroy.url(tag.id),
-        confirmText: tag.name,
+        confirmText: DELETE_KEYWORD,
     });
 };
 </script>

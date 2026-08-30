@@ -1,3 +1,12 @@
+<script lang="ts">
+/**
+ * What you type to confirm a delete. One word for every screen: the point is
+ * to break the rhythm of clicking through, not to test recall of a name that
+ * is already on screen beside the button.
+ */
+export const DELETE_KEYWORD = 'delete';
+</script>
+
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
 import { IconCopy, IconX } from '@tabler/icons-vue';

@@ -8,11 +8,11 @@ use App\Models\Tag;
 use App\Models\User;
 
 /**
- * Every delete that cannot be undone asks you to type the thing's own name
- * first. Typing the name rather than a generic keyword is what makes you read
- * which one you are about to remove.
+ * Every delete that cannot be undone asks you to type "delete" first. The point
+ * is to break the rhythm of clicking through, so it is the same word on every
+ * screen rather than a name already sitting beside the button.
  */
-test('deleting a tag stays disabled until its name is typed', function () {
+test('deleting a tag stays disabled until the keyword is typed', function () {
     $user = User::factory()->withWorkspace()->create();
 
     $tag = Tag::factory()->create([
@@ -31,7 +31,7 @@ test('deleting a tag stays disabled until its name is typed', function () {
     $page->type('@confirm-delete-input', 'wrong')
         ->assertButtonDisabled('@confirm-delete-button');
 
-    $page->type('@confirm-delete-input', 'Campaign')
+    $page->type('@confirm-delete-input', 'delete')
         ->assertButtonEnabled('@confirm-delete-button');
 
     $page->click('@confirm-delete-button')
@@ -41,7 +41,7 @@ test('deleting a tag stays disabled until its name is typed', function () {
     expect(Tag::find($tag->id))->toBeNull();
 });
 
-test('deleting a domain asks for the domain itself', function () {
+test('deleting a domain asks for the keyword', function () {
     $user = User::factory()->withWorkspace()->create();
 
     $domain = Domain::factory()->create([
@@ -56,14 +56,14 @@ test('deleting a domain asks for the domain itself', function () {
     $page->click("@domain-delete-{$domain->id}")
         ->assertButtonDisabled('@confirm-delete-button');
 
-    $page->type('@confirm-delete-input', 'links.example.com')
+    $page->type('@confirm-delete-input', 'delete')
         ->click('@confirm-delete-button')
         ->assertNoJavaScriptErrors();
 
     expect(Domain::find($domain->id))->toBeNull();
 });
 
-test('deleting a link asks for the short link', function () {
+test('deleting a link asks for the keyword', function () {
     $user = User::factory()->withWorkspace()->create();
 
     $link = Link::factory()->create([
@@ -77,7 +77,7 @@ test('deleting a link asks for the short link', function () {
     $page->click('@link-delete')
         ->assertButtonDisabled('@confirm-delete-button');
 
-    $page->type('@confirm-delete-input', $link->link)
+    $page->type('@confirm-delete-input', 'delete')
         ->click('@confirm-delete-button')
         ->assertNoJavaScriptErrors();
 

@@ -2,7 +2,9 @@
 import { ref } from "vue";
 import { Head } from "@inertiajs/vue3";
 import { Button } from "@/components/ui/button";
-import ConfirmDeleteModal from "@/components/ConfirmDeleteModal.vue";
+import ConfirmDeleteModal, {
+    DELETE_KEYWORD,
+} from "@/components/ConfirmDeleteModal.vue";
 import { IconKey, IconTrash } from "@tabler/icons-vue";
 import date from "@/date";
 import EmptyState from "@/components/EmptyState.vue";
@@ -32,14 +34,10 @@ defineProps<{
     hasData: boolean;
 }>();
 
-// Anything still authenticating with this token stops working the moment it
-// goes, so you type the token's own name.
 const confirmDelete = (token: ApiToken) => {
     deleteModal.value?.open({
         url: apiTokensRoutes.destroy.url(token.id),
-        // A token created without a name falls back to the generic keyword;
-        // there is nothing specific to read back.
-        confirmText: token.name ?? "delete",
+        confirmText: DELETE_KEYWORD,
     });
 };
 

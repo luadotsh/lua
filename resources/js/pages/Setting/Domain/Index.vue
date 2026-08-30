@@ -2,7 +2,9 @@
 import { ref } from "vue";
 import { Head } from "@inertiajs/vue3";
 import { Button } from "@/components/ui/button";
-import ConfirmDeleteModal from "@/components/ConfirmDeleteModal.vue";
+import ConfirmDeleteModal, {
+    DELETE_KEYWORD,
+} from "@/components/ConfirmDeleteModal.vue";
 import { IconPencil, IconTrash, IconWorld } from "@tabler/icons-vue";
 import DomainStatus from "@/components/DomainStatus.vue";
 import EmptyState from "@/components/EmptyState.vue";
@@ -35,12 +37,10 @@ const props = defineProps<{
     hasData: boolean;
 }>();
 
-// The domain itself is what you type: every short link already created on it
-// stops resolving, so the name is worth reading twice.
 const confirmDelete = (domain: Domain) => {
     deleteModal.value?.open({
         url: domainsRoutes.destroy.url(domain.id),
-        confirmText: domain.domain,
+        confirmText: DELETE_KEYWORD,
     });
 };
 </script>
