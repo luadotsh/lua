@@ -232,8 +232,37 @@ const refresh = (value: typeof range.value) => {
                                 </span>
                             </TableCell>
 
-                            <TableCell class="whitespace-nowrap">{{ event.region }}</TableCell>
-                            <TableCell class="whitespace-nowrap">{{ event.city }}</TableCell>
+                            <!-- A region and a city belong to the country on
+                                 the same row, so they carry its flag too. -->
+                            <TableCell class="whitespace-nowrap">
+                                <span v-if="event.region" class="flex items-center gap-1.5">
+                                    <img
+                                        v-if="event.country"
+                                        :src="countryFlagUrl(event.country)"
+                                        alt=""
+                                        aria-hidden="true"
+                                        class="h-3 w-[18px] shrink-0 rounded-[2px] object-cover"
+                                        loading="lazy"
+                                        @error="(e) => ((e.target as HTMLImageElement).style.display = 'none')"
+                                    />
+                                    {{ event.region }}
+                                </span>
+                            </TableCell>
+
+                            <TableCell class="whitespace-nowrap">
+                                <span v-if="event.city" class="flex items-center gap-1.5">
+                                    <img
+                                        v-if="event.country"
+                                        :src="countryFlagUrl(event.country)"
+                                        alt=""
+                                        aria-hidden="true"
+                                        class="h-3 w-[18px] shrink-0 rounded-[2px] object-cover"
+                                        loading="lazy"
+                                        @error="(e) => ((e.target as HTMLImageElement).style.display = 'none')"
+                                    />
+                                    {{ event.city }}
+                                </span>
+                            </TableCell>
 
                             <TableCell class="whitespace-nowrap">
                                 <span class="flex items-center gap-1.5">
