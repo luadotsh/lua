@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { VisArea, VisAxis, VisLine, VisXYContainer } from '@unovis/vue';
+import { VisArea, VisAxis, VisGroupedBar, VisLine, VisXYContainer } from '@unovis/vue';
 import { useId } from 'reka-ui';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import {
     ChartContainer,
     ChartCrosshair,
@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/chart';
 import dayjs from '@/dayjs';
 import { formatCount, metricLabels, type MetricKey } from '@/lib/metrics';
+import { cn } from '@/lib/utils';
 
 export type TimeseriesPoint = {
     bucket: string;
@@ -27,8 +28,20 @@ const props = defineProps<{
 
 const CROSSHAIR_CIRCLE_RADIUS = 4;
 
+/** A literal, not `var(--color-value)`: the bar fill does not resolve the var. */
+const SERIES_COLOR = '#8b5cf6';
+
+const SHAPES = [
+    { value: 'line', label: 'Line' },
+    { value: 'bar', label: 'Bar' },
+] as const;
+
+type Shape = (typeof SHAPES)[number]['value'];
+
+const shape = ref<Shape>('line');
+
 const chartConfig = computed<ChartConfig>(() => ({
-    value: { label: metricLabels[props.metric], color: '#8b5cf6' },
+    value: { label: metricLabels[props.metric], color: SERIES_COLOR },
 }));
 
 const chartData = computed(() =>
@@ -44,7 +57,7 @@ const hasData = computed(() => chartData.value.some((point) => point.value > 0))
 const xAccessor = (d: { index: number }) => d.index;
 const yAccessors = [(d: { value: number }) => d.value];
 
-const lineColors = ['var(--color-value)'];
+const lineColors = [SERIES_COLOR];
 
 // A unique id per instance, so two charts on one page never collide on the
 // <defs> they inject.
@@ -56,8 +69,8 @@ const areaColors = computed(() => [`url(#${valueGradientId.value})`]);
 const svgDefs = computed(
     () => `
     <linearGradient id="${valueGradientId.value}" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="5%" stop-color="var(--color-value)" stop-opacity="0.28" />
-        <stop offset="95%" stop-color="var(--color-value)" stop-opacity="0.02" />
+        <stop offset="5%" stop-color="${SERIES_COLOR}" stop-opacity="0.28" />
+        <stop offset="95%" stop-color="${SERIES_COLOR}" stop-opacity="0.02" />
     </linearGradient>
 `,
 );
@@ -99,9 +112,32 @@ const tooltipTemplate = (d: { bucket: string; value: number }): string =>
 
 <template>
     <div class="rounded-lg border border-border bg-card p-4">
-        <h2 class="mb-2 text-sm font-medium text-foreground">
-            {{ metricLabels[metric] }} over time
-        </h2>
+        <div class="mb-2 flex items-center justify-between gap-3">
+            <h2 class="text-sm font-medium text-foreground">
+                {{ metricLabels[metric] }} over time
+            </h2>
+
+            <div
+                v-if="hasData"
+                class="flex gap-0.5 rounded-md border border-border p-0.5 text-xs font-medium"
+            >
+                <button
+                    v-for="option in SHAPES"
+                    :key="option.value"
+                    type="button"
+                    :aria-pressed="shape === option.value"
+                    :class="cn(
+                        'cursor-pointer rounded px-2 py-0.5 transition-colors',
+                        shape === option.value
+                            ? 'bg-foreground text-background'
+                            : 'text-muted-foreground hover:text-foreground',
+                    )"
+                    @click="shape = option.value"
+                >
+                    {{ option.label }}
+                </button>
+            </div>
+        </div>
 
         <div
             v-if="!hasData"
@@ -124,22 +160,41 @@ const tooltipTemplate = (d: { bucket: string; value: number }): string =>
                 '--vis-crosshair-circle-stroke-color': 'transparent',
             }"
         >
-            <!-- No margin override: the plot runs edge to edge and unovis still
-                 reserves the gutter the y labels need. -->
+            <!--
+                `duration: 0` on every series, and it is load-bearing rather
+                than a style choice. Unovis enters a shape at zero height and
+                animates it to size; switching between line and bar remounts the
+                components, and the transition that follows was being dropped —
+                bars stayed 2px tall, the line stayed flat on the axis. Drawing
+                straight to the final geometry sidesteps it.
+            -->
             <VisXYContainer :data="chartData" :svg-defs="svgDefs" :y-domain="yDomain">
-                <VisArea
-                    :x="xAccessor"
-                    :y="yAccessors"
-                    :color="areaColors"
-                    :opacity="1"
-                    curve-type="monotoneX"
-                />
-                <VisLine
+                <template v-if="shape === 'line'">
+                    <VisArea
+                        :x="xAccessor"
+                        :y="yAccessors"
+                        :color="areaColors"
+                        :opacity="1"
+                        curve-type="monotoneX"
+                        :duration="0"
+                    />
+                    <VisLine
+                        :x="xAccessor"
+                        :y="yAccessors"
+                        :color="lineColors"
+                        :line-width="2"
+                        curve-type="monotoneX"
+                        :duration="0"
+                    />
+                </template>
+                <VisGroupedBar
+                    v-else
                     :x="xAccessor"
                     :y="yAccessors"
                     :color="lineColors"
-                    :line-width="2"
-                    curve-type="monotoneX"
+                    :bar-padding="0.3"
+                    :rounded-corners="2"
+                    :duration="0"
                 />
                 <VisAxis
                     type="x"
@@ -158,6 +213,8 @@ const tooltipTemplate = (d: { bucket: string; value: number }): string =>
                     :tick-line="false"
                 />
                 <ChartCrosshair
+                    :x="xAccessor"
+                    :y="yAccessors"
                     :template="tooltipTemplate"
                     :color="lineColors"
                     :circle-radius="CROSSHAIR_CIRCLE_RADIUS"
