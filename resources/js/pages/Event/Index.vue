@@ -168,16 +168,20 @@ const refresh = (value: typeof range.value) => {
             </template>
 
             <!--
-                The table owns its scrolling, both ways. That keeps the metrics
-                and the chart above still while you reach the last column, and
-                it is also what makes the infinite scroll work: Inertia finds
-                the scroll container by walking up from `items-element`, so a
-                wrapper that scrolls sideways but not down would swallow it.
+                This wrapper is the only scroll container on the screen, and it
+                scrolls both ways. Sideways it keeps the metrics and the chart
+                still while you reach the last column; downwards it is what
+                Inertia finds by walking up from `items-element`, so a wrapper
+                that scrolled sideways only would swallow the infinite scroll.
+                `min-w-0` is what makes the sideways part work at all: without
+                it the flex child sizes to the table and pushes the overflow
+                back out to the page.
 
                 `items-element` is required — without it Inertia has nowhere to
                 append the next page and it replaces the rows instead.
             -->
-            <InfiniteScroll
+            <div class="min-h-0 min-w-0 flex-1 overflow-auto pb-px">
+                <InfiniteScroll
                     data="table"
                     items-element="#events-body"
                     preserve-url
@@ -336,7 +340,8 @@ const refresh = (value: typeof range.value) => {
                         </TableRow>
                     </TableBody>
                 </Table>
-            </InfiniteScroll>
+                </InfiniteScroll>
+            </div>
         </div>
     </AppLayout>
 </template>

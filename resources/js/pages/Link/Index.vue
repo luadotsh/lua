@@ -215,10 +215,14 @@ onMounted(() => {
 
         <div class="flex min-h-0 flex-1 flex-col">
             <template v-if="hasData">
-                <!-- The table owns its scrolling, both ways: that keeps the
-                     header row above it still, and Inertia finds the scroll
-                     container by walking up from `items-element`, so it has to
-                     be one that scrolls vertically. -->
+                <!-- This wrapper is the only scroll container on the screen,
+                     and it scrolls both ways: sideways so reaching the last
+                     column leaves the page header alone, downwards because
+                     Inertia finds the container by walking up from
+                     `items-element`. `min-w-0` is what makes the sideways part
+                     work — without it the flex child sizes to the table and
+                     pushes the overflow back out to the page. -->
+                <div class="min-h-0 min-w-0 flex-1 overflow-auto pb-px">
                 <InfiniteScroll
                     data="table"
                     items-element="#links-body"
@@ -396,6 +400,7 @@ onMounted(() => {
                             </TableBody>
                         </Table>
                 </InfiniteScroll>
+                </div>
             </template>
 
             <div v-else class="p-4 sm:p-6">
