@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\LinkStat;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Inertia\Inertia;
-
-use App\Models\User;
-use App\Models\LinkStat;
 
 class EventController extends Controller
 {
@@ -29,7 +26,13 @@ class EventController extends Controller
         $links = $query->paginate(config('app.pagination.default'))->withQueryString();
 
         return Inertia::render('Event/Index', [
-            'table' => $links,
+            /**
+             * Wrapped in `Inertia::scroll()` so the frontend `<InfiniteScroll>`
+             * can ask for the next page and have it appended. The pagination
+             * itself is unchanged — this only marks the prop as one the client
+             * may extend.
+             */
+            'table' => Inertia::scroll(fn () => $links),
             'hasData' => LinkStat::where('workspace_id', $workspace->id)->exists(),
             'start' => $start->format('Y-m-d'),
             'end' => $end->format('Y-m-d'),

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import axios from "axios";
 import { onMounted, ref, watch } from "vue";
-import { router } from "@inertiajs/vue3";
+import { InfiniteScroll, router } from "@inertiajs/vue3";
 import AppLayout from "@/layouts/AppLayout.vue";
 import date from "@/date";
 
@@ -15,7 +15,6 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import Pagination from "@/components/Pagination.vue";
 import StatHeader from "@/components/analytics/StatHeader.vue";
 import TimeseriesChart, {
     type TimeseriesPoint,
@@ -24,12 +23,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { MetricKey, Overview } from "@/lib/metrics";
 import { statistics } from "@/routes/analytics";
 import Header from "./Header.vue";
-
-interface Column {
-    key: string;
-    label: string;
-    show: boolean;
-}
 
 interface EventLink {
     link: string;
@@ -74,24 +67,26 @@ const range = ref({
     group: "day",
 });
 
-const columns = ref<Column[]>([
-    { key: "event", label: "Event", show: true },
-    { key: "link", label: "Link", show: true },
-    { key: "country", label: "Country", show: true },
-    { key: "region", label: "Region", show: true },
-    { key: "city", label: "City", show: false },
-    { key: "device", label: "Device", show: true },
-    { key: "browser", label: "Browser", show: true },
-    { key: "os", label: "OS", show: true },
-    { key: "date", label: "Date", show: true },
-    { key: "language", label: "Language", show: false },
-    { key: "utm_medium", label: "Utm Medium", show: false },
-    { key: "utm_source", label: "Utm Source", show: false },
-    { key: "utm_campaign", label: "Utm Campaign", show: false },
-    { key: "utm_content", label: "Utm Content", show: false },
-    { key: "utm_term", label: "Utm Term", show: false },
-    { key: "referer", label: "Referer", show: false },
-]);
+// Every column, always. The picker that used to hide most of them was one more
+// thing to configure before the screen told you anything.
+const COLUMNS = [
+    { key: "event", label: "Event" },
+    { key: "link", label: "Link" },
+    { key: "country", label: "Country" },
+    { key: "region", label: "Region" },
+    { key: "city", label: "City" },
+    { key: "device", label: "Device" },
+    { key: "browser", label: "Browser" },
+    { key: "os", label: "OS" },
+    { key: "date", label: "Date" },
+    { key: "language", label: "Language" },
+    { key: "utm_source", label: "UTM source" },
+    { key: "utm_medium", label: "UTM medium" },
+    { key: "utm_campaign", label: "UTM campaign" },
+    { key: "utm_content", label: "UTM content" },
+    { key: "utm_term", label: "UTM term" },
+    { key: "referer", label: "Referrer" },
+] as const;
 
 // The same endpoint the analytics screen reads, so the two never disagree
 // about what a click or a scan is.
@@ -130,65 +125,74 @@ const refresh = (value: typeof range.value) => {
 </script>
 
 <template>
-    <AppLayout title="Events">
+    <AppLayout title="Events" full-width>
         <template #header-actions>
-            <Header
-                :columns="columns"
-                :range="range"
-                @update:columns="columns = $event"
-                @update:range="refresh"
-            />
+            <Header :range="range" @update:range="refresh" />
         </template>
 
-        <div class="flex flex-col gap-4 p-4 lg:p-6">
+        <!-- No padding: the app already draws the card these sit in, so the
+             blocks run edge to edge and are separated by rules rather than by
+             a second set of rounded borders. -->
+        <div class="flex flex-col">
             <template v-if="overview">
-                <StatHeader v-model="metric" :overview="overview" />
+                <StatHeader v-model="metric" :overview="overview" flush />
                 <TimeseriesChart
                     :series="timeseries"
                     :metric="metric"
                     :group="range.group"
+                    flush
                 />
             </template>
             <template v-else>
-                <Skeleton class="h-[104px] w-full rounded-lg" />
-                <Skeleton class="h-[324px] w-full rounded-lg" />
+                <Skeleton class="h-[104px] w-full" />
+                <Skeleton class="h-[324px] w-full" />
             </template>
 
-            <div class="rounded-md border">
+            <!--
+                No scroller of its own: the page is what scrolls, so the sticky
+                header anchors just below the app header. A wrapper with
+                overflow here would give `top-0` the wrong thing to stick to.
+
+                `items-element` is required — without it Inertia has nowhere to
+                append the next page and it replaces the rows instead.
+            -->
+            <InfiniteScroll data="table" items-element="#events-body" preserve-url>
                 <Table>
-                    <TableHeader>
+                    <TableHeader sticky>
                         <TableRow>
-                            <TableHead v-for="column in columns.filter((c) => c.show)" :key="column.key">
+                            <TableHead
+                                v-for="column in COLUMNS"
+                                :key="column.key"
+                                class="whitespace-nowrap"
+                            >
                                 {{ column.label }}
                             </TableHead>
                         </TableRow>
                     </TableHeader>
-                    <TableBody>
+                    <TableBody id="events-body">
                         <TableRow v-for="event in table.data" :key="event.id">
-                            <TableCell v-if="columns.find((c) => c.key === 'event' && c.show)">{{ event.event }}</TableCell>
-                            <TableCell v-if="columns.find((c) => c.key === 'link' && c.show)">{{ event.link.link }}</TableCell>
-                            <TableCell v-if="columns.find((c) => c.key === 'country' && c.show)">{{ event.country }}</TableCell>
-                            <TableCell v-if="columns.find((c) => c.key === 'region' && c.show)">{{ event.region }}</TableCell>
-                            <TableCell v-if="columns.find((c) => c.key === 'city' && c.show)">{{ event.city }}</TableCell>
-                            <TableCell v-if="columns.find((c) => c.key === 'device' && c.show)">{{ event.device }}</TableCell>
-                            <TableCell v-if="columns.find((c) => c.key === 'browser' && c.show)">{{ event.browser }}</TableCell>
-                            <TableCell v-if="columns.find((c) => c.key === 'os' && c.show)">{{ event.os }}</TableCell>
-                            <TableCell v-if="columns.find((c) => c.key === 'date' && c.show)">{{ date.formatDateTime(event.created_at) }}</TableCell>
-                            <TableCell v-if="columns.find((c) => c.key === 'language' && c.show)">{{ event.language }}</TableCell>
-                            <TableCell v-if="columns.find((c) => c.key === 'utm_medium' && c.show)">{{ event.utm_medium }}</TableCell>
-                            <TableCell v-if="columns.find((c) => c.key === 'utm_source' && c.show)">{{ event.utm_source }}</TableCell>
-                            <TableCell v-if="columns.find((c) => c.key === 'utm_campaign' && c.show)">{{ event.utm_campaign }}</TableCell>
-                            <TableCell v-if="columns.find((c) => c.key === 'utm_content' && c.show)">{{ event.utm_content }}</TableCell>
-                            <TableCell v-if="columns.find((c) => c.key === 'utm_term' && c.show)">{{ event.utm_term }}</TableCell>
-                            <TableCell v-if="columns.find((c) => c.key === 'referer' && c.show)">{{ event.referer }}</TableCell>
+                            <TableCell class="whitespace-nowrap">{{ event.event }}</TableCell>
+                            <TableCell class="whitespace-nowrap">{{ event.link.link }}</TableCell>
+                            <TableCell>{{ event.country }}</TableCell>
+                            <TableCell class="whitespace-nowrap">{{ event.region }}</TableCell>
+                            <TableCell class="whitespace-nowrap">{{ event.city }}</TableCell>
+                            <TableCell>{{ event.device }}</TableCell>
+                            <TableCell class="whitespace-nowrap">{{ event.browser }}</TableCell>
+                            <TableCell class="whitespace-nowrap">{{ event.os }}</TableCell>
+                            <TableCell class="whitespace-nowrap">
+                                {{ date.formatDateTime(event.created_at) }}
+                            </TableCell>
+                            <TableCell>{{ event.language }}</TableCell>
+                            <TableCell class="whitespace-nowrap">{{ event.utm_source }}</TableCell>
+                            <TableCell class="whitespace-nowrap">{{ event.utm_medium }}</TableCell>
+                            <TableCell class="whitespace-nowrap">{{ event.utm_campaign }}</TableCell>
+                            <TableCell class="whitespace-nowrap">{{ event.utm_content }}</TableCell>
+                            <TableCell class="whitespace-nowrap">{{ event.utm_term }}</TableCell>
+                            <TableCell class="max-w-xs truncate">{{ event.referer }}</TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>
-            </div>
+            </InfiniteScroll>
         </div>
-
-        <template v-if="table.next_page_url" #pagination>
-            <Pagination :data="table" />
-        </template>
     </AppLayout>
 </template>

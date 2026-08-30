@@ -24,6 +24,8 @@ const props = defineProps<{
     series: TimeseriesPoint[];
     metric: MetricKey;
     group: string;
+    /** Edge to edge, with only a rule underneath. See StatHeader. */
+    flush?: boolean;
 }>();
 
 const CROSSHAIR_CIRCLE_RADIUS = 4;
@@ -111,7 +113,12 @@ const tooltipTemplate = (d: { bucket: string; value: number }): string =>
 </script>
 
 <template>
-    <div class="rounded-lg border border-border bg-card p-4">
+    <div
+        :class="cn(
+            'bg-card p-4',
+            flush ? 'border-b border-border' : 'rounded-lg border border-border',
+        )"
+    >
         <div class="mb-2 flex items-center justify-between gap-3">
             <h2 class="text-sm font-medium text-foreground">
                 {{ metricLabels[metric] }} over time

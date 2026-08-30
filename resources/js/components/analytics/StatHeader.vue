@@ -12,13 +12,26 @@ import { cn } from '@/lib/utils';
 
 defineProps<{
     overview: Overview;
+    /**
+     * Edge to edge, with only the dividers between cards. For screens whose
+     * content already sits inside the app's own card, where a second rounded
+     * border around this one is a border too many.
+     */
+    flush?: boolean;
 }>();
 
 const selected = defineModel<MetricKey>({ required: true });
 </script>
 
 <template>
-    <div class="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-border bg-border lg:grid-cols-4">
+    <div
+        :class="cn(
+            'grid grid-cols-2 gap-px bg-border lg:grid-cols-4',
+            flush
+                ? 'border-b border-border'
+                : 'overflow-hidden rounded-lg border border-border',
+        )"
+    >
         <button
             v-for="(metric, key) in overview"
             :key="key"
