@@ -1,12 +1,18 @@
 <script setup lang="ts">
 import { CalendarDate, getLocalTimeZone } from "@internationalized/date"
 import type { DateValue } from "reka-ui"
-import { IconCalendar, IconX } from "@tabler/icons-vue"
+import { IconCalendar } from "@tabler/icons-vue"
 import { computed, ref, shallowRef, watch } from "vue"
 import { Button } from "@/components/ui/button"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
-import { Input } from "@/components/ui/input"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 import date from "@/date"
 import dayjs from "@/dayjs"
@@ -16,65 +22,103 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-    'update:modelValue': [value: string]
+    "update:modelValue": [value: string]
 }>()
 
 const isOpen = ref(false)
 
-const selectedDate = shallowRef<DateValue | undefined>(
-    props.modelValue ? toCalendarDate(props.modelValue) : undefined
-)
-const timeValue = ref<string>(
-    props.modelValue ? dayjs(props.modelValue).format("HH:mm") : "00:00"
-)
-
-function toCalendarDate(value: string) {
-    const d = dayjs(value)
-    return new CalendarDate(d.year(), d.month() + 1, d.date())
-}
-
-const displayLabel = computed(() => {
-    if (!props.modelValue) return null
-    return dayjs(props.modelValue).format("MMM D, YYYY HH:mm")
-})
-
-watch(selectedDate, (newDate) => {
-    if (!newDate) return
-    const d = newDate.toDate(getLocalTimeZone())
-    const [h, m] = timeValue.value.split(":").map(Number)
-    const result = dayjs(d).hour(h).minute(m)
-    emit("update:modelValue", result.format("YYYY-MM-DDTHH:mm"))
-})
-
-watch(timeValue, (newTime) => {
-    if (!selectedDate.value) return
-    const d = selectedDate.value.toDate(getLocalTimeZone())
-    const [h, m] = newTime.split(":").map(Number)
-    const result = dayjs(d).hour(h).minute(m)
-    emit("update:modelValue", result.format("YYYY-MM-DDTHH:mm"))
-})
-
-watch(() => props.modelValue, (val) => {
-    if (!val) {
-        selectedDate.value = undefined
-        timeValue.value = "00:00"
-    } else {
-        selectedDate.value = toCalendarDate(val)
-        timeValue.value = dayjs(val).format("HH:mm")
-    }
-})
+/**
+ * The picker stages its own date and time and only reports back when the user
+ * confirms, so opening it to look at a date cannot change one. Shaped after
+ * `PickTimePopover` in `~/Herd/trypost`.
+ */
+const selectedDate = shallowRef<DateValue | undefined>()
+const selectedHour = ref("00")
+const selectedMinute = ref("00")
 
 const timezoneAbbr = date.getTimezoneAbbr()
 
-// Expiring a link in the past is legal — it just means "already expired" — but
-// it is far more often a slip, so say so rather than block it.
-const isPast = computed(
-    () => Boolean(props.modelValue) && dayjs(props.modelValue).isBefore(dayjs()),
+const hours = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, "0"))
+
+/**
+ * Five-minute steps, plus whatever the stored value happens to be. A link can
+ * already expire at 12:37 — set through the API, or before this control looked
+ * like this — and a list without it would render blank and quietly round the
+ * time down on the next save.
+ */
+const minutes = computed(() => {
+    const steps = Array.from({ length: 12 }, (_, i) => (i * 5).toString().padStart(2, "0"))
+
+    return steps.includes(selectedMinute.value)
+        ? steps
+        : [...steps, selectedMinute.value].sort()
+})
+
+const toCalendarDate = (value: string) => {
+    const d = dayjs(value)
+
+    return new CalendarDate(d.year(), d.month() + 1, d.date())
+}
+
+const seed = () => {
+    if (props.modelValue) {
+        selectedDate.value = toCalendarDate(props.modelValue)
+        selectedHour.value = dayjs(props.modelValue).format("HH")
+        selectedMinute.value = dayjs(props.modelValue).format("mm")
+
+        return
+    }
+
+    selectedDate.value = undefined
+    selectedHour.value = "00"
+    selectedMinute.value = "00"
+}
+
+seed()
+
+// Reopening always starts from what is saved, discarding an abandoned edit.
+watch(isOpen, (open) => {
+    if (open) {
+        seed()
+    }
+})
+
+watch(() => props.modelValue, seed)
+
+const displayLabel = computed(() =>
+    props.modelValue ? dayjs(props.modelValue).format("MMM D, YYYY HH:mm") : null,
 )
 
-const clear = () => {
-    selectedDate.value = undefined
-    timeValue.value = "00:00"
+const staged = computed(() => {
+    if (!selectedDate.value) {
+        return null
+    }
+
+    const d = selectedDate.value.toDate(getLocalTimeZone())
+
+    return dayjs(d)
+        .hour(Number(selectedHour.value))
+        .minute(Number(selectedMinute.value))
+})
+
+// Expiring a link in the past is legal — it just means "already expired" — but
+// it is far more often a slip, so say so rather than block it.
+const isPast = computed(() => Boolean(staged.value?.isBefore(dayjs())))
+
+const confirm = () => {
+    if (!staged.value) {
+        return
+    }
+
+    emit("update:modelValue", staged.value.format("YYYY-MM-DDTHH:mm"))
+    isOpen.value = false
+}
+
+const cancel = () => {
+    isOpen.value = false
+}
+
+const remove = () => {
     emit("update:modelValue", "")
     isOpen.value = false
 }
@@ -91,36 +135,60 @@ const clear = () => {
                 <span>{{ displayLabel ?? 'Pick a date and time' }}</span>
             </Button>
         </PopoverTrigger>
+
         <PopoverContent class="w-auto p-0" align="start">
             <!-- month-and-year, not just arrows: an expiry a year out would
                  otherwise be twelve clicks. -->
             <Calendar v-model="selectedDate" layout="month-and-year" initial-focus />
 
             <div class="border-t border-border p-3">
-                <div class="flex items-center gap-2">
+                <div class="flex flex-wrap items-center gap-2">
                     <span class="shrink-0 text-sm text-muted-foreground">Time</span>
-                    <Input type="time" v-model="timeValue" class="h-8 text-sm" />
-                    <span
-                        v-if="timezoneAbbr"
-                        class="shrink-0 text-xs text-muted-foreground"
-                    >
+                    <Select v-model="selectedHour">
+                        <SelectTrigger class="w-[84px]">
+                            <SelectValue placeholder="HH" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem v-for="h in hours" :key="h" :value="h">{{ h }}</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <span class="text-muted-foreground">:</span>
+                    <Select v-model="selectedMinute">
+                        <SelectTrigger class="w-[84px]">
+                            <SelectValue placeholder="MM" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem v-for="m in minutes" :key="m" :value="m">{{ m }}</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <span v-if="timezoneAbbr" class="ml-1 shrink-0 text-xs text-muted-foreground">
                         {{ timezoneAbbr }}
                     </span>
-                    <Button
-                        v-if="modelValue"
-                        variant="ghost"
-                        size="icon"
-                        class="h-8 w-8 shrink-0"
-                        @click="clear"
-                    >
-                        <IconX class="size-4" />
-                        <span class="sr-only">Clear</span>
-                    </Button>
                 </div>
 
                 <p v-if="isPast" class="mt-2 text-xs font-medium text-destructive">
                     This is in the past — the link will already be expired.
                 </p>
+            </div>
+
+            <div class="flex items-center justify-between gap-2 border-t border-border p-3">
+                <Button
+                    v-if="modelValue"
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    class="text-destructive hover:text-destructive"
+                    @click="remove"
+                >
+                    Remove
+                </Button>
+                <Button v-else type="button" variant="ghost" size="sm" @click="cancel">
+                    Cancel
+                </Button>
+
+                <Button type="button" size="sm" :disabled="!selectedDate" @click="confirm">
+                    Pick time
+                </Button>
             </div>
         </PopoverContent>
     </Popover>
