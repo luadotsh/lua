@@ -4,16 +4,12 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\Queueable;
-
-use App\Services\UserAgentService;
-
 use App\Enums\LinkStat\Event;
-
 use App\Models\Link;
 use App\Models\LinkStat;
-
+use App\Services\UserAgentService;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 use Stevebauman\Location\Facades\Location;
 
 class ProcessLinkStat implements ShouldQueue
@@ -38,7 +34,7 @@ class ProcessLinkStat implements ShouldQueue
      */
     public function handle(): void
     {
-        $service = new UserAgentService();
+        $service = new UserAgentService;
 
         // user geo
         $geo = Location::get($this->ip) ?: null;
@@ -61,11 +57,6 @@ class ProcessLinkStat implements ShouldQueue
             'utm_content' => $this->utms['utm_content'],
             'utm_term' => $this->utms['utm_term'],
             'ip' => $this->ip,
-        ]);
-
-        $this->link->update([
-            'clicks' => $this->link->clicks + 1,
-            'last_click' => now(),
         ]);
     }
 }

@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Actions\Link\GetLink;
 use App\Actions\Link\ListLinks;
+use App\Enums\LinkStat\Event;
 use App\Models\Link;
 use App\Models\LinkStat;
 use App\Models\Tag;
@@ -246,4 +248,55 @@ it('lists only that link events on its dashboard', function () {
     $this->actingAs($this->user)
         ->get(route('links.show', $mine->id))
         ->assertInertia(fn (Assert $page) => $page->has('table.data', 2));
+});
+
+it('counts a link clicks from its events rather than from a column', function () {
+    $workspace = $this->user->currentWorkspace;
+    $link = Link::factory()->create(['workspace_id' => $workspace->id]);
+
+    LinkStat::factory()->count(3)->create([
+        'workspace_id' => $workspace->id,
+        'link_id' => $link->id,
+        'event' => Event::CLICK,
+    ]);
+
+    // A scan is not a click: the dashboard has always drawn that line, and the
+    // counter this replaced did not.
+    LinkStat::factory()->count(2)->create([
+        'workspace_id' => $workspace->id,
+        'link_id' => $link->id,
+        'event' => Event::QR_SCAN,
+    ]);
+
+    $listed = ListLinks::execute($workspace)->firstWhere('id', $link->id);
+
+    expect($listed->clicks)->toBe(3)
+        ->and($listed->last_click)->not->toBeNull();
+});
+
+it('reports no clicks for a link nothing has reached', function () {
+    $link = Link::factory()->create([
+        'workspace_id' => $this->user->currentWorkspace->id,
+    ]);
+
+    $listed = ListLinks::execute($this->user->currentWorkspace)->firstWhere('id', $link->id);
+
+    expect($listed->clicks)->toBe(0)
+        ->and($listed->last_click)->toBeNull();
+});
+
+it('counts one click per event even when two arrive at once', function () {
+    $workspace = $this->user->currentWorkspace;
+    $link = Link::factory()->create(['workspace_id' => $workspace->id]);
+
+    // The counter this replaced read, added one and wrote back, so two jobs
+    // running together both stored the same total and one click vanished.
+    // Counting cannot lose one.
+    LinkStat::factory()->count(50)->create([
+        'workspace_id' => $workspace->id,
+        'link_id' => $link->id,
+        'event' => Event::CLICK,
+    ]);
+
+    expect(GetLink::execute($workspace, $link->id)->clicks)->toBe(50);
 });

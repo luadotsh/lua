@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\Link\Os;
+use App\Enums\LinkStat\Event;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -37,8 +39,6 @@ class Link extends Model
         'utm_campaign',
         'utm_term',
         'utm_content',
-        'clicks',
-        'last_click',
         'external_id',
         'password',
         'expires_at',
@@ -75,8 +75,10 @@ class Link extends Model
             // Encrypted, not hashed: the owner has to be able to read back the
             // password they set in order to share it.
             'password' => 'encrypted',
-            'last_click' => 'datetime',
             'expires_at' => 'datetime',
+            // Not a column: withClickTotals() selects it, and the cast is what
+            // keeps it serialising as it did when it was one.
+            'last_click' => 'datetime',
             'os' => Os::class,
         ];
     }
@@ -105,6 +107,29 @@ class Link extends Model
     public function linkStats(): HasMany
     {
         return $this->hasMany(LinkStat::class);
+    }
+
+    /**
+     * Adds `clicks` and `last_click`, counted from the events themselves.
+     *
+     * These used to be columns kept in step by the tracking job, which meant
+     * they could drift from the events and, being a read-modify-write, quietly
+     * lost a click whenever two arrived at once. Counting means the number is
+     * the events by definition.
+     *
+     * A QR scan is not a click here, matching what the dashboard means by the
+     * word — the old counter incremented on both.
+     *
+     * @param  Builder<Link>  $query
+     * @return Builder<Link>
+     */
+    public function scopeWithClickTotals(Builder $query): Builder
+    {
+        $clicks = fn ($stats) => $stats->where('event', Event::CLICK->value);
+
+        return $query
+            ->withCount(['linkStats as clicks' => $clicks])
+            ->withMax(['linkStats as last_click' => $clicks], 'created_at');
     }
 
     public function tags(): BelongsToMany

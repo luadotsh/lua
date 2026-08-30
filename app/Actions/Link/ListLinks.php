@@ -45,6 +45,7 @@ class ListLinks
         $perPage = min(max($perPage, 1), 100);
 
         return Link::where('workspace_id', $workspace->id)
+            ->withClickTotals()
             ->with('tags')
             // whereLike is case-insensitive by default, which a raw LIKE is
             // not on Postgres: searching "GitHub" used to miss "github.com".

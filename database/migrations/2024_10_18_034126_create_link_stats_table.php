@@ -38,6 +38,12 @@ return new class extends Migration
             $table->string('referer', 900)->nullable();
 
             $table->timestamps();
+
+            // A link's own totals are read on every page of the links list, and
+            // the dashboard slices the workspace by period. Without these two
+            // both are a sequential scan of every event ever recorded.
+            $table->index(['link_id', 'event']);
+            $table->index(['workspace_id', 'created_at']);
         });
     }
 

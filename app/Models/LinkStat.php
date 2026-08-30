@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\LinkStat\Event;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
-use App\Enums\LinkStat\Event;
 
 class LinkStat extends Model
 {
@@ -57,7 +56,6 @@ class LinkStat extends Model
     protected function casts(): array
     {
         return [
-            'last_click' => 'datetime',
             'event' => Event::class,
         ];
     }

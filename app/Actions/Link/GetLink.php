@@ -17,6 +17,7 @@ class GetLink
     {
         return Link::where('workspace_id', $workspace->id)
             ->with('tags')
+            ->withClickTotals()
             ->find($id);
     }
 }

@@ -37,8 +37,6 @@ class LinkFactory extends Factory
             // appends whatever is here to the destination — a factory that
             // always filled them made every redirect assertion carry five
             // parameters nobody asked for.
-            'clicks' => $this->faker->randomNumber(),
-            'last_click' => $this->faker->dateTime,
         ];
     }
 }

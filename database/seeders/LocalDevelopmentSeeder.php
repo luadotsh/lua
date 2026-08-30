@@ -39,8 +39,6 @@ class LocalDevelopmentSeeder extends Seeder
         $links = collect(range(1, self::LINKS))->map(function (int $i) use ($workspace, $tags): Link {
             $link = Link::factory()->create([
                 'workspace_id' => $workspace->id,
-                'clicks' => 0,
-                'last_click' => null,
                 // Spread over four months so "Created" is not one timestamp.
                 'created_at' => now()->subMinutes(random_int(0, 60 * 24 * 120)),
 
@@ -110,13 +108,6 @@ class LocalDevelopmentSeeder extends Seeder
                 'workspace_id' => $workspace->id,
                 'created_at' => $date,
             ])->create();
-        }
-
-        // One pass at the end rather than a save per stat.
-        foreach ($links as $link) {
-            $link->clicks = LinkStat::where('link_id', $link->id)->count();
-            $link->last_click = LinkStat::where('link_id', $link->id)->max('created_at');
-            $link->save();
         }
     }
 }

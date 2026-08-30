@@ -28,9 +28,6 @@ return new class extends Migration
             $table->string('utm_content')->nullable();
             $table->string('utm_name')->nullable();
 
-            $table->unsignedBigInteger('clicks')->default(0);
-            $table->dateTime('last_click')->nullable();
-
             $table->string('external_id')->nullable();
             // Encrypted at rest, so the column holds ciphertext rather than
             // the 255 characters a password would need.
