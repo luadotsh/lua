@@ -5,9 +5,11 @@ declare(strict_types=1);
 use App\Actions\Analytics\GetBreakdown;
 use App\Actions\Analytics\GetOverview;
 use App\Actions\Analytics\GetTimeseries;
+use App\Actions\Analytics\ResolveFilters;
 use App\Enums\LinkStat\Event;
 use App\Models\Link;
 use App\Models\LinkStat;
+use App\Models\User;
 use App\Models\Workspace;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -140,7 +142,7 @@ it('ranks the busiest links', function () {
 });
 
 it('serves the whole dashboard in one call', function () {
-    $user = App\Models\User::factory()->withWorkspace()->create();
+    $user = User::factory()->withWorkspace()->create();
     $link = Link::factory()->create(['workspace_id' => $user->current_workspace_id]);
 
     hit($user->currentWorkspace, $link, ['country' => 'BR', 'browser' => 'Chrome']);
@@ -161,4 +163,87 @@ it('serves the whole dashboard in one call', function () {
 
     expect($response->json('overview.events.value'))->toBe(1)
         ->and($response->json('breakdowns.locations.0.rows.0.value'))->toBe('BR');
+});
+
+it('keeps only known dimensions and drops empty or unsafe values', function () {
+    $filters = ResolveFilters::execute([
+        'country' => 'BR',
+        'browser' => ['Chrome', '', 'Chrome', 'Safari'],
+        'start' => '2026-01-01',
+        'nonsense' => 'x',
+        'city' => "bad\0byte",
+        'os' => [],
+    ]);
+
+    expect($filters)->toBe([
+        'country' => ['BR'],
+        'browser' => ['Chrome', 'Safari'],
+    ]);
+});
+
+it('orders filters by dimension rather than by query string', function () {
+    $filters = ResolveFilters::execute(['browser' => 'Chrome', 'referer' => 'https://x.com/']);
+
+    expect(array_keys($filters))->toBe(['referer', 'browser']);
+});
+
+it('shapes filters as a list the frontend can render without branching', function () {
+    expect(ResolveFilters::toActive(['country' => ['BR', 'PT']]))
+        ->toBe([['dimension' => 'country', 'values' => ['BR', 'PT']]]);
+});
+
+it('narrows the overview, the chart and every breakdown to a filter', function () {
+    hit($this->workspace, $this->link, ['country' => 'BR', 'browser' => 'Chrome']);
+    hit($this->workspace, $this->link, ['country' => 'BR', 'browser' => 'Safari']);
+    hit($this->workspace, $this->link, ['country' => 'PT', 'browser' => 'Chrome']);
+
+    $filters = ['country' => ['BR']];
+
+    $overview = GetOverview::execute($this->workspace, $this->start, $this->end, $filters);
+    expect($overview['events']['value'])->toBe(2);
+
+    $timeseries = GetTimeseries::execute(
+        $this->workspace,
+        $this->start,
+        $this->end,
+        'day',
+        'UTC',
+        $filters,
+    );
+    expect($timeseries->sum('events'))->toBe(2);
+
+    // A filter narrows its own card too: the country list shows Brazil alone.
+    $countries = GetBreakdown::execute($this->workspace, 'country', $this->start, $this->end, $filters);
+    expect($countries->pluck('value')->all())->toBe(['BR']);
+
+    $browsers = GetBreakdown::execute($this->workspace, 'browser', $this->start, $this->end, $filters);
+    expect($browsers->pluck('value')->sort()->values()->all())->toBe(['Chrome', 'Safari']);
+
+    expect(GetBreakdown::links($this->workspace, $this->start, $this->end, $filters)->first()['events'])
+        ->toBe(2);
+});
+
+it('combines two filters rather than replacing one with the other', function () {
+    hit($this->workspace, $this->link, ['country' => 'BR', 'browser' => 'Chrome']);
+    hit($this->workspace, $this->link, ['country' => 'BR', 'browser' => 'Safari']);
+    hit($this->workspace, $this->link, ['country' => 'PT', 'browser' => 'Chrome']);
+
+    $overview = GetOverview::execute($this->workspace, $this->start, $this->end, [
+        'country' => ['BR'],
+        'browser' => ['Chrome'],
+    ]);
+
+    expect($overview['events']['value'])->toBe(1);
+});
+
+it('widens a dimension when it holds several values', function () {
+    hit($this->workspace, $this->link, ['country' => 'BR']);
+    hit($this->workspace, $this->link, ['country' => 'PT']);
+    hit($this->workspace, $this->link, ['country' => 'ES']);
+
+    $overview = GetOverview::execute($this->workspace, $this->start, $this->end, [
+        'country' => ['BR', 'PT'],
+    ]);
+
+    expect($overview['events']['value'])->toBe(2);
 });

@@ -44,6 +44,7 @@ class GetBreakdown
      * The top values for one dimension, with the share each holds of the
      * period's total, so a row reads without needing the total beside it.
      *
+     * @param  array<string, list<string>>  $filters
      * @return Collection<int, array{value: string, country: string|null, events: int, visitors: int, share: float}>
      */
     public static function execute(
@@ -51,6 +52,7 @@ class GetBreakdown
         string $dimension,
         CarbonImmutable $start,
         CarbonImmutable $end,
+        array $filters = [],
         int $limit = 10,
     ): Collection {
         $column = self::DIMENSIONS[$dimension]
@@ -60,6 +62,11 @@ class GetBreakdown
             ->whereBetween('created_at', [$start, $end])
             ->whereNotNull($column)
             ->where($column, '!=', '');
+
+        // A filter narrows every card, its own included: filtering to Brazil
+        // and still seeing the other countries listed would say the filter had
+        // not taken.
+        ApplyFilters::execute($base->getQuery(), $filters);
 
         $total = (clone $base)->count();
 
@@ -95,16 +102,22 @@ class GetBreakdown
      * The top links themselves, which are a breakdown by relation rather than
      * by column.
      *
+     * @param  array<string, list<string>>  $filters
      * @return Collection<int, array{value: string, url: string, events: int, visitors: int, share: float}>
      */
     public static function links(
         Workspace $workspace,
         CarbonImmutable $start,
         CarbonImmutable $end,
+        array $filters = [],
         int $limit = 10,
     ): Collection {
         $base = LinkStat::where('link_stats.workspace_id', $workspace->id)
             ->whereBetween('link_stats.created_at', [$start, $end]);
+
+        // Qualified: this query joins links, and every filtered column lives on
+        // link_stats.
+        ApplyFilters::execute($base->getQuery(), $filters, 'link_stats.');
 
         $total = (clone $base)->count();
 

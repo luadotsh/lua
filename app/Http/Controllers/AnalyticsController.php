@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Actions\Analytics\GetBreakdown;
 use App\Actions\Analytics\GetOverview;
 use App\Actions\Analytics\GetTimeseries;
+use App\Actions\Analytics\ResolveFilters;
 use App\Http\Requests\Analytics\StatisticsRequest;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
@@ -52,6 +53,9 @@ class AnalyticsController extends Controller
         return Inertia::render('Analytics/Index', [
             'start' => $start->toDateString(),
             'end' => $end->toDateString(),
+            // The URL is the filter state, so a narrowed dashboard is a link
+            // you can bookmark, share, or walk back out of.
+            'filters' => ResolveFilters::toActive(ResolveFilters::execute($request->query())),
         ]);
     }
 
@@ -65,20 +69,25 @@ class AnalyticsController extends Controller
         $end = CarbonImmutable::createFromFormat('Y-m-d', $request->validated('end'), $timezone)
             ->endOfDay()->setTimezone('UTC');
 
+        // Resolved from the raw bag rather than the validated one: the filter
+        // keys are an allowlist of dimensions, not a fixed set of fields.
+        $filters = ResolveFilters::execute($request->query());
+
         return response()->json([
-            'overview' => GetOverview::execute($workspace, $start, $end),
+            'overview' => GetOverview::execute($workspace, $start, $end, $filters),
             'timeseries' => GetTimeseries::execute(
                 $workspace,
                 $start,
                 $end,
                 $request->validated('group'),
                 $timezone,
+                $filters,
             ),
-            'links' => GetBreakdown::links($workspace, $start, $end),
+            'links' => GetBreakdown::links($workspace, $start, $end, $filters),
             'breakdowns' => collect(self::CARDS)
                 ->map(fn (array $tabs) => collect($tabs)->map(fn (array $tab) => [
                     ...$tab,
-                    'rows' => GetBreakdown::execute($workspace, $tab['key'], $start, $end),
+                    'rows' => GetBreakdown::execute($workspace, $tab['key'], $start, $end, $filters),
                 ])->values())
                 ->all(),
         ]);

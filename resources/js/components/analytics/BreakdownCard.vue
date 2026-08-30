@@ -1,9 +1,16 @@
 <script setup lang="ts">
+import { IconFilter } from '@tabler/icons-vue';
 import { computed, ref } from 'vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { formatCount } from '@/lib/metrics';
 
 export type BreakdownRow = {
@@ -21,6 +28,11 @@ export type BreakdownTab = {
     label: string;
     /** Undefined while loading; a tab rendering its own content leaves it unset. */
     rows?: BreakdownRow[];
+    /**
+     * The dimension a row filters by. A tab without one — the map, or the link
+     * list — offers no filter control at all.
+     */
+    filterDimension?: string;
 };
 
 const props = withDefaults(
@@ -43,7 +55,24 @@ const props = withDefaults(
     { skeletonRows: 5 },
 );
 
+const emit = defineEmits<{
+    filter: [payload: { dimension: string; row: BreakdownRow }];
+}>();
+
 const activeTab = ref(props.defaultTab ?? props.tabs[0]?.key ?? '');
+
+// "Direct" is a label the dashboard prints for an absent referrer, not a value
+// any column holds, so filtering by it would return nothing.
+const isFilterable = (tab: BreakdownTab, row: BreakdownRow): boolean =>
+    Boolean(tab.filterDimension) && row.value !== '' && row.value !== 'Direct';
+
+const applyFilter = (tab: BreakdownTab, row: BreakdownRow): void => {
+    if (!tab.filterDimension || !isFilterable(tab, row)) {
+        return;
+    }
+
+    emit('filter', { dimension: tab.filterDimension, row });
+};
 
 // A single tab needs no tab list — the title carries the card instead.
 const showTabList = computed(() => props.tabs.length > 1);
@@ -125,6 +154,23 @@ const showTabList = computed(() => props.tabs.length > 1);
                             <span
                                 class="relative z-10 flex shrink-0 items-center justify-end tabular-nums"
                             >
+                                <TooltipProvider v-if="isFilterable(tab, row)">
+                                    <Tooltip>
+                                        <TooltipTrigger as-child>
+                                            <button
+                                                type="button"
+                                                class="mr-1 flex size-5 shrink-0 cursor-pointer items-center justify-center rounded border border-border text-muted-foreground opacity-0 transition-opacity hover:text-foreground focus-visible:opacity-100 focus-visible:outline-none group-hover:opacity-100"
+                                                :aria-label="`Filter by ${row.value}`"
+                                                @click="applyFilter(tab, row)"
+                                            >
+                                                <IconFilter class="size-3" />
+                                            </button>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="left">
+                                            Filter by {{ row.value }}
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
                                 <!-- The count sits flush right, translated over the
                                      hidden share cell, and slides back to reveal it
                                      when the list is hovered. -->

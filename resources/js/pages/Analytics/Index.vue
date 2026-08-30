@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import { Head, usePage } from "@inertiajs/vue3";
+import { Head, router } from "@inertiajs/vue3";
 import axios from "axios";
 import { computed, onMounted, ref, watch } from "vue";
 import BreakdownCard, {
+    type BreakdownRow,
     type BreakdownTab,
 } from "@/components/analytics/BreakdownCard.vue";
+import FilterPills, {
+    type ActiveFilter,
+} from "@/components/analytics/FilterPills.vue";
 import { browserIconUrl } from "@/lib/browsers";
 import { countryFlagUrl, countryFor } from "@/lib/countries";
 import { deviceIconUrl } from "@/lib/devices";
@@ -21,7 +25,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import date from "@/date";
 import AppLayout from "@/layouts/AppLayout.vue";
 import type { MetricKey, Overview } from "@/lib/metrics";
-import { statistics } from "@/routes/analytics";
+import { index as analyticsRoute, statistics } from "@/routes/analytics";
 
 interface Range {
     timezone: string;
@@ -30,14 +34,75 @@ interface Range {
     end: string;
 }
 
+const props = defineProps<{
+    start: string;
+    end: string;
+    filters: ActiveFilter[];
+}>();
+
 type Breakdowns = Record<string, BreakdownTab[]>;
 
 const range = ref<Range>({
     timezone: date.getUserTimezone(),
     group: "day",
-    start: usePage().props.start as string,
-    end: usePage().props.end as string,
+    start: props.start,
+    end: props.end,
 });
+
+// The URL is the filter state. Every refine is a real visit, so a narrowed
+// dashboard can be bookmarked, shared and walked back out of with the browser's
+// own back button.
+const filterQuery = computed(() => {
+    const query: Record<string, string | string[]> = {};
+
+    for (const filter of props.filters) {
+        if (filter.values.length === 1) {
+            query[filter.dimension] = filter.values[0]!;
+        } else if (filter.values.length > 1) {
+            query[filter.dimension] = [...filter.values];
+        }
+    }
+
+    return query;
+});
+
+const navigate = (query: Record<string, string | string[]>) => {
+    router.get(
+        analyticsRoute.url({
+            query: { start: range.value.start, end: range.value.end, ...query },
+        }),
+        {},
+        // preserveState keeps each card on the tab you were reading and the
+        // header on the metric you had selected; without it a refine snaps
+        // every one of them back to its first.
+        { preserveState: true, preserveScroll: true },
+    );
+};
+
+const applyFilter = ({
+    dimension,
+    row,
+}: {
+    dimension: string;
+    row: BreakdownRow;
+}) => {
+    const query = { ...filterQuery.value, [dimension]: row.value };
+
+    // A region or city row carries the country it belongs to. Applying that as
+    // its own filter keeps two same-named cities in different countries apart.
+    if ((dimension === "region" || dimension === "city") && row.country) {
+        query.country = row.country;
+    }
+
+    navigate(query);
+};
+
+const removeFilter = (dimension: string) => {
+    const query = { ...filterQuery.value };
+    delete query[dimension];
+
+    navigate(query);
+};
 
 const metric = ref<MetricKey>("events");
 const loading = ref(true);
@@ -50,7 +115,9 @@ const load = async () => {
     loading.value = true;
 
     try {
-        const { data } = await axios.get(statistics.url({ query: range.value }));
+        const { data } = await axios.get(
+            statistics.url({ query: { ...range.value, ...filterQuery.value } }),
+        );
 
         overview.value = data.overview;
         timeseries.value = data.timeseries;
@@ -63,6 +130,7 @@ const load = async () => {
 
 onMounted(load);
 watch(range, load, { deep: true });
+watch(() => props.filters, load, { deep: true });
 
 const countryRows = computed(
     () => breakdowns.value.locations?.find((tab) => tab.key === "country")?.rows ?? [],
@@ -73,6 +141,13 @@ const locationTabs = computed<BreakdownTab[]>(() => [
     { key: "map", label: "Map" },
     ...(breakdowns.value.locations ?? []),
 ]);
+
+// A tab's key is its dimension, so every tab the server sends filters by
+// itself. The map is the exception: it renders a slot, not rows.
+const filterable = (tabs: BreakdownTab[]): BreakdownTab[] =>
+    tabs.map((tab) =>
+        tab.key === "map" ? tab : { ...tab, filterDimension: tab.key },
+    );
 
 const setRange = (next: Range) => {
     range.value = { ...next, timezone: date.getUserTimezone() };
@@ -112,6 +187,12 @@ const setRange = (next: Range) => {
             </template>
 
             <template v-else-if="overview">
+                <FilterPills
+                    :filters="filters"
+                    @remove="removeFilter"
+                    @clear="navigate({})"
+                />
+
                 <StatHeader v-model="metric" :overview="overview" flush />
 
                 <TimeseriesChart
@@ -145,8 +226,9 @@ const setRange = (next: Range) => {
                     <BreakdownCard
                         title="Sources"
                         empty-label="No referrers or campaigns yet."
-                        :tabs="breakdowns.sources ?? []"
+                        :tabs="filterable(breakdowns.sources ?? [])"
                         flush
+                        @filter="applyFilter"
                     >
                         <template #row="{ row, tab }">
                             <img
@@ -165,9 +247,10 @@ const setRange = (next: Range) => {
                     <BreakdownCard
                         title="Locations"
                         empty-label="No location data yet."
-                        :tabs="locationTabs"
+                        :tabs="filterable(locationTabs)"
                         default-tab="country"
                         flush
+                        @filter="applyFilter"
                     >
                         <template #content-map>
                             <VisitorsMap :rows="countryRows" />
@@ -191,8 +274,9 @@ const setRange = (next: Range) => {
                     <BreakdownCard
                         title="Devices"
                         empty-label="No device data yet."
-                        :tabs="breakdowns.devices ?? []"
+                        :tabs="filterable(breakdowns.devices ?? [])"
                         flush
+                        @filter="applyFilter"
                     >
                         <template #row="{ row, tab }">
                             <img
