@@ -26,6 +26,7 @@ import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { buildDestination } from "@/lib/destination";
+import dayjs from "@/dayjs";
 
 interface Tag {
     id: string | number;
@@ -131,11 +132,9 @@ const expirationSummary = computed(() => {
         return "";
     }
 
-    const on = new Date(props.expiresAtDate).toLocaleDateString(undefined, {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-    });
+    // Same face as the picker: the time is set to the minute, so hiding it left
+    // the row claiming a link expires on a day rather than at a moment.
+    const on = dayjs(props.expiresAtDate).format("MMM D, YYYY h:mm A");
 
     return props.form.expired_redirect_url
         ? `Expires ${on} · then redirects`
