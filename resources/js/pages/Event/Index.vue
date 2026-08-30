@@ -194,7 +194,7 @@ const refresh = (value: typeof range.value) => {
                                 v-for="column in COLUMNS"
                                 :key="column.key"
                                 class="whitespace-nowrap"
-                                :class="column.key === 'event' ? 'w-10' : ''"
+                                :class="column.key === 'event' ? 'w-10 text-center' : ''"
                             >
                                 {{ column.label }}
                             </TableHead>
@@ -205,7 +205,7 @@ const refresh = (value: typeof range.value) => {
                             <TableCell class="w-10">
                                 <Tooltip>
                                     <TooltipTrigger as-child>
-                                        <span class="inline-flex">
+                                        <span class="flex justify-center">
                                             <component
                                                 :is="eventIcon(event.event)"
                                                 class="size-4 text-muted-foreground"
