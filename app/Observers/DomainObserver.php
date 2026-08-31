@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Observers;
 
-use Illuminate\Support\Facades\Redis;
-
 use App\Models\Domain;
+use Illuminate\Support\Facades\Redis;
 
 class DomainObserver
 {
@@ -15,7 +14,8 @@ class DomainObserver
      */
     protected $redis;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->redis = Redis::connection('default');
     }
 
@@ -24,7 +24,7 @@ class DomainObserver
      */
     public function created(Domain $domain): void
     {
-        $this->redis->set($domain->domain, "lua.sha");
+        $this->redis->set($domain->domain, 'lua.sha');
 
     }
 
@@ -37,7 +37,7 @@ class DomainObserver
         $this->redis->del($domain->getOriginal('domain'));
 
         // set the new domain
-        $this->redis->set($domain->domain, "lua.sha");
+        $this->redis->set($domain->domain, 'lua.sha');
     }
 
     /**
@@ -46,21 +46,5 @@ class DomainObserver
     public function deleted(Domain $domain): void
     {
         $this->redis->del($domain->domain);
-    }
-
-    /**
-     * Handle the Domain "restored" event.
-     */
-    public function restored(Domain $domain): void
-    {
-        //
-    }
-
-    /**
-     * Handle the Domain "force deleted" event.
-     */
-    public function forceDeleted(Domain $domain): void
-    {
-        //
     }
 }

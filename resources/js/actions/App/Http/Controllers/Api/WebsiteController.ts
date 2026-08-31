@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\WebsiteController::__invoke
-* @see app/Http/Controllers/Api/WebsiteController.php:11
+* @see app/Http/Controllers/Api/WebsiteController.php:20
 * @route '/api/websites/favicon'
 */
 const WebsiteController = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ WebsiteController.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\WebsiteController::__invoke
-* @see app/Http/Controllers/Api/WebsiteController.php:11
+* @see app/Http/Controllers/Api/WebsiteController.php:20
 * @route '/api/websites/favicon'
 */
 WebsiteController.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ WebsiteController.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\WebsiteController::__invoke
-* @see app/Http/Controllers/Api/WebsiteController.php:11
+* @see app/Http/Controllers/Api/WebsiteController.php:20
 * @route '/api/websites/favicon'
 */
 WebsiteController.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ WebsiteController.get = (options?: RouteQueryOptions): RouteDefinition<'get'> =>
 
 /**
 * @see \App\Http\Controllers\Api\WebsiteController::__invoke
-* @see app/Http/Controllers/Api/WebsiteController.php:11
+* @see app/Http/Controllers/Api/WebsiteController.php:20
 * @route '/api/websites/favicon'
 */
 WebsiteController.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ WebsiteController.head = (options?: RouteQueryOptions): RouteDefinition<'head'> 
 
 /**
 * @see \App\Http\Controllers\Api\WebsiteController::__invoke
-* @see app/Http/Controllers/Api/WebsiteController.php:11
+* @see app/Http/Controllers/Api/WebsiteController.php:20
 * @route '/api/websites/favicon'
 */
 const WebsiteControllerForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const WebsiteControllerForm = (options?: RouteQueryOptions): RouteFormDefinition
 
 /**
 * @see \App\Http\Controllers\Api\WebsiteController::__invoke
-* @see app/Http/Controllers/Api/WebsiteController.php:11
+* @see app/Http/Controllers/Api/WebsiteController.php:20
 * @route '/api/websites/favicon'
 */
 WebsiteControllerForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ WebsiteControllerForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'
 
 /**
 * @see \App\Http\Controllers\Api\WebsiteController::__invoke
-* @see app/Http/Controllers/Api/WebsiteController.php:11
+* @see app/Http/Controllers/Api/WebsiteController.php:20
 * @route '/api/websites/favicon'
 */
 WebsiteControllerForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
