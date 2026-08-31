@@ -10,9 +10,11 @@ use App\Mcp\Tools\Invite\CreateInviteTool;
 use App\Mcp\Tools\Invite\DeleteInviteTool;
 use App\Mcp\Tools\Invite\ListInvitesTool;
 use App\Models\Invite;
+use App\Models\Plan;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
+use Inertia\Testing\AssertableInertia as Assert;
 
 uses(RefreshDatabase::class);
 
@@ -280,4 +282,58 @@ it('sends the invitation on its own queue so email never blocks a request', func
     $invite = Invite::factory()->create(['workspace_id' => $this->workspace->id]);
 
     expect((new SendUserInvite($this->workspace, $invite))->queue)->toBe('emails');
+});
+
+it('shows the invitation screen to whoever opens the link', function () {
+    $invite = Invite::factory()->create([
+        'workspace_id' => $this->workspace->id,
+        'email' => 'newcomer@example.com',
+    ]);
+
+    $this->get(route('auth.invites.show', $invite->id))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('Auth/Invitation')
+            ->where('email', 'newcomer@example.com')
+        );
+});
+
+it('404s an invitation link that no longer resolves', function () {
+    $this->get(route('auth.invites.show', '00000000-0000-0000-0000-000000000000'))
+        ->assertNotFound();
+});
+
+it('shows the invite form', function () {
+    $this->actingAs($this->user)
+        ->get(route('setting.invites.create'))
+        ->assertOk();
+});
+
+it('adds an existing account straight from the settings screen', function () {
+    User::factory()->create(['email' => 'known@example.com']);
+
+    $this->actingAs($this->user)
+        ->post(route('setting.invites.store'), [
+            'email' => 'known@example.com',
+            'role' => Role::ROLE_USER->value,
+        ])
+        ->assertRedirect();
+
+    // They already have an account, so they join rather than being emailed.
+    expect(Invite::count())->toBe(0)
+        ->and($this->workspace->fresh()->users)->toHaveCount(2);
+});
+
+it('turns away an invite once the plan allowance is used', function () {
+    $plan = Plan::factory()->create(['max_users' => 1]);
+    $this->workspace->update(['plan_id' => $plan->id]);
+
+    $this->actingAs($this->user)
+        ->post(route('setting.invites.store'), [
+            'email' => 'newcomer@example.com',
+            'role' => Role::ROLE_USER->value,
+        ])
+        ->assertRedirect(route('setting.team-members.index'));
+
+    expect(Invite::count())->toBe(0);
 });

@@ -11,6 +11,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Inertia\Testing\AssertableInertia as Assert;
 use Laravel\Passport\Passport;
 
 use function Pest\Laravel\actingAs;
@@ -241,4 +242,94 @@ it('deletes an api token through the settings screen', function () {
         ->assertRedirect();
 
     expect($token->fresh()->revoked)->toBeTrue();
+});
+
+it('lists the sessions this account has open', function () {
+    config(['session.driver' => 'database']);
+
+    DB::table('sessions')->insert([
+        'id' => 'other-session',
+        'user_id' => $this->user->id,
+        'ip_address' => '203.0.113.7',
+        'user_agent' => 'Firefox on Linux',
+        'payload' => '',
+        'last_activity' => now()->subMinutes(5)->timestamp,
+    ]);
+
+    $this->actingAs($this->user)
+        ->get(route('setting.authentication.edit'))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->has('sessions', 1)
+            ->where('sessions.0.ip_address', '203.0.113.7')
+            ->where('sessions.0.user_agent', 'Firefox on Linux')
+            ->where('sessions.0.is_current', false)
+            ->has('sessions.0.last_active')
+            ->etc()
+        );
+});
+
+it('lists no sessions when they are not kept in the database', function () {
+    // Nothing to list from an array or cookie driver, and the screen says so
+    // rather than guessing.
+    config(['session.driver' => 'array']);
+
+    $this->actingAs($this->user)
+        ->get(route('setting.authentication.edit'))
+        ->assertInertia(fn (Assert $page) => $page->has('sessions', 0)->etc());
+});
+
+it('reaches the workspace and the person a token was issued to', function () {
+    apiTokenFor($this->user, 'Deploy key');
+
+    $token = AccessToken::query()
+        ->where('workspace_id', $this->user->current_workspace_id)
+        ->firstOrFail();
+
+    expect($token->workspace->is($this->user->currentWorkspace))->toBeTrue()
+        ->and($token->user->is($this->user))->toBeTrue();
+});
+
+it('counts an expired mcp grant as no longer active', function () {
+    $client = Passport::client()->forceFill([
+        'id' => Str::uuid()->toString(),
+        'name' => 'Some MCP client',
+        'redirect_uris' => ['https://example.com/callback'],
+        'grant_types' => ['authorization_code', 'refresh_token'],
+        'revoked' => false,
+    ]);
+    $client->save();
+
+    $make = fn (?string $expires) => AccessToken::query()->create([
+        'id' => Str::random(80),
+        'user_id' => $this->user->id,
+        'client_id' => $client->id,
+        'workspace_id' => $this->user->current_workspace_id,
+        'scopes' => ['mcp:use'],
+        'revoked' => false,
+        'expires_at' => $expires,
+    ]);
+
+    expect($make(null)->isActiveMcpGrant())->toBeTrue()
+        ->and($make(now()->addDay()->toDateTimeString())->isActiveMcpGrant())->toBeTrue()
+        ->and($make(now()->subDay()->toDateTimeString())->isActiveMcpGrant())->toBeFalse();
+});
+
+it('refuses a password change without the current one', function () {
+    $this->actingAs($this->user)
+        ->put(route('setting.authentication.password'), [
+            'password' => 'new-password-123',
+            'password_confirmation' => 'new-password-123',
+        ])
+        ->assertSessionHasErrors('current_password');
+});
+
+it('refuses a password change when the current one is wrong', function () {
+    $this->actingAs($this->user)
+        ->put(route('setting.authentication.password'), [
+            'current_password' => 'not-my-password',
+            'password' => 'new-password-123',
+            'password_confirmation' => 'new-password-123',
+        ])
+        ->assertSessionHasErrors('current_password');
 });

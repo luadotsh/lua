@@ -35,3 +35,23 @@ it('falls back rather than guessing on an agent it cannot read', function () {
     expect($this->svc->getBrowser('something-else'))->toBe('Unknown')
         ->and($this->svc->getOS('something-else'))->toBe('Unknown');
 });
+
+it('summarises everything it can read off one request', function () {
+    $service = new UserAgentService;
+
+    $details = $service->getUserDetails(
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148 Safari/604.1',
+        ['pt-BR', 'en-US'],
+    );
+
+    expect($details)->toBe([
+        'browser' => 'Safari',
+        'os' => 'iOS',
+        'device' => 'Mobile',
+        'language' => 'pt-BR',
+    ]);
+});
+
+it('says so when the request carried no language at all', function () {
+    expect((new UserAgentService)->getLanguage([]))->toBe('Unknown Language');
+});

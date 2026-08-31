@@ -292,3 +292,34 @@ it('narrows the dashboard to a single link', function () {
             ->pluck('value')->sort()->values()->all())
         ->toBe(['BR', 'PT']);
 });
+
+it('buckets by the unit it was asked for', function (string $group, int $expected) {
+    hit($this->workspace, $this->link, ['created_at' => $this->end->subHour()]);
+
+    $series = GetTimeseries::execute(
+        $this->workspace,
+        $this->end->subHours(3),
+        $this->end,
+        $group,
+        'UTC',
+    );
+
+    // Each grouping walks the period with its own step, so a three-hour window
+    // is one month, four hours, or a wall of minutes.
+    expect($series)->toHaveCount($expected);
+})->with([
+    'hour' => ['hour', 4],
+    'month' => ['month', 1],
+]);
+
+it('caps a minute view so a long range cannot ask for a chart nothing can draw', function () {
+    $series = GetTimeseries::execute(
+        $this->workspace,
+        $this->end->subYear(),
+        $this->end,
+        'minute',
+        'UTC',
+    );
+
+    expect($series)->toHaveCount(1500);
+});

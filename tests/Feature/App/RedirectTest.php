@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Enums\Domain\Status;
+use App\Models\Domain;
 use App\Models\Link;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 
@@ -260,4 +263,49 @@ it('prefers the utm the visitor arrived with', function () {
 
     $this->get(route('links.redirect', $link->key).'?utm_source=twitter')
         ->assertRedirect('https://example.com/pricing?utm_source=twitter');
+});
+
+it('sends the root of a custom domain to its not found url', function () {
+    $workspace = User::factory()->withWorkspace()->create()->currentWorkspace;
+
+    Domain::factory()->create([
+        'workspace_id' => $workspace->id,
+        'domain' => 'links.example.com',
+        'status' => Status::ACTIVE,
+        'not_found_url' => 'https://example.com/lost',
+    ]);
+
+    // The middleware only steps in for the bare host: with a key present the
+    // request belongs to the redirect controller.
+    $this->get('https://links.example.com')
+        ->assertRedirect('https://example.com/lost');
+});
+
+it('sends the root of a custom domain with no fallback to the website', function () {
+    $workspace = User::factory()->withWorkspace()->create()->currentWorkspace;
+
+    Domain::factory()->create([
+        'workspace_id' => $workspace->id,
+        'domain' => 'links.example.com',
+        'status' => Status::ACTIVE,
+        'not_found_url' => null,
+    ]);
+
+    $this->get('https://links.example.com')
+        ->assertRedirect(config('app.website'));
+});
+
+it('shows the password gate before a protected link resolves', function () {
+    $workspace = User::factory()->withWorkspace()->create()->currentWorkspace;
+
+    $link = Link::factory()->create([
+        'workspace_id' => $workspace->id,
+        'domain' => 'lua.test',
+        'key' => 'secret',
+        'password' => 'sesame',
+    ]);
+
+    $this->get(route('links.password', $link->key))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page->component('Link/Password'));
 });

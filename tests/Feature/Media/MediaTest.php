@@ -176,3 +176,24 @@ it('refuses an upload with no file', function () {
         ->post(route('medias.store'), ['collection' => 'avatar'])
         ->assertSessionHasErrors('media');
 });
+
+it('knows whether a collection holds anything', function () {
+    expect($this->user->hasMedia('avatar'))->toBeFalse();
+
+    actingAs($this->user)->post(route('medias.store'), [
+        'media' => UploadedFile::fake()->image('me.jpg', 200, 200),
+        'collection' => 'avatar',
+    ]);
+
+    expect($this->user->fresh()->hasMedia('avatar'))->toBeTrue();
+});
+
+it('keeps a gif as it is so the animation survives', function () {
+    actingAs($this->user)->post(route('medias.store'), [
+        'media' => UploadedFile::fake()->create('spin.gif', 10, 'image/gif'),
+        'collection' => 'avatar',
+    ]);
+
+    // Re-encoding a GIF to JPEG would take the first frame and drop the rest.
+    expect(Media::firstOrFail()->mime_type)->toBe('image/gif');
+});

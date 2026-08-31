@@ -35,36 +35,4 @@ class WorkspaceObserver
             Tag::create([...$tag, 'workspace_id' => $workspace->id]);
         }
     }
-
-    /**
-     * Handle the Workspace "updated" event.
-     */
-    public function updated(Workspace $workspace): void
-    {
-        //
-    }
-
-    /**
-     * Handle the Workspace "deleted" event.
-     */
-    public function deleted(Workspace $workspace): void
-    {
-        //
-    }
-
-    /**
-     * Handle the Workspace "restored" event.
-     */
-    public function restored(Workspace $workspace): void
-    {
-        //
-    }
-
-    /**
-     * Handle the Workspace "force deleted" event.
-     */
-    public function forceDeleted(Workspace $workspace): void
-    {
-        //
-    }
 }

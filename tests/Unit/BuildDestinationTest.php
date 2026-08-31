@@ -52,3 +52,19 @@ it('returns anything that is not a url untouched', function () {
 
     expect(BuildDestination::execute('not-a-url', $link))->toBe('not-a-url');
 });
+
+it('keeps credentials and a port when it rebuilds the url', function () {
+    $link = new Link(['utm_source' => 'newsletter']);
+
+    // Both halves are rare but valid, and dropping either would send the
+    // visitor somewhere that does not answer.
+    expect(BuildDestination::execute('https://ada:secret@example.com:8443/deck', $link))
+        ->toBe('https://ada:secret@example.com:8443/deck?utm_source=newsletter');
+});
+
+it('keeps a user with no password', function () {
+    $link = new Link(['utm_source' => 'newsletter']);
+
+    expect(BuildDestination::execute('https://ada@example.com/deck', $link))
+        ->toBe('https://ada@example.com/deck?utm_source=newsletter');
+});

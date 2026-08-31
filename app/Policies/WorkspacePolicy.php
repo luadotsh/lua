@@ -23,23 +23,6 @@ class WorkspacePolicy
     }
 
     /**
-     * Ownership is one person, and only they may hand it on or close the
-     * workspace. An admin runs it; the owner answers for it.
-     */
-    public function own(User $user, Workspace $workspace): bool
-    {
-        return $user->ownsWorkspace($workspace);
-    }
-
-    /**
-     * The day-to-day work: links, tags and domains. Every member may.
-     */
-    public function contribute(User $user, Workspace $workspace): bool
-    {
-        return $user->belongsToWorkspace($workspace);
-    }
-
-    /**
      * The owner cannot be removed or demoted out of their own workspace —
      * that is what ownership means, and it is what keeps stripeEmail() and
      * billing pointing at someone.

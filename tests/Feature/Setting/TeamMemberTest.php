@@ -190,3 +190,16 @@ it('will not let the owner walk away from their own workspace', function () {
 
     expect($this->owner->fresh()->current_workspace_id)->toBe($this->workspace->id);
 });
+
+it('refuses to let the last member leave', function () {
+    // Only one person left, and they are not the owner: the workspace cannot
+    // be left with nobody in it.
+    $member = joinWorkspace($this->workspace);
+    RemoveMember::execute($this->workspace, $this->owner);
+
+    $this->actingAs($member)
+        ->delete(route('setting.team-members.leave'))
+        ->assertRedirect();
+
+    expect($member->fresh()->current_workspace_id)->toBe($this->workspace->id);
+});

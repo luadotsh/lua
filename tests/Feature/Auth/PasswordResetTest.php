@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
-use Illuminate\Support\Facades\Notification;
-
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 
 uses(RefreshDatabase::class);
 
@@ -63,4 +63,48 @@ test('password can be reset with valid token', function () {
 
         return true;
     });
+});
+
+test('changing the password requires the current one', function () {
+    $user = User::factory()->withWorkspace()->create();
+
+    $this->actingAs($user)
+        ->put(route('password.update'), [
+            'current_password' => 'wrong-password',
+            'password' => 'new-password-123',
+            'password_confirmation' => 'new-password-123',
+        ])
+        ->assertSessionHasErrors('current_password');
+});
+
+test('the password changes when the current one is right', function () {
+    $user = User::factory()->withWorkspace()->create();
+
+    $this->actingAs($user)
+        ->put(route('password.update'), [
+            'current_password' => 'password',
+            'password' => 'new-password-123',
+            'password_confirmation' => 'new-password-123',
+        ])
+        ->assertSessionHasNoErrors();
+
+    expect(Hash::check('new-password-123', $user->fresh()->password))->toBeTrue();
+});
+
+test('asking to reset an address we do not have says so on the field', function () {
+    $this->post(route('password.email'), ['email' => 'nobody@example.com'])
+        ->assertSessionHasErrors('email');
+});
+
+test('resetting with a token that is not valid says so on the field', function () {
+    $user = User::factory()->create();
+
+    $this->post(route('password.store'), [
+        'token' => 'not-a-real-token',
+        'email' => $user->email,
+        'password' => 'new-password-123',
+        'password_confirmation' => 'new-password-123',
+    ])->assertSessionHasErrors('email');
+
+    expect(Hash::check('new-password-123', $user->fresh()->password))->toBeFalse();
 });
