@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
+
+import PasswordInput from '@/components/PasswordInput.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import PasswordInput from '@/components/PasswordInput.vue';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/AuthLayout.vue';
+import Social from '@/pages/Auth/Partial/Social.vue';
 import { login as loginRoute, register as registerRoute } from '@/routes';
 import { request as forgotPasswordRoute } from '@/routes/password';
-import Social from '@/pages/Auth/Partial/Social.vue';
 
 defineProps<{
     status?: string;
@@ -27,7 +28,10 @@ const submit = () => {
 </script>
 
 <template>
-    <AuthLayout title="Sign in" description="Enter your email and password to sign in">
+    <AuthLayout
+        title="Sign in"
+        description="Enter your email and password to sign in"
+    >
         <Head title="Sign in" />
 
         <Social />
@@ -46,7 +50,9 @@ const submit = () => {
                     autocomplete="username"
                     autofocus
                 />
-                <p v-if="form.errors.email" class="text-sm text-destructive">{{ form.errors.email }}</p>
+                <p v-if="form.errors.email" class="text-sm text-destructive">
+                    {{ form.errors.email }}
+                </p>
             </div>
 
             <div class="grid gap-2">
@@ -64,7 +70,9 @@ const submit = () => {
                     v-model="form.password"
                     autocomplete="current-password"
                 />
-                <p v-if="form.errors.password" class="text-sm text-destructive">{{ form.errors.password }}</p>
+                <p v-if="form.errors.password" class="text-sm text-destructive">
+                    {{ form.errors.password }}
+                </p>
             </div>
 
             <Button

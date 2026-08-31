@@ -1,31 +1,32 @@
 <script setup lang="ts">
-import { Head, router } from "@inertiajs/vue3";
-import axios from "axios";
-import { computed, onMounted, ref, watch } from "vue";
+import { Head, router } from '@inertiajs/vue3';
+import axios from 'axios';
+import { computed, onMounted, ref, watch } from 'vue';
+
 import BreakdownCard, {
     type BreakdownRow,
     type BreakdownTab,
-} from "@/components/analytics/BreakdownCard.vue";
+} from '@/components/analytics/BreakdownCard.vue';
 import FilterPills, {
     type ActiveFilter,
-} from "@/components/analytics/FilterPills.vue";
-import { browserIconUrl } from "@/lib/browsers";
-import { countryFlagUrl, countryFor } from "@/lib/countries";
-import { deviceIconUrl } from "@/lib/devices";
-import { languageFlagUrl, languageLabel } from "@/lib/languages";
-import { osIconUrl } from "@/lib/os";
-import { favicon } from "@/lib/utils";
-import StatHeader from "@/components/analytics/StatHeader.vue";
+} from '@/components/analytics/FilterPills.vue';
+import StatHeader from '@/components/analytics/StatHeader.vue';
 import TimeseriesChart, {
     type TimeseriesPoint,
-} from "@/components/analytics/TimeseriesChart.vue";
-import VisitorsMap from "@/components/analytics/VisitorsMap.vue";
-import RangePicker from "@/components/RangePicker.vue";
-import { Skeleton } from "@/components/ui/skeleton";
-import date from "@/date";
-import AppLayout from "@/layouts/AppLayout.vue";
-import type { MetricKey, Overview } from "@/lib/metrics";
-import { index as analyticsRoute, statistics } from "@/routes/analytics";
+} from '@/components/analytics/TimeseriesChart.vue';
+import VisitorsMap from '@/components/analytics/VisitorsMap.vue';
+import RangePicker from '@/components/RangePicker.vue';
+import { Skeleton } from '@/components/ui/skeleton';
+import date from '@/date';
+import AppLayout from '@/layouts/AppLayout.vue';
+import { browserIconUrl } from '@/lib/browsers';
+import { countryFlagUrl, countryFor } from '@/lib/countries';
+import { deviceIconUrl } from '@/lib/devices';
+import { languageFlagUrl, languageLabel } from '@/lib/languages';
+import type { MetricKey, Overview } from '@/lib/metrics';
+import { osIconUrl } from '@/lib/os';
+import { favicon } from '@/lib/utils';
+import { index as analyticsRoute, statistics } from '@/routes/analytics';
 
 interface Range {
     timezone: string;
@@ -44,7 +45,7 @@ type Breakdowns = Record<string, BreakdownTab[]>;
 
 const range = ref<Range>({
     timezone: date.getUserTimezone(),
-    group: "day",
+    group: 'day',
     start: props.start,
     end: props.end,
 });
@@ -90,7 +91,7 @@ const applyFilter = ({
 
     // A region or city row carries the country it belongs to. Applying that as
     // its own filter keeps two same-named cities in different countries apart.
-    if ((dimension === "region" || dimension === "city") && row.country) {
+    if ((dimension === 'region' || dimension === 'city') && row.country) {
         query.country = row.country;
     }
 
@@ -104,11 +105,11 @@ const removeFilter = (dimension: string) => {
     navigate(query);
 };
 
-const metric = ref<MetricKey>("events");
+const metric = ref<MetricKey>('events');
 const loading = ref(true);
 const overview = ref<Overview | null>(null);
 const timeseries = ref<TimeseriesPoint[]>([]);
-const links = ref<BreakdownTab["rows"]>([]);
+const links = ref<BreakdownTab['rows']>([]);
 const breakdowns = ref<Breakdowns>({});
 
 const load = async () => {
@@ -133,12 +134,14 @@ watch(range, load, { deep: true });
 watch(() => props.filters, load, { deep: true });
 
 const countryRows = computed(
-    () => breakdowns.value.locations?.find((tab) => tab.key === "country")?.rows ?? [],
+    () =>
+        breakdowns.value.locations?.find((tab) => tab.key === 'country')
+            ?.rows ?? [],
 );
 
 // The map is the first tab but not the one that opens, matching clickbase.
 const locationTabs = computed<BreakdownTab[]>(() => [
-    { key: "map", label: "Map" },
+    { key: 'map', label: 'Map' },
     ...(breakdowns.value.locations ?? []),
 ]);
 
@@ -146,7 +149,7 @@ const locationTabs = computed<BreakdownTab[]>(() => [
 // itself. The map is the exception: it renders a slot, not rows.
 const filterable = (tabs: BreakdownTab[]): BreakdownTab[] =>
     tabs.map((tab) =>
-        tab.key === "map" ? tab : { ...tab, filterDimension: tab.key },
+        tab.key === 'map' ? tab : { ...tab, filterDimension: tab.key },
     );
 
 const setRange = (next: Range) => {
@@ -217,7 +220,12 @@ const setRange = (next: Range) => {
                                 aria-hidden="true"
                                 class="size-4 shrink-0 rounded-sm"
                                 loading="lazy"
-                                @error="(event) => ((event.target as HTMLImageElement).style.display = 'none')"
+                                @error="
+                                    (event) =>
+                                        ((
+                                            event.target as HTMLImageElement
+                                        ).style.display = 'none')
+                                "
                             />
                             <span class="truncate">{{ row.value }}</span>
                         </template>
@@ -232,13 +240,20 @@ const setRange = (next: Range) => {
                     >
                         <template #row="{ row, tab }">
                             <img
-                                v-if="tab === 'referer' && row.value !== 'Direct'"
+                                v-if="
+                                    tab === 'referer' && row.value !== 'Direct'
+                                "
                                 :src="favicon(row.value)"
                                 alt=""
                                 aria-hidden="true"
                                 class="size-4 shrink-0 rounded-sm"
                                 loading="lazy"
-                                @error="(event) => ((event.target as HTMLImageElement).style.display = 'none')"
+                                @error="
+                                    (event) =>
+                                        ((
+                                            event.target as HTMLImageElement
+                                        ).style.display = 'none')
+                                "
                             />
                             <span class="truncate">{{ row.value }}</span>
                         </template>
@@ -258,15 +273,30 @@ const setRange = (next: Range) => {
                         <template #row="{ row, tab }">
                             <img
                                 v-if="tab === 'country' || row.country"
-                                :src="countryFlagUrl(tab === 'country' ? row.value : (row.country ?? ''))"
+                                :src="
+                                    countryFlagUrl(
+                                        tab === 'country'
+                                            ? row.value
+                                            : (row.country ?? ''),
+                                    )
+                                "
                                 alt=""
                                 aria-hidden="true"
                                 class="h-3 w-[18px] shrink-0 rounded-[2px] object-cover"
                                 loading="lazy"
-                                @error="(event) => ((event.target as HTMLImageElement).style.display = 'none')"
+                                @error="
+                                    (event) =>
+                                        ((
+                                            event.target as HTMLImageElement
+                                        ).style.display = 'none')
+                                "
                             />
                             <span class="truncate">
-                                {{ tab === 'country' ? countryFor(row.value).name : row.value }}
+                                {{
+                                    tab === 'country'
+                                        ? countryFor(row.value).name
+                                        : row.value
+                                }}
                             </span>
                         </template>
                     </BreakdownCard>
@@ -296,25 +326,44 @@ const setRange = (next: Range) => {
                                 loading="lazy"
                             />
                             <img
-                                v-else-if="tab === 'device' && deviceIconUrl(row.value)"
+                                v-else-if="
+                                    tab === 'device' && deviceIconUrl(row.value)
+                                "
                                 :src="deviceIconUrl(row.value) ?? ''"
                                 alt=""
                                 aria-hidden="true"
                                 class="size-4 shrink-0"
                                 loading="lazy"
-                                @error="(event) => ((event.target as HTMLImageElement).style.display = 'none')"
+                                @error="
+                                    (event) =>
+                                        ((
+                                            event.target as HTMLImageElement
+                                        ).style.display = 'none')
+                                "
                             />
                             <img
-                                v-else-if="tab === 'language' && languageFlagUrl(row.value)"
+                                v-else-if="
+                                    tab === 'language' &&
+                                    languageFlagUrl(row.value)
+                                "
                                 :src="languageFlagUrl(row.value) ?? ''"
                                 alt=""
                                 aria-hidden="true"
                                 class="h-3 w-[18px] shrink-0 rounded-[2px] object-cover"
                                 loading="lazy"
-                                @error="(event) => ((event.target as HTMLImageElement).style.display = 'none')"
+                                @error="
+                                    (event) =>
+                                        ((
+                                            event.target as HTMLImageElement
+                                        ).style.display = 'none')
+                                "
                             />
                             <span class="truncate">
-                                {{ tab === 'language' ? languageLabel(row.value) : row.value }}
+                                {{
+                                    tab === 'language'
+                                        ? languageLabel(row.value)
+                                        : row.value
+                                }}
                             </span>
                         </template>
                     </BreakdownCard>

@@ -1,16 +1,13 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { Head } from "@inertiajs/vue3";
-import { Button } from "@/components/ui/button";
+import { Head } from '@inertiajs/vue3';
+import { IconKey, IconTrash } from '@tabler/icons-vue';
+import { ref } from 'vue';
+
 import ConfirmDeleteModal, {
     DELETE_KEYWORD,
-} from "@/components/ConfirmDeleteModal.vue";
-import { IconKey, IconTrash } from "@tabler/icons-vue";
-import date from "@/date";
-import EmptyState from "@/components/EmptyState.vue";
-import AppLayout from "@/layouts/AppLayout.vue";
-import CreateModal from "./Create.vue";
-import * as apiTokensRoutes from "@/routes/setting/api-tokens";
+} from '@/components/ConfirmDeleteModal.vue';
+import EmptyState from '@/components/EmptyState.vue';
+import { Button } from '@/components/ui/button';
 import {
     Table,
     TableBody,
@@ -18,13 +15,18 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 import {
     Tooltip,
     TooltipContent,
     TooltipTrigger,
-} from "@/components/ui/tooltip";
-import type { ApiToken } from "@/types";
+} from '@/components/ui/tooltip';
+import date from '@/date';
+import AppLayout from '@/layouts/AppLayout.vue';
+import * as apiTokensRoutes from '@/routes/setting/api-tokens';
+import type { ApiToken } from '@/types';
+
+import CreateModal from './Create.vue';
 
 const createModal = ref<InstanceType<typeof CreateModal> | null>(null);
 const deleteModal = ref<InstanceType<typeof ConfirmDeleteModal> | null>(null);
@@ -40,7 +42,6 @@ const confirmDelete = (token: ApiToken) => {
         confirmText: DELETE_KEYWORD,
     });
 };
-
 </script>
 
 <template>
@@ -56,7 +57,9 @@ const confirmDelete = (token: ApiToken) => {
 
     <AppLayout title="API Tokens" :total="tokens.length" full-width>
         <template #header-actions>
-            <Button data-testid="new-api-token" @click="createModal?.open()">New API Token</Button>
+            <Button data-testid="new-api-token" @click="createModal?.open()"
+                >New API Token</Button
+            >
         </template>
 
         <div class="flex min-h-0 min-w-0 flex-1 flex-col">
@@ -69,8 +72,12 @@ const confirmDelete = (token: ApiToken) => {
                     <TableHeader sticky>
                         <TableRow>
                             <TableHead class="w-full">Name</TableHead>
-                            <TableHead class="w-px whitespace-nowrap">Last used</TableHead>
-                            <TableHead class="w-px whitespace-nowrap">Expires</TableHead>
+                            <TableHead class="w-px whitespace-nowrap"
+                                >Last used</TableHead
+                            >
+                            <TableHead class="w-px whitespace-nowrap"
+                                >Expires</TableHead
+                            >
                             <TableHead class="w-px">
                                 <span class="sr-only">Actions</span>
                             </TableHead>
@@ -78,18 +85,28 @@ const confirmDelete = (token: ApiToken) => {
                     </TableHeader>
                     <TableBody id="api-tokens-body">
                         <TableRow v-for="token in tokens" :key="token.id">
-                            <TableCell class="font-medium">{{ token.name }}</TableCell>
+                            <TableCell class="font-medium">{{
+                                token.name
+                            }}</TableCell>
 
-                            <TableCell class="w-px whitespace-nowrap text-muted-foreground">
+                            <TableCell
+                                class="w-px whitespace-nowrap text-muted-foreground"
+                            >
                                 {{
                                     token.last_used_at
                                         ? date.diffForHumans(token.last_used_at)
-                                        : "Never"
+                                        : 'Never'
                                 }}
                             </TableCell>
 
-                            <TableCell class="w-px whitespace-nowrap text-muted-foreground">
-                                {{ token.expires_at ? date.formatDate(token.expires_at) : "—" }}
+                            <TableCell
+                                class="w-px whitespace-nowrap text-muted-foreground"
+                            >
+                                {{
+                                    token.expires_at
+                                        ? date.formatDate(token.expires_at)
+                                        : '—'
+                                }}
                             </TableCell>
 
                             <TableCell class="w-px">
@@ -104,7 +121,9 @@ const confirmDelete = (token: ApiToken) => {
                                                 @click="confirmDelete(token)"
                                             >
                                                 <IconTrash class="size-3.5" />
-                                                <span class="sr-only">Delete</span>
+                                                <span class="sr-only"
+                                                    >Delete</span
+                                                >
                                             </Button>
                                         </TooltipTrigger>
                                         <TooltipContent>Delete</TooltipContent>

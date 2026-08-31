@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,7 +19,10 @@ const submit = () => {
 </script>
 
 <template>
-    <AuthLayout title="Confirm Password" description="This is a secure area — please confirm your password">
+    <AuthLayout
+        title="Confirm Password"
+        description="This is a secure area — please confirm your password"
+    >
         <Head title="Confirm Password" />
 
         <form class="flex flex-col gap-4" @submit.prevent="submit">
@@ -31,7 +35,9 @@ const submit = () => {
                     autocomplete="current-password"
                     autofocus
                 />
-                <p v-if="form.errors.password" class="text-sm text-destructive">{{ form.errors.password }}</p>
+                <p v-if="form.errors.password" class="text-sm text-destructive">
+                    {{ form.errors.password }}
+                </p>
             </div>
 
             <Button type="submit" class="w-full" :disabled="form.processing">

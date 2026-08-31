@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { IconChevronDown } from '@tabler/icons-vue';
 import type { Component } from 'vue';
+
 import {
     Collapsible,
     CollapsibleContent,
@@ -30,38 +31,50 @@ const open = defineModel<boolean>('open', { default: false });
 <template>
     <Collapsible
         v-model:open="open"
-        :class="cn(
-            'overflow-hidden rounded-lg border bg-card',
-            summary ? 'border-violet-500/40' : 'border-border',
-        )"
+        :class="
+            cn(
+                'overflow-hidden rounded-lg border bg-card',
+                summary ? 'border-violet-500/40' : 'border-border',
+            )
+        "
     >
         <CollapsibleTrigger
             class="flex w-full cursor-pointer items-center gap-3 px-3.5 py-3 text-left transition-colors hover:bg-accent/40"
         >
             <span
-                :class="cn(
-                    'grid size-8 shrink-0 place-items-center rounded-lg',
-                    summary
-                        ? 'bg-violet-500/15 text-violet-400'
-                        : 'bg-muted text-muted-foreground',
-                )"
+                :class="
+                    cn(
+                        'grid size-8 shrink-0 place-items-center rounded-lg',
+                        summary
+                            ? 'bg-violet-500/15 text-violet-400'
+                            : 'bg-muted text-muted-foreground',
+                    )
+                "
             >
                 <component :is="icon" class="size-4" />
             </span>
 
             <span class="flex min-w-0 flex-1 flex-col">
-                <span class="text-sm font-medium text-foreground">{{ title }}</span>
+                <span class="text-sm font-medium text-foreground">{{
+                    title
+                }}</span>
                 <span
-                    :class="cn(
-                        'truncate text-xs',
-                        summary ? 'text-violet-400' : 'text-muted-foreground',
-                    )"
+                    :class="
+                        cn(
+                            'truncate text-xs',
+                            summary
+                                ? 'text-violet-400'
+                                : 'text-muted-foreground',
+                        )
+                    "
                 >
                     {{ summary || description }}
                 </span>
             </span>
 
-            <span v-if="!summary" class="shrink-0 text-xs text-muted-foreground">Off</span>
+            <span v-if="!summary" class="shrink-0 text-xs text-muted-foreground"
+                >Off</span
+            >
 
             <IconChevronDown
                 class="size-4 shrink-0 text-muted-foreground transition-transform duration-200"
@@ -74,7 +87,9 @@ const open = defineModel<boolean>('open', { default: false });
         <CollapsibleContent
             class="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down motion-reduce:data-[state=closed]:animate-none motion-reduce:data-[state=open]:animate-none"
         >
-            <div class="flex flex-col gap-4 border-t border-border px-3.5 py-4 sm:pl-[3.4rem]">
+            <div
+                class="flex flex-col gap-4 border-t border-border px-3.5 py-4 sm:pl-[3.4rem]"
+            >
                 <slot />
             </div>
         </CollapsibleContent>

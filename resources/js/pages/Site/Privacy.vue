@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import LegalDocument, { type LegalSection } from '@/components/site/LegalDocument.vue';
+import LegalDocument, {
+    type LegalSection,
+} from '@/components/site/LegalDocument.vue';
 
 defineProps<{ seo: { title: string; description: string } }>();
 

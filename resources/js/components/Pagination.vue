@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
+
 import { Button } from '@/components/ui/button';
 
 defineProps<{
@@ -15,7 +16,10 @@ defineProps<{
 </script>
 
 <template>
-    <div v-if="(data.links?.length ?? 0) > 3" class="py-2 flex items-center justify-between">
+    <div
+        v-if="(data.links?.length ?? 0) > 3"
+        class="flex items-center justify-between py-2"
+    >
         <div class="hidden sm:block">
             <p class="text-sm text-muted-foreground">
                 Showing
@@ -23,7 +27,9 @@ defineProps<{
                 to
                 <span class="font-medium text-foreground">{{ data.to }}</span>
                 of
-                <span class="font-medium text-foreground">{{ data.total }}</span>
+                <span class="font-medium text-foreground">{{
+                    data.total
+                }}</span>
                 results
             </p>
         </div>
@@ -52,9 +58,7 @@ defineProps<{
                     Next
                 </Link>
             </Button>
-            <Button v-else variant="outline" size="sm" disabled>
-                Next
-            </Button>
+            <Button v-else variant="outline" size="sm" disabled> Next </Button>
         </div>
     </div>
 </template>

@@ -1,23 +1,24 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, ref, watch } from 'vue';
+
+import HexColorInput from '@/components/HexColorInput.vue';
+import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import HexColorInput from "@/components/HexColorInput.vue";
-import { absoluteUrl, copyToClipboard } from "@/lib/utils";
-import { qrCode as qrCodeRoute } from "@/routes/api";
+} from '@/components/ui/dialog';
+import { absoluteUrl, copyToClipboard } from '@/lib/utils';
+import { qrCode as qrCodeRoute } from '@/routes/api';
 
 interface LinkData {
     id: string | number;
     link?: string;
 }
 
-const DEFAULT_COLOR = "#000000";
+const DEFAULT_COLOR = '#000000';
 
 const linkIsCopied = ref(false);
 const color = ref<string>(DEFAULT_COLOR);
@@ -31,7 +32,7 @@ const pickedColor = computed({
     },
 });
 const link = ref<LinkData | null>(null);
-const imageUrl = ref("");
+const imageUrl = ref('');
 const isOpen = ref(false);
 
 const open = (l: LinkData) => {
@@ -58,7 +59,7 @@ watch(
             qrCodeRoute.url(link.value.id, { query: { color: color.value } }),
         );
     },
-    { immediate: true }
+    { immediate: true },
 );
 </script>
 
@@ -69,12 +70,14 @@ watch(
                 <DialogTitle>QR Code</DialogTitle>
             </DialogHeader>
 
-            <div class="flex items-center justify-center p-8 bg-muted border border-border rounded-lg">
+            <div
+                class="flex items-center justify-center rounded-lg border border-border bg-muted p-8"
+            >
                 <img
                     v-if="imageUrl"
                     :src="imageUrl"
                     alt="QR Code"
-                    class="max-h-44 h-full rounded-lg border border-border"
+                    class="h-full max-h-44 rounded-lg border border-border"
                 />
             </div>
 
@@ -85,11 +88,19 @@ watch(
                     variant="outline"
                     @click="copyToClipboard(imageUrl, 'QR code link copied')"
                 >
-                    {{ linkIsCopied ? "Copied!" : "Copy link" }}
+                    {{ linkIsCopied ? 'Copied!' : 'Copy link' }}
                 </Button>
                 <Button as-child>
                     <a
-                        :href="link ? absoluteUrl(qrCodeRoute.url(link.id, { query: { color, download: '1' } })) : '#'"
+                        :href="
+                            link
+                                ? absoluteUrl(
+                                      qrCodeRoute.url(link.id, {
+                                          query: { color, download: '1' },
+                                      }),
+                                  )
+                                : '#'
+                        "
                         target="_blank"
                     >
                         Download

@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { useForm, usePage } from "@inertiajs/vue3";
-import dayjs from "@/dayjs";
-import { Button } from "@/components/ui/button";
+import { useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
+
 import {
     AlertDialog,
     AlertDialogAction,
@@ -12,7 +11,7 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog';
 import {
     Table,
     TableBody,
@@ -20,8 +19,9 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table";
-import * as invitesRoutes from "@/routes/setting/invites";
+} from '@/components/ui/table';
+import dayjs from '@/dayjs';
+import * as invitesRoutes from '@/routes/setting/invites';
 
 defineProps<{
     invites: Array<{
@@ -37,7 +37,7 @@ const deleteForm = useForm({});
 const beingDeleted = ref<string | number | null>(null);
 
 const formatDate = (date: string) => {
-    return dayjs(date).format("MMMM D, YYYY h:mm A");
+    return dayjs(date).format('MMMM D, YYYY h:mm A');
 };
 
 const confirmDeletion = (invite: { id: string | number }) => {
@@ -59,13 +59,16 @@ const deleteInvite = () => {
 
 <template>
     <div v-if="invites.length >= 1" class="mt-8">
-        <div class="sm:flex sm:items-center mb-4">
+        <div class="mb-4 sm:flex sm:items-center">
             <div class="sm:flex-auto">
                 <h2 class="text-lg font-semibold">Pending Invites</h2>
             </div>
         </div>
 
-        <AlertDialog :open="beingDeleted != null" @update:open="(val) => !val && (beingDeleted = null)">
+        <AlertDialog
+            :open="beingDeleted != null"
+            @update:open="(val) => !val && (beingDeleted = null)"
+        >
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>Delete Invite</AlertDialogTitle>
@@ -74,8 +77,14 @@ const deleteInvite = () => {
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel @click="beingDeleted = null">Cancel</AlertDialogCancel>
-                    <AlertDialogAction @click="deleteInvite" class="bg-red-600 hover:bg-red-700">Delete</AlertDialogAction>
+                    <AlertDialogCancel @click="beingDeleted = null"
+                        >Cancel</AlertDialogCancel
+                    >
+                    <AlertDialogAction
+                        @click="deleteInvite"
+                        class="bg-red-600 hover:bg-red-700"
+                        >Delete</AlertDialogAction
+                    >
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
@@ -88,7 +97,9 @@ const deleteInvite = () => {
                         <TableHead>E-mail</TableHead>
                         <TableHead>Role</TableHead>
                         <TableHead>Invited At</TableHead>
-                        <TableHead><span class="sr-only">Actions</span></TableHead>
+                        <TableHead
+                            ><span class="sr-only">Actions</span></TableHead
+                        >
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -96,14 +107,20 @@ const deleteInvite = () => {
                         <TableCell>{{ invite.name }}</TableCell>
                         <TableCell>{{ invite.email }}</TableCell>
                         <TableCell>{{ invite.role }}</TableCell>
-                        <TableCell>{{ formatDate(invite.created_at) }}</TableCell>
+                        <TableCell>{{
+                            formatDate(invite.created_at)
+                        }}</TableCell>
                         <TableCell>
                             <a
-                                v-if="$page.props.auth.user.current_workspace?.role !== 'USER'"
+                                v-if="
+                                    $page.props.auth.user.current_workspace
+                                        ?.role !== 'USER'
+                                "
                                 href="#"
                                 @click.prevent="confirmDeletion(invite)"
-                                class="text-red-600 hover:underline font-medium"
-                            >Cancel</a>
+                                class="font-medium text-red-600 hover:underline"
+                                >Cancel</a
+                            >
                         </TableCell>
                     </TableRow>
                 </TableBody>

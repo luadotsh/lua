@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { router } from '@inertiajs/vue3';
 import { IconArrowNarrowRight, IconLoader2 } from '@tabler/icons-vue';
 import { ref } from 'vue';
+
 import JsonLd from '@/components/site/JsonLd.vue';
 import PageHeader from '@/components/site/PageHeader.vue';
 import Seo from '@/components/site/Seo.vue';
-import SiteLayout from '@/layouts/site/SiteLayout.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import SiteLayout from '@/layouts/site/SiteLayout.vue';
 import site from '@/routes/site';
 
 defineProps<{ seo: { title: string; description: string } }>();
@@ -32,13 +32,16 @@ const check = async (): Promise<void> => {
     error.value = null;
 
     try {
-        const response = await window.axios.post(site.tools.check.url(), { url: url.value.trim() });
+        const response = await window.axios.post(site.tools.check.url(), {
+            url: url.value.trim(),
+        });
 
         hops.value = response.data.hops;
         destination.value = response.data.destination;
         error.value = response.data.error;
     } catch (thrown: unknown) {
-        const status = (thrown as { response?: { status?: number } }).response?.status;
+        const status = (thrown as { response?: { status?: number } }).response
+            ?.status;
 
         error.value =
             status === 429
@@ -93,28 +96,50 @@ const tone = (status: number | null): string => {
                         class="font-mono"
                         placeholder="https://example.com/abc"
                     />
-                    <Button type="submit" data-testid="check-submit" :disabled="loading">
-                        <IconLoader2 v-if="loading" class="size-4 animate-spin" />
+                    <Button
+                        type="submit"
+                        data-testid="check-submit"
+                        :disabled="loading"
+                    >
+                        <IconLoader2
+                            v-if="loading"
+                            class="size-4 animate-spin"
+                        />
                         {{ loading ? 'Following' : 'Follow it' }}
                     </Button>
                 </div>
             </form>
 
-            <p v-if="error" data-testid="check-error" class="mt-6 text-sm text-destructive">
+            <p
+                v-if="error"
+                data-testid="check-error"
+                class="mt-6 text-sm text-destructive"
+            >
                 {{ error }}
             </p>
 
-            <ol v-if="hops.length" data-testid="check-hops" class="mt-10 space-y-px">
+            <ol
+                v-if="hops.length"
+                data-testid="check-hops"
+                class="mt-10 space-y-px"
+            >
                 <li
                     v-for="(hop, index) in hops"
                     :key="index"
                     class="flex items-start gap-4 rounded-lg border border-border bg-card p-4"
                 >
-                    <span class="font-mono text-xs text-muted-foreground tabular-nums">
+                    <span
+                        class="font-mono text-xs text-muted-foreground tabular-nums"
+                    >
                         {{ String(index + 1).padStart(2, '0') }}
                     </span>
-                    <span class="min-w-0 flex-1 font-mono text-sm break-all">{{ hop.url }}</span>
-                    <span class="font-mono text-sm tabular-nums" :class="tone(hop.status)">
+                    <span class="min-w-0 flex-1 font-mono text-sm break-all">{{
+                        hop.url
+                    }}</span>
+                    <span
+                        class="font-mono text-sm tabular-nums"
+                        :class="tone(hop.status)"
+                    >
                         {{ hop.status ?? '—' }}
                     </span>
                 </li>
@@ -125,7 +150,9 @@ const tone = (status: number | null): string => {
                 data-testid="check-destination"
                 class="mt-6 flex items-start gap-2 text-sm"
             >
-                <IconArrowNarrowRight class="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+                <IconArrowNarrowRight
+                    class="mt-0.5 size-4 shrink-0 text-muted-foreground"
+                />
                 <span>
                     Ends at
                     <span class="font-mono break-all">{{ destination }}</span>

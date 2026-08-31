@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+
 import { Button } from '@/components/ui/button';
 import { social } from '@/routes/auth';
 
@@ -33,7 +34,7 @@ const iconFor = (provider: string) => `/images/oauth/${provider}.svg`;
                 <a :href="social(provider.provider).url">
                     <img
                         :src="iconFor(provider.provider)"
-                        class="h-4 w-4 mr-2"
+                        class="mr-2 h-4 w-4"
                         :class="provider.provider === 'github' && 'dark:invert'"
                         :alt="provider.label"
                     />
@@ -45,7 +46,9 @@ const iconFor = (provider: string) => `/images/oauth/${provider}.svg`;
         <div
             class="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border"
         >
-            <span class="relative z-10 bg-background px-2 text-muted-foreground">
+            <span
+                class="relative z-10 bg-background px-2 text-muted-foreground"
+            >
                 Or continue with
             </span>
         </div>

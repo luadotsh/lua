@@ -1,18 +1,14 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { Head } from "@inertiajs/vue3";
-import { Button } from "@/components/ui/button";
+import { Head } from '@inertiajs/vue3';
+import { IconPencil, IconTrash, IconWorld } from '@tabler/icons-vue';
+import { ref } from 'vue';
+
 import ConfirmDeleteModal, {
     DELETE_KEYWORD,
-} from "@/components/ConfirmDeleteModal.vue";
-import { IconPencil, IconTrash, IconWorld } from "@tabler/icons-vue";
-import DomainStatus from "@/components/DomainStatus.vue";
-import EmptyState from "@/components/EmptyState.vue";
-import AppLayout from "@/layouts/AppLayout.vue";
-import CreateModal from "./Create.vue";
-import EditModal from "./Edit.vue";
-import * as domainsRoutes from "@/routes/setting/domains";
-import * as websitesRoutes from "@/routes/websites";
+} from '@/components/ConfirmDeleteModal.vue';
+import DomainStatus from '@/components/DomainStatus.vue';
+import EmptyState from '@/components/EmptyState.vue';
+import { Button } from '@/components/ui/button';
 import {
     Table,
     TableBody,
@@ -20,19 +16,25 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 import {
     Tooltip,
     TooltipContent,
     TooltipTrigger,
-} from "@/components/ui/tooltip";
-import type { Domain } from "@/types";
+} from '@/components/ui/tooltip';
+import AppLayout from '@/layouts/AppLayout.vue';
+import * as domainsRoutes from '@/routes/setting/domains';
+import * as websitesRoutes from '@/routes/websites';
+import type { Domain } from '@/types';
+
+import CreateModal from './Create.vue';
+import EditModal from './Edit.vue';
 
 const createModal = ref<InstanceType<typeof CreateModal> | null>(null);
 const editModal = ref<InstanceType<typeof EditModal> | null>(null);
 const deleteModal = ref<InstanceType<typeof ConfirmDeleteModal> | null>(null);
 
-const props = defineProps<{
+defineProps<{
     domains: Domain[];
     hasData: boolean;
 }>();
@@ -75,7 +77,9 @@ const confirmDelete = (domain: Domain) => {
                             <TableHead class="w-px whitespace-nowrap">
                                 Not found redirect
                             </TableHead>
-                            <TableHead class="w-px whitespace-nowrap">Status</TableHead>
+                            <TableHead class="w-px whitespace-nowrap"
+                                >Status</TableHead
+                            >
                             <TableHead class="w-px">
                                 <span class="sr-only">Actions</span>
                             </TableHead>
@@ -86,19 +90,32 @@ const confirmDelete = (domain: Domain) => {
                             <TableCell>
                                 <span class="flex items-center gap-2">
                                     <img
-                                        :src="websitesRoutes.favicon.url({ query: { url: domain.domain } })"
+                                        :src="
+                                            websitesRoutes.favicon.url({
+                                                query: { url: domain.domain },
+                                            })
+                                        "
                                         alt=""
                                         aria-hidden="true"
                                         class="size-4 shrink-0 rounded-sm"
                                         loading="lazy"
-                                        @error="(event) => ((event.target as HTMLImageElement).style.display = 'none')"
+                                        @error="
+                                            (event) =>
+                                                ((
+                                                    event.target as HTMLImageElement
+                                                ).style.display = 'none')
+                                        "
                                     />
-                                    <span class="font-medium">{{ domain.domain }}</span>
+                                    <span class="font-medium">{{
+                                        domain.domain
+                                    }}</span>
                                 </span>
                             </TableCell>
 
-                            <TableCell class="w-px whitespace-nowrap text-muted-foreground">
-                                {{ domain.not_found_url ?? "—" }}
+                            <TableCell
+                                class="w-px whitespace-nowrap text-muted-foreground"
+                            >
+                                {{ domain.not_found_url ?? '—' }}
                             </TableCell>
 
                             <TableCell class="w-px">
@@ -106,7 +123,9 @@ const confirmDelete = (domain: Domain) => {
                             </TableCell>
 
                             <TableCell class="w-px">
-                                <div class="flex items-center justify-end gap-1">
+                                <div
+                                    class="flex items-center justify-end gap-1"
+                                >
                                     <Tooltip>
                                         <TooltipTrigger as-child>
                                             <Button
@@ -117,7 +136,9 @@ const confirmDelete = (domain: Domain) => {
                                                 @click="editModal?.open(domain)"
                                             >
                                                 <IconPencil class="size-3.5" />
-                                                <span class="sr-only">Edit</span>
+                                                <span class="sr-only"
+                                                    >Edit</span
+                                                >
                                             </Button>
                                         </TooltipTrigger>
                                         <TooltipContent>Edit</TooltipContent>
@@ -133,7 +154,9 @@ const confirmDelete = (domain: Domain) => {
                                                 @click="confirmDelete(domain)"
                                             >
                                                 <IconTrash class="size-3.5" />
-                                                <span class="sr-only">Delete</span>
+                                                <span class="sr-only"
+                                                    >Delete</span
+                                                >
                                             </Button>
                                         </TooltipTrigger>
                                         <TooltipContent>Delete</TooltipContent>

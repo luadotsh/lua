@@ -42,7 +42,8 @@ onMounted(() => {
                 .map((entry) => entry.target as HTMLElement)
                 .sort(
                     (a, b) =>
-                        a.getBoundingClientRect().top - b.getBoundingClientRect().top,
+                        a.getBoundingClientRect().top -
+                        b.getBoundingClientRect().top,
                 )[0];
 
             if (topmost) {
@@ -87,8 +88,14 @@ const markActive = (id: string): void => {
 </script>
 
 <template>
-    <nav v-if="headings.length > 0" aria-label="On this page" data-testid="blog-toc">
-        <h2 class="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+    <nav
+        v-if="headings.length > 0"
+        aria-label="On this page"
+        data-testid="blog-toc"
+    >
+        <h2
+            class="text-xs font-medium tracking-wide text-muted-foreground uppercase"
+        >
             On this page
         </h2>
         <ul class="mt-4 space-y-0.5 border-l border-border">
@@ -96,7 +103,9 @@ const markActive = (id: string): void => {
                 <a
                     :href="`#${heading.id}`"
                     :data-testid="`toc-${heading.id}`"
-                    :aria-current="activeId === heading.id ? 'location' : undefined"
+                    :aria-current="
+                        activeId === heading.id ? 'location' : undefined
+                    "
                     class="-ml-px block border-l py-1.5 leading-snug transition-colors"
                     :class="[
                         heading.level === 3 ? 'pl-7 text-xs' : 'pl-4 text-sm',

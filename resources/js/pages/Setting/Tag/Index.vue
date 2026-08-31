@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { Head } from "@inertiajs/vue3";
-import { IconPencil, IconTrash } from "@tabler/icons-vue";
-import { ref } from "vue";
+import { Head } from '@inertiajs/vue3';
+import { IconPencil, IconTrash } from '@tabler/icons-vue';
+import { ref } from 'vue';
+
 import ConfirmDeleteModal, {
     DELETE_KEYWORD,
-} from "@/components/ConfirmDeleteModal.vue";
-import { Button } from "@/components/ui/button";
+} from '@/components/ConfirmDeleteModal.vue';
+import { Button } from '@/components/ui/button';
 import {
     Table,
     TableBody,
@@ -13,20 +14,21 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 import {
     Tooltip,
     TooltipContent,
     TooltipTrigger,
-} from "@/components/ui/tooltip";
-import date from "@/date";
-import AppLayout from "@/layouts/AppLayout.vue";
-import * as tagsRoutes from "@/routes/setting/tags";
-import type { Tag } from "@/types";
-import CreateModal from "./Create.vue";
-import EditModal from "./Edit.vue";
+} from '@/components/ui/tooltip';
+import date from '@/date';
+import AppLayout from '@/layouts/AppLayout.vue';
+import * as tagsRoutes from '@/routes/setting/tags';
+import type { Tag } from '@/types';
 
-const props = defineProps<{
+import CreateModal from './Create.vue';
+import EditModal from './Edit.vue';
+
+defineProps<{
     tags: Tag[];
 }>();
 
@@ -68,7 +70,9 @@ const confirmDelete = (tag: Tag) => {
                     <TableHeader sticky>
                         <TableRow>
                             <TableHead class="w-full">Name</TableHead>
-                            <TableHead class="w-px whitespace-nowrap">Created</TableHead>
+                            <TableHead class="w-px whitespace-nowrap"
+                                >Created</TableHead
+                            >
                             <TableHead class="w-px">
                                 <span class="sr-only">Actions</span>
                             </TableHead>
@@ -82,16 +86,22 @@ const confirmDelete = (tag: Tag) => {
                                         class="size-2.5 shrink-0 rounded-full"
                                         :style="{ backgroundColor: tag.color }"
                                     />
-                                    <span class="font-medium">{{ tag.name }}</span>
+                                    <span class="font-medium">{{
+                                        tag.name
+                                    }}</span>
                                 </span>
                             </TableCell>
 
-                            <TableCell class="w-px whitespace-nowrap text-muted-foreground">
+                            <TableCell
+                                class="w-px whitespace-nowrap text-muted-foreground"
+                            >
                                 {{ date.diffForHumans(tag.created_at) }}
                             </TableCell>
 
                             <TableCell class="w-px">
-                                <div class="flex items-center justify-end gap-1">
+                                <div
+                                    class="flex items-center justify-end gap-1"
+                                >
                                     <Tooltip>
                                         <TooltipTrigger as-child>
                                             <Button
@@ -102,7 +112,9 @@ const confirmDelete = (tag: Tag) => {
                                                 @click="editModal?.open(tag)"
                                             >
                                                 <IconPencil class="size-3.5" />
-                                                <span class="sr-only">Edit</span>
+                                                <span class="sr-only"
+                                                    >Edit</span
+                                                >
                                             </Button>
                                         </TooltipTrigger>
                                         <TooltipContent>Edit</TooltipContent>
@@ -118,7 +130,9 @@ const confirmDelete = (tag: Tag) => {
                                                 @click="confirmDelete(tag)"
                                             >
                                                 <IconTrash class="size-3.5" />
-                                                <span class="sr-only">Delete</span>
+                                                <span class="sr-only"
+                                                    >Delete</span
+                                                >
                                             </Button>
                                         </TooltipTrigger>
                                         <TooltipContent>Delete</TooltipContent>

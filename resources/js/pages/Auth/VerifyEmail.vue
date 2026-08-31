@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { computed } from 'vue';
+
 import { Button } from '@/components/ui/button';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import { logout } from '@/routes';
@@ -16,11 +17,16 @@ const submit = () => {
     form.post(verificationSendRoute().url);
 };
 
-const verificationLinkSent = computed(() => props.status === 'verification-link-sent');
+const verificationLinkSent = computed(
+    () => props.status === 'verification-link-sent',
+);
 </script>
 
 <template>
-    <AuthLayout title="Verify your email" description="Please verify your email address to continue">
+    <AuthLayout
+        title="Verify your email"
+        description="Please verify your email address to continue"
+    >
         <Head title="Email Verification" />
 
         <p class="text-sm text-muted-foreground">
@@ -29,8 +35,12 @@ const verificationLinkSent = computed(() => props.status === 'verification-link-
             didn't receive the email, we will gladly send you another.
         </p>
 
-        <div v-if="verificationLinkSent" class="text-sm font-medium text-green-600">
-            A new verification link has been sent to the email address you provided during registration.
+        <div
+            v-if="verificationLinkSent"
+            class="text-sm font-medium text-green-600"
+        >
+            A new verification link has been sent to the email address you
+            provided during registration.
         </div>
 
         <form class="flex flex-col gap-4" @submit.prevent="submit">

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import { IconArrowRight } from '@tabler/icons-vue';
+
 import JsonLd from '@/components/site/JsonLd.vue';
 import PageHeader from '@/components/site/PageHeader.vue';
 import Seo from '@/components/site/Seo.vue';
@@ -15,7 +16,13 @@ defineProps<{
 
 <template>
     <Seo :title="seo.title" :description="seo.description" />
-    <JsonLd :data="{ '@type': 'CollectionPage', name: seo.title, description: seo.description }" />
+    <JsonLd
+        :data="{
+            '@type': 'CollectionPage',
+            name: seo.title,
+            description: seo.description,
+        }"
+    />
 
     <SiteLayout>
         <section class="px-6 py-16 sm:px-10 sm:py-24">
@@ -31,15 +38,23 @@ defineProps<{
                     :key="useCase.slug"
                     :href="site.useCases.show.url(useCase.slug)"
                     :data-testid="`use-case-${useCase.slug}`"
-                    class="group flex flex-col site-card p-6 transition-colors hover:border-foreground/20"
+                    class="group site-card flex flex-col p-6 transition-colors hover:border-foreground/20"
                 >
-                    <h2 class="text-xl font-semibold tracking-tight">{{ useCase.name }}</h2>
-                    <p class="mt-3 mb-6 line-clamp-4 text-sm leading-relaxed text-muted-foreground">
+                    <h2 class="text-xl font-semibold tracking-tight">
+                        {{ useCase.name }}
+                    </h2>
+                    <p
+                        class="mt-3 mb-6 line-clamp-4 text-sm leading-relaxed text-muted-foreground"
+                    >
                         {{ useCase.intro }}
                     </p>
-                    <span class="mt-auto inline-flex items-center gap-1 text-sm font-medium">
+                    <span
+                        class="mt-auto inline-flex items-center gap-1 text-sm font-medium"
+                    >
                         Read on
-                        <IconArrowRight class="size-4 transition-transform group-hover:translate-x-0.5" />
+                        <IconArrowRight
+                            class="size-4 transition-transform group-hover:translate-x-0.5"
+                        />
                     </span>
                 </Link>
             </div>

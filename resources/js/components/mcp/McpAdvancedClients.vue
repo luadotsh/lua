@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { IconChevronDown, IconCopy } from '@tabler/icons-vue';
 import { ref } from 'vue';
+
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -121,8 +122,12 @@ const copy = (value: string): void => {
                             />
                         </span>
                         <span class="min-w-0">
-                            <span class="block font-bold">{{ client.name }}</span>
-                            <span class="mt-0.5 block text-sm text-foreground/70">
+                            <span class="block font-bold">{{
+                                client.name
+                            }}</span>
+                            <span
+                                class="mt-0.5 block text-sm text-foreground/70"
+                            >
                                 {{ client.description }}
                             </span>
                         </span>
@@ -138,8 +143,9 @@ const copy = (value: string): void => {
                 >
                     <div class="space-y-5">
                         <p class="text-sm font-medium text-foreground/70">
-                            Paste the name, URL, or config below into your app. Sign-in opens
-                            in the browser the first time it connects.
+                            Paste the name, URL, or config below into your app.
+                            Sign-in opens in the browser the first time it
+                            connects.
                         </p>
 
                         <div class="grid gap-2">

@@ -8,6 +8,7 @@ import {
     IconTargetArrow,
 } from '@tabler/icons-vue';
 import { computed } from 'vue';
+
 import {
     Tooltip,
     TooltipContent,
@@ -33,7 +34,9 @@ const props = defineProps<{
 }>();
 
 const isExpired = computed(
-    () => Boolean(props.expiresAt) && new Date(props.expiresAt as string) < new Date(),
+    () =>
+        Boolean(props.expiresAt) &&
+        new Date(props.expiresAt as string) < new Date(),
 );
 
 const campaign = computed(() =>
@@ -43,7 +46,9 @@ const campaign = computed(() =>
         props.utmCampaign && `campaign: ${props.utmCampaign}`,
         props.utmTerm && `term: ${props.utmTerm}`,
         props.utmContent && `content: ${props.utmContent}`,
-    ].filter(Boolean).join(' · '),
+    ]
+        .filter(Boolean)
+        .join(' · '),
 );
 </script>
 
@@ -60,11 +65,16 @@ const campaign = computed(() =>
             <TooltipTrigger as-child>
                 <component
                     :is="isExpired ? IconClockExclamation : IconClockPause"
-                    :class="isExpired ? 'size-3.5 text-destructive' : 'size-3.5 text-muted-foreground'"
+                    :class="
+                        isExpired
+                            ? 'size-3.5 text-destructive'
+                            : 'size-3.5 text-muted-foreground'
+                    "
                 />
             </TooltipTrigger>
             <TooltipContent>
-                {{ isExpired ? 'Expired' : 'Expires' }} {{ date.formatDateTime(expiresAt) }}
+                {{ isExpired ? 'Expired' : 'Expires' }}
+                {{ date.formatDateTime(expiresAt) }}
             </TooltipContent>
         </Tooltip>
 
@@ -79,7 +89,9 @@ const campaign = computed(() =>
             <TooltipTrigger as-child>
                 <IconBrandAndroid class="size-3.5 text-muted-foreground" />
             </TooltipTrigger>
-            <TooltipContent>Android visitors go to {{ android }}</TooltipContent>
+            <TooltipContent
+                >Android visitors go to {{ android }}</TooltipContent
+            >
         </Tooltip>
 
         <Tooltip v-if="campaign">

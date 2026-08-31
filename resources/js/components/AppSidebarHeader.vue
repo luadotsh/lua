@@ -38,7 +38,10 @@ withDefaults(
             <SidebarTrigger class="-ml-1 md:hidden" />
             <slot name="header">
                 <HeaderTitle v-if="title" :title="title" :total="total" />
-                <Breadcrumbs v-else-if="breadcrumbs.length > 0" :breadcrumbs="breadcrumbs" />
+                <Breadcrumbs
+                    v-else-if="breadcrumbs.length > 0"
+                    :breadcrumbs="breadcrumbs"
+                />
             </slot>
         </div>
         <div v-if="$slots['header-actions']" class="flex items-center gap-2">

@@ -1,13 +1,13 @@
 <!-- Ported from `~/Herd/changelogfy` (Liveboard/FilterMenu.vue). -->
 <script setup lang="ts">
 import {
-    IconFilter,
+    IconCheck,
     IconChevronLeft,
     IconChevronRight,
-    IconCheck,
+    IconFilter,
     IconSearch,
 } from '@tabler/icons-vue';
-import { ref, computed, watch, nextTick } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 
 import type {
     FilterCategory,
@@ -16,8 +16,8 @@ import type {
 import { Button } from '@/components/ui/button';
 import {
     Popover,
-    PopoverTrigger,
     PopoverContent,
+    PopoverTrigger,
 } from '@/components/ui/popover';
 
 const props = defineProps<{
@@ -163,7 +163,9 @@ watch(open, (value) => {
                     v-model="search"
                     type="text"
                     autocomplete="off"
-                    :placeholder="activeCategory ? activeCategory.label : 'Search filter…'"
+                    :placeholder="
+                        activeCategory ? activeCategory.label : 'Search filter…'
+                    "
                     class="h-9 w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
                 />
             </div>

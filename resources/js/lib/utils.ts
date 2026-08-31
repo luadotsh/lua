@@ -1,8 +1,9 @@
 import type { InertiaLinkProps } from '@inertiajs/vue3';
-import { favicon as faviconRoute } from '@/routes/websites';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { toast } from 'vue-sonner';
+
+import { favicon as faviconRoute } from '@/routes/websites';
 
 export const cn = (...inputs: ClassValue[]) => {
     return twMerge(clsx(inputs));
@@ -18,7 +19,8 @@ export const formatNumber = (value: number): string => {
 
 export const formatNumberCompact = (value: number | string): string => {
     // Some endpoints send counts already run through PHP's number_format(), e.g. "1,234".
-    const numeric = typeof value === 'number' ? value : Number(value.replace(/,/g, ''));
+    const numeric =
+        typeof value === 'number' ? value : Number(value.replace(/,/g, ''));
 
     if (!Number.isFinite(numeric)) {
         return String(value);
