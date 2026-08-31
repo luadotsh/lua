@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d7d4589a5cd5f676e57158e957975fbc",
+    "content-hash": "9d76ce43487349fc1c7881d0822a003d",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -6791,24 +6791,24 @@
         },
         {
             "name": "spatie/color",
-            "version": "1.8.0",
+            "version": "2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/color.git",
-                "reference": "142af7fec069a420babea80a5412eb2f646dcd8c"
+                "reference": "bcfe1840e32af163555a832dc6225f766a05f710"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/color/zipball/142af7fec069a420babea80a5412eb2f646dcd8c",
-                "reference": "142af7fec069a420babea80a5412eb2f646dcd8c",
+                "url": "https://api.github.com/repos/spatie/color/zipball/bcfe1840e32af163555a832dc6225f766a05f710",
+                "reference": "bcfe1840e32af163555a832dc6225f766a05f710",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.3|^8.0"
+                "php": "^8.2"
             },
             "require-dev": {
-                "pestphp/pest": "^1.22",
-                "phpunit/phpunit": "^6.5||^9.0"
+                "pestphp/pest": "^3.7",
+                "phpunit/phpunit": "^11.5"
             },
             "type": "library",
             "autoload": {
@@ -6838,7 +6838,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/color/issues",
-                "source": "https://github.com/spatie/color/tree/1.8.0"
+                "source": "https://github.com/spatie/color/tree/2.1.0"
             },
             "funding": [
                 {
@@ -6846,7 +6846,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-02-10T09:22:41+00:00"
+            "time": "2026-02-08T22:16:42+00:00"
         },
         {
             "name": "stevebauman/location",

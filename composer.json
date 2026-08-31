@@ -28,7 +28,7 @@
         "posthog/posthog-php": "^4.13",
         "sendkit/sendkit-laravel": "^1.1",
         "simplesoftwareio/simple-qrcode": "^4.2",
-        "spatie/color": "^1.6",
+        "spatie/color": "^1.6 || ^2.0",
         "stevebauman/location": "^7.0"
     },
     "require-dev": {
