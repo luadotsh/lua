@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Setting\BillingController::index
-* @see app/Http/Controllers/Setting/BillingController.php:16
+* @see app/Http/Controllers/Setting/BillingController.php:13
 * @route '/settings/billing'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\BillingController::index
-* @see app/Http/Controllers/Setting/BillingController.php:16
+* @see app/Http/Controllers/Setting/BillingController.php:13
 * @route '/settings/billing'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Setting\BillingController::index
-* @see app/Http/Controllers/Setting/BillingController.php:16
+* @see app/Http/Controllers/Setting/BillingController.php:13
 * @route '/settings/billing'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\BillingController::index
-* @see app/Http/Controllers/Setting/BillingController.php:16
+* @see app/Http/Controllers/Setting/BillingController.php:13
 * @route '/settings/billing'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\BillingController::index
-* @see app/Http/Controllers/Setting/BillingController.php:16
+* @see app/Http/Controllers/Setting/BillingController.php:13
 * @route '/settings/billing'
 */
 const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\Setting\BillingController::index
-* @see app/Http/Controllers/Setting/BillingController.php:16
+* @see app/Http/Controllers/Setting/BillingController.php:13
 * @route '/settings/billing'
 */
 indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\BillingController::index
-* @see app/Http/Controllers/Setting/BillingController.php:16
+* @see app/Http/Controllers/Setting/BillingController.php:13
 * @route '/settings/billing'
 */
 indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\Setting\BillingController::upgrade
-* @see app/Http/Controllers/Setting/BillingController.php:21
+* @see app/Http/Controllers/Setting/BillingController.php:18
 * @route '/settings/billing/upgrade'
 */
 export const upgrade = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -97,7 +97,7 @@ upgrade.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\BillingController::upgrade
-* @see app/Http/Controllers/Setting/BillingController.php:21
+* @see app/Http/Controllers/Setting/BillingController.php:18
 * @route '/settings/billing/upgrade'
 */
 upgrade.url = (options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ upgrade.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Setting\BillingController::upgrade
-* @see app/Http/Controllers/Setting/BillingController.php:21
+* @see app/Http/Controllers/Setting/BillingController.php:18
 * @route '/settings/billing/upgrade'
 */
 upgrade.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -116,7 +116,7 @@ upgrade.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\BillingController::upgrade
-* @see app/Http/Controllers/Setting/BillingController.php:21
+* @see app/Http/Controllers/Setting/BillingController.php:18
 * @route '/settings/billing/upgrade'
 */
 upgrade.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -126,7 +126,7 @@ upgrade.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\BillingController::upgrade
-* @see app/Http/Controllers/Setting/BillingController.php:21
+* @see app/Http/Controllers/Setting/BillingController.php:18
 * @route '/settings/billing/upgrade'
 */
 const upgradeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -136,7 +136,7 @@ const upgradeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =>
 
 /**
 * @see \App\Http\Controllers\Setting\BillingController::upgrade
-* @see app/Http/Controllers/Setting/BillingController.php:21
+* @see app/Http/Controllers/Setting/BillingController.php:18
 * @route '/settings/billing/upgrade'
 */
 upgradeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -146,7 +146,7 @@ upgradeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\Setting\BillingController::upgrade
-* @see app/Http/Controllers/Setting/BillingController.php:21
+* @see app/Http/Controllers/Setting/BillingController.php:18
 * @route '/settings/billing/upgrade'
 */
 upgradeForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -163,7 +163,7 @@ upgrade.form = upgradeForm
 
 /**
 * @see \App\Http\Controllers\Setting\BillingController::checkout
-* @see app/Http/Controllers/Setting/BillingController.php:29
+* @see app/Http/Controllers/Setting/BillingController.php:27
 * @route '/settings/billing/checkout/{planId}'
 */
 export const checkout = (args: { planId: string | number } | [planId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -178,7 +178,7 @@ checkout.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\BillingController::checkout
-* @see app/Http/Controllers/Setting/BillingController.php:29
+* @see app/Http/Controllers/Setting/BillingController.php:27
 * @route '/settings/billing/checkout/{planId}'
 */
 checkout.url = (args: { planId: string | number } | [planId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -205,7 +205,7 @@ checkout.url = (args: { planId: string | number } | [planId: string | number ] |
 
 /**
 * @see \App\Http\Controllers\Setting\BillingController::checkout
-* @see app/Http/Controllers/Setting/BillingController.php:29
+* @see app/Http/Controllers/Setting/BillingController.php:27
 * @route '/settings/billing/checkout/{planId}'
 */
 checkout.get = (args: { planId: string | number } | [planId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -215,7 +215,7 @@ checkout.get = (args: { planId: string | number } | [planId: string | number ] |
 
 /**
 * @see \App\Http\Controllers\Setting\BillingController::checkout
-* @see app/Http/Controllers/Setting/BillingController.php:29
+* @see app/Http/Controllers/Setting/BillingController.php:27
 * @route '/settings/billing/checkout/{planId}'
 */
 checkout.head = (args: { planId: string | number } | [planId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -225,7 +225,7 @@ checkout.head = (args: { planId: string | number } | [planId: string | number ] 
 
 /**
 * @see \App\Http\Controllers\Setting\BillingController::checkout
-* @see app/Http/Controllers/Setting/BillingController.php:29
+* @see app/Http/Controllers/Setting/BillingController.php:27
 * @route '/settings/billing/checkout/{planId}'
 */
 const checkoutForm = (args: { planId: string | number } | [planId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -235,7 +235,7 @@ const checkoutForm = (args: { planId: string | number } | [planId: string | numb
 
 /**
 * @see \App\Http\Controllers\Setting\BillingController::checkout
-* @see app/Http/Controllers/Setting/BillingController.php:29
+* @see app/Http/Controllers/Setting/BillingController.php:27
 * @route '/settings/billing/checkout/{planId}'
 */
 checkoutForm.get = (args: { planId: string | number } | [planId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -245,7 +245,7 @@ checkoutForm.get = (args: { planId: string | number } | [planId: string | number
 
 /**
 * @see \App\Http\Controllers\Setting\BillingController::checkout
-* @see app/Http/Controllers/Setting/BillingController.php:29
+* @see app/Http/Controllers/Setting/BillingController.php:27
 * @route '/settings/billing/checkout/{planId}'
 */
 checkoutForm.head = (args: { planId: string | number } | [planId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -262,7 +262,7 @@ checkout.form = checkoutForm
 
 /**
 * @see \App\Http\Controllers\Setting\BillingController::portal
-* @see app/Http/Controllers/Setting/BillingController.php:48
+* @see app/Http/Controllers/Setting/BillingController.php:46
 * @route '/settings/billing/portal'
 */
 export const portal = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -277,7 +277,7 @@ portal.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\BillingController::portal
-* @see app/Http/Controllers/Setting/BillingController.php:48
+* @see app/Http/Controllers/Setting/BillingController.php:46
 * @route '/settings/billing/portal'
 */
 portal.url = (options?: RouteQueryOptions) => {
@@ -286,7 +286,7 @@ portal.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Setting\BillingController::portal
-* @see app/Http/Controllers/Setting/BillingController.php:48
+* @see app/Http/Controllers/Setting/BillingController.php:46
 * @route '/settings/billing/portal'
 */
 portal.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -296,7 +296,7 @@ portal.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\BillingController::portal
-* @see app/Http/Controllers/Setting/BillingController.php:48
+* @see app/Http/Controllers/Setting/BillingController.php:46
 * @route '/settings/billing/portal'
 */
 portal.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -306,7 +306,7 @@ portal.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\BillingController::portal
-* @see app/Http/Controllers/Setting/BillingController.php:48
+* @see app/Http/Controllers/Setting/BillingController.php:46
 * @route '/settings/billing/portal'
 */
 const portalForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -316,7 +316,7 @@ const portalForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 
 /**
 * @see \App\Http\Controllers\Setting\BillingController::portal
-* @see app/Http/Controllers/Setting/BillingController.php:48
+* @see app/Http/Controllers/Setting/BillingController.php:46
 * @route '/settings/billing/portal'
 */
 portalForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -326,7 +326,7 @@ portalForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\BillingController::portal
-* @see app/Http/Controllers/Setting/BillingController.php:48
+* @see app/Http/Controllers/Setting/BillingController.php:46
 * @route '/settings/billing/portal'
 */
 portalForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

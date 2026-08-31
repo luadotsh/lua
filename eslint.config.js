@@ -47,17 +47,12 @@ export default defineConfigWithVueTs(
             // defineModel is a refactor of the main form and belongs in its
             // own change, not in a CI/CD one.
             'vue/no-mutating-props': 'off',
-            'import/order': [
-                'error',
-                {
-                    groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
-                    'newlines-between': 'always',
-                    alphabetize: {
-                        order: 'asc',
-                        caseInsensitive: true,
-                    },
-                },
-            ],
+            // Import order has exactly one owner: prettier-plugin-organize-imports.
+            // Running import/order alongside it makes the two fix each other in
+            // a loop — `eslint --fix` reorders, `prettier --write` puts it back,
+            // and `format:check` then fails on whatever ran last. Ordering is a
+            // formatting concern, so it stays with the formatter.
+            'import/order': 'off',
         },
     },
     prettier,
