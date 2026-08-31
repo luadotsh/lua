@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Auth;
 
 use App\Actions\Auth\LoginUser;
-use App\Http\Requests\Auth\AcceptInviteRequest;
 use App\Actions\User\CreateUser;
+use App\Http\Requests\Auth\AcceptInviteRequest;
 use App\Models\Invite;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class InviteController extends Controller
@@ -19,7 +19,7 @@ class InviteController extends Controller
     {
         // pega o invite
         $invite = Invite::where('id', $id)->first();
-        if (!$invite) {
+        if (! $invite) {
             abort(404);
         }
 
@@ -37,12 +37,22 @@ class InviteController extends Controller
             ->with('workspace')
             ->first();
 
-        // se não encontrar o token
-        if (!$invite) {
-            session()->flash('flash.banner', 'Invalid Invite.');
-            session()->flash('flash.bannerStyle', 'danger');
+        // The redirect used to read $invite->id on the null it had just
+        // checked for, so a wrong email — or a second attempt at an invite
+        // already consumed — was a fatal rather than this message.
+        if (! $invite) {
+            throw ValidationException::withMessages([
+                'email' => 'This invitation is not for that email address, or it has already been used.',
+            ]);
+        }
 
-            return redirect(route('auth.invites.show', $invite->id));
+        // Someone who already has an account cannot register again; joining is
+        // what they need, and CreateInvite does that up front for anyone who
+        // had an account when the invite was written.
+        if (User::where('email', $invite->email)->exists()) {
+            throw ValidationException::withMessages([
+                'email' => 'An account already exists for this address. Sign in and ask to be added again.',
+            ]);
         }
 
         // user — is_invite keeps CreateUser from also making a personal

@@ -162,3 +162,99 @@ it('refuses to cancel an invite from another workspace through the tool', functi
 
     expect(Invite::find($invite->id))->not->toBeNull();
 });
+
+// --- acceptance ------------------------------------------------------------
+
+it('refuses an invite accepted with a different email', function () {
+    $invite = Invite::factory()->create([
+        'workspace_id' => $this->workspace->id,
+        'email' => 'intended@example.com',
+    ]);
+
+    // This used to read ->id off the null it had just checked for, so a wrong
+    // address was a fatal rather than a message.
+    $this->post(route('auth.invites.accept', $invite->id), [
+        'email' => 'someone.else@example.com',
+        'name' => 'Someone Else',
+        'password' => 'password123',
+        'password_confirmation' => 'password123',
+    ])->assertSessionHasErrors('email');
+
+    expect(User::where('email', 'someone.else@example.com')->exists())->toBeFalse();
+});
+
+it('consumes the invite so the same link cannot be used twice', function () {
+    $invite = Invite::factory()->create([
+        'workspace_id' => $this->workspace->id,
+        'email' => 'newcomer@example.com',
+    ]);
+
+    $this->post(route('auth.invites.accept', $invite->id), [
+        'email' => 'newcomer@example.com',
+        'name' => 'Newcomer',
+        'password' => 'password123',
+        'password_confirmation' => 'password123',
+    ]);
+
+    expect(Invite::find($invite->id))->toBeNull()
+        ->and(User::where('email', 'newcomer@example.com')->exists())->toBeTrue();
+
+    // Accepting logs you in, so the second attempt comes from someone else —
+    // the invite is gone and the id no longer resolves.
+    auth()->logout();
+
+    $this->post(route('auth.invites.accept', $invite->id), [
+        'email' => 'newcomer@example.com',
+        'name' => 'Someone Else',
+        'password' => 'password123',
+        'password_confirmation' => 'password123',
+    ])->assertSessionHasErrors('email');
+});
+
+it('refuses an invite for an address that already has an account', function () {
+    User::factory()->create(['email' => 'known@example.com']);
+
+    $invite = Invite::factory()->create([
+        'workspace_id' => $this->workspace->id,
+        'email' => 'known@example.com',
+    ]);
+
+    // Registering again would hit the unique index as a 500. Joining is what
+    // they need, and CreateInvite does that for anyone who had an account when
+    // the invite was written.
+    $this->post(route('auth.invites.accept', $invite->id), [
+        'email' => 'known@example.com',
+        'name' => 'Known',
+        'password' => 'password123',
+        'password_confirmation' => 'password123',
+    ])->assertSessionHasErrors('email');
+});
+
+it('lets the same address be invited to two different workspaces', function () {
+    $elsewhere = User::factory()->withWorkspace()->create();
+
+    Invite::factory()->create([
+        'workspace_id' => $elsewhere->current_workspace_id,
+        'email' => 'newcomer@example.com',
+    ]);
+
+    // The unique rule used to be global, so a pending invite anywhere blocked
+    // this one — and told you it existed.
+    $this->actingAs($this->user)
+        ->post(route('setting.invites.store'), [
+            'email' => 'newcomer@example.com',
+            'role' => Role::ROLE_ADMIN->value,
+        ])
+        ->assertSessionHasNoErrors();
+
+    expect(Invite::where('email', 'newcomer@example.com')->count())->toBe(2);
+});
+
+it('refuses an invite without a role', function () {
+    // A missing role used to reach a NOT NULL column as a 500.
+    $this->actingAs($this->user)
+        ->post(route('setting.invites.store'), ['email' => 'newcomer@example.com'])
+        ->assertSessionHasErrors('role');
+
+    expect(Invite::count())->toBe(0);
+});

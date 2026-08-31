@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Setting;
 
+use App\Actions\Media\DeleteMedia;
 use App\Actions\Workspace\UpdateWorkspace;
-use Illuminate\Http\Request;
-
 use App\Http\Requests\Workspace\UpdateRequest;
-
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class WorkspaceController extends Controller
@@ -25,6 +24,26 @@ class WorkspaceController extends Controller
         UpdateWorkspace::execute($workspace, $request->validated());
 
         session()->flash('flash.banner', 'Workspace updated');
+        session()->flash('flash.bannerStyle', 'success');
+
+        return back();
+    }
+
+    /**
+     * The route has always existed; the method it named did not, so removing a
+     * workspace logo was a BadMethodCallException.
+     */
+    public function deleteLogo(Request $request)
+    {
+        $workspace = $request->user()->currentWorkspace;
+        $logo = $workspace->getFirstMedia('logo');
+
+        if ($logo !== null) {
+            DeleteMedia::execute($request->user(), $logo);
+            $workspace->unsetRelation('media');
+        }
+
+        session()->flash('flash.banner', 'Logo removed');
         session()->flash('flash.bannerStyle', 'success');
 
         return back();

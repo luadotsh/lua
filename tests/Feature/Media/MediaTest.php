@@ -110,3 +110,69 @@ it('deletes the file from storage along with the record', function () {
     expect(Media::find($media->id))->toBeNull();
     Storage::assertMissing($path);
 });
+
+it('removes the avatar and the file behind it', function () {
+    actingAs($this->user)->post(route('medias.store'), [
+        'media' => UploadedFile::fake()->image('me.jpg', 200, 200),
+        'collection' => 'avatar',
+    ]);
+
+    $path = Media::firstOrFail()->path;
+
+    // This used to null a legacy `photo` column nothing reads, so the avatar
+    // stayed exactly where it was and the file stayed on disk.
+    actingAs($this->user)
+        ->delete(route('setting.account.photo.destroy'))
+        ->assertRedirect();
+
+    expect($this->user->fresh()->photo_url)->toBeNull()
+        ->and($this->user->fresh()->has_photo)->toBeFalse()
+        ->and(Media::count())->toBe(0);
+
+    Storage::assertMissing($path);
+});
+
+it('removes the workspace logo through the route that always existed', function () {
+    actingAs($this->user)->post(route('medias.store'), [
+        'media' => UploadedFile::fake()->image('logo.jpg', 200, 200),
+        'collection' => 'logo',
+    ]);
+
+    $path = Media::firstOrFail()->path;
+
+    // The route named a controller method that did not exist, so removing a
+    // logo was a BadMethodCallException.
+    actingAs($this->user)
+        ->delete(route('setting.workspace.logo.destroy'))
+        ->assertRedirect();
+
+    expect($this->user->currentWorkspace->fresh()->logo_url)->toBeNull()
+        ->and(Media::count())->toBe(0);
+
+    Storage::assertMissing($path);
+});
+
+it('shrugs when there is no photo to remove', function () {
+    actingAs($this->user)
+        ->delete(route('setting.account.photo.destroy'))
+        ->assertRedirect();
+
+    expect(Media::count())->toBe(0);
+});
+
+it('refuses an upload larger than the limit', function () {
+    actingAs($this->user)
+        ->post(route('medias.store'), [
+            'media' => UploadedFile::fake()->image('huge.jpg')->size(3000),
+            'collection' => 'avatar',
+        ])
+        ->assertSessionHasErrors('media');
+
+    expect(Media::count())->toBe(0);
+});
+
+it('refuses an upload with no file', function () {
+    actingAs($this->user)
+        ->post(route('medias.store'), ['collection' => 'avatar'])
+        ->assertSessionHasErrors('media');
+});
