@@ -1,0 +1,173 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  DB_DATABASE: lua_test
+  DB_PASSWORD: password
+  BROADCAST_CONNECTION: log
+  CACHE_STORE: array
+  QUEUE_CONNECTION: sync
+  SESSION_DRIVER: array
+
+jobs:
+  tests:
+    name: Tests (${{ matrix.name }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: PostgreSQL
+            connection: pgsql
+            image: postgres:16
+            port: '5432'
+            username: postgres
+            health: '--health-cmd="pg_isready"'
+          - name: MySQL
+            connection: mysql
+            image: mysql:8.4
+            port: '3306'
+            username: root
+            health: '--health-cmd="mysqladmin ping -h 127.0.0.1 -u root -ppassword"'
+
+    env:
+      DB_CONNECTION: ${{ matrix.connection }}
+      DB_USERNAME: ${{ matrix.username }}
+
+    services:
+      database:
+        image: ${{ matrix.image }}
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: lua_test
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: lua_test
+        ports:
+          - ${{ matrix.port }}/tcp
+        options: >-
+          ${{ matrix.health }}
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+
+      redis:
+        image: redis:7
+        ports:
+          - 6379/tcp
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      # CONVERT_TZ returns NULL for a named zone unless the server's timezone
+      # tables are populated, which silently zeroes every analytics timeseries.
+      # See GetTimeseries::bucketExpression(). Run inside the service container,
+      # not on the runner: mysql_tzinfo_to_sql ships with mysql-server, and the
+      # runner only has the client.
+      - name: Load MySQL timezone tables
+        if: matrix.connection == 'mysql'
+        run: |
+          CID=$(docker ps --filter "ancestor=${{ matrix.image }}" --format '{{.ID}}' | head -1)
+          test -n "$CID" || { echo "mysql service container not found"; exit 1; }
+          docker exec "$CID" sh -c \
+            "mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root -ppassword mysql" 2>/dev/null
+          docker exec "$CID" mysql -u root -ppassword \
+            -e "SELECT COUNT(*) AS tz_rows FROM mysql.time_zone_name;"
+
+      - name: Setup test environment
+        uses: ./.github/actions/setup-laravel
+        with:
+          db-port: ${{ job.services.database.ports[matrix.port] }}
+          redis-port: ${{ job.services.redis.ports['6379'] }}
+
+      - name: Run backend tests
+        env:
+          DB_PORT: ${{ job.services.database.ports[matrix.port] }}
+          REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
+        run: php artisan test --compact --parallel
+
+  backend:
+    name: backend
+    runs-on: ubuntu-latest
+    needs: [tests]
+    if: always()
+
+    steps:
+      - name: Fail unless every engine passed
+        run: '[ "${{ needs.tests.result }}" = "success" ]'
+
+  e2e:
+    runs-on: ubuntu-latest
+
+    env:
+      DB_CONNECTION: pgsql
+      DB_USERNAME: postgres
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: lua_test
+        ports:
+          - 5432/tcp
+        options: >-
+          --health-cmd="pg_isready"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+      redis:
+        image: redis:7
+        ports:
+          - 6379/tcp
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Setup test environment
+        uses: ./.github/actions/setup-laravel
+        with:
+          node: 'true'
+          db-port: ${{ job.services.postgres.ports['5432'] }}
+          redis-port: ${{ job.services.redis.ports['6379'] }}
+
+      - name: Build assets
+        run: npm run build
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run browser tests
+        env:
+          DB_PORT: ${{ job.services.postgres.ports['5432'] }}
+          REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
+        run: php artisan test tests/Browser --compact
+
+      - name: Upload Playwright artifacts
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-artifacts
+          path: tests/Browser/Screenshots
+          if-no-files-found: ignore
+          retention-days: 7
