@@ -41,7 +41,7 @@ class ListLinks
         $tags = array_filter((array) (data_get($filters, 'tag') ?? []));
         $domains = array_filter((array) (data_get($filters, 'domain') ?? []));
         $users = array_filter((array) (data_get($filters, 'user') ?? []));
-        $perPage = (int) (data_get($filters, 'per_page') ?: config('app.pagination.default'));
+        $perPage = (int) (data_get($filters, 'per_page') ?: config('lua.pagination.default'));
         $perPage = min(max($perPage, 1), 100);
 
         return Link::where('workspace_id', $workspace->id)

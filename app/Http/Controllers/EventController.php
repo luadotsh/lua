@@ -23,7 +23,7 @@ class EventController extends Controller
             ->whereBetween('created_at', [$start, $end])
             ->latest();
 
-        $links = $query->paginate(config('app.pagination.default'))->withQueryString();
+        $links = $query->paginate(config('lua.pagination.default'))->withQueryString();
 
         return Inertia::render('Event/Index', [
             /**

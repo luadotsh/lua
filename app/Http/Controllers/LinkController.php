@@ -70,7 +70,7 @@ class LinkController extends Controller
             ->where('link_id', $link->id)
             ->whereBetween('created_at', [$start, $end])
             ->latest()
-            ->paginate((int) config('app.pagination.default'))
+            ->paginate((int) config('lua.pagination.default'))
             ->withQueryString();
 
         return Inertia::render('Link/Show', [

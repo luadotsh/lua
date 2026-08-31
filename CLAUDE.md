@@ -243,8 +243,14 @@ Vue components must have a single root element.
 
 - Always use normal pagination (`->paginate()`). NEVER use cursor pagination (`->cursorPaginate()`).
 - All paginated lists must use Inertia's scroll pagination (`Inertia::scroll()` on the backend with `<InfiniteScroll>` on the frontend). NEVER use traditional page-based pagination with page links/buttons.
-- The page size ALWAYS comes from `config('app.pagination.default')` — never a magic number, and never a `perPage`/`per_page` value supplied by the request or frontend. Action/service list methods must NOT accept a `$perPage` parameter; call `->paginate((int) config('app.pagination.default'))` directly.
+- The page size ALWAYS comes from `config('lua.pagination.default')` — never a magic number, and never a `perPage`/`per_page` value supplied by the request or frontend. Action/service list methods must NOT accept a `$perPage` parameter; call `->paginate((int) config('lua.pagination.default'))` directly.
     - The only exception is the public REST API (`app/Http/Controllers/Api`), which uses its own fixed, documented page size (15) as a stable API contract.
+
+## Application Config
+
+- Anything that is a decision about how **this application** behaves — rather than about a framework or a package — lives in `config/lua.php`, not scattered into `config/app.php` or a file of its own. Read it with `config('lua.*')`.
+- Every key takes an `env()` with a default that is right for a fresh install, so cloning the repo and running it needs no `.env` edits to work.
+- Social login is gated there: a provider appears on login and register only when `lua.auth.<provider>` is on **and** its credentials are set in `config/services.php`. The credential half is what stops a self-hosted install rendering a button that leads straight to an OAuth error; the switch half is what lets you turn a provider off without deleting the credentials to do it. See `App\Enums\Auth\SocialAuthProvider::isEnabled()`.
 
 ## Form Validation
 

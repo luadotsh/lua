@@ -39,3 +39,31 @@ test('the sign up link points at the register route', function () {
         ->assertRoute('register')
         ->assertNoJavaScriptErrors();
 });
+
+test('the login page shows no social buttons when no provider is configured', function () {
+    config([
+        'lua.auth.google' => false,
+        'lua.auth.github' => false,
+    ]);
+
+    $page = visit(route('login'));
+
+    $page->assertDontSee('Continue with')
+        ->assertDontSee('Or continue with')
+        ->assertNoJavaScriptErrors();
+});
+
+test('the login page shows a configured provider on its own', function () {
+    config([
+        'lua.auth.google' => true,
+        'lua.auth.github' => false,
+        'services.google.client_id' => 'id',
+        'services.google.client_secret' => 'secret',
+    ]);
+
+    $page = visit(route('login'));
+
+    $page->assertSee('Continue with Google')
+        ->assertDontSee('Continue with GitHub')
+        ->assertNoJavaScriptErrors();
+});

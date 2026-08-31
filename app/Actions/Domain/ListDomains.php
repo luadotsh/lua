@@ -26,7 +26,7 @@ class ListDomains
      */
     public static function paginate(Workspace $workspace, ?int $perPage = null): LengthAwarePaginator
     {
-        $perPage = min(max((int) ($perPage ?: config('app.pagination.default')), 1), 100);
+        $perPage = min(max((int) ($perPage ?: config('lua.pagination.default')), 1), 100);
 
         return Domain::where('workspace_id', $workspace->id)
             ->latest()

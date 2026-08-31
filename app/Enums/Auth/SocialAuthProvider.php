@@ -26,12 +26,17 @@ enum SocialAuthProvider: string
     }
 
     /**
-     * A provider without credentials configured is hidden everywhere, so a
-     * self-hosted install that only sets up one of them shows only that one.
+     * A provider needs both to appear: the switch in config/lua.php, and
+     * credentials in config/services.php.
+     *
+     * The credential check is what keeps a self-hosted install from rendering
+     * a button that leads straight to an OAuth error, and the switch is what
+     * lets you turn a provider off without deleting the credentials to do it.
      */
     public function isEnabled(): bool
     {
-        return filled(config("services.{$this->value}.client_id"))
+        return (bool) config("lua.auth.{$this->value}")
+            && filled(config("services.{$this->value}.client_id"))
             && filled(config("services.{$this->value}.client_secret"));
     }
 
