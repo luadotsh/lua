@@ -13,9 +13,10 @@ it('builds a tagged url as you type', function (): void {
             "function () { return document.querySelector('[data-testid=\"utm-result\"]').textContent.includes('utm_source=newsletter'); }",
         )
         ->fill('@utm-utm_source', 'partner-blog')
-        ->assertScript(
-            "function () { return document.querySelector('[data-testid=\"utm-result\"]').textContent.includes('utm_source=partner-blog'); }",
-        )
+        // assertSee waits for the text; assertScript evaluates once and races
+        // the re-render the keystroke triggers. Asserting the typed value with
+        // assertScript was an intermittent failure, not a product bug.
+        ->assertSee('utm_source=partner-blog')
         ->assertNoJavaScriptErrors();
 });
 
