@@ -9,8 +9,8 @@ jobs:
       DB_DATABASE: laravel
       DB_USERNAME: root
       DB_PASSWORD: password
-      BROADCAST_DRIVER: log
-      CACHE_DRIVER: redis
+      BROADCAST_CONNECTION: log
+      CACHE_STORE: redis
       QUEUE_CONNECTION: redis
       SESSION_DRIVER: redis
 
