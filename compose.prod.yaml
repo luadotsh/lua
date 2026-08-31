@@ -1,0 +1,189 @@
+# Lua — self-hosted production stack.
+#
+#   1. Generate an app key:   docker compose -f compose.prod.yaml run --rm app php artisan key:generate --show
+#      Paste the value into APP_KEY below.
+#   2. Edit APP_URL and the passwords marked "change me".
+#   3. Start:                 docker compose -f compose.prod.yaml up -d
+#
+# This pulls the published image — no local build. Postgres, Redis, the queue
+# workers, the scheduler and the WebSocket server all run for you.
+
+services:
+  app:
+    image: ghcr.io/luadotsh/lua:latest
+    container_name: lua
+    restart: unless-stopped
+    environment:
+      # ===== Required =====
+      APP_NAME: Lua
+      APP_ENV: production
+      APP_DEBUG: "false"
+      APP_KEY: ""                       # <- run key:generate (see header) and paste here
+      APP_URL: http://localhost:8000    # <- your public URL, e.g. https://post.yourdomain.com
+      SELF_HOSTED: "true"
+      ALLOW_MULTIPLE_SOCIAL_ACCOUNTS: "true"
+      LUA_TARGET: production
+
+      # ===== Database (bundled postgres service below) =====
+      DB_CONNECTION: pgsql
+      DB_HOST: pgsql
+      DB_PORT: "5432"
+      DB_DATABASE: lua
+      DB_USERNAME: lua
+      DB_PASSWORD: lua-password     # <- change me (must match POSTGRES_PASSWORD below)
+
+      # ===== Redis / queue / cache / broadcasting =====
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      QUEUE_CONNECTION: redis
+      CACHE_STORE: redis
+      SESSION_DRIVER: database
+      BROADCAST_CONNECTION: reverb
+
+      # ===== WebSockets (Reverb) =====
+      # The published image bakes the client at localhost:8080. For a custom
+      # domain, rebuild the image with --build-arg VITE_REVERB_HOST=<domain>
+      # VITE_REVERB_PORT=443 VITE_REVERB_SCHEME=https.
+      REVERB_APP_ID: "1001"
+      REVERB_APP_KEY: lua-reverb-key           # must match the key baked into the published image
+      REVERB_APP_SECRET: change-me-reverb-secret   # <- change me
+      REVERB_HOST: localhost
+      REVERB_PORT: "8080"
+      REVERB_SCHEME: http
+
+      # ===== Passport (OAuth / API keys / MCP) =====
+      # REQUIRED for any durable deploy (and always for multi-node / load
+      # balancers). File keys under storage/ are NOT persisted by the volumes
+      # below — without these env vars a container recreate issues new keys and
+      # invalidates every API/MCP token. Generate once:
+      #   docker compose -f compose.prod.yaml run --rm app php artisan passport:keys --show
+      # then paste the PEM contents here (use \n for newlines).
+      PASSPORT_PRIVATE_KEY: ""
+      PASSPORT_PUBLIC_KEY: ""
+
+      # ===== Storage =====
+      # Default: local disk, persisted in the "storage" volume below.
+      FILESYSTEM_DISK: public
+      #
+      # --- Cloudflare R2: set FILESYSTEM_DISK=r2 and fill these ---
+      # R2_ACCESS_KEY_ID: ""
+      # R2_SECRET_ACCESS_KEY: ""
+      # R2_ENDPOINT: ""
+      # R2_BUCKET: ""
+      # R2_URL: ""                       # public bucket URL (needed for media to display)
+      #
+      # --- AWS S3: set FILESYSTEM_DISK=s3 and fill these ---
+      # AWS_ACCESS_KEY_ID: ""
+      # AWS_SECRET_ACCESS_KEY: ""
+      # AWS_DEFAULT_REGION: us-east-1
+      # AWS_BUCKET: ""
+      # AWS_URL: ""
+
+      # ===== Mail =====
+      # Defaults to "log" (emails written to the container log). Configure SMTP
+      # for real password-reset / team-invite emails.
+      MAIL_MAILER: log
+      MAIL_FROM_ADDRESS: hello@example.com
+      MAIL_FROM_NAME: Lua
+      # MAIL_MAILER: smtp
+      # MAIL_HOST: ""
+      # MAIL_PORT: "587"
+      # MAIL_USERNAME: ""
+      # MAIL_PASSWORD: ""
+      # MAIL_SCHEME: tls
+
+      # ===== Social platforms (fill in when you connect each network) =====
+      # Redirect URI in each portal: ${APP_URL}/accounts/<platform>/callback
+      # LINKEDIN_CLIENT_ID: ""
+      # LINKEDIN_CLIENT_SECRET: ""
+      # X_CLIENT_ID: ""
+      # X_CLIENT_SECRET: ""
+      # FACEBOOK_CLIENT_ID: ""
+      # FACEBOOK_CLIENT_SECRET: ""
+      # INSTAGRAM_CLIENT_ID: ""
+      # INSTAGRAM_CLIENT_SECRET: ""
+      # THREADS_CLIENT_ID: ""
+      # THREADS_CLIENT_SECRET: ""
+      # TIKTOK_CLIENT_ID: ""
+      # TIKTOK_CLIENT_SECRET: ""
+      # PINTEREST_CLIENT_ID: ""
+      # PINTEREST_CLIENT_SECRET: ""
+      # GOOGLE_CLIENT_ID: ""             # YouTube + Google login
+      # GOOGLE_CLIENT_SECRET: ""
+
+      # ===== AI (optional — leave blank to disable AI features) =====
+      # OPENAI_API_KEY: ""
+      # ANTHROPIC_API_KEY: ""
+      # GEMINI_API_KEY: ""
+      # OPENROUTER_API_KEY: ""
+      # ELEVENLABS_API_KEY: ""
+    ports:
+      - "8000:80"     # app (nginx)
+      - "8080:8080"   # Reverb WebSocket
+    volumes:
+      - storage:/var/www/html/storage/app
+    depends_on:
+      pgsql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  pgsql:
+    image: postgres:16-alpine
+    container_name: lua-pgsql
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: lua
+      POSTGRES_USER: lua
+      POSTGRES_PASSWORD: lua-password   # <- must match DB_PASSWORD above
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U lua -d lua']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: lua-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # Optional reverse proxy with automatic HTTPS (Let's Encrypt).
+  # To serve on a domain:
+  #   1. Point the domain's DNS at this host.
+  #   2. Set APP_DOMAIN below and APP_URL above to https://<that domain>.
+  #   3. Start with the proxy profile:
+  #        docker compose -f compose.prod.yaml --profile proxy up -d
+  # Without the profile, the app is served directly on http://localhost:8000.
+  caddy:
+    image: caddy:2-alpine
+    container_name: lua-caddy
+    restart: unless-stopped
+    profiles: [proxy]
+    environment:
+      APP_DOMAIN: post.example.com    # <- your domain
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - app
+
+volumes:
+  pgdata:
+  redisdata:
+  storage:
+  caddy-data:
+  caddy-config:
