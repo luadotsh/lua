@@ -8,11 +8,13 @@ import {
     DialogTitle,
     DialogFooter,
 } from "@/components/ui/dialog";
+import { IconCopy } from "@tabler/icons-vue";
 import { Button } from "@/components/ui/button";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import dayjs from "@/dayjs";
+import { copyToClipboard } from "@/lib/utils";
 import * as apiTokensRoutes from "@/routes/setting/api-tokens";
 
 const token = computed(() => usePage().props.flash?.token);
@@ -39,6 +41,14 @@ const open = () => {
 defineExpose({
     open,
 });
+
+// The dialog asks you to copy it; selecting a 700-character string by hand is
+// not a reasonable way to be asked.
+const copyToken = () => {
+    if (token.value) {
+        copyToClipboard(String(token.value), "API token copied");
+    }
+};
 
 const store = () => {
     form.expires_at = expiresAtDate.value
@@ -90,6 +100,7 @@ const store = () => {
 
             <DialogFooter>
                 <Button
+                    data-testid="generate-api-token"
                     @click="store"
                     :disabled="form.processing"
                     :class="{ 'opacity-25': form.processing }"
@@ -107,20 +118,33 @@ const store = () => {
                 <DialogTitle>API Token</DialogTitle>
             </DialogHeader>
 
-            <div class="text-zinc-800 dark:text-zinc-300">
+            <p class="text-sm text-muted-foreground">
                 Please copy your new API token. For your security, it won't be
                 shown again.
-            </div>
+            </p>
 
+            <!--
+                A token is one unbroken string, so without break-all its
+                min-content width is the whole thing and it pushes the dialog
+                past max-w-md and off the screen.
+            -->
             <div
-                class="mt-4 bg-zinc-100 dark:bg-zinc-800 px-4 py-2 rounded text-sm text-zinc-500 dark:text-zinc-100"
                 v-if="token"
+                class="max-h-40 min-w-0 overflow-y-auto rounded-md bg-muted px-3 py-2 font-mono text-xs break-all text-foreground"
+                data-testid="api-token-value"
             >
                 {{ token }}
             </div>
 
             <DialogFooter>
-                <Button @click="displayToken = false">
+                <Button
+                    data-testid="copy-api-token"
+                    @click="copyToken"
+                >
+                    <IconCopy class="size-4" />
+                    Copy token
+                </Button>
+                <Button variant="secondary" @click="displayToken = false">
                     Close
                 </Button>
             </DialogFooter>

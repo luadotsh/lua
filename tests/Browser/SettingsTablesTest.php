@@ -116,3 +116,27 @@ test('the api token dialog picks an expiry with the app date picker', function (
         )
         ->assertNoJavaScriptErrors();
 });
+
+test('the new token dialog keeps the token inside the dialog', function () {
+    $user = User::factory()->withWorkspace()->create();
+
+    $this->actingAs($user);
+
+    $page = visit(route('setting.api-tokens.index'));
+
+    $page->click('@new-api-token')
+        ->type('#name', 'Deploy key')
+        ->click('@generate-api-token');
+
+    // A token is one unbroken string: without break-all its min-content width
+    // is the whole thing, and it pushed the dialog off the right of the screen.
+    $page->assertPresent('@api-token-value')
+        ->assertScript(
+            'document.documentElement.scrollWidth <= document.documentElement.clientWidth',
+        )
+        ->assertScript(
+            "(() => { const d = document.querySelector('[data-testid=\"api-token-value\"]');"
+            .' return d.getBoundingClientRect().right <= window.innerWidth; })()',
+        )
+        ->assertNoJavaScriptErrors();
+});
