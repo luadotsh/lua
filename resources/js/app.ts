@@ -45,9 +45,19 @@ createInertiaApp({
         const app: App = createSSRApp({ render: () => h(page, props) })
             .use(plugin)
             .use(i18nVue, {
+                // The plugin reads the language off `document` when it is not
+                // told one. There is no document on the server, so it has to
+                // come from the locale the backend already shares.
+                lang: (props.initialPage.props.locale as string | undefined) ?? 'en',
+                fallbackLang: 'en',
                 resolve: async (lang: string) => {
                     const langs = import.meta.glob<{ default: Record<string, string> }>('../../lang/*.json');
-                    return await langs[`../../lang/php_${lang}.json`]();
+                    const load =
+                        langs[`../../lang/php_${lang}.json`] ?? langs['../../lang/php_en.json'];
+
+                    // A locale with no bundled file is a missing translation,
+                    // not a reason to take the SSR process down with it.
+                    return load ? await load() : { default: {} };
                 },
             });
 

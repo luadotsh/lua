@@ -216,7 +216,170 @@ Vue components must have a single root element.
 - **`app.ts` runs in Node as well as the browser.** Anything touching `window`, `document`, `localStorage` or a WebSocket has to be behind `typeof window !== 'undefined'` or it throws at import time and every page falls back to client rendering. `resources/js/bootstrap.ts` is the pattern: axios on the window and the Echo connection are both guarded, and Echo is a dynamic import so the client is never loaded server-side.
 - `createSSRApp` on both sides, not `createApp`: it is what lets the browser hydrate the markup the server sent instead of throwing it away and rendering again.
 - **`app.blade.php` carries no `<title>`.** `@inertiaHead` renders it; a static one comes through as a second tag. The default title comes from the `title` callback in `app.ts`.
+- **The SSR server holds the bundle in memory.** After `npm run build`, restart it (`php artisan inertia:stop-ssr && php artisan inertia:start-ssr`) or you are debugging the previous build. The symptom is markup that looks a version behind while the client-side app is current.
+- **A crash in the SSR process is silent.** Inertia falls back to client rendering and the page still looks fine, so the only sign is server-rendered markup going missing. Check the process output. A plugin that reads a browser global at install time is the usual culprit — `laravel-vue-i18n` is passed an explicit `lang` from the shared `locale` prop for exactly this reason, because it otherwise reads `document`.
 - Tests pin `INERTIA_SSR_ENABLED=false` in `phpunit.xml`. With it on and nothing listening, Inertia falls back to client rendering silently, so the suite would pass either way — a difference no test would report, and the run would depend on whether a server happened to be up.
+
+## Marketing site
+
+- The public site (`/`, `/pricing`, `/terms`, `/privacy`, `/alternatives`) lives in this app — there is no separate `www` project, and no `app.website` config.
+- `routes/site.php` is **scoped to `config('domains.main')`** and required from the **top** of `routes/web.php`. Both halves matter: registration order is what makes `/pricing` win over the `/{key?}` short-link catch-all at the bottom, and the domain scope is what keeps a customer's own domain free to serve `example.com/pricing` as a short link.
+- **Reserved back-halves are derived, not listed.** `CreateLink::reservedKeys()` reads the router for every first path segment registered on the main domain, so adding a route reserves it automatically. Never replace it with a hand-kept list. It applies only on the main domain.
+- Adding a competitor comparison is **one key in `config/alternatives.php`** — no route, no component, no registry. The config keys *are* the registry and the slug is the URL. `tests/Feature/Site/AlternativeTest.php` asserts the shape every entry needs, because the template reads those keys unconditionally.
+- Slugs are constrained to `[a-z0-9-]+` in the route: the controller reads back with `config("alternatives.{$slug}")`, and a dot would traverse into a nested key rather than miss.
+- Page titles carry **no brand** — `createInertiaApp`'s `title` callback appends it. `components/site/Seo.vue` adds it back for the OG and Twitter tags, which bypass that callback.
+
+## FAQ
+
+- Questions live in `config/faq.php`, grouped. It is the **one source** for three surfaces: the `/faq` page, the short set on the home page, and the `FAQPage` structured data both emit. Adding a question adds it everywhere.
+- `home: true` marks the handful that lead the home page. They are the ones a stranger asks before signing up, not the ones a customer asks after.
+- `PageController::faqGroups(homeOnly:)` shapes both. `tests/Feature/Site/FaqTest.php` asserts the home set is a strict subset, because two lists would drift into two different answers to the same question on the same site.
+- Every answer must be true of the product as it stands. The list of what Lua does **not** do is in `.claude/blog-context.md`.
+
+## Content-driven pages
+
+Four surfaces share one arrangement, and a fifth should copy it rather than invent another: **the config keys are the registry, the key is the URL slug, and adding an entry touches no route and no component.**
+
+| Surface | Config | Notes |
+| --- | --- | --- |
+| Alternatives | `config/alternatives.php` | One competitor per key |
+| Use cases | `config/use_cases.php` | Every entry needs a `caveat` |
+| Glossary | `config/glossary.php` | `related` must resolve; a test fails a dangling slug |
+| FAQ | `config/faq.php` | Grouped; `home: true` marks the home-page set |
+
+Slugs are constrained to `[a-z0-9-]+` in the route because the controller reads back with `config("x.{$slug}")`, and a dot would traverse into a nested key rather than miss. Each has a shape test, because the templates read their keys unconditionally: an entry added with a section missing renders broken rather than failing.
+
+## Use cases and tools
+
+- **Use cases** are `config/use_cases.php`, the same arrangement as `config/alternatives.php`: keys are the registry, slug is the URL, adding one touches no route and no component. Every entry needs a `caveat` naming where Lua stops helping, and a test fails an empty one — a page that only sells is a page nobody believes the rest of.
+- **Tools** are real and work without an account. The UTM builder and the QR generator run entirely in the browser and send nothing anywhere, which is the claim their pages make and has to stay true.
+- **The redirect checker fetches a URL a stranger chose, from our server.** `App\Actions\Tool\FollowRedirects` is written around that: http/https only, the host resolved and **every** address checked against private, loopback, link-local and reserved ranges **on every hop**, redirects followed one at a time so that per-hop check is possible at all, a hop limit, a short timeout, and the response body never read. The route is throttled. `ToolTest` asserts nothing is sent for five separate vectors; do not relax any of it.
+- `qrcode` ships no types and `@types/qrcode` would be a new dependency, so the two calls used are declared in `resources/js/types/qrcode.d.ts`. Widen that rather than reaching for `any`.
+
+## Blog
+
+- Posts are markdown files in `resources/blog/<slug>.md`. The directory is the database: dropping a file in publishes a post, and there is no index, registry or seeder to update alongside it.
+- Frontmatter: `title`, `description`, `date` (required — a post with no date never publishes), `author`, `image`, `tags`, `draft`. A `date` in the future is a scheduled draft: `ListPosts` keeps it out of the listing **and** 404s its own URL, so writing ahead is safe.
+- **symfony/yaml resolves a bare `2026-08-20` into a Unix timestamp.** `ListPosts::date()` normalises it; never read `frontmatter.date` raw.
+- Markdown is rendered to HTML **on the server** by `RenderPost` (League\CommonMark, already a Laravel dependency — no parser ships to the browser). The same pass that writes `id` onto each `h2`/`h3` is the one that reports the headings to the table of contents, so the two can never disagree.
+- `RenderPost` caches on `path + mtime`, so editing a post invalidates its own entry and nothing has to be cleared.
+- Body styling is `prose` from `@tailwindcss/typography`, which is already loaded in `resources/css/app.css`.
+
+## Design system
+
+**The accent is Firecrawl's Heat, `#FA5D19`.** It was chosen on looks and then made to work; the logo is used in its black and white variants, so it constrains nothing.
+
+### Colour
+
+Tokens live in `resources/css/app.css` on `:root`, `.dark` and `.site-light`, and reach Tailwind through `@theme inline`. **Always use the semantic token, never a raw hex.**
+
+| Token | Light | Dark | Notes |
+| --- | --- | --- | --- |
+| `foreground` | `#000000` | | **Pure black, not near-black.** `full-black.svg` is drawn in `fill="black"`, so `#0a0a0a` type put the wordmark and the nav a shade apart inside the same header. |
+| `primary` | `#fa5d19` | `#fa5d19` | One button colour everywhere. **Its label is ink, not white**: white on Heat is 3.16:1 and fails; `#1a0c04` on it is 6.26:1. |
+| `primary-text` | `#be3c04` | `#fd9a6b` | **The accent as text**, for links and small marks. A second token is forced, not decorative: Heat is bright enough to be a button against white and therefore too bright to read as text on it (3.16:1). Use `text-primary-text`, never `text-primary`. |
+| `destructive` | `#be123c` | `#fb7185` | **Moved off red, and this is load-bearing.** Heat sits at a CIEDE2000 of about 16 from the stock `#dc2626`, and the app confirms deletions in four places, so Save and Delete would read as the same button. Against the crimson it clears 25. `DesignSystemTest` asserts both directions, so putting the stock red back fails with the reason attached. |
+| `border` / `input` / `muted` | warm neutrals | warm neutrals | Greys pulled a few degrees toward the accent. |
+| `chart-1..5` | deep rust → pale peach | reversed | Reversed per theme so every band stays visible on its ground. |
+| `radius` | `0.75rem` | | Cards go further, at `1.25rem` via `.site-card`. |
+
+Contrast is computed, not eyeballed. If you add a colour, compute it.
+
+### The marketing site is light. Always.
+
+`.site-light` on the `SiteLayout` root redefines the whole token set, so the public pages render light whatever `.dark` is doing on `<html>`. **The signed-in app keeps its dark mode**; only the site is fixed.
+
+This is a decision, not an omission. A marketing page has one job and a reader passes through it once, so a second palette doubles the design work and halves the attention each version gets. It is a token scope rather than a class stripped off `<html>`, because that class belongs to the app and navigating between the two must not fight over it.
+
+`DesignSystemTest` fails on any `dark:` variant inside `pages/Site`, `components/site` or `layouts/site` — a dark variant there is a second palette nobody is designing, visible only to a reader whose app theme happens to be dark.
+
+**`.brand-panel` is the one dark surface**: the footer, anchoring the bottom of a white page on **pure `#000`**, matching the black the type and the wordmark use. Like `.site-light` it is a token scope, so an unmodified `<Button>` or `<Link>` works inside it. Writing hexes onto components instead is exactly how the header's "Start for free" once drifted from every other primary button, and the test also fails on any `bg-[#...]`-style colour in those directories. The single exception is `HeroGlobe.vue`, where mapbox paints through WebGL and cannot resolve a custom property.
+
+### The structural device: a ruled column
+
+`SiteLayout` wraps every page in `.site-rail` — two hairlines at the container edges running the full height, which each section's bottom rule then crosses. It reads as a drawing rather than as a stack of blocks, which is the register a measurement product wants.
+
+**Pages therefore carry no container of their own.** A section is `border-b border-border px-6 py-16 sm:px-10 sm:py-24` and nothing more; adding `mx-auto max-w-6xl` back inside puts a second column inside the first and breaks the rails.
+
+Supporting devices, all of them once each:
+
+- `.site-grid` — a faint dot grid, masked, behind the hero only. Drawing sheet, not wallpaper.
+- `.label` — small mono, uppercase, tracked. **This is the eyebrow register**, and it is the reason eyebrows no longer need the accent to be noticed. Three type registers carry the site: display for headlines, mono for labels, Inter for everything else.
+- Ghosted display numerals (`text-border`, `text-5xl`) on the steps, like dimensions on a drawing.
+- `bg-muted/40` on alternating sections, so a long page has rhythm the rules alone cannot give it.
+- `.site-card` for anything that should read as an object: hairline border plus a soft shadow. Border-only at a tight radius is what made earlier passes look flat and drawn.
+
+### Where the accent goes
+
+`--primary` is for **buttons and small marks**, not for running text. Section eyebrows use the `.label` register instead: an accent on every eyebrow down a long page made the palette read as the loudest thing on the site rather than the sharpest.
+
+`brand-gradient-text` is the headline treatment and belongs to the home page's `h1` alone; a test enforces that. It has a `forced-colors` fallback, because that mode strips the background and would otherwise leave the headline blank.
+
+### Typography
+
+| Token | Family | Use |
+| --- | --- | --- |
+| `font-display` | Schibsted Grotesk 700, `-0.032em` | Marketing headlines only |
+| `font-sans` | Inter | Everything else: body, all app UI, all data |
+| `font-mono` | system stack | URLs, keys, code |
+
+Set heavy and tight on purpose. With the palette restrained to a single accent, the headline carries the page, and a grotesque at 700 with negative tracking is what makes a short line read as a statement rather than a label. A high-contrast serif was tried here first and read as fashion editorial rather than as a technical product.
+
+**The app keeps Inter everywhere.** A display face in a data table costs legibility and buys nothing. Apply `font-display` to `h1`/`h2` at `text-3xl` and above on `pages/Site/**` and `components/site/**`, nowhere else; a test enforces it.
+
+### Space, radius, depth
+
+- Section rhythm: `py-16 sm:py-24` standard, `py-20 sm:py-28` for the hero.
+- Container: `mx-auto w-full max-w-6xl px-4 sm:px-6`. Articles narrow to `max-w-3xl` for line length.
+- Sections are separated by `border-b border-border`, never by shadow or a background change.
+- `rounded-md` on controls, `rounded-xl` on cards and mockups, `rounded-2xl` on panels, `rounded-full` on avatars and pills.
+- Shadows are faint by design (2 to 4% opacity). **Structure comes from borders.** Do not reach for a heavier shadow to create hierarchy.
+
+### Section pattern
+
+```html
+<p class="text-sm font-medium text-primary">Eyebrow</p>
+<h2 class="mt-2 font-display text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+    Headline
+</h2>
+<p class="mt-4 text-lg text-muted-foreground">Standfirst</p>
+```
+
+The eyebrow is the only place the accent appears as text. It names the section in one word so the page can be skimmed down its left edge.
+
+### Motion
+
+- `prefers-reduced-motion` is honoured everywhere, without exception.
+- Hover changes opacity or border, never the accent's hue.
+- Nothing animates on load. A page that assembles itself is a page nobody can read while it does.
+
+### Adding to this
+
+Tokens are shared by the marketing site and the signed-in app: one brand, one document, no second set of rules to drift. A change to `--primary` restyles both, which is the intent, so check both before shipping one.
+
+## The hero
+
+The hero is the drawing sheet the rest of the page is ruled to, so it is the one section that uses every device at once.
+
+- The headline sits **in** the column, left, at `text-7xl` with tight tracking. Centred text floating in the middle of the rails was the weak version: it ignored the one structural idea the page has.
+- A **title block** takes the right margin, divided by a hairline, in the `.label` register with mono values. It states facts rather than adjectives, and **every line has to stay checkable** — that is the only reason it carries.
+- **The title block does not mention the licence.** Open source is a real differentiator and it appears in three other places on the page, but leading the hero with a licence answers a question almost nobody arrives with. The block states what the product does: analytics on every plan, history kept, a domain live in minutes, the three interfaces.
+- The product surface follows, **cropped by the section's own rule**, so the screen continues under it rather than ending at a hard stop. Crop on a clean line: through the chart, not through the first row of a list, or it reads as clipped rather than as deliberate.
+- The three pillar cards moved below the fold onto the alternating ground. They are elaboration; the headline and the product are the argument.
+
+A globe sat beside the headline first and it was wrong at every size: a pale ball with country labels for noise, leaving a large empty block under the buttons. Shrinking it into a dark card did not save it either. **A hero should show the thing being sold**, and here that is the analytics, so the mockup carries it and the globe is gone.
+
+## Marketing visuals
+
+- Product imagery is **drawn in markup**, never screenshotted. `components/site/AnalyticsMockup.vue` and `ShortenMockup.vue` restyle with the theme, stay sharp on any display, use the same country and browser icons the real screens do, and cannot go stale against a screenshot nobody retook.
+- Illustrative numbers stay unremarkable and **fixed**, never randomised — a random series is a hydration mismatch, and inflated numbers are an invented case study.
+- **The site has no globe, deliberately.** One was built, moved, resized and eventually cut. It broke silently three times (any mutation of a v3 mapbox style layer stops tile loading with no error), and at every size it read as a pale ball rather than as information. The country breakdown in `AnalyticsMockup.vue` says the same thing better. `VisitorsMap.vue` in the app is unaffected and still the right tool there, where the data is real.
+
+## Anchor links and Inertia history
+
+- Anchor navigation is **native**: a plain `<a href="#id">`, `scroll-behavior: smooth` on `html` (with an `auto` override under `prefers-reduced-motion`), and `scroll-mt` on the headings for the sticky header. Do not script it.
+- **Never call `history.replaceState(null, ...)`.** Inertia keeps its page object in `history.state`; replacing it with `null` strands the router and the next interaction navigates to the wrong page. This actually happened in the blog TOC. If you must touch history, pass `history.state` back.
+- Scripting a scroll and then writing the hash does not work either: Inertia rewrites history whenever it saves a scroll position, so a hash set from JavaScript is wiped moments later and the section becomes unlinkable.
 
 ## Dialogs
 
@@ -292,6 +455,9 @@ TryPost runs on **both PostgreSQL and MySQL**. Cloud runs PostgreSQL; a self-hos
 Browser tests live in `tests/Browser` and run on `pestphp/pest-plugin-browser` driving Playwright. **Laravel Dusk is not installed** — there is no `DuskTestCase`, no `$browser` object, and no `browse()`. Do not add `dusk="..."` attributes; they select nothing.
 
 - ALWAYS use named routes via `route()`. NEVER hardcode URLs like `'https://lua.test/login'`.
+- **`visit()` returns a *pending* page, and every call made on it materialises a fresh one.** Splitting a chain into separate statements (`$page = visit(...); $page->click(...); $page->script(...)`) silently reloads between steps, so state set in one call is gone by the next and the assertion measures a page that never saw the click. Keep everything an assertion depends on in a single chain.
+- **After a click, assert with something that retries.** `assertSee` and `assertDontSee` wait for the text; `assertScript` evaluates once, immediately, and races the re-render the click triggered. The same applies to reading the database after a click that starts an Inertia request: wait for a visible outcome first. Two intermittent failures in this suite were this exact bug, both looking like product flakiness and neither being it.
+- **A headless browser is a backgrounded one, and Chrome does not animate a smooth scroll in a backgrounded tab** — the position simply never changes. To assert where a scroll lands, first set `document.documentElement.style.scrollBehavior = 'auto'`; that measures the same jump and is the path a `prefers-reduced-motion` reader gets anyway.
     - Example: `visit(route('login'))`.
 - ALWAYS target elements by `data-testid`. NEVER use CSS classes (`.text-red-600`), tag names, or text strings.
     - `@my-element` resolves to `[data-testid="my-element"]`, so add `data-testid="my-element"` in the Vue component and use `$page->click('@my-element')`.
