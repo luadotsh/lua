@@ -26,6 +26,7 @@ use App\Models\Plan;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\JsonSchema\JsonSchemaTypeFactory;
 
 uses(RefreshDatabase::class);
 
@@ -415,4 +416,20 @@ it('fetches a link in the bound workspace through the tool', function () {
         ->tool(GetLinkTool::class, ['id' => $link->id])
         ->assertOk()
         ->assertSee('findme.example');
+});
+
+it('describes every tool it offers', function () {
+    // Nothing else calls schema(): a tool call goes straight to handle(), so
+    // without this the argument descriptions an MCP client actually reads are
+    // never built, and a broken one would only surface in a client.
+    $tools = (new ReflectionClass(LuaServer::class))
+        ->getDefaultProperties()['tools'];
+
+    expect($tools)->not->toBeEmpty();
+
+    $schema = new JsonSchemaTypeFactory;
+
+    foreach ($tools as $tool) {
+        expect(app($tool)->schema($schema))->toBeArray();
+    }
 });

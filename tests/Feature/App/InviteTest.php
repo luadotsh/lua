@@ -258,3 +258,26 @@ it('refuses an invite without a role', function () {
 
     expect(Invite::count())->toBe(0);
 });
+
+it('builds the invitation email around the workspace and its link', function () {
+    $invite = Invite::factory()->create([
+        'workspace_id' => $this->workspace->id,
+        'email' => 'newcomer@example.com',
+    ]);
+
+    $mail = new SendUserInvite($this->workspace, $invite);
+
+    expect($mail->envelope()->subject)
+        ->toBe("You are invited to join the {$this->workspace->name} team.")
+        ->and($mail->content()->view)->toBe('mail.invite')
+        ->and($mail->content()->with['url'])->toBe(route('auth.invites.show', $invite->id));
+
+    // Rendering catches a broken blade, which the envelope alone would not.
+    $mail->assertSeeInHtml($this->workspace->name);
+});
+
+it('sends the invitation on its own queue so email never blocks a request', function () {
+    $invite = Invite::factory()->create(['workspace_id' => $this->workspace->id]);
+
+    expect((new SendUserInvite($this->workspace, $invite))->queue)->toBe('emails');
+});

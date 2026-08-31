@@ -136,3 +136,98 @@ test('an invited user is synced but does not emit the signup event', function ()
     Queue::assertPushed(SyncUser::class);
     Queue::assertNotPushed(SendEvent::class);
 });
+
+test('capture dispatches the send job with the workspace group attached', function () {
+    Queue::fake();
+    config(['services.posthog.enabled' => true, 'services.posthog.api_key' => 'phc_test']);
+
+    $user = User::factory()->withWorkspace()->create();
+
+    app(PostHogService::class)->capture(
+        (string) $user->id,
+        'link_created',
+        ['source' => 'web'],
+        $user->currentWorkspace,
+    );
+
+    Queue::assertPushed(SendEvent::class, function (SendEvent $job) use ($user) {
+        return $job->method === 'capture'
+            && $job->payload['event'] === 'link_created'
+            && $job->payload['properties']['workspace_id'] === (string) $user->current_workspace_id
+            && $job->payload['properties']['$groups']['workspace'] === (string) $user->current_workspace_id;
+    });
+});
+
+test('capture leaves the group out when no workspace is given', function () {
+    Queue::fake();
+    config(['services.posthog.enabled' => true, 'services.posthog.api_key' => 'phc_test']);
+
+    app(PostHogService::class)->capture('anon', 'page_view');
+
+    Queue::assertPushed(SendEvent::class, function (SendEvent $job) {
+        return ! array_key_exists('workspace_id', $job->payload['properties']);
+    });
+});
+
+test('identify and group identify each dispatch their own job', function () {
+    Queue::fake();
+    config(['services.posthog.enabled' => true, 'services.posthog.api_key' => 'phc_test']);
+
+    $service = app(PostHogService::class);
+    $service->identify('user-1', ['$email' => 'ada@example.com']);
+    $service->groupIdentify('workspace', 'ws-1', ['name' => 'Lovelace']);
+
+    Queue::assertPushed(SendEvent::class, fn (SendEvent $j) => $j->method === 'identify');
+    Queue::assertPushed(SendEvent::class, fn (SendEvent $j) => $j->method === 'groupIdentify');
+});
+
+test('nothing is dispatched by capture, identify or group identify when disabled', function () {
+    Queue::fake();
+    config(['services.posthog.enabled' => false, 'services.posthog.api_key' => null]);
+
+    $service = app(PostHogService::class);
+    $service->capture('user-1', 'link_created');
+    $service->identify('user-1');
+    $service->groupIdentify('workspace', 'ws-1');
+
+    Queue::assertNotPushed(SendEvent::class);
+});
+
+test('the sync job identifies the user and their workspace', function () {
+    Queue::fake();
+    config(['services.posthog.enabled' => true, 'services.posthog.api_key' => 'phc_test']);
+
+    $user = User::factory()->withWorkspace()->create(['name' => 'Ada Lovelace']);
+
+    (new SyncUser($user->id))->handle(app(PostHogService::class));
+
+    Queue::assertPushed(SendEvent::class, function (SendEvent $job) use ($user) {
+        return $job->method === 'identify'
+            && $job->payload['properties']['$email'] === $user->email;
+    });
+
+    Queue::assertPushed(SendEvent::class, function (SendEvent $job) use ($user) {
+        return $job->method === 'groupIdentify'
+            && $job->payload['groupKey'] === (string) $user->current_workspace_id;
+    });
+});
+
+test('the sync job does nothing for a user who has since been deleted', function () {
+    Queue::fake();
+    config(['services.posthog.enabled' => true, 'services.posthog.api_key' => 'phc_test']);
+
+    (new SyncUser('01a00000-0000-7000-8000-000000000000'))->handle(app(PostHogService::class));
+
+    Queue::assertNotPushed(SendEvent::class);
+});
+
+test('the sync job is inert when posthog is disabled', function () {
+    Queue::fake();
+    config(['services.posthog.enabled' => false, 'services.posthog.api_key' => null]);
+
+    $user = User::factory()->withWorkspace()->create();
+
+    (new SyncUser($user->id))->handle(app(PostHogService::class));
+
+    Queue::assertNotPushed(SendEvent::class);
+});

@@ -7,6 +7,7 @@ use App\Actions\Link\ListLinks;
 use App\Enums\LinkStat\Event;
 use App\Models\Link;
 use App\Models\LinkStat;
+use App\Models\Plan;
 use App\Models\Tag;
 use App\Models\User;
 use App\Models\Workspace;
@@ -299,4 +300,100 @@ it('counts one click per event even when two arrive at once', function () {
     ]);
 
     expect(GetLink::execute($workspace, $link->id)->clicks)->toBe(50);
+});
+
+it('opens the edit screen with the password readable', function () {
+    $link = Link::factory()->create([
+        'workspace_id' => $this->user->currentWorkspace->id,
+        'password' => 'sesame',
+    ]);
+
+    $this->actingAs($this->user)
+        ->get(route('links.edit', $link->id))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('Link/Edit')
+            // The owner set this password and may need to read it back.
+            ->where('link.password', 'sesame')
+            ->has('domains')
+            ->has('tags')
+        );
+});
+
+it('never opens the edit screen for another workspace link', function () {
+    $link = Link::factory()->create([
+        'workspace_id' => Workspace::factory()->create()->id,
+    ]);
+
+    $this->actingAs($this->user)
+        ->get(route('links.edit', $link->id))
+        ->assertNotFound();
+});
+
+it('deletes a link from the edit screen', function () {
+    $link = Link::factory()->create(['workspace_id' => $this->user->currentWorkspace->id]);
+
+    $this->actingAs($this->user)
+        ->delete(route('links.destroy', $link->id))
+        ->assertRedirect();
+
+    expect(Link::find($link->id))->toBeNull();
+});
+
+it('never deletes another workspace link', function () {
+    $link = Link::factory()->create([
+        'workspace_id' => Workspace::factory()->create()->id,
+    ]);
+
+    $this->actingAs($this->user)
+        ->delete(route('links.destroy', $link->id))
+        ->assertNotFound();
+
+    expect(Link::find($link->id))->not->toBeNull();
+});
+
+it('takes the click history with the link', function () {
+    $workspace = $this->user->currentWorkspace;
+    $link = Link::factory()->create(['workspace_id' => $workspace->id]);
+
+    LinkStat::factory()->count(3)->create([
+        'workspace_id' => $workspace->id,
+        'link_id' => $link->id,
+    ]);
+
+    $this->actingAs($this->user)->delete(route('links.destroy', $link->id));
+
+    expect(LinkStat::where('link_id', $link->id)->count())->toBe(0);
+});
+
+it('turns away a new link once the plan allowance is used', function () {
+    $plan = Plan::factory()->create(['max_links' => 1]);
+    $this->user->currentWorkspace->update(['plan_id' => $plan->id]);
+
+    Link::factory()->create(['workspace_id' => $this->user->currentWorkspace->id]);
+
+    $this->actingAs($this->user)
+        ->post(route('links.store'), ['url' => 'https://example.com/too-many'])
+        ->assertRedirect();
+
+    expect(Link::where('url', 'https://example.com/too-many')->exists())->toBeFalse();
+});
+
+it('narrows a link dashboard to the period asked for', function () {
+    $workspace = $this->user->currentWorkspace;
+    $link = Link::factory()->create(['workspace_id' => $workspace->id]);
+
+    LinkStat::factory()->create([
+        'workspace_id' => $workspace->id,
+        'link_id' => $link->id,
+        'created_at' => now()->subYear(),
+    ]);
+
+    $this->actingAs($this->user)
+        ->get(route('links.show', [
+            $link->id,
+            'start' => now()->subDays(7)->toDateString(),
+            'end' => now()->toDateString(),
+        ]))
+        ->assertInertia(fn (Assert $page) => $page->has('table.data', 0));
 });
