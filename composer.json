@@ -27,7 +27,6 @@
         "league/flysystem-aws-s3-v3": "^3.0",
         "posthog/posthog-php": "^4.13",
         "sendkit/sendkit-laravel": "^1.1",
-        "sentry/sentry-laravel": "^4.10",
         "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/color": "^1.6",
         "stevebauman/location": "^7.0"
