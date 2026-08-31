@@ -63,6 +63,21 @@
         ]
     },
     "scripts": {
+        "lint": [
+            "pint --parallel"
+        ],
+        "test:lint": [
+            "pint --parallel --test"
+        ],
+        "test": [
+            "@php artisan config:clear --ansi",
+            "@test:lint",
+            "@php artisan test"
+        ],
+        "test:all": [
+            "@test",
+            "@php artisan test tests/Browser"
+        ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
