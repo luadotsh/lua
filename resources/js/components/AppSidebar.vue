@@ -110,7 +110,7 @@ const workspaceNavItems: NavItem[] = [
                                     :src="auth.user?.current_workspace?.logo_url"
                                     :name="auth.user?.current_workspace?.name ?? '?'"
                                     class="h-8 w-8 shrink-0 rounded-lg"
-                                    fallback-class="bg-sidebar-accent text-sidebar-accent-foreground"
+                                    fallback-class="bg-violet-100 font-bold text-violet-700"
                                 />
                                 <div class="grid flex-1 text-left text-sm leading-tight">
                                     <span class="truncate font-semibold">

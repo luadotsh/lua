@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Traits\HasMedia;
+use App\Models\Traits\HasWorkspaces;
+use App\Support\AttributionKeys;
+use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,13 +15,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 
-use App\Models\Traits\HasMedia;
-use App\Models\Traits\HasWorkspaces;
-
 class User extends Authenticatable implements MustVerifyEmail
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasWorkspaces, HasUuids, HasMedia, HasApiTokens;
+    /** @use HasFactory<UserFactory> */
+    use HasApiTokens, HasFactory, HasMedia, HasUuids, HasWorkspaces, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -33,8 +34,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'google_id',
         'github_id',
         'email_verified_at',
-        ...\App\Support\AttributionKeys::UTM,
-        ...\App\Support\AttributionKeys::CLICK_ID,
+        ...AttributionKeys::UTM,
+        ...AttributionKeys::CLICK_ID,
     ];
 
     /**
@@ -66,12 +67,23 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $appends = [
-        'photo_url'
+        'has_photo',
+        'photo_url',
     ];
 
-    public function getPhotoUrlAttribute()
+    public function getHasPhotoAttribute(): bool
     {
-        return $this->getFirstMediaUrl('avatar')
-            ?? 'https://api.dicebear.com/7.x/initials/svg?backgroundType=gradientLinear&fontFamily=Helvetica&fontSize=40&seed='.urlencode($this->name);
+        return $this->getFirstMedia('avatar') !== null;
+    }
+
+    /**
+     * Null when nothing has been uploaded. The avatar component draws initials
+     * from the name in that case, which keeps the name off a third party: this
+     * used to hand every viewer's browser a dicebear URL with the person's real
+     * name in the query string.
+     */
+    public function getPhotoUrlAttribute(): ?string
+    {
+        return $this->getFirstMediaUrl('avatar') ?: null;
     }
 }

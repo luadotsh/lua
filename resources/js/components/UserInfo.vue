@@ -20,7 +20,7 @@ withDefaults(defineProps<Props>(), {
         :name="user.name"
         :class="['h-8 w-8 rounded-lg', avatarClass]"
         :fallback-class="
-            fallbackClass ?? 'bg-sidebar-accent text-sidebar-accent-foreground'
+            fallbackClass ?? 'bg-violet-100 font-bold text-violet-700'
         "
     />
 

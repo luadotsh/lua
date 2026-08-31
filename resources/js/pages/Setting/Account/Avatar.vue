@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { router, usePage } from "@inertiajs/vue3";
+import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { IconTrash } from "@tabler/icons-vue";
 import axios from "axios";
@@ -62,10 +63,11 @@ const destroy = () => {
     <div class="flex items-center justify-between">
         <div class="flex items-center space-x-4">
             <div>
-                <img
-                    :src="user.photo_url ?? undefined"
-                    :alt="user.name"
-                    class="h-10 w-10 rounded-full"
+                <Avatar
+                    :src="user.photo_url"
+                    :name="user.name ?? '?'"
+                    class="size-10 rounded-full"
+                    fallback-class="bg-violet-100 font-bold text-violet-700"
                 />
             </div>
             <div>

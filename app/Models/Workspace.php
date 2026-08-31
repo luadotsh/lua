@@ -5,32 +5,29 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\User\Role;
-
-use function Illuminate\Events\queueable;
-
+use App\Models\Traits\HasMedia;
 use App\Models\Traits\WorkspaceUsage;
-
+use App\Observers\WorkspaceObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Cashier\Billable;
 
-
-use App\Observers\WorkspaceObserver;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use function Illuminate\Events\queueable;
 
 #[ObservedBy(WorkspaceObserver::class)]
 class Workspace extends Model
 {
+    use Billable;
     use HasFactory;
+    use HasMedia;
     use HasUuids;
     use SoftDeletes;
-    use Billable;
-    use \App\Models\Traits\HasMedia;
     use WorkspaceUsage;
 
     /**
@@ -42,7 +39,7 @@ class Workspace extends Model
         'name',
         'plan_id',
         'logo',
-        'billing_cycle_start'
+        'billing_cycle_start',
     ];
 
     /**
@@ -53,7 +50,7 @@ class Workspace extends Model
     protected $hidden = [
         'pm_last_four',
         'pm_type',
-        'stripe_id'
+        'stripe_id',
     ];
 
     /**
@@ -74,7 +71,8 @@ class Workspace extends Model
      * @var array
      */
     protected $appends = [
-        'logo_url'
+        'has_logo',
+        'logo_url',
     ];
 
     /**
@@ -92,15 +90,24 @@ class Workspace extends Model
     /**
      * Get the customer name that should be synced to Stripe.
      */
-    public function stripeEmail(): string|null
+    public function stripeEmail(): ?string
     {
         return $this->users()->where('role', Role::ROLE_OWNER)->first()->email;
     }
 
-    public function getLogoUrlAttribute()
+    public function getHasLogoAttribute(): bool
     {
-        return $this->getFirstMediaUrl('logo')
-            ?? 'https://api.dicebear.com/7.x/initials/svg?backgroundType=gradientLinear&fontFamily=Helvetica&fontSize=40&seed=url'.urlencode($this->name);
+        return $this->getFirstMedia('logo') !== null;
+    }
+
+    /**
+     * Null when nothing has been uploaded — see User::getPhotoUrlAttribute().
+     * The old fallback also seeded dicebear with the literal string "url" glued
+     * before the name, so the letters it drew were never the workspace's.
+     */
+    public function getLogoUrlAttribute(): ?string
+    {
+        return $this->getFirstMediaUrl('logo') ?: null;
     }
 
     public function users(): BelongsToMany

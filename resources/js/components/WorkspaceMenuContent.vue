@@ -68,7 +68,7 @@ const switchWorkspace = (workspaceId: string) => {
             <UserInfo
                 :user="user"
                 :show-email="true"
-                fallback-class="bg-neutral-200 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-200"
+                fallback-class="bg-violet-100 font-bold text-violet-700"
             />
         </div>
     </DropdownMenuLabel>
@@ -154,7 +154,7 @@ const switchWorkspace = (workspaceId: string) => {
                 :src="workspace.logo_url"
                 :name="workspace.name"
                 class="h-6 w-6 shrink-0 rounded-md"
-                fallback-class="text-[10px]"
+                fallback-class="bg-violet-100 text-[10px] font-bold text-violet-700"
             />
             <span class="min-w-0 flex-1 truncate">{{ workspace.name }}</span>
             <IconCheck

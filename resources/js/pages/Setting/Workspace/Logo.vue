@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { router, usePage } from "@inertiajs/vue3";
+import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { IconTrash } from "@tabler/icons-vue";
 import axios from "axios";
@@ -66,10 +67,11 @@ const destroy = () => {
     <div class="flex items-center justify-between">
         <div class="flex items-center space-x-4">
             <div>
-                <img
-                    :src="workspace?.logo_url ?? undefined"
-                    :alt="workspace?.name"
-                    class="h-10 w-10 rounded-full"
+                <Avatar
+                    :src="workspace?.logo_url"
+                    :name="workspace?.name ?? '?'"
+                    class="size-10 rounded-full"
+                    fallback-class="bg-violet-100 font-bold text-violet-700"
                 />
             </div>
             <div>
