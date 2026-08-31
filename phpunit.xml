@@ -16,6 +16,16 @@
         <include>
             <directory>app</directory>
         </include>
+        <!--
+            Development tooling that only ever runs with its own env flag on,
+            and framework scaffolding with no behaviour of ours in it. Counting
+            them as uncovered would only ever tempt someone to write a test
+            that asserts Laravel still works.
+        -->
+        <exclude>
+            <file>app/Providers/TelescopeServiceProvider.php</file>
+            <file>app/Providers/HorizonServiceProvider.php</file>
+        </exclude>
     </source>
     <php>
         <env name="APP_ENV" value="testing"/>

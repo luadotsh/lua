@@ -93,3 +93,88 @@ it('leaves you without a workspace when it was your only one', function () {
     expect($landed)->toBeNull()
         ->and($this->owner->fresh()->current_workspace_id)->toBeNull();
 });
+
+// --- the web surface -------------------------------------------------------
+
+it('changes a member role from the settings screen', function () {
+    $member = joinWorkspace($this->workspace);
+
+    $this->actingAs($this->owner)
+        ->put(route('setting.team-members.role', $member->id), [
+            'role' => Role::ROLE_ADMIN->value,
+        ])
+        ->assertRedirect();
+
+    expect($member->fresh()->workspaces->first()->membership->role)
+        ->toBe(Role::ROLE_ADMIN->value);
+});
+
+it('refuses a role that is not one of ours', function () {
+    $member = joinWorkspace($this->workspace);
+
+    $this->actingAs($this->owner)
+        ->put(route('setting.team-members.role', $member->id), ['role' => 'EMPEROR'])
+        ->assertSessionHasErrors('role');
+});
+
+it('never changes the role of someone outside the workspace', function () {
+    $stranger = User::factory()->withWorkspace()->create();
+
+    $this->actingAs($this->owner)
+        ->put(route('setting.team-members.role', $stranger->id), [
+            'role' => Role::ROLE_ADMIN->value,
+        ])
+        ->assertNotFound();
+});
+
+it('removes a member from the settings screen', function () {
+    $member = joinWorkspace($this->workspace);
+
+    $this->actingAs($this->owner)
+        ->delete(route('setting.team-members.destroy', $member->id))
+        ->assertRedirect();
+
+    expect($member->fresh()->workspaces)->toBeEmpty();
+});
+
+it('never removes someone who is not in the workspace', function () {
+    $stranger = User::factory()->withWorkspace()->create();
+
+    $this->actingAs($this->owner)
+        ->delete(route('setting.team-members.destroy', $stranger->id))
+        ->assertNotFound();
+
+    expect($stranger->fresh()->workspaces)->not->toBeEmpty();
+});
+
+it('refuses to let the only member leave', function () {
+    $this->actingAs($this->owner)
+        ->delete(route('setting.team-members.leave'))
+        ->assertRedirect();
+
+    // A workspace cannot be left with nobody in it.
+    expect($this->owner->fresh()->current_workspace_id)->toBe($this->workspace->id);
+});
+
+it('sends you to your next workspace after leaving one', function () {
+    joinWorkspace($this->workspace);
+
+    $elsewhere = Workspace::factory()->create();
+    $this->owner->workspaces()->attach($elsewhere->id, ['role' => Role::ROLE_OWNER->value]);
+
+    $this->actingAs($this->owner)
+        ->delete(route('setting.team-members.leave'))
+        ->assertRedirect(route('links.index'));
+
+    expect($this->owner->fresh()->current_workspace_id)->toBe($elsewhere->id);
+});
+
+it('sends you to create one after leaving your last workspace', function () {
+    joinWorkspace($this->workspace);
+
+    $this->actingAs($this->owner)
+        ->delete(route('setting.team-members.leave'))
+        ->assertRedirect(route('workspaces.create'));
+
+    expect($this->owner->fresh()->current_workspace_id)->toBeNull();
+});

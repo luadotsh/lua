@@ -2,7 +2,14 @@
     "name": "luadotsh/lua",
     "type": "project",
     "description": "Open source, scalable URL shortener for modern teams",
-    "keywords": ["laravel", "php", "url-shortener", "short-url", "shortener", "short-links"],
+    "keywords": [
+        "laravel",
+        "php",
+        "url-shortener",
+        "short-url",
+        "shortener",
+        "short-links"
+    ],
     "license": "AGPL-3.0-or-later",
     "require": {
         "php": "^8.5",
@@ -48,7 +55,10 @@
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
-        }
+        },
+        "files": [
+            "tests/Support/DnsRecords.php"
+        ]
     },
     "scripts": {
         "post-autoload-dump": [
@@ -78,7 +88,7 @@
     "extra": {
         "laravel": {
             "dont-discover": [
-                 "laravel/telescope"
+                "laravel/telescope"
             ]
         }
     },

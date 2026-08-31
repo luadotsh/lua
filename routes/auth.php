@@ -42,13 +42,6 @@ Route::group(
         Route::get('/invites/{id}', [InviteController::class, 'show'])->name('auth.invites.show');
         Route::post('/invites/{id}', [InviteController::class, 'accept'])->name('auth.invites.accept');
 
-        // Google login...
-        Route::get('/{provider}/login', [SocialAuthController::class, 'redirectToProvider'])
-            ->whereIn('provider', ['google', 'github'])
-            ->name('auth.social');
-        Route::get('/{provider}/callback', [SocialAuthController::class, 'handleProviderCallback'])
-            ->whereIn('provider', ['google', 'github'])
-            ->name('auth.social.callback');
     }
 );
 
@@ -71,3 +64,18 @@ Route::group(
         Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
     }
 );
+
+/**
+ * Social sign-in, reachable signed in as well as out: signed out it signs you
+ * in or registers you, signed in it links the provider to the account you are
+ * already using. These sat inside the guest group, so the Connect button on the
+ * authentication settings screen bounced off the middleware and never arrived.
+ */
+Route::middleware('web')->group(function () {
+    Route::get('/{provider}/login', [SocialAuthController::class, 'redirectToProvider'])
+        ->whereIn('provider', ['google', 'github'])
+        ->name('auth.social');
+    Route::get('/{provider}/callback', [SocialAuthController::class, 'handleProviderCallback'])
+        ->whereIn('provider', ['google', 'github'])
+        ->name('auth.social.callback');
+});

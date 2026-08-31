@@ -22,6 +22,7 @@ use App\Mcp\Tools\TeamMember\ListMembersTool;
 use App\Mcp\Tools\Workspace\GetWorkspaceTool;
 use App\Models\Domain;
 use App\Models\Link;
+use App\Models\Plan;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -286,4 +287,132 @@ it('lists the members of the bound workspace', function () {
         ->tool(ListMembersTool::class, [])
         ->assertOk()
         ->assertSee($this->user->email);
+});
+
+it('reports a validation failure back through the tool', function () {
+    LuaServer::actingAs($this->user)
+        ->tool(CreateLinkTool::class, ['url' => 'not a url'])
+        ->assertHasErrors();
+
+    expect(Link::where('workspace_id', $this->user->current_workspace_id)->exists())
+        ->toBeFalse();
+});
+
+it('refuses a link once the plan allowance is used', function () {
+    $plan = Plan::factory()->create(['max_links' => 1]);
+    $this->user->currentWorkspace->update(['plan_id' => $plan->id]);
+
+    Link::factory()->create(['workspace_id' => $this->user->current_workspace_id]);
+
+    LuaServer::actingAs($this->user)
+        ->tool(CreateLinkTool::class, ['url' => 'https://example.com'])
+        ->assertHasErrors();
+});
+
+it('updates only the fields the tool was given', function () {
+    $link = Link::factory()->create([
+        'workspace_id' => $this->user->current_workspace_id,
+        'url' => 'https://before.example',
+        'utm_source' => 'newsletter',
+    ]);
+
+    // The whole point of the partial update: what MCP does not mention keeps
+    // whatever it had.
+    LuaServer::actingAs($this->user)
+        ->tool(UpdateLinkTool::class, ['id' => $link->id, 'url' => 'https://after.example'])
+        ->assertOk();
+
+    expect($link->fresh()->url)->toBe('https://after.example')
+        ->and($link->fresh()->utm_source)->toBe('newsletter');
+});
+
+it('reports a bad update back through the tool', function () {
+    $link = Link::factory()->create(['workspace_id' => $this->user->current_workspace_id]);
+
+    LuaServer::actingAs($this->user)
+        ->tool(UpdateLinkTool::class, ['id' => $link->id, 'url' => 'not a url'])
+        ->assertHasErrors();
+});
+
+it('updates a tag through the tool', function () {
+    $tag = Tag::factory()->create([
+        'workspace_id' => $this->user->current_workspace_id,
+        'name' => 'Before',
+    ]);
+
+    LuaServer::actingAs($this->user)
+        ->tool(UpdateTagTool::class, ['id' => $tag->id, 'name' => 'After'])
+        ->assertOk();
+
+    expect($tag->fresh()->name)->toBe('After');
+});
+
+it('rejects an update that would blank a tag colour', function () {
+    $tag = Tag::factory()->create(['workspace_id' => $this->user->current_workspace_id]);
+
+    LuaServer::actingAs($this->user)
+        ->tool(UpdateTagTool::class, ['id' => $tag->id, 'color' => 'octarine'])
+        ->assertHasErrors();
+});
+
+it('refuses a tag once the plan allowance is used', function () {
+    $plan = Plan::factory()->create(['max_tags' => 1]);
+    $this->user->currentWorkspace->update(['plan_id' => $plan->id]);
+
+    LuaServer::actingAs($this->user)
+        ->tool(CreateTagTool::class, ['name' => 'One too many', 'color' => '#f87171'])
+        ->assertHasErrors();
+});
+
+it('deletes a domain through the tool', function () {
+    $domain = Domain::factory()->create(['workspace_id' => $this->user->current_workspace_id]);
+
+    LuaServer::actingAs($this->user)
+        ->tool(DeleteDomainTool::class, ['id' => $domain->id])
+        ->assertOk();
+
+    expect(Domain::find($domain->id))->toBeNull();
+});
+
+it('refuses a domain once the plan allowance is used', function () {
+    $plan = Plan::factory()->create(['max_domains' => 0]);
+    $this->user->currentWorkspace->update(['plan_id' => $plan->id]);
+
+    LuaServer::actingAs($this->user)
+        ->tool(CreateDomainTool::class, ['domain' => 'links.example.com'])
+        ->assertHasErrors();
+});
+
+it('refuses a domain another workspace already claimed', function () {
+    $other = User::factory()->withWorkspace()->create();
+    Domain::factory()->create([
+        'workspace_id' => $other->current_workspace_id,
+        'domain' => 'links.example.com',
+    ]);
+
+    LuaServer::actingAs($this->user)
+        ->tool(CreateDomainTool::class, ['domain' => 'links.example.com'])
+        ->assertHasErrors();
+});
+
+it('deletes a link through the tool', function () {
+    $link = Link::factory()->create(['workspace_id' => $this->user->current_workspace_id]);
+
+    LuaServer::actingAs($this->user)
+        ->tool(DeleteLinkTool::class, ['id' => $link->id])
+        ->assertOk();
+
+    expect(Link::find($link->id))->toBeNull();
+});
+
+it('fetches a link in the bound workspace through the tool', function () {
+    $link = Link::factory()->create([
+        'workspace_id' => $this->user->current_workspace_id,
+        'url' => 'https://findme.example',
+    ]);
+
+    LuaServer::actingAs($this->user)
+        ->tool(GetLinkTool::class, ['id' => $link->id])
+        ->assertOk()
+        ->assertSee('findme.example');
 });
