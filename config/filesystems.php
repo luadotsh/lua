@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'default' => env('FILESYSTEM_DISK', 'spaces'),
+    'default' => env('FILESYSTEM_DISK', 'r2'),
 
     /*
     |--------------------------------------------------------------------------
@@ -70,6 +70,23 @@ return [
             'use_path_style_endpoint' => env('DIGITALOCEAN_SPACES_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => true,
             'visibility' => 'public',
+        ],
+
+        // R2 speaks S3, but its endpoint is account-scoped rather than
+        // bucket-scoped, so path-style addressing is not optional here. The
+        // region is always "auto"; R2 has no regions to choose between.
+        'r2' => [
+            'driver' => 's3',
+            'key' => env('R2_ACCESS_KEY_ID'),
+            'secret' => env('R2_SECRET_ACCESS_KEY'),
+            'region' => env('R2_REGION', 'auto'),
+            'bucket' => env('R2_BUCKET'),
+            // The public bucket or custom domain files are served from. The
+            // endpoint above is the API; it is not reachable by a browser.
+            'url' => env('R2_URL'),
+            'endpoint' => env('R2_ENDPOINT'),
+            'use_path_style_endpoint' => true,
+            'throw' => true,
         ],
     ],
 
