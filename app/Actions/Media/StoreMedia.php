@@ -8,7 +8,6 @@ use App\Models\Media;
 use App\Models\User;
 use App\Models\Workspace;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Gate;
 
 class StoreMedia
 {

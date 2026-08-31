@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Mcp\Tools\Domain;
 
-use App\Actions\Domain\GetDomain;
 use App\Actions\Domain\DeleteDomain;
+use App\Actions\Domain\GetDomain;
 use App\Mcp\Concerns\ResolvesWorkspace;
-use App\Models\Domain;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;

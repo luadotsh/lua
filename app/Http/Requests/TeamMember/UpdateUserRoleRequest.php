@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\TeamMember;
 
-use Illuminate\Foundation\Http\FormRequest;
-
-use Illuminate\Validation\Rules\Enum;
 use App\Enums\User\Role as UserRole;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class UpdateUserRoleRequest extends FormRequest
 {

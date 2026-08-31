@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Setting;
 
+use App\Models\Plan;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-
-use App\Models\Plan;
-use App\Models\Domain;
-use App\Models\Tag;
 
 class BillingController extends Controller
 {
@@ -21,6 +18,7 @@ class BillingController extends Controller
     public function upgrade(Request $request)
     {
         $plans = Plan::where('internal_id', '!=', 'free')->where('is_private', false)->get();
+
         return Inertia::render('Setting/Billing/Upgrade', [
             'plans' => $plans,
         ]);

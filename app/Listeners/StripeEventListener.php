@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Listeners;
 
-use Laravel\Cashier\Events\WebhookReceived;
-
-use App\Models\Workspace;
 use App\Models\Plan;
+use App\Models\Workspace;
+use Laravel\Cashier\Events\WebhookReceived;
 
 class StripeEventListener
 {

@@ -21,7 +21,7 @@ class UpdateRequest extends FormRequest
                 Rule::unique('domains')
                     ->ignore($this->id)
                     ->whereNull('deleted_at'),
-                Rule::notIn(config('domains.available'))
+                Rule::notIn(config('domains.available')),
             ],
             'not_found_url' => ['nullable', 'max:255', 'url'],
             'expired_url' => ['nullable', 'max:255', 'url'],

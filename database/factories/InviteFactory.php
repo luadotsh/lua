@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Enums\User\Role;
+use App\Models\Invite;
+use App\Models\Workspace;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-use App\Enums\User\Role;
-use \App\Models\Workspace;
-
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Invite>
+ * @extends Factory<Invite>
  */
 class InviteFactory extends Factory
 {

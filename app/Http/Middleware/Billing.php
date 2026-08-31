@@ -13,6 +13,7 @@ class Billing
     public function handle(Request $request, Closure $next)
     {
         Inertia::share('usage', auth()->user()->currentWorkspace->usage());
+
         return $next($request);
     }
 }

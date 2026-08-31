@@ -4,17 +4,15 @@ declare(strict_types=1);
 
 namespace App\Mail\Team;
 
+use App\Models\Invite;
+use App\Models\Workspace;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
-use Illuminate\Queue\SerializesModels;
-
 use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
-
-use App\Models\Invite;
-use App\Models\Workspace;
+use Illuminate\Queue\SerializesModels;
 
 class SendUserInvite extends Mailable implements ShouldQueue
 {

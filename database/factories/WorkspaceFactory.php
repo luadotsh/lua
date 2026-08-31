@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Models\Plan;
+use App\Models\Workspace;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-use App\Models\Plan;
-
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Workspace>
+ * @extends Factory<Workspace>
  */
 class WorkspaceFactory extends Factory
 {

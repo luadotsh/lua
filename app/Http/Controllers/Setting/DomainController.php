@@ -4,23 +4,18 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Setting;
 
-use App\Actions\Domain\VerifyDomainDns;
+use App\Actions\Domain\CreateDomain;
+use App\Actions\Domain\DeleteDomain;
 use App\Actions\Domain\GetDomain;
 use App\Actions\Domain\ListDomains;
 use App\Actions\Domain\UpdateDomain;
-use App\Actions\Domain\DeleteDomain;
-use App\Actions\Domain\CreateDomain;
+use App\Actions\Domain\VerifyDomainDns;
 use App\Http\Requests\Domain\CreateRequest;
 use App\Http\Requests\Domain\UpdateRequest;
-
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
-
-use App\Enums\Domain\Status;
-
-use App\Models\Domain;
 
 class DomainController extends Controller
 {
@@ -39,9 +34,10 @@ class DomainController extends Controller
         $workspace = Auth::user()->currentWorkspace;
 
         $response = Gate::inspect('reached-domain-limit', $workspace);
-        if (!$response->allowed()) {
+        if (! $response->allowed()) {
             session()->flash('flash.banner', 'You have reached the limit of domains, please upgrade your plan.');
             session()->flash('flash.bannerStyle', 'danger');
+
             return back();
         }
 
@@ -95,6 +91,7 @@ class DomainController extends Controller
 
         session()->flash('flash.banner', 'Domain validated successful.');
         session()->flash('flash.bannerStyle', 'success');
+
         return back();
     }
 }

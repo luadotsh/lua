@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Auth;
 
-use App\Actions\Auth\LoginUser;
 use App\Actions\Auth\LinkSocialAccount;
+use App\Actions\Auth\LoginUser;
 use App\Actions\User\CreateUser;
 use App\Enums\Auth\SocialAuthProvider;
 use App\Http\Controllers\Auth\Concerns\PreservesAttributionParameters;

@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Models\User;
-
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -47,7 +46,7 @@ test('users can logout', function () {
 });
 
 it('locks out after too many failed attempts on the same email and ip', function () {
-    $user = App\Models\User::factory()->create();
+    $user = User::factory()->create();
 
     for ($i = 0; $i < 5; $i++) {
         $this->post(route('login'), [
@@ -66,7 +65,7 @@ it('locks out after too many failed attempts on the same email and ip', function
 });
 
 it('regenerates the session on login so a fixated id cannot be reused', function () {
-    $user = App\Models\User::factory()->create();
+    $user = User::factory()->create();
 
     $this->get(route('login'));
     $before = session()->getId();
