@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { router, usePage } from "@inertiajs/vue3";
-import { Avatar } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { IconTrash } from "@tabler/icons-vue";
-import axios from "axios";
-import * as mediasRoutes from "@/routes/medias";
+import { router, usePage } from '@inertiajs/vue3';
+import { IconTrash } from '@tabler/icons-vue';
+import axios from 'axios';
+import { computed, ref } from 'vue';
+
+import { Avatar } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import * as mediasRoutes from '@/routes/medias';
 
 const input = ref<HTMLInputElement | null>(null);
 const uploadHasErrors = ref<string | null>(null);
@@ -20,8 +21,8 @@ const upload = async () => {
         isLoading.value = true;
 
         const formData = new FormData();
-        formData.append("media", (event.target as HTMLInputElement).files![0]);
-        formData.append("collection", "avatar");
+        formData.append('media', (event.target as HTMLInputElement).files![0]);
+        formData.append('collection', 'avatar');
 
         await axios
             .post(mediasRoutes.store.url(), formData)
@@ -34,7 +35,7 @@ const upload = async () => {
             })
             .finally(() => {
                 isLoading.value = false;
-                input.value!.value = "";
+                input.value!.value = '';
             });
     };
 };
@@ -46,14 +47,11 @@ const destroy = () => {
         return;
     }
 
-    router.delete(
-        mediasRoutes.destroy.url(media.id),
-        {
-            onSuccess: () => {
-                router.reload();
-            },
-        }
-    );
+    router.delete(mediasRoutes.destroy.url(media.id), {
+        onSuccess: () => {
+            router.reload();
+        },
+    });
 };
 </script>
 
@@ -89,9 +87,9 @@ const destroy = () => {
         <div
             v-if="(user.media?.length ?? 0) >= 1"
             @click="destroy"
-            class="p-2 hover:bg-zinc-100 rounded-md cursor-pointer"
+            class="cursor-pointer rounded-md p-2 hover:bg-zinc-100"
         >
-            <IconTrash class="text-zinc-500 h-5 w-5" />
+            <IconTrash class="h-5 w-5 text-zinc-500" />
         </div>
     </div>
     <div v-show="uploadHasErrors" class="my-2">

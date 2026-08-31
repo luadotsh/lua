@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { IconDownload } from '@tabler/icons-vue';
 import { ref, watch } from 'vue';
+
 import JsonLd from '@/components/site/JsonLd.vue';
 import PageHeader from '@/components/site/PageHeader.vue';
 import Seo from '@/components/site/Seo.vue';
-import SiteLayout from '@/layouts/site/SiteLayout.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import SiteLayout from '@/layouts/site/SiteLayout.vue';
 
 defineProps<{ seo: { title: string; description: string } }>();
 
@@ -36,7 +37,11 @@ const render = async (): Promise<void> => {
 
         // Error correction M leaves the code readable with a quarter of it
         // damaged, which is the right trade for something that gets printed.
-        const options = { errorCorrectionLevel: 'M' as const, margin: 2, width: 512 };
+        const options = {
+            errorCorrectionLevel: 'M' as const,
+            margin: 2,
+            width: 512,
+        };
 
         png.value = await QRCode.toDataURL(text, options);
         svg.value = await QRCode.toString(text, { ...options, type: 'svg' });
@@ -86,7 +91,9 @@ const download = (format: 'png' | 'svg'): void => {
                 lead="Any URL, as a code you can print. Generated in your browser, so the address is never sent to us."
             />
 
-            <div class="mt-12 grid gap-10 sm:grid-cols-[minmax(0,1fr)_16rem] sm:items-start">
+            <div
+                class="mt-12 grid gap-10 sm:grid-cols-[minmax(0,1fr)_16rem] sm:items-start"
+            >
                 <div>
                     <Label for="qr-value">URL or text</Label>
                     <Input
@@ -96,20 +103,34 @@ const download = (format: 'png' | 'svg'): void => {
                         class="mt-2 font-mono"
                         placeholder="https://example.com/page"
                     />
-                    <p v-if="error" class="mt-2 text-sm text-destructive">{{ error }}</p>
+                    <p v-if="error" class="mt-2 text-sm text-destructive">
+                        {{ error }}
+                    </p>
 
                     <div class="mt-6 flex flex-wrap gap-3">
-                        <Button variant="outline" data-testid="qr-png" :disabled="png === ''" @click="download('png')">
+                        <Button
+                            variant="outline"
+                            data-testid="qr-png"
+                            :disabled="png === ''"
+                            @click="download('png')"
+                        >
                             <IconDownload class="size-4" />
                             PNG
                         </Button>
-                        <Button variant="outline" data-testid="qr-svg" :disabled="svg === ''" @click="download('svg')">
+                        <Button
+                            variant="outline"
+                            data-testid="qr-svg"
+                            :disabled="svg === ''"
+                            @click="download('svg')"
+                        >
                             <IconDownload class="size-4" />
                             SVG
                         </Button>
                     </div>
 
-                    <p class="mt-6 text-sm leading-relaxed text-muted-foreground">
+                    <p
+                        class="mt-6 text-sm leading-relaxed text-muted-foreground"
+                    >
                         Take the SVG for anything printed. It stays sharp at any
                         size, which a PNG scaled up to a poster does not.
                     </p>

@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { useForm } from "@inertiajs/vue3";
-import { ref } from "vue";
-import { Button } from "@/components/ui/button";
+import { useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
+
+import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
@@ -9,10 +10,10 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import * as linksRoute from "@/routes/links";
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import * as linksRoute from '@/routes/links';
 
 /**
  * Creating a link asks one question: where does it go.
@@ -23,7 +24,7 @@ import * as linksRoute from "@/routes/links";
  * else the link can do.
  */
 const form = useForm({
-    url: "",
+    url: '',
 });
 
 const show = ref(false);
@@ -50,8 +51,8 @@ const store = () =>
             <DialogHeader>
                 <DialogTitle>New link</DialogTitle>
                 <DialogDescription>
-                    Paste the destination. You can set the back-half, tags and everything
-                    else on the next screen.
+                    Paste the destination. You can set the back-half, tags and
+                    everything else on the next screen.
                 </DialogDescription>
             </DialogHeader>
 
@@ -70,7 +71,9 @@ const store = () =>
             </form>
 
             <DialogFooter>
-                <Button :disabled="form.processing" @click="store">Continue</Button>
+                <Button :disabled="form.processing" @click="store"
+                    >Continue</Button
+                >
             </DialogFooter>
         </DialogContent>
     </Dialog>

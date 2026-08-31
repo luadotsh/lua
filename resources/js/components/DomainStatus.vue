@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
+
 import { Badge } from '@/components/ui/badge';
 import { validateDns } from '@/routes/setting/domains';
 
@@ -21,7 +22,11 @@ const handleValidateDns = () => {
 </script>
 
 <template>
-    <Badge v-if="domain.status === 'active'" variant="default" class="bg-green-500 hover:bg-green-500">
+    <Badge
+        v-if="domain.status === 'active'"
+        variant="default"
+        class="bg-green-500 hover:bg-green-500"
+    >
         Active
     </Badge>
     <Badge

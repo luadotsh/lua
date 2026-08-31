@@ -15,6 +15,8 @@ const json = computed(() =>
 
 <template>
     <Head>
-        <component :is="'script'" type="application/ld+json">{{ json }}</component>
+        <component :is="'script'" type="application/ld+json">{{
+            json
+        }}</component>
     </Head>
 </template>

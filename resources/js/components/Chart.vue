@@ -1,7 +1,13 @@
 <script setup lang="ts">
-import { VisArea, VisAxis, VisGroupedBar, VisLine, VisXYContainer } from '@unovis/vue';
+import {
+    VisArea,
+    VisAxis,
+    VisGroupedBar,
+    VisLine,
+    VisXYContainer,
+} from '@unovis/vue';
 import { computed, ref } from 'vue';
-import { formatNumberCompact } from '@/lib/utils';
+
 import {
     type ChartConfig,
     ChartContainer,
@@ -10,6 +16,7 @@ import {
     ChartTooltipContent,
     componentToString,
 } from '@/components/ui/chart';
+import { formatNumberCompact } from '@/lib/utils';
 
 const VIOLET = '#A78BFA';
 
@@ -31,7 +38,9 @@ const props = defineProps<{
     };
 }>();
 
-const chartType = ref(types.find((t) => t.value === (props.type ?? 'bar')) ?? types[1]);
+const chartType = ref(
+    types.find((t) => t.value === (props.type ?? 'bar')) ?? types[1],
+);
 
 type DataPoint = { index: number; label: string; value: number };
 
@@ -40,7 +49,7 @@ const chartData = computed<DataPoint[]>(() =>
         index: i,
         label,
         value: props.data.chart.data[i] ?? 0,
-    }))
+    })),
 );
 
 const xAccessor = (_d: DataPoint, i: number) => i;
@@ -59,20 +68,27 @@ const chartConfig: ChartConfig = {
 
 const tooltipTemplate = componentToString(chartConfig, ChartTooltipContent, {
     indicator: 'dot' as const,
-    labelFormatter: (x: number | Date) => chartData.value[x as number]?.label ?? '',
+    labelFormatter: (x: number | Date) =>
+        chartData.value[x as number]?.label ?? '',
 });
 </script>
 
 <template>
-    <div class="border border-border rounded-lg overflow-hidden p-4">
-        <div class="w-full flex justify-between mb-4">
+    <div class="overflow-hidden rounded-lg border border-border p-4">
+        <div class="mb-4 flex w-full justify-between">
             <div>
-                <div class="text-base font-medium text-foreground mb-1">{{ title }}</div>
-                <div class="text-2xl font-semibold text-foreground">{{ formatNumberCompact(data.total) }}</div>
+                <div class="mb-1 text-base font-medium text-foreground">
+                    {{ title }}
+                </div>
+                <div class="text-2xl font-semibold text-foreground">
+                    {{ formatNumberCompact(data.total) }}
+                </div>
             </div>
             <div class="flex justify-center">
                 <fieldset>
-                    <div class="grid grid-cols-2 gap-x-1 rounded-md p-1 text-center text-xs font-semibold leading-5 ring-1 ring-inset ring-border">
+                    <div
+                        class="grid grid-cols-2 gap-x-1 rounded-md p-1 text-center text-xs leading-5 font-semibold ring-1 ring-border ring-inset"
+                    >
                         <button
                             v-for="option in types"
                             :key="option.value"

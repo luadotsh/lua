@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { Head, usePoll } from "@inertiajs/vue3";
-import { IconExternalLink, IconPlugConnected } from "@tabler/icons-vue";
-import { ref } from "vue";
-import ConfirmDeleteModal from "@/components/ConfirmDeleteModal.vue";
-import HeadingSmall from "@/components/HeadingSmall.vue";
-import McpAdvancedClients from "@/components/mcp/McpAdvancedClients.vue";
-import McpPrimarySetup from "@/components/mcp/McpPrimarySetup.vue";
-import { Button } from "@/components/ui/button";
-import date from "@/date";
-import AppLayout from "@/layouts/AppLayout.vue";
-import { destroy as mcpDisconnect } from "@/routes/setting/mcp";
+import { Head, usePoll } from '@inertiajs/vue3';
+import { IconExternalLink, IconPlugConnected } from '@tabler/icons-vue';
+import { ref } from 'vue';
+
+import ConfirmDeleteModal from '@/components/ConfirmDeleteModal.vue';
+import HeadingSmall from '@/components/HeadingSmall.vue';
+import McpAdvancedClients from '@/components/mcp/McpAdvancedClients.vue';
+import McpPrimarySetup from '@/components/mcp/McpPrimarySetup.vue';
+import { Button } from '@/components/ui/button';
+import date from '@/date';
+import AppLayout from '@/layouts/AppLayout.vue';
+import { destroy as mcpDisconnect } from '@/routes/setting/mcp';
 
 interface ConnectedClient {
     id: string;
@@ -28,7 +29,7 @@ const deleteModal = ref<InstanceType<typeof ConfirmDeleteModal> | null>(null);
 // The connection only appears once the client finishes the OAuth handshake in
 // another window, so the list has to come to us rather than wait for a reload.
 usePoll(1000, {
-    only: ["connectedClients"],
+    only: ['connectedClients'],
 });
 
 const confirmDisconnect = (client: ConnectedClient): void => {
@@ -46,8 +47,9 @@ const confirmDisconnect = (client: ConnectedClient): void => {
         <div class="p-4 sm:p-6">
             <div class="flex max-w-3xl flex-col gap-10">
                 <p class="text-sm text-foreground/70">
-                    Connect AI assistants to this workspace. Connections are yours alone,
-                    and each one can only act on the workspace it was authorised from.
+                    Connect AI assistants to this workspace. Connections are
+                    yours alone, and each one can only act on the workspace it
+                    was authorised from.
                 </p>
 
                 <section class="space-y-6">
@@ -66,7 +68,8 @@ const confirmDisconnect = (client: ConnectedClient): void => {
                         class="rounded-xl border border-dashed border-border bg-card/40 px-4 py-6 text-center text-sm font-medium text-foreground/60"
                         data-testid="mcp-connected-empty"
                     >
-                        Nothing connected yet. Use Claude, ChatGPT, or another client above.
+                        Nothing connected yet. Use Claude, ChatGPT, or another
+                        client above.
                     </div>
 
                     <div v-else class="space-y-3">
@@ -77,15 +80,22 @@ const confirmDisconnect = (client: ConnectedClient): void => {
                             :data-testid="`mcp-connected-client-${client.id}`"
                         >
                             <div
-                                class="inline-flex size-10 -rotate-2 flex-shrink-0 items-center justify-center rounded-2xl border border-border bg-violet-100 shadow-2xs"
+                                class="inline-flex size-10 flex-shrink-0 -rotate-2 items-center justify-center rounded-2xl border border-border bg-violet-100 shadow-2xs"
                             >
-                                <IconPlugConnected class="size-5 text-zinc-900" stroke-width="2" />
+                                <IconPlugConnected
+                                    class="size-5 text-zinc-900"
+                                    stroke-width="2"
+                                />
                             </div>
                             <div class="min-w-0 flex-1 space-y-0.5">
-                                <div class="truncate text-sm font-bold text-foreground">
+                                <div
+                                    class="truncate text-sm font-bold text-foreground"
+                                >
                                     {{ client.name }}
                                 </div>
-                                <div class="flex items-center gap-1.5 text-xs font-medium text-foreground/60">
+                                <div
+                                    class="flex items-center gap-1.5 text-xs font-medium text-foreground/60"
+                                >
                                     <span class="relative flex size-2">
                                         <span
                                             class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/60"
@@ -98,8 +108,10 @@ const confirmDisconnect = (client: ConnectedClient): void => {
                                         Last used:
                                         {{
                                             client.last_used_at
-                                                ? date.diffForHumans(client.last_used_at)
-                                                : "Never"
+                                                ? date.diffForHumans(
+                                                      client.last_used_at,
+                                                  )
+                                                : 'Never'
                                         }}
                                     </span>
                                 </div>
@@ -121,7 +133,13 @@ const confirmDisconnect = (client: ConnectedClient): void => {
                         title="Documentation"
                         description="Client setup guides, available tools, and troubleshooting."
                     />
-                    <Button as="a" variant="outline" size="sm" target="_blank" :href="docsUrl">
+                    <Button
+                        as="a"
+                        variant="outline"
+                        size="sm"
+                        target="_blank"
+                        :href="docsUrl"
+                    >
                         <IconExternalLink class="size-4" />
                         View docs
                     </Button>

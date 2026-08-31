@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import mapboxgl from 'mapbox-gl';
 import { usePage } from '@inertiajs/vue3';
+import mapboxgl from 'mapbox-gl';
 import {
     computed,
     onBeforeUnmount,
@@ -9,10 +9,11 @@ import {
     shallowRef,
     watch,
 } from 'vue';
+
+import type { BreakdownRow } from '@/components/analytics/BreakdownCard.vue';
 import { useAppearance } from '@/composables/useAppearance';
 import { countryFor } from '@/lib/countries';
 import { formatCount } from '@/lib/metrics';
-import type { BreakdownRow } from '@/components/analytics/BreakdownCard.vue';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -40,10 +41,14 @@ const mapStyle = computed(() =>
         : 'mapbox://styles/mapbox/light-v11',
 );
 
-const peak = computed(() => Math.max(1, ...props.rows.map((row) => row.events)));
+const peak = computed(() =>
+    Math.max(1, ...props.rows.map((row) => row.events)),
+);
 
 const eventsByCode = computed<Record<string, number>>(() =>
-    Object.fromEntries(props.rows.map((row) => [row.value.toUpperCase(), row.events])),
+    Object.fromEntries(
+        props.rows.map((row) => [row.value.toUpperCase(), row.events]),
+    ),
 );
 
 // Countries are shaded by how much of the traffic they hold, so the map reads
@@ -101,8 +106,11 @@ const applyData = () => {
         });
     }
 
-    instance.setPaintProperty('lua-country-fills', 'fill-opacity', opacityExpression.value);
-
+    instance.setPaintProperty(
+        'lua-country-fills',
+        'fill-opacity',
+        opacityExpression.value,
+    );
 };
 
 const bindInteractions = (instance: mapboxgl.Map) => {
@@ -113,7 +121,8 @@ const bindInteractions = (instance: mapboxgl.Map) => {
     });
 
     instance.on('mousemove', 'lua-country-fills', (event) => {
-        const code = (event.features?.[0]?.properties?.iso_3166_1 as string) ?? '';
+        const code =
+            (event.features?.[0]?.properties?.iso_3166_1 as string) ?? '';
         const events = eventsByCode.value[code];
 
         if (!events) {
@@ -214,7 +223,10 @@ watch(mapStyle, (style) => {
     map.value?.setStyle(style);
 });
 
-watch(() => props.rows, () => applyData());
+watch(
+    () => props.rows,
+    () => applyData(),
+);
 
 onBeforeUnmount(() => {
     resizeObserver?.disconnect();
@@ -232,7 +244,8 @@ onBeforeUnmount(() => {
             v-if="!mapboxToken"
             class="py-6 text-center text-sm text-muted-foreground"
         >
-            Set <code class="font-mono text-xs">MAPBOX_TOKEN</code> to show the map.
+            Set <code class="font-mono text-xs">MAPBOX_TOKEN</code> to show the
+            map.
         </p>
 
         <div

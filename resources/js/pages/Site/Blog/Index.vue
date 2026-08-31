@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
+
 import JsonLd from '@/components/site/JsonLd.vue';
 import Seo from '@/components/site/Seo.vue';
-import SiteLayout from '@/layouts/site/SiteLayout.vue';
 import date from '@/date';
+import SiteLayout from '@/layouts/site/SiteLayout.vue';
 import site from '@/routes/site';
 
 type Post = {
@@ -22,17 +23,25 @@ defineProps<{ posts: Post[]; seo: { title: string; description: string } }>();
 
 <template>
     <Seo :title="seo.title" :description="seo.description" />
-    <JsonLd :data="{ '@type': 'Blog', name: 'Lua Blog', description: seo.description }" />
+    <JsonLd
+        :data="{
+            '@type': 'Blog',
+            name: 'Lua Blog',
+            description: seo.description,
+        }"
+    />
 
     <SiteLayout>
         <section class="px-6 py-16 sm:px-10 sm:py-24">
             <p class="label">Blog</p>
-            <h1 class="mt-2 max-w-2xl font-display text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
+            <h1
+                class="mt-2 max-w-2xl font-display text-4xl font-semibold tracking-tight text-balance sm:text-5xl"
+            >
                 Notes from building a link shortener
             </h1>
             <p class="mt-4 max-w-2xl text-lg text-muted-foreground">
-                What we learn about clicks, domains and analytics, written
-                down so it is useful whether or not you use Lua.
+                What we learn about clicks, domains and analytics, written down
+                so it is useful whether or not you use Lua.
             </p>
 
             <p
@@ -42,7 +51,10 @@ defineProps<{ posts: Post[]; seo: { title: string; description: string } }>();
                 Nothing published yet.
             </p>
 
-            <div v-else class="mt-12 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+            <div
+                v-else
+                class="mt-12 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3"
+            >
                 <Link
                     v-for="post in posts"
                     :key="post.slug"
@@ -75,7 +87,9 @@ defineProps<{ posts: Post[]; seo: { title: string; description: string } }>();
                     >
                         {{ post.title }}
                     </h2>
-                    <p class="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">
+                    <p
+                        class="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground"
+                    >
                         {{ post.description }}
                     </p>
                 </Link>

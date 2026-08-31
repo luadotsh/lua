@@ -71,7 +71,9 @@ $link = Http::withToken(config('services.lua.token'))
 ];
 
 const active = ref(samples[0]!.key);
-const current = computed(() => samples.find((sample) => sample.key === active.value)!);
+const current = computed(() =>
+    samples.find((sample) => sample.key === active.value)!,
+);
 
 const copied = ref(false);
 

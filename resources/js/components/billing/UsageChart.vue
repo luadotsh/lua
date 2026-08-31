@@ -2,13 +2,14 @@
 import { VisArea, VisAxis, VisLine, VisXYContainer } from '@unovis/vue';
 import { useId } from 'reka-ui';
 import { computed } from 'vue';
+
 import {
     ChartContainer,
     ChartCrosshair,
     ChartTooltip,
     type ChartConfig,
 } from '@/components/ui/chart';
-import { formatCount, formatNumber } from '@/lib/metrics';
+import { formatCount } from '@/lib/metrics';
 
 /**
  * Usage over the billing cycle, drawn the same way as the analytics timeseries
@@ -38,7 +39,9 @@ const total = computed(() =>
     chartData.value.reduce((sum, point) => sum + point.value, 0),
 );
 
-const hasData = computed(() => chartData.value.some((point) => point.value > 0));
+const hasData = computed(() =>
+    chartData.value.some((point) => point.value > 0),
+);
 
 const xAccessor = (d: { index: number }) => d.index;
 const yAccessors = [(d: { value: number }) => d.value];
@@ -76,7 +79,7 @@ const tooltipTemplate = (d: { label: string; value: number }): string =>
             <h2 class="text-sm font-medium text-foreground">
                 {{ title }} this cycle
             </h2>
-            <p class="text-2xl font-semibold tabular-nums text-foreground">
+            <p class="text-2xl font-semibold text-foreground tabular-nums">
                 {{ formatCount(total) }}
             </p>
         </div>

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { useForm } from "@inertiajs/vue3";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import InputError from "@/components/InputError.vue";
+import { useForm } from '@inertiajs/vue3';
 
-import { validate as validatePasswordRoute } from "@/routes/links/password";
+import InputError from '@/components/InputError.vue';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { validate as validatePasswordRoute } from '@/routes/links/password';
 
 interface LinkData {
     key: string;
@@ -16,7 +16,7 @@ const { link } = defineProps<{
 }>();
 
 const form = useForm({
-    password: "",
+    password: '',
 });
 
 const submit = () => {
@@ -53,9 +53,7 @@ const submit = () => {
                 </div>
 
                 <div>
-                    <Button type="submit" class="w-full">
-                        Unlock
-                    </Button>
+                    <Button type="submit" class="w-full"> Unlock </Button>
                 </div>
             </form>
         </div>

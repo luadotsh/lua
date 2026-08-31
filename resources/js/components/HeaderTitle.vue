@@ -16,6 +16,8 @@ defineProps<{
 <template>
     <h2 class="text-lg font-semibold">
         {{ title }}
-        <span v-if="total != null && total > 0" class="text-muted-foreground">({{ total }})</span>
+        <span v-if="total != null && total > 0" class="text-muted-foreground"
+            >({{ total }})</span
+        >
     </h2>
 </template>

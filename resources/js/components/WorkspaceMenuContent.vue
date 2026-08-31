@@ -13,7 +13,7 @@ import {
     IconUser,
 } from '@tabler/icons-vue';
 import { computed } from 'vue';
-import UserInfo from '@/components/UserInfo.vue';
+
 import { Avatar } from '@/components/ui/avatar';
 import {
     DropdownMenuGroup,
@@ -25,6 +25,7 @@ import {
     DropdownMenuSubContent,
     DropdownMenuSubTrigger,
 } from '@/components/ui/dropdown-menu';
+import UserInfo from '@/components/UserInfo.vue';
 import { useAppearance } from '@/composables/useAppearance';
 import { logout } from '@/routes';
 import { edit as accountEdit } from '@/routes/setting/account';
@@ -45,7 +46,9 @@ import {
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 const workspaces = computed(() => page.props.auth.user?.workspaces ?? []);
-const currentWorkspaceId = computed(() => page.props.auth.user?.current_workspace_id);
+const currentWorkspaceId = computed(
+    () => page.props.auth.user?.current_workspace_id,
+);
 
 const { appearance, updateAppearance } = useAppearance();
 
@@ -83,7 +86,10 @@ const switchWorkspace = (workspaceId: string) => {
             </Link>
         </DropdownMenuItem>
         <DropdownMenuItem as-child>
-            <Link class="block w-full cursor-pointer" :href="authenticationEdit()">
+            <Link
+                class="block w-full cursor-pointer"
+                :href="authenticationEdit()"
+            >
                 <IconShieldLock class="size-4" />
                 Authentication
             </Link>
@@ -115,7 +121,10 @@ const switchWorkspace = (workspaceId: string) => {
                     v-else-if="appearance === 'dark'"
                     class="size-4 text-muted-foreground"
                 />
-                <IconDeviceDesktop v-else class="size-4 text-muted-foreground" />
+                <IconDeviceDesktop
+                    v-else
+                    class="size-4 text-muted-foreground"
+                />
                 Theme: <span class="capitalize">{{ appearance }}</span>
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
@@ -164,7 +173,10 @@ const switchWorkspace = (workspaceId: string) => {
             />
         </DropdownMenuItem>
         <DropdownMenuItem as-child>
-            <Link class="block w-full cursor-pointer" :href="workspacesCreate()">
+            <Link
+                class="block w-full cursor-pointer"
+                :href="workspacesCreate()"
+            >
                 <IconPlus class="size-4" />
                 Create Workspace
             </Link>

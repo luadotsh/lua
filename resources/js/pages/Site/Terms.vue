@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import LegalDocument, { type LegalSection } from '@/components/site/LegalDocument.vue';
+import LegalDocument, {
+    type LegalSection,
+} from '@/components/site/LegalDocument.vue';
 
 defineProps<{ seo: { title: string; description: string } }>();
 
@@ -92,9 +94,7 @@ const sections: LegalSection[] = [
     {
         id: 'contact',
         title: 'Contact',
-        paragraphs: [
-            'Questions about these terms: hello@lua.sh.',
-        ],
+        paragraphs: ['Questions about these terms: hello@lua.sh.'],
     },
 ];
 </script>

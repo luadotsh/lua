@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { IconBrandGithub, IconBrandX, IconMenu2, IconX } from '@tabler/icons-vue';
+import {
+    IconBrandGithub,
+    IconBrandX,
+    IconMenu2,
+    IconX,
+} from '@tabler/icons-vue';
 import { computed, ref } from 'vue';
+
 import { Button } from '@/components/ui/button';
 import { login, register } from '@/routes';
 import { index as linksIndex } from '@/routes/links';
@@ -21,7 +27,11 @@ const isAuthenticated = computed(() => Boolean(page.props.auth?.user));
 const open = ref(false);
 
 const socials = [
-    { label: 'Lua on GitHub', href: 'https://github.com/luadotsh/lua', icon: IconBrandGithub },
+    {
+        label: 'Lua on GitHub',
+        href: 'https://github.com/luadotsh/lua',
+        icon: IconBrandGithub,
+    },
     { label: 'Lua on X', href: 'https://x.com/luadotsh', icon: IconBrandX },
 ];
 
@@ -60,7 +70,11 @@ const footerColumns: Array<{ title: string; links: FooterLink[] }> = [
         links: [
             { label: 'Terms', href: site.terms.url() },
             { label: 'Privacy', href: site.privacy.url() },
-            { label: 'Source', href: 'https://github.com/luadotsh/lua', external: true },
+            {
+                label: 'Source',
+                href: 'https://github.com/luadotsh/lua',
+                external: true,
+            },
         ],
     },
 ];
@@ -70,16 +84,31 @@ const nav = [
     { key: 'use-cases', label: 'Use cases', href: site.useCases.index.url() },
     { key: 'tools', label: 'Tools', href: site.tools.index.url() },
     { key: 'blog', label: 'Blog', href: site.blog.index.url() },
-    { key: 'alternatives', label: 'Alternatives', href: site.alternatives.index.url() },
+    {
+        key: 'alternatives',
+        label: 'Alternatives',
+        href: site.alternatives.index.url(),
+    },
 ];
 </script>
 
 <template>
     <div class="site-light flex min-h-screen flex-col">
-        <header class="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
-            <div class="mx-auto flex h-16 w-full max-w-6xl items-center gap-6 px-4 sm:px-6">
-                <Link :href="site.home.url()" class="flex shrink-0 items-center gap-2">
-                    <img src="/images/lua/full-black.svg" alt="Lua" class="h-7 w-auto" />
+        <header
+            class="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur"
+        >
+            <div
+                class="mx-auto flex h-16 w-full max-w-6xl items-center gap-6 px-4 sm:px-6"
+            >
+                <Link
+                    :href="site.home.url()"
+                    class="flex shrink-0 items-center gap-2"
+                >
+                    <img
+                        src="/images/lua/full-black.svg"
+                        alt="Lua"
+                        class="h-7 w-auto"
+                    />
                 </Link>
 
                 <nav class="hidden items-center gap-6 md:flex">
@@ -120,7 +149,9 @@ const nav = [
             </div>
 
             <div v-if="open" class="border-t border-border md:hidden">
-                <nav class="mx-auto flex w-full max-w-6xl flex-col gap-1 px-4 py-3">
+                <nav
+                    class="mx-auto flex w-full max-w-6xl flex-col gap-1 px-4 py-3"
+                >
                     <Link
                         v-for="item in nav"
                         :key="item.href"
@@ -131,7 +162,9 @@ const nav = [
                         {{ item.label }}
                     </Link>
                     <Link
-                        :href="isAuthenticated ? linksIndex.url() : register.url()"
+                        :href="
+                            isAuthenticated ? linksIndex.url() : register.url()
+                        "
                         class="rounded-md px-2 py-2 text-sm font-medium hover:bg-accent"
                     >
                         {{ isAuthenticated ? 'Go to app' : 'Start for free' }}
@@ -153,13 +186,21 @@ const nav = [
 
         <footer class="brand-panel">
             <div class="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
-                <div class="grid gap-12 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,2.6fr)]">
+                <div
+                    class="grid gap-12 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,2.6fr)]"
+                >
                     <!-- Brand block: mark, one line, and the two places to go. -->
                     <div>
                         <Link :href="site.home.url()" class="inline-block">
-                            <img src="/images/lua/full-white.svg" alt="Lua" class="h-7 w-auto" />
+                            <img
+                                src="/images/lua/full-white.svg"
+                                alt="Lua"
+                                class="h-7 w-auto"
+                            />
                         </Link>
-                        <p class="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
+                        <p
+                            class="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground"
+                        >
                             Short links, and the story of every click. Open
                             source, and yours to self-host.
                         </p>
@@ -180,12 +221,20 @@ const nav = [
                     </div>
 
                     <div class="grid grid-cols-2 gap-8 sm:grid-cols-4">
-                        <div v-for="column in footerColumns" :key="column.title">
-                            <h2 class="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                        <div
+                            v-for="column in footerColumns"
+                            :key="column.title"
+                        >
+                            <h2
+                                class="text-xs font-medium tracking-wide text-muted-foreground uppercase"
+                            >
                                 {{ column.title }}
                             </h2>
                             <ul class="mt-4 space-y-2.5 text-sm">
-                                <li v-for="item in column.links" :key="item.label">
+                                <li
+                                    v-for="item in column.links"
+                                    :key="item.label"
+                                >
                                     <a
                                         v-if="item.external"
                                         :href="item.href"

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import RangePicker from "@/components/RangePicker.vue";
+import RangePicker from '@/components/RangePicker.vue';
 
 interface Range {
     start: string;
@@ -13,7 +13,7 @@ const props = defineProps<{
 }>();
 
 defineEmits<{
-    "update:range": [value: Range];
+    'update:range': [value: Range];
 }>();
 </script>
 

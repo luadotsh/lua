@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { IconCheck, IconCopy } from '@tabler/icons-vue';
 import { computed, ref } from 'vue';
+
 import JsonLd from '@/components/site/JsonLd.vue';
 import PageHeader from '@/components/site/PageHeader.vue';
 import Seo from '@/components/site/Seo.vue';
-import SiteLayout from '@/layouts/site/SiteLayout.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import SiteLayout from '@/layouts/site/SiteLayout.vue';
 
 defineProps<{ seo: { title: string; description: string } }>();
 
@@ -21,11 +22,14 @@ const fields = ref<Record<string, string>>({
 });
 
 const hints: Record<string, string> = {
-    utm_source: 'Where the link was published: newsletter, instagram, a partner\'s name.',
+    utm_source:
+        "Where the link was published: newsletter, instagram, a partner's name.",
     utm_medium: 'How it travelled: email, social, cpc, qr, print.',
-    utm_campaign: 'The campaign this belongs to. Keep it identical across placements.',
+    utm_campaign:
+        'The campaign this belongs to. Keep it identical across placements.',
     utm_term: 'Paid keyword, if there is one. Usually left empty.',
-    utm_content: 'Which of two links in the same place. The header button, or the footer one.',
+    utm_content:
+        'Which of two links in the same place. The header button, or the footer one.',
 };
 
 const built = computed(() => {
@@ -101,19 +105,25 @@ const copy = async (): Promise<void> => {
 
                 <div class="grid gap-6 sm:grid-cols-2">
                     <div v-for="(hint, key) in hints" :key="key">
-                        <Label :for="key" class="font-mono text-xs">{{ key }}</Label>
+                        <Label :for="key" class="font-mono text-xs">{{
+                            key
+                        }}</Label>
                         <Input
                             :id="key"
                             v-model="fields[key]"
                             :data-testid="`utm-${key}`"
                             class="mt-2"
                         />
-                        <p class="mt-2 text-xs leading-relaxed text-muted-foreground">{{ hint }}</p>
+                        <p
+                            class="mt-2 text-xs leading-relaxed text-muted-foreground"
+                        >
+                            {{ hint }}
+                        </p>
                     </div>
                 </div>
             </div>
 
-            <div class="mt-10 site-card p-6">
+            <div class="site-card mt-10 p-6">
                 <div class="flex items-center justify-between gap-4">
                     <h2 class="text-sm font-medium">Your tagged link</h2>
                     <Button

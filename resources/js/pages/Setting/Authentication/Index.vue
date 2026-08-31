@@ -1,17 +1,18 @@
 <script setup lang="ts">
-import { Head, router, useForm } from "@inertiajs/vue3";
-import { nextTick, ref } from "vue";
-import { IconDeviceLaptop } from "@tabler/icons-vue";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import PasswordInput from "@/components/PasswordInput.vue";
-import AppLayout from "@/layouts/AppLayout.vue";
-import SettingsLayout from "@/layouts/settings/Layout.vue";
-import { password as passwordRoute } from "@/routes/setting/authentication";
-import { destroy as destroySessions } from "@/routes/setting/authentication/sessions";
-import { destroy as destroyProvider } from "@/routes/setting/authentication/providers";
-import { social } from "@/routes/auth";
+import { Head, router, useForm } from '@inertiajs/vue3';
+import { IconDeviceLaptop } from '@tabler/icons-vue';
+import { nextTick, ref } from 'vue';
+
+import PasswordInput from '@/components/PasswordInput.vue';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import AppLayout from '@/layouts/AppLayout.vue';
+import SettingsLayout from '@/layouts/settings/Layout.vue';
+import { social } from '@/routes/auth';
+import { password as passwordRoute } from '@/routes/setting/authentication';
+import { destroy as destroyProvider } from '@/routes/setting/authentication/providers';
+import { destroy as destroySessions } from '@/routes/setting/authentication/sessions';
 
 type ConnectedAccount = {
     provider: string;
@@ -34,14 +35,14 @@ defineProps<{
 }>();
 
 const passwordForm = useForm({
-    current_password: "",
-    password: "",
-    password_confirmation: "",
+    current_password: '',
+    password: '',
+    password_confirmation: '',
 });
 
 const sessionsForm = useForm({
-    password: "",
-    email_confirmation: "",
+    password: '',
+    email_confirmation: '',
 });
 
 const confirmingLogout = ref(false);
@@ -55,8 +56,8 @@ const startLogout = async () => {
 
     await nextTick();
 
-    confirmForm.value?.scrollIntoView({ block: "center", behavior: "smooth" });
-    confirmForm.value?.querySelector("input")?.focus();
+    confirmForm.value?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    confirmForm.value?.querySelector('input')?.focus();
 };
 
 const updatePassword = () => {
@@ -81,7 +82,6 @@ const disconnect = (provider: string) => {
         preserveScroll: true,
     });
 };
-
 </script>
 
 <template>
@@ -94,16 +94,23 @@ const disconnect = (provider: string) => {
         >
             <!-- Password -->
             <section>
-                <h2 class="text-base font-semibold text-zinc-800 dark:text-zinc-200">Password</h2>
+                <h2
+                    class="text-base font-semibold text-zinc-800 dark:text-zinc-200"
+                >
+                    Password
+                </h2>
                 <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
                     {{
                         hasPassword
-                            ? "Use a long, random password to keep your account secure."
-                            : "You signed up with a social account. Set a password to also sign in with your email."
+                            ? 'Use a long, random password to keep your account secure.'
+                            : 'You signed up with a social account. Set a password to also sign in with your email.'
                     }}
                 </p>
 
-                <form class="mt-4 grid max-w-md gap-4" @submit.prevent="updatePassword">
+                <form
+                    class="mt-4 grid max-w-md gap-4"
+                    @submit.prevent="updatePassword"
+                >
                     <div v-if="hasPassword" class="grid gap-2">
                         <Label for="current_password">Current password</Label>
                         <PasswordInput
@@ -111,7 +118,10 @@ const disconnect = (provider: string) => {
                             v-model="passwordForm.current_password"
                             autocomplete="current-password"
                         />
-                        <p v-if="passwordForm.errors.current_password" class="text-sm text-destructive">
+                        <p
+                            v-if="passwordForm.errors.current_password"
+                            class="text-sm text-destructive"
+                        >
                             {{ passwordForm.errors.current_password }}
                         </p>
                     </div>
@@ -123,13 +133,18 @@ const disconnect = (provider: string) => {
                             v-model="passwordForm.password"
                             autocomplete="new-password"
                         />
-                        <p v-if="passwordForm.errors.password" class="text-sm text-destructive">
+                        <p
+                            v-if="passwordForm.errors.password"
+                            class="text-sm text-destructive"
+                        >
                             {{ passwordForm.errors.password }}
                         </p>
                     </div>
 
                     <div class="grid gap-2">
-                        <Label for="password_confirmation">Confirm new password</Label>
+                        <Label for="password_confirmation"
+                            >Confirm new password</Label
+                        >
                         <PasswordInput
                             id="password_confirmation"
                             v-model="passwordForm.password_confirmation"
@@ -138,8 +153,13 @@ const disconnect = (provider: string) => {
                     </div>
 
                     <div>
-                        <Button type="submit" :disabled="passwordForm.processing">
-                            {{ hasPassword ? "Update password" : "Set password" }}
+                        <Button
+                            type="submit"
+                            :disabled="passwordForm.processing"
+                        >
+                            {{
+                                hasPassword ? 'Update password' : 'Set password'
+                            }}
                         </Button>
                     </div>
                 </form>
@@ -147,7 +167,11 @@ const disconnect = (provider: string) => {
 
             <!-- Connected accounts -->
             <section>
-                <h2 class="text-base font-semibold text-zinc-800 dark:text-zinc-200">Connected accounts</h2>
+                <h2
+                    class="text-base font-semibold text-zinc-800 dark:text-zinc-200"
+                >
+                    Connected accounts
+                </h2>
                 <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
                     Sign in to Lua with these providers.
                 </p>
@@ -156,16 +180,21 @@ const disconnect = (provider: string) => {
                     <div
                         v-for="account in connectedAccounts"
                         :key="account.provider"
-                        class="flex items-center justify-between rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-4"
+                        class="flex items-center justify-between rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900"
                     >
                         <div class="flex items-center space-x-3">
                             <img
                                 :src="`/images/oauth/${account.provider}.svg`"
                                 class="h-5 w-5"
-                                :class="account.provider === 'github' && 'dark:invert'"
+                                :class="
+                                    account.provider === 'github' &&
+                                    'dark:invert'
+                                "
                                 :alt="account.label"
                             />
-                            <div class="text-sm font-medium text-zinc-600 dark:text-white">
+                            <div
+                                class="text-sm font-medium text-zinc-600 dark:text-white"
+                            >
                                 {{ account.label }}
                             </div>
                         </div>
@@ -175,7 +204,11 @@ const disconnect = (provider: string) => {
                             variant="outline"
                             size="sm"
                             :disabled="!hasPassword"
-                            :title="hasPassword ? undefined : 'Set a password before disconnecting your only sign-in method.'"
+                            :title="
+                                hasPassword
+                                    ? undefined
+                                    : 'Set a password before disconnecting your only sign-in method.'
+                            "
                             @click="disconnect(account.provider)"
                         >
                             Disconnect
@@ -193,27 +226,42 @@ const disconnect = (provider: string) => {
 
             <!-- Sessions -->
             <section v-if="sessions.length">
-                <h2 class="text-base font-semibold text-zinc-800 dark:text-zinc-200">Browser sessions</h2>
+                <h2
+                    class="text-base font-semibold text-zinc-800 dark:text-zinc-200"
+                >
+                    Browser sessions
+                </h2>
                 <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                    Where your account is currently signed in. Sign out everywhere else if you
-                    do not recognise something here.
+                    Where your account is currently signed in. Sign out
+                    everywhere else if you do not recognise something here.
                 </p>
 
                 <div class="mt-4 space-y-2">
                     <div
                         v-for="session in sessions"
                         :key="session.id"
-                        class="flex items-center justify-between rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-4"
+                        class="flex items-center justify-between rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900"
                     >
                         <div class="flex items-center space-x-3">
                             <IconDeviceLaptop class="h-5 w-5 text-zinc-400" />
                             <div>
-                                <div class="text-sm font-medium text-zinc-600 dark:text-white">
-                                    {{ session.ip_address ?? "Unknown address" }}
-                                    <span v-if="session.is_current" class="ml-2 text-xs text-green-600">This device</span>
+                                <div
+                                    class="text-sm font-medium text-zinc-600 dark:text-white"
+                                >
+                                    {{
+                                        session.ip_address ?? 'Unknown address'
+                                    }}
+                                    <span
+                                        v-if="session.is_current"
+                                        class="ml-2 text-xs text-green-600"
+                                        >This device</span
+                                    >
                                 </div>
-                                <div class="max-w-md truncate text-xs text-zinc-500 dark:text-zinc-400">
-                                    {{ session.user_agent ?? "Unknown device" }} &middot; {{ session.last_active }}
+                                <div
+                                    class="max-w-md truncate text-xs text-zinc-500 dark:text-zinc-400"
+                                >
+                                    {{ session.user_agent ?? 'Unknown device' }}
+                                    &middot; {{ session.last_active }}
                                 </div>
                             </div>
                         </div>
@@ -221,7 +269,11 @@ const disconnect = (provider: string) => {
                 </div>
 
                 <div class="mt-4 max-w-md">
-                    <Button v-if="!confirmingLogout" variant="outline" @click="startLogout">
+                    <Button
+                        v-if="!confirmingLogout"
+                        variant="outline"
+                        @click="startLogout"
+                    >
                         Sign out other sessions
                     </Button>
 
@@ -232,28 +284,50 @@ const disconnect = (provider: string) => {
                         @submit.prevent="logoutOtherSessions"
                     >
                         <div v-if="hasPassword" class="grid gap-2">
-                            <Label for="sessions_password">Confirm your password</Label>
+                            <Label for="sessions_password"
+                                >Confirm your password</Label
+                            >
                             <PasswordInput
                                 id="sessions_password"
                                 v-model="sessionsForm.password"
                                 autocomplete="current-password"
                             />
-                            <p v-if="sessionsForm.errors.password" class="text-sm text-destructive">
+                            <p
+                                v-if="sessionsForm.errors.password"
+                                class="text-sm text-destructive"
+                            >
                                 {{ sessionsForm.errors.password }}
                             </p>
                         </div>
 
                         <div v-else class="grid gap-2">
-                            <Label for="email_confirmation">Type your email to confirm</Label>
-                            <Input id="email_confirmation" v-model="sessionsForm.email_confirmation" />
-                            <p v-if="sessionsForm.errors.email_confirmation" class="text-sm text-destructive">
+                            <Label for="email_confirmation"
+                                >Type your email to confirm</Label
+                            >
+                            <Input
+                                id="email_confirmation"
+                                v-model="sessionsForm.email_confirmation"
+                            />
+                            <p
+                                v-if="sessionsForm.errors.email_confirmation"
+                                class="text-sm text-destructive"
+                            >
                                 {{ sessionsForm.errors.email_confirmation }}
                             </p>
                         </div>
 
                         <div class="flex gap-2">
-                            <Button type="submit" :disabled="sessionsForm.processing">Sign out</Button>
-                            <Button type="button" variant="ghost" @click="confirmingLogout = false">Cancel</Button>
+                            <Button
+                                type="submit"
+                                :disabled="sessionsForm.processing"
+                                >Sign out</Button
+                            >
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                @click="confirmingLogout = false"
+                                >Cancel</Button
+                            >
                         </div>
                     </form>
                 </div>

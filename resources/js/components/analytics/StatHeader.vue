@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { IconArrowDownRight, IconArrowUpRight, IconMinus } from '@tabler/icons-vue';
+import {
+    IconArrowDownRight,
+    IconArrowUpRight,
+    IconMinus,
+} from '@tabler/icons-vue';
+
 import {
     directionOf,
     formatChange,
@@ -25,43 +30,60 @@ const selected = defineModel<MetricKey>({ required: true });
 
 <template>
     <div
-        :class="cn(
-            'grid grid-cols-2 gap-px bg-border lg:grid-cols-4',
-            flush
-                ? 'border-b border-border'
-                : 'overflow-hidden rounded-lg border border-border',
-        )"
+        :class="
+            cn(
+                'grid grid-cols-2 gap-px bg-border lg:grid-cols-4',
+                flush
+                    ? 'border-b border-border'
+                    : 'overflow-hidden rounded-lg border border-border',
+            )
+        "
     >
         <button
             v-for="(metric, key) in overview"
             :key="key"
             type="button"
             :aria-pressed="selected === key"
-            :class="cn(
-                'flex cursor-pointer flex-col gap-1 bg-card p-4 text-left transition-colors',
-                'hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset',
-                selected === key && 'bg-accent',
-            )"
+            :class="
+                cn(
+                    'flex cursor-pointer flex-col gap-1 bg-card p-4 text-left transition-colors',
+                    'hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-inset',
+                    selected === key && 'bg-accent',
+                )
+            "
             @click="selected = key as MetricKey"
         >
-            <span class="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+            <span
+                class="text-xs font-medium tracking-wide text-muted-foreground uppercase"
+            >
                 {{ metricLabels[key as MetricKey] }}
             </span>
 
-            <span class="text-2xl font-semibold tabular-nums text-foreground">
+            <span class="text-2xl font-semibold text-foreground tabular-nums">
                 {{ formatCount(metric.value) }}
             </span>
 
             <span
-                :class="cn(
-                    'inline-flex items-center gap-1 text-xs tabular-nums',
-                    directionOf(metric.change) === 'up' && 'text-emerald-600 dark:text-emerald-400',
-                    directionOf(metric.change) === 'down' && 'text-rose-600 dark:text-rose-400',
-                    directionOf(metric.change) === 'flat' && 'text-muted-foreground',
-                )"
+                :class="
+                    cn(
+                        'inline-flex items-center gap-1 text-xs tabular-nums',
+                        directionOf(metric.change) === 'up' &&
+                            'text-emerald-600 dark:text-emerald-400',
+                        directionOf(metric.change) === 'down' &&
+                            'text-rose-600 dark:text-rose-400',
+                        directionOf(metric.change) === 'flat' &&
+                            'text-muted-foreground',
+                    )
+                "
             >
-                <IconArrowUpRight v-if="directionOf(metric.change) === 'up'" class="size-3.5" />
-                <IconArrowDownRight v-else-if="directionOf(metric.change) === 'down'" class="size-3.5" />
+                <IconArrowUpRight
+                    v-if="directionOf(metric.change) === 'up'"
+                    class="size-3.5"
+                />
+                <IconArrowDownRight
+                    v-else-if="directionOf(metric.change) === 'down'"
+                    class="size-3.5"
+                />
                 <IconMinus v-else class="size-3.5" />
 
                 {{ formatChange(metric.change) }}
