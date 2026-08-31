@@ -56,8 +56,6 @@ return [
 
     'url' => env('APP_URL', 'https://lua.sh'),
 
-    'website' => env('APP_WEBSITE', 'https://www.lua.sh'),
-
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

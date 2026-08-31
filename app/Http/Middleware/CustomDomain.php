@@ -4,25 +4,24 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
-use Inertia\Inertia;
-use Closure;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
-
 use App\Enums\Domain\Status;
 use App\Models\Domain;
+use Closure;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\Response;
 
 class CustomDomain
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
         // If the 'key' parameter is present in the request, proceed with the request.
-        if($request->key) {
+        if ($request->key) {
             return $next($request);
         }
 
@@ -30,8 +29,8 @@ class CustomDomain
         $host = $request->getHost();
 
         // If the domain is provided by lua, we redirect to the website.
-        if(in_array($host, config('domains.available'))) {
-            return Inertia::location(config('app.website'));
+        if (in_array($host, config('domains.available'))) {
+            return Inertia::location(route('site.home'));
         }
 
         // Check if the domain exists in the database and is active.
@@ -40,16 +39,16 @@ class CustomDomain
             ->first();
 
         // If the domain is not found, we redirect to the website.
-        if(!$domain) {
-            return Inertia::location(config('app.website'));
+        if (! $domain) {
+            return Inertia::location(route('site.home'));
         }
 
         // if domain provides a not found url, we redirect to that url.
-        if($domain->not_found_url) {
+        if ($domain->not_found_url) {
             return Inertia::location($domain->not_found_url);
         }
 
         // default route
-        return Inertia::location(config('app.website'));
+        return Inertia::location(route('site.home'));
     }
 }

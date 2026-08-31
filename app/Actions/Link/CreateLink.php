@@ -9,6 +9,7 @@ use App\Models\Tag;
 use App\Models\User;
 use App\Models\Workspace;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -88,12 +89,51 @@ class CreateLink
     }
 
     /**
+     * Keys the main domain can never serve, because a real route already
+     * answers on that path.
+     *
+     * Short links resolve through a `/{key?}` catch-all registered last, so
+     * anything registered before it wins: `/pricing` reaches the marketing
+     * page and `/login` reaches the form, whatever link claims that key. The
+     * link would save and then never resolve.
+     *
+     * Read off the router rather than kept as a list, so adding a route also
+     * reserves it — a hand-maintained list is one that goes stale the first
+     * time someone adds a page and does not think of this method.
+     *
+     * Only the main domain is affected: the marketing and app routes are
+     * scoped to it, so on a customer's own domain `pricing` is a perfectly
+     * good back-half.
+     *
+     * @return list<string>
+     */
+    public static function reservedKeys(): array
+    {
+        $main = (string) config('domains.main');
+
+        $keys = collect(Route::getRoutes()->getRoutes())
+            ->filter(fn ($route): bool => in_array('GET', $route->methods(), true))
+            // A route bound to another domain cannot shadow anything here.
+            ->filter(fn ($route): bool => $route->getDomain() === null || $route->getDomain() === $main)
+            ->map(fn ($route): string => Str::before(ltrim($route->uri(), '/'), '/'))
+            // Drop the catch-all itself and anything else starting with a
+            // parameter: those are patterns, not paths a key can collide with.
+            ->reject(fn (string $segment): bool => $segment === '' || Str::startsWith($segment, '{'))
+            ->unique()
+            ->values()
+            ->all();
+
+        return $keys;
+    }
+
+    /**
      * @return array<string, string>
      */
     public static function messages(): array
     {
         return [
             'key.alpha_dash' => 'The custom back-half may only contain letters, numbers, hyphens and underscores.',
+            'key.not_in' => 'That back-half is reserved by the site and would never open. Pick another one.',
         ];
     }
 
@@ -129,6 +169,12 @@ class CreateLink
 
         $optional = fn (mixed $value, array $rules) => Rule::when(fn () => filled($value), $rules);
 
+        // Only the main domain carries routes that could shadow a key, and
+        // building the list walks the router — so skip it entirely elsewhere.
+        $reserved = $domain === config('domains.main')
+            ? [Rule::notIn(self::reservedKeys())]
+            : [];
+
         return [
             'key' => $optional($key, [
                 'required', 'string', 'max:255',
@@ -138,6 +184,7 @@ class CreateLink
                 // Case is significant — lookups match the column exactly, so
                 // `/AbC` and `/abc` are two different links.
                 'alpha_dash:ascii',
+                ...$reserved,
                 Rule::unique('links')->where('domain', $domain)->ignore($ignoreId),
             ]),
             'domain' => [

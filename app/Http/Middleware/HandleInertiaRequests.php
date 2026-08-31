@@ -70,6 +70,9 @@ class HandleInertiaRequests extends Middleware
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'flash' => $request->session()->get('flash', []),
             'env' => config('app.env'),
+            // The marketing pages build canonical and OG urls from this, and
+            // a relative one is no use to a crawler or a link preview.
+            'appUrl' => rtrim((string) config('app.url'), '/'),
             'locale' => app()->getLocale(),
         ];
     }

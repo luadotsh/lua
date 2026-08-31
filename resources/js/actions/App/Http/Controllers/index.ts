@@ -1,3 +1,4 @@
+import Site from './Site'
 import Api from './Api'
 import WorkspaceController from './WorkspaceController'
 import LinkController from './LinkController'
@@ -9,6 +10,7 @@ import Auth from './Auth'
 import RedirectController from './RedirectController'
 
 const Controllers = {
+    Site: Object.assign(Site, Site),
     Api: Object.assign(Api, Api),
     WorkspaceController: Object.assign(WorkspaceController, WorkspaceController),
     LinkController: Object.assign(LinkController, LinkController),
