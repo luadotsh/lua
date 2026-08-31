@@ -31,7 +31,11 @@ class RevokeAccessToken
         }
 
         $token->forceFill(['revoked' => true])->saveQuietly();
-        $token->refreshToken()?->forceFill(['revoked' => true])->saveQuietly();
+
+        // The property, not the method: refreshToken() hands back the HasOne
+        // itself, which has no forceFill. The null-safe operator hid nothing
+        // either — a relation object is never null, only its result is.
+        $token->refreshToken?->forceFill(['revoked' => true])->saveQuietly();
 
         return true;
     }

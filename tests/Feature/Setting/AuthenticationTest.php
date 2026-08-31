@@ -10,6 +10,8 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Laravel\Passport\Passport;
 
 use function Pest\Laravel\actingAs;
 
@@ -97,8 +99,8 @@ it('will not let one member revoke another member oauth grant', function () {
 
     // A real OAuth client, not a personal-access one: that distinction is what
     // separates a personal MCP grant from a workspace API key.
-    $client = Laravel\Passport\Passport::client()->forceFill([
-        'id' => Illuminate\Support\Str::uuid()->toString(),
+    $client = Passport::client()->forceFill([
+        'id' => Str::uuid()->toString(),
         'name' => 'Some MCP client',
         'redirect_uris' => ['https://example.com/callback'],
         'grant_types' => ['authorization_code', 'refresh_token'],
@@ -107,7 +109,7 @@ it('will not let one member revoke another member oauth grant', function () {
     $client->save();
 
     $theirToken = AccessToken::query()->create([
-        'id' => Illuminate\Support\Str::random(80),
+        'id' => Str::random(80),
         'user_id' => $teammate->id,
         'client_id' => $client->id,
         'workspace_id' => $this->user->current_workspace_id,
@@ -171,4 +173,72 @@ it('refuses to sign out the other sessions with a wrong password', function () {
         ->assertSessionHasErrors('password');
 
     expect(DB::table('sessions')->where('id', 'other-session')->exists())->toBeTrue();
+});
+
+it('revokes a personal access token that has no refresh token', function () {
+    apiTokenFor($this->user, 'Deploy key');
+
+    $token = AccessToken::query()
+        ->where('workspace_id', $this->user->current_workspace_id)
+        ->firstOrFail();
+
+    // The happy path had never been exercised: every existing test returned
+    // before reaching the revoke itself, so a call to the relation instead of
+    // its result went out as a 500.
+    $revoked = RevokeAccessToken::execute(
+        $this->user,
+        $this->user->currentWorkspace,
+        $token->id,
+    );
+
+    expect($revoked)->toBeTrue()
+        ->and($token->fresh()->revoked)->toBeTrue();
+});
+
+it('revokes an oauth grant together with its refresh token', function () {
+    $client = Passport::client()->forceFill([
+        'id' => Str::uuid()->toString(),
+        'name' => 'Some MCP client',
+        'redirect_uris' => ['https://example.com/callback'],
+        'grant_types' => ['authorization_code', 'refresh_token'],
+        'revoked' => false,
+    ]);
+    $client->save();
+
+    $token = AccessToken::query()->create([
+        'id' => Str::random(80),
+        'user_id' => $this->user->id,
+        'client_id' => $client->id,
+        'workspace_id' => $this->user->current_workspace_id,
+        'scopes' => ['mcp:use'],
+        'revoked' => false,
+    ]);
+
+    $refresh = Passport::refreshToken()->forceFill([
+        'id' => Str::random(80),
+        'access_token_id' => $token->id,
+        'revoked' => false,
+    ]);
+    $refresh->save();
+
+    // A live refresh token would mint a new access token, so revoking one
+    // without the other leaves the connection working.
+    expect(RevokeAccessToken::execute($this->user, $this->user->currentWorkspace, $token->id))
+        ->toBeTrue()
+        ->and($token->fresh()->revoked)->toBeTrue()
+        ->and($refresh->fresh()->revoked)->toBeTrue();
+});
+
+it('deletes an api token through the settings screen', function () {
+    apiTokenFor($this->user, 'Deploy key');
+
+    $token = AccessToken::query()
+        ->where('workspace_id', $this->user->current_workspace_id)
+        ->firstOrFail();
+
+    $this->actingAs($this->user)
+        ->delete(route('setting.api-tokens.destroy', $token->id))
+        ->assertRedirect();
+
+    expect($token->fresh()->revoked)->toBeTrue();
 });
