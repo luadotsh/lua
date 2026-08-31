@@ -45,6 +45,8 @@ defineProps<{
         name: string;
         email: string;
         created_at: string;
+        /** Ownership is a column, not a role, so it arrives beside one. */
+        is_owner: boolean;
         membership: { role: string };
     }>;
     invites: Array<{
@@ -226,7 +228,8 @@ onMounted(() => {
                                         <DropdownMenuItem
                                             v-if="
                                                 member.id !== user.id &&
-                                                user.current_workspace?.role !== 'USER'
+                                                user.current_workspace?.role !== 'USER' &&
+                                                !member.is_owner
                                             "
                                             @click="changeUserRole(member, member.membership.role == 'USER' ? 'ADMIN' : 'USER')"
                                         >
@@ -239,7 +242,8 @@ onMounted(() => {
                                         <DropdownMenuSeparator
                                             v-if="
                                                 member.id !== user.id &&
-                                                user.current_workspace?.role !== 'USER'
+                                                user.current_workspace?.role !== 'USER' &&
+                                                !member.is_owner
                                             "
                                         />
                                         <DropdownMenuItem

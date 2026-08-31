@@ -65,7 +65,7 @@ trait HasWorkspaces
             return false;
         }
 
-        return $this->workspaceRole($workspace) === UserRole::ROLE_OWNER->value;
+        return $workspace->owner_id === $this->id;
     }
 
     public function isAdminOnStore($workspace)
@@ -95,7 +95,7 @@ trait HasWorkspaces
 
     public function switchWorkspace($workspace)
     {
-        if (!$this->belongsToWorkspace($workspace)) {
+        if (! $this->belongsToWorkspace($workspace)) {
             return false;
         }
 

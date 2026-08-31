@@ -43,7 +43,12 @@ class HandleInertiaRequests extends Middleware
                     }
 
                     $currentWorkspace = $request->user()->current_workspace_id ? $request->user()->currentWorkspace : null;
-                    $currentWorkspace ? $currentWorkspace->role = $request->user()->workspaceRole($currentWorkspace) : null;
+                    if ($currentWorkspace) {
+                        $currentWorkspace->role = $request->user()->workspaceRole($currentWorkspace);
+                        // Ownership is a column, not a role, so it travels
+                        // alongside rather than inside it.
+                        $currentWorkspace->is_owner = $request->user()->ownsWorkspace($currentWorkspace);
+                    }
 
                     $request->user()->loadMissing('media');
                     $currentWorkspace?->loadMissing('media');

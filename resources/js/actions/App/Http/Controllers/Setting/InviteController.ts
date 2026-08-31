@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Setting\InviteController::create
-* @see app/Http/Controllers/Setting/InviteController.php:24
+* @see app/Http/Controllers/Setting/InviteController.php:17
 * @route '/settings/users/invites/create'
 */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\InviteController::create
-* @see app/Http/Controllers/Setting/InviteController.php:24
+* @see app/Http/Controllers/Setting/InviteController.php:17
 * @route '/settings/users/invites/create'
 */
 create.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ create.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Setting\InviteController::create
-* @see app/Http/Controllers/Setting/InviteController.php:24
+* @see app/Http/Controllers/Setting/InviteController.php:17
 * @route '/settings/users/invites/create'
 */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\InviteController::create
-* @see app/Http/Controllers/Setting/InviteController.php:24
+* @see app/Http/Controllers/Setting/InviteController.php:17
 * @route '/settings/users/invites/create'
 */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\InviteController::create
-* @see app/Http/Controllers/Setting/InviteController.php:24
+* @see app/Http/Controllers/Setting/InviteController.php:17
 * @route '/settings/users/invites/create'
 */
 const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 
 /**
 * @see \App\Http\Controllers\Setting\InviteController::create
-* @see app/Http/Controllers/Setting/InviteController.php:24
+* @see app/Http/Controllers/Setting/InviteController.php:17
 * @route '/settings/users/invites/create'
 */
 createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\InviteController::create
-* @see app/Http/Controllers/Setting/InviteController.php:24
+* @see app/Http/Controllers/Setting/InviteController.php:17
 * @route '/settings/users/invites/create'
 */
 createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ create.form = createForm
 
 /**
 * @see \App\Http\Controllers\Setting\InviteController::store
-* @see app/Http/Controllers/Setting/InviteController.php:29
+* @see app/Http/Controllers/Setting/InviteController.php:22
 * @route '/settings/users/invites'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -97,7 +97,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\InviteController::store
-* @see app/Http/Controllers/Setting/InviteController.php:29
+* @see app/Http/Controllers/Setting/InviteController.php:22
 * @route '/settings/users/invites'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Setting\InviteController::store
-* @see app/Http/Controllers/Setting/InviteController.php:29
+* @see app/Http/Controllers/Setting/InviteController.php:22
 * @route '/settings/users/invites'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -116,7 +116,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Setting\InviteController::store
-* @see app/Http/Controllers/Setting/InviteController.php:29
+* @see app/Http/Controllers/Setting/InviteController.php:22
 * @route '/settings/users/invites'
 */
 const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -126,7 +126,7 @@ const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => 
 
 /**
 * @see \App\Http\Controllers\Setting\InviteController::store
-* @see app/Http/Controllers/Setting/InviteController.php:29
+* @see app/Http/Controllers/Setting/InviteController.php:22
 * @route '/settings/users/invites'
 */
 storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -138,7 +138,7 @@ store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\Setting\InviteController::destroy
-* @see app/Http/Controllers/Setting/InviteController.php:58
+* @see app/Http/Controllers/Setting/InviteController.php:54
 * @route '/settings/users/invites/{id}'
 */
 export const destroy = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -153,7 +153,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Setting\InviteController::destroy
-* @see app/Http/Controllers/Setting/InviteController.php:58
+* @see app/Http/Controllers/Setting/InviteController.php:54
 * @route '/settings/users/invites/{id}'
 */
 destroy.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -180,7 +180,7 @@ destroy.url = (args: { id: string | number } | [id: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\Setting\InviteController::destroy
-* @see app/Http/Controllers/Setting/InviteController.php:58
+* @see app/Http/Controllers/Setting/InviteController.php:54
 * @route '/settings/users/invites/{id}'
 */
 destroy.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -190,7 +190,7 @@ destroy.delete = (args: { id: string | number } | [id: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\Setting\InviteController::destroy
-* @see app/Http/Controllers/Setting/InviteController.php:58
+* @see app/Http/Controllers/Setting/InviteController.php:54
 * @route '/settings/users/invites/{id}'
 */
 const destroyForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -205,7 +205,7 @@ const destroyForm = (args: { id: string | number } | [id: string | number ] | st
 
 /**
 * @see \App\Http\Controllers\Setting\InviteController::destroy
-* @see app/Http/Controllers/Setting/InviteController.php:58
+* @see app/Http/Controllers/Setting/InviteController.php:54
 * @route '/settings/users/invites/{id}'
 */
 destroyForm.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

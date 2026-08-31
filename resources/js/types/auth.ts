@@ -1,6 +1,6 @@
-// Mirrors App\Enums\User\Role
+// Mirrors App\Enums\User\Role. Ownership is not a role — it is
+// workspaces.owner_id, and arrives as `is_owner` on the current workspace.
 export const WorkspaceRole = {
-    Owner: 'OWNER',
     Admin: 'ADMIN',
     User: 'USER',
 } as const;
@@ -52,6 +52,8 @@ export type Workspace = {
     plan: WorkspacePlan | null;
     subscribed: boolean;
     role: WorkspaceRole | null;
+    /** Ownership is a column, not a role, so it travels alongside one. */
+    is_owner?: boolean;
     media?: Media[];
 };
 

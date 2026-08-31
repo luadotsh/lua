@@ -27,12 +27,16 @@ class CreateWorkspace
         return DB::transaction(function () use ($user, $data, $plan): Workspace {
             $workspace = Workspace::create([
                 'name' => data_get($data, 'name'),
+                'owner_id' => $user->id,
                 'plan_id' => $plan->id,
                 'billing_cycle_start' => now()->day,
             ]);
 
+            // The owner is also a member, at the highest role there is. What
+            // ownership adds on top is what only one person may do: transfer
+            // it, and never be removed or demoted out of the workspace.
             $user->workspaces()->attach($workspace->id, [
-                'role' => Role::ROLE_OWNER,
+                'role' => Role::ROLE_ADMIN,
             ]);
 
             $user->forceFill([

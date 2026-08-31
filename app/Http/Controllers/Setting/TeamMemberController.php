@@ -4,21 +4,18 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Setting;
 
-use App\Actions\TeamMember\ListMembers;
 use App\Actions\Invite\ListInvites;
 use App\Actions\TeamMember\LeaveWorkspace;
-use App\Actions\TeamMember\UpdateMemberRole;
+use App\Actions\TeamMember\ListMembers;
 use App\Actions\TeamMember\RemoveMember;
+use App\Actions\TeamMember\UpdateMemberRole;
 use App\Http\Requests\TeamMember\UpdateUserRoleRequest;
-
-use Illuminate\Database\Eloquent\Builder;
-
-use Illuminate\Http\Request;
-use Inertia\Inertia;
-
-use App\Models\Workspace;
 use App\Models\User;
-use App\Models\Invite;
+use App\Models\Workspace;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Inertia\Inertia;
 
 class TeamMemberController extends Controller
 {
@@ -27,22 +24,28 @@ class TeamMemberController extends Controller
         $workspace = auth()->user()->currentWorkspace;
 
         return Inertia::render('Setting/TeamMember/Index', [
-            'users' => ListMembers::execute($workspace, ['search' => $request->q]),
+            // is_owner rather than a role: the screen hides the controls the
+            // policy would refuse, and ownership is what it refuses on.
+            'users' => ListMembers::execute($workspace, ['search' => $request->q])
+                ->each(fn ($member) => $member->is_owner = $member->id === $workspace->owner_id),
             'invites' => ListInvites::execute($workspace),
         ]);
     }
 
     public function updateUserRole($id, UpdateUserRoleRequest $request)
     {
+        $workspace = auth()->user()->currentWorkspace;
+
         // validate user
         $user = User::where('id', $id)
-        ->whereHas('workspaces', function (Builder $query) {
-            $query->where('workspaces.id', auth()->user()->currentWorkspace->id);
-        })
-        ->firstOrFail();
+            ->whereHas('workspaces', function (Builder $query) {
+                $query->where('workspaces.id', auth()->user()->currentWorkspace->id);
+            })
+            ->firstOrFail();
 
-        // update user role
-        UpdateMemberRole::execute(auth()->user()->currentWorkspace, $user, $request->role);
+        Gate::authorize('manageMember', [$workspace, $user]);
+
+        UpdateMemberRole::execute($workspace, $user, $request->role);
 
         session()->flash('flash.banner', 'User role updated');
         session()->flash('flash.bannerStyle', 'success');
@@ -55,14 +58,18 @@ class TeamMemberController extends Controller
      */
     public function destroy($id)
     {
+        $workspace = auth()->user()->currentWorkspace;
+
         // validate if user exist on workspace
         $user = User::where('id', $id)
-        ->whereHas('workspaces', function (Builder $query) {
-            $query->where('workspaces.id', auth()->user()->currentWorkspace->id);
-        })
-        ->firstOrFail();
+            ->whereHas('workspaces', function (Builder $query) {
+                $query->where('workspaces.id', auth()->user()->currentWorkspace->id);
+            })
+            ->firstOrFail();
 
-        RemoveMember::execute(auth()->user()->currentWorkspace, $user);
+        Gate::authorize('manageMember', [$workspace, $user]);
+
+        RemoveMember::execute($workspace, $user);
 
         session()->flash('flash.banner', 'User removed successful');
         session()->flash('flash.bannerStyle', 'success');
@@ -74,6 +81,15 @@ class TeamMemberController extends Controller
     {
         $user = auth()->user();
         $workspace = $user->currentWorkspace;
+
+        // The owner cannot walk away from what they answer for; they hand it
+        // on or close it.
+        if ($user->ownsWorkspace($workspace)) {
+            session()->flash('flash.banner', 'Transfer ownership before leaving this workspace.');
+            session()->flash('flash.bannerStyle', 'danger');
+
+            return back();
+        }
 
         if (LeaveWorkspace::isLastMember($workspace)) {
             session()->flash('flash.banner', 'The Team cannot stay without a user');

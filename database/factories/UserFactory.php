@@ -4,17 +4,15 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Enums\User\Role;
+use App\Models\User;
+use App\Models\Workspace;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-use App\Enums\User\Role;
-
-use App\Models\User;
-use App\Models\Workspace;
-
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ * @extends Factory<User>
  */
 class UserFactory extends Factory
 {
@@ -54,7 +52,8 @@ class UserFactory extends Factory
         return $this->afterCreating(function (User $user) {
 
             $workspace = Workspace::factory()->create();
-            $user->workspaces()->attach($workspace->id, ['role' => Role::ROLE_OWNER]);
+            $workspace->forceFill(['owner_id' => $user->id])->save();
+            $user->workspaces()->attach($workspace->id, ['role' => Role::ROLE_ADMIN]);
 
             // set the current team
             $user->current_workspace_id = $workspace->id;

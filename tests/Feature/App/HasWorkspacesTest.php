@@ -36,7 +36,7 @@ it('knows whether it belongs to a workspace', function () {
 });
 
 it('reads the role it holds in a workspace', function () {
-    expect($this->user->workspaceRole($this->workspace))->toBe(Role::ROLE_OWNER->value);
+    expect($this->user->workspaceRole($this->workspace))->toBe(Role::ROLE_ADMIN->value);
 });
 
 it('has no role in a workspace it does not belong to', function () {
@@ -44,11 +44,13 @@ it('has no role in a workspace it does not belong to', function () {
 });
 
 it('knows whether it owns a workspace', function () {
-    $member = User::factory()->create();
-    $member->workspaces()->attach($this->workspace->id, ['role' => Role::ROLE_USER->value]);
+    // Ownership is workspaces.owner_id, so an admin membership does not confer
+    // it and removing a pivot row cannot take it away.
+    $admin = User::factory()->create();
+    $admin->workspaces()->attach($this->workspace->id, ['role' => Role::ROLE_ADMIN->value]);
 
     expect($this->user->ownsWorkspace($this->workspace))->toBeTrue()
-        ->and($member->fresh()->ownsWorkspace($this->workspace))->toBeFalse()
+        ->and($admin->fresh()->ownsWorkspace($this->workspace))->toBeFalse()
         ->and($this->user->ownsWorkspace(null))->toBeFalse();
 });
 
@@ -62,15 +64,15 @@ it('counts anyone above USER as an admin', function () {
 });
 
 it('matches an exact role', function () {
-    expect($this->user->hasWorkspaceRole($this->workspace, Role::ROLE_OWNER->value))->toBeTrue()
+    expect($this->user->hasWorkspaceRole($this->workspace, Role::ROLE_ADMIN->value))->toBeTrue()
         ->and($this->user->hasWorkspaceRole($this->workspace, Role::ROLE_USER->value))->toBeFalse()
-        ->and($this->user->hasWorkspaceRole(Workspace::factory()->create(), Role::ROLE_OWNER->value))
+        ->and($this->user->hasWorkspaceRole(Workspace::factory()->create(), Role::ROLE_ADMIN->value))
         ->toBeNull();
 });
 
 it('switches to a workspace it belongs to and refuses one it does not', function () {
     $mine = Workspace::factory()->create();
-    $this->user->workspaces()->attach($mine->id, ['role' => Role::ROLE_OWNER->value]);
+    $this->user->workspaces()->attach($mine->id, ['role' => Role::ROLE_ADMIN->value]);
 
     expect($this->user->fresh()->switchWorkspace($mine))->toBeTrue()
         ->and($this->user->fresh()->current_workspace_id)->toBe($mine->id)

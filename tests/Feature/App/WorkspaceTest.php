@@ -67,7 +67,7 @@ test('user cant update workspace without name', function () {
 it('switches to a workspace you belong to', function () {
     $user = User::factory()->withWorkspace()->create();
     $elsewhere = Workspace::factory()->create();
-    $user->workspaces()->attach($elsewhere->id, ['role' => Role::ROLE_OWNER->value]);
+    $user->workspaces()->attach($elsewhere->id, ['role' => Role::ROLE_ADMIN->value]);
 
     actingAs($user)->put(route('workspaces.update-current'), [
         'workspace_id' => $elsewhere->id,

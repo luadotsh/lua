@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Enums\User\Role;
 use App\Models\Traits\HasMedia;
 use App\Models\Traits\WorkspaceUsage;
 use App\Observers\WorkspaceObserver;
@@ -37,6 +36,7 @@ class Workspace extends Model
      */
     protected $fillable = [
         'name',
+        'owner_id',
         'plan_id',
         'logo',
         'billing_cycle_start',
@@ -92,7 +92,7 @@ class Workspace extends Model
      */
     public function stripeEmail(): ?string
     {
-        return $this->users()->where('role', Role::ROLE_OWNER)->first()->email;
+        return $this->owner?->email;
     }
 
     public function getHasLogoAttribute(): bool
@@ -108,6 +108,12 @@ class Workspace extends Model
     public function getLogoUrlAttribute(): ?string
     {
         return $this->getFirstMediaUrl('logo') ?: null;
+    }
+
+    /** Whoever the workspace belongs to. Null only if that account is gone. */
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'owner_id');
     }
 
     public function users(): BelongsToMany

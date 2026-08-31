@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Setting;
 
-use App\Http\Requests\ApiToken\CreateRequest;
 use App\Actions\AccessToken\ListWorkspaceApiKeys;
 use App\Actions\AccessToken\RevokeAccessToken;
 use App\Actions\ApiKey\CreateApiKey;
-use Illuminate\Http\Request;
+use App\Http\Requests\ApiToken\CreateRequest;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class ApiTokenController extends Controller
@@ -33,6 +33,9 @@ class ApiTokenController extends Controller
 
     public function store(CreateRequest $request)
     {
+        // A key acts for the whole workspace, so minting one is running it.
+        Gate::authorize('administer', auth()->user()->currentWorkspace);
+
         $result = CreateApiKey::execute(
             auth()->user(),
             auth()->user()->currentWorkspace,
@@ -47,6 +50,8 @@ class ApiTokenController extends Controller
 
     public function destroy($id)
     {
+        Gate::authorize('administer', auth()->user()->currentWorkspace);
+
         $revoked = RevokeAccessToken::execute(
             auth()->user(),
             auth()->user()->currentWorkspace,

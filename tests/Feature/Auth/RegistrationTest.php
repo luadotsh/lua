@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Actions\Workspace\CreateWorkspace;
 use App\Enums\User\Role;
 use App\Models\Invite;
 use App\Models\User;
@@ -40,7 +41,8 @@ test('registering creates a personal workspace named after the user', function (
     $workspace = $user->workspaces()->firstOrFail();
 
     expect($workspace->name)->toBe("Paulo's Workspace")
-        ->and($workspace->membership->role)->toBe(Role::ROLE_OWNER->value)
+        ->and($workspace->membership->role)->toBe(Role::ROLE_ADMIN->value)
+        ->and($workspace->owner_id)->toBe($user->id)
         ->and($user->current_workspace_id)->toBe($workspace->id);
 });
 
@@ -57,8 +59,8 @@ test('a user without a usable name falls back to a generic workspace name', func
 
     // The fallback still has to hold for the paths that do not validate a
     // name the same way, e.g. an OAuth profile with no display name.
-    expect(\App\Actions\Workspace\CreateWorkspace::defaultNameFor('   '))->toBe('My Workspace')
-        ->and(\App\Actions\Workspace\CreateWorkspace::defaultNameFor('Lucas'))->toBe("Lucas's Workspace");
+    expect(CreateWorkspace::defaultNameFor('   '))->toBe('My Workspace')
+        ->and(CreateWorkspace::defaultNameFor('Lucas'))->toBe("Lucas's Workspace");
 });
 
 test('registration persists utm parameters and ad click ids captured on the landing url', function () {

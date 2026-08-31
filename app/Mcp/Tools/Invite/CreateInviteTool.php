@@ -8,6 +8,7 @@ use App\Actions\Invite\CreateInvite;
 use App\Enums\User\Role;
 use App\Mcp\Concerns\ResolvesWorkspace;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Enum;
 use Laravel\Mcp\Request;
@@ -34,6 +35,14 @@ class CreateInviteTool extends Tool
 
     public function handle(Request $request): Response|ResponseFactory
     {
+        $workspace = $this->workspace($request);
+
+        // Same rule as the settings screen: running the workspace is what an
+        // invite is, whichever surface it arrives through.
+        if (! Gate::forUser($request->user())->allows('administer', $workspace)) {
+            return Response::error('Only a workspace admin can manage invites.');
+        }
+
         $validator = Validator::make($request->all(), [
             'email' => ['required', 'email', 'max:255'],
             'role' => ['required', new Enum(Role::class)],

@@ -4,19 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Setting;
 
-use App\Actions\Invite\GetInvite;
-use App\Actions\Invite\DeleteInvite;
 use App\Actions\Invite\CreateInvite;
+use App\Actions\Invite\DeleteInvite;
+use App\Actions\Invite\GetInvite;
 use App\Http\Requests\Invite\InviteRequest;
-
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Gate;
-
 use App\Models\User;
-use App\Models\Invite;
-
-use App\Mail\Team\SendUserInvite;
-
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class InviteController extends Controller
@@ -30,10 +23,13 @@ class InviteController extends Controller
     {
         $workspace = auth()->user()->currentWorkspace;
 
+        Gate::authorize('administer', $workspace);
+
         $response = Gate::inspect('reached-user-limit', $workspace);
-        if (!$response->allowed()) {
+        if (! $response->allowed()) {
             session()->flash('flash.banner', 'You have reached the limit of team members, please upgrade your plan.');
             session()->flash('flash.bannerStyle', 'danger');
+
             return redirect()->route('setting.team-members.index');
         }
 
@@ -58,6 +54,8 @@ class InviteController extends Controller
     public function destroy($id)
     {
         $workspace = auth()->user()->currentWorkspace;
+
+        Gate::authorize('administer', $workspace);
 
         $invite = GetInvite::execute($workspace, $id);
 

@@ -8,6 +8,7 @@ use App\Actions\Media\DeleteMedia;
 use App\Actions\Workspace\UpdateWorkspace;
 use App\Http\Requests\Workspace\UpdateRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class WorkspaceController extends Controller
@@ -20,6 +21,8 @@ class WorkspaceController extends Controller
     public function update(UpdateRequest $request)
     {
         $workspace = auth()->user()->currentWorkspace;
+
+        Gate::authorize('administer', $workspace);
 
         UpdateWorkspace::execute($workspace, $request->validated());
 
@@ -36,6 +39,9 @@ class WorkspaceController extends Controller
     public function deleteLogo(Request $request)
     {
         $workspace = $request->user()->currentWorkspace;
+
+        Gate::authorize('administer', $workspace);
+
         $logo = $workspace->getFirstMedia('logo');
 
         if ($logo !== null) {

@@ -79,7 +79,7 @@ it('refuses to leave a workspace with nobody else in it', function () {
 
 it('switches you to another workspace when you leave one', function () {
     $elsewhere = Workspace::factory()->create();
-    $this->owner->workspaces()->attach($elsewhere->id, ['role' => Role::ROLE_OWNER->value]);
+    $this->owner->workspaces()->attach($elsewhere->id, ['role' => Role::ROLE_ADMIN->value]);
 
     $landed = LeaveWorkspace::execute($this->owner, $this->workspace);
 
@@ -157,24 +157,36 @@ it('refuses to let the only member leave', function () {
 });
 
 it('sends you to your next workspace after leaving one', function () {
-    joinWorkspace($this->workspace);
+    $member = joinWorkspace($this->workspace);
 
-    $elsewhere = Workspace::factory()->create();
-    $this->owner->workspaces()->attach($elsewhere->id, ['role' => Role::ROLE_OWNER->value]);
+    $elsewhere = Workspace::factory()->create(['owner_id' => $member->id]);
+    $member->workspaces()->attach($elsewhere->id, ['role' => Role::ROLE_ADMIN->value]);
 
-    $this->actingAs($this->owner)
+    $this->actingAs($member)
         ->delete(route('setting.team-members.leave'))
         ->assertRedirect(route('links.index'));
 
-    expect($this->owner->fresh()->current_workspace_id)->toBe($elsewhere->id);
+    expect($member->fresh()->current_workspace_id)->toBe($elsewhere->id);
 });
 
 it('sends you to create one after leaving your last workspace', function () {
-    joinWorkspace($this->workspace);
+    $member = joinWorkspace($this->workspace);
 
-    $this->actingAs($this->owner)
+    $this->actingAs($member)
         ->delete(route('setting.team-members.leave'))
         ->assertRedirect(route('workspaces.create'));
 
-    expect($this->owner->fresh()->current_workspace_id)->toBeNull();
+    expect($member->fresh()->current_workspace_id)->toBeNull();
+});
+
+it('will not let the owner walk away from their own workspace', function () {
+    joinWorkspace($this->workspace);
+
+    // Billing and stripeEmail() point at the owner; the workspace cannot be
+    // left without one.
+    $this->actingAs($this->owner)
+        ->delete(route('setting.team-members.leave'))
+        ->assertRedirect();
+
+    expect($this->owner->fresh()->current_workspace_id)->toBe($this->workspace->id);
 });
