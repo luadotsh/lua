@@ -18,7 +18,9 @@
             })();
         </script>
 
-        <title data-inertia>{{ config('app.name', 'Lua') }}</title>
+        {{-- No <title> here: @inertiaHead renders it, and with SSR on a
+             static one would come through as a second tag. The default comes
+             from the `title` callback in app.ts. --}}
 
         {{-- The .ico is a PNG in disguise, and Herd's nginx has an exact-match
              location for /favicon.ico that answers 404. Both are why the SVG and

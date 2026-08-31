@@ -1,12 +1,14 @@
 import axios from 'axios';
-window.axios = axios;
-
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 /**
- * Echo exposes an expressive API for subscribing to channels and listening
- * for events that are broadcast by Laravel. Echo and event broadcasting
- * allow your team to quickly build robust real-time web applications.
+ * Browser wiring: axios on the window and the Echo connection. Neither exists
+ * on the server, and both throw there — the SSR renderer imports this module
+ * exactly like the browser does.
  */
+if (typeof window !== 'undefined') {
+    window.axios = axios;
+    window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
-import './echo';
+    // Dynamic so the WebSocket client is never even loaded server-side.
+    import('./echo');
+}

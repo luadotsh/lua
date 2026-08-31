@@ -210,9 +210,13 @@ Vue components must have a single root element.
 
 ## Inertia SSR
 
-- This project does **not** run Inertia SSR. `config/inertia.php` defaults `ssr.enabled` to `false` and nothing in the repo sets `INERTIA_SSR_ENABLED`.
-- Keep it off. With it on, every test rendering an Inertia page issues a real HTTP request to the SSR endpoint, which fails silently and falls back to client rendering — slow, and it hides missing `Http::fake()` stubs.
-- The build wiring is still shipped (`resources/js/ssr.ts`, `vite.config.ts`, `npm run build:ssr` in `docker/Dockerfile`). Turning SSR on means building that bundle and running `inertia:start-ssr` alongside the app, not just flipping the env.
+- **SSR is on**, in development and in production alike, so a bug that only appears server-side is caught while you are working rather than in someone's search results.
+- There is **no `ssr.ts`**. Since Inertia 3 the `@inertiajs/vite` plugin builds the server bundle from `resources/js/app.ts`, so there is one entrypoint that cannot drift from the other. `npm run build` runs both passes and writes the server bundle to `bootstrap/ssr/app.js`, which `config/inertia.php` points at.
+- `npm run dev` serves SSR itself — no second process. In production run `php artisan inertia:start-ssr` alongside the app.
+- **`app.ts` runs in Node as well as the browser.** Anything touching `window`, `document`, `localStorage` or a WebSocket has to be behind `typeof window !== 'undefined'` or it throws at import time and every page falls back to client rendering. `resources/js/bootstrap.ts` is the pattern: axios on the window and the Echo connection are both guarded, and Echo is a dynamic import so the client is never loaded server-side.
+- `createSSRApp` on both sides, not `createApp`: it is what lets the browser hydrate the markup the server sent instead of throwing it away and rendering again.
+- **`app.blade.php` carries no `<title>`.** `@inertiaHead` renders it; a static one comes through as a second tag. The default title comes from the `title` callback in `app.ts`.
+- Tests pin `INERTIA_SSR_ENABLED=false` in `phpunit.xml`. With it on and nothing listening, Inertia falls back to client rendering silently, so the suite would pass either way — a difference no test would report, and the run would depend on whether a server happened to be up.
 
 ## Dialogs
 

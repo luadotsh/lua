@@ -28,3 +28,4 @@ yarn-error.log
 # Passport signing keys - never commit these
 /storage/oauth-private.key
 /storage/oauth-public.key
+/bootstrap/ssr

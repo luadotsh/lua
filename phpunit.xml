@@ -29,6 +29,11 @@
     </source>
     <php>
         <env name="APP_ENV" value="testing"/>
+        <!-- Pinned off so a run does not depend on whether an SSR server
+             happens to be up: with it on and nothing listening, Inertia falls
+             back to client rendering silently and the suite passes either way,
+             which is a difference no test would report. -->
+        <env name="INERTIA_SSR_ENABLED" value="false"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null"/>

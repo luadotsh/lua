@@ -1,3 +1,4 @@
+import inertia from '@inertiajs/vite';
 import { wayfinder } from '@laravel/vite-plugin-wayfinder';
 import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
@@ -12,6 +13,9 @@ export default defineConfig({
             refresh: true,
         }),
         tailwindcss(),
+        // Builds the SSR bundle from app.ts, so there is one entrypoint rather
+        // than an ssr.ts that drifts from it.
+        inertia({ ssr: true }),
         wayfinder({
             formVariants: true,
         }),
