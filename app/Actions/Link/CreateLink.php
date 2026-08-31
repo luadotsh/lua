@@ -10,9 +10,34 @@ use App\Models\Workspace;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class CreateLink
 {
+    /**
+     * The plan's link allowance for the billing cycle.
+     *
+     * Enforced here rather than in the controllers because the web form, the
+     * REST API and the MCP tool all come through this action — a check in one
+     * of them would be a limit the other two ignore.
+     *
+     * Reported as a validation error on `url` so it lands on the one field the
+     * create dialog has, and comes back as a 422 with a readable message to
+     * the API and to MCP.
+     */
+    private static function assertWithinPlanLimit(Workspace $workspace): void
+    {
+        $links = $workspace->usage()['links'];
+
+        if (! $links['reached_limit']) {
+            return;
+        }
+
+        throw ValidationException::withMessages([
+            'url' => "Your plan covers {$links['limit']} links per billing cycle and you have used them all. Upgrade to create more.",
+        ]);
+    }
+
     /**
      * The creator is passed in rather than read from `auth()`: an MCP tool call
      * and an API request are not the web session, and the action has to work
@@ -22,6 +47,8 @@ class CreateLink
      */
     public static function execute(Workspace $workspace, array $data, ?User $creator = null): Link
     {
+        self::assertWithinPlanLimit($workspace);
+
         $domain = data_get($data, 'domain') ?: config('domains.main');
         $key = data_get($data, 'key') ?: Str::random(7);
 

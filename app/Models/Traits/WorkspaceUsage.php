@@ -63,7 +63,7 @@ trait WorkspaceUsage
             'links' => [
                 'used' => $usedLinks,
                 'limit' => $this->plan->max_links,
-                'percent' => $usedLinks === 0 ? 0 : round(($usedLinks / $this->plan->max_links) * 100),
+                'percent' => $this->plan->max_links === 0 ? 0 : round(($usedLinks / $this->plan->max_links) * 100),
                 'remaining' => $this->plan->max_links - $usedLinks,
                 'reached_limit' => $usedLinks >= $this->plan->max_links,
                 'chart' => [
@@ -81,7 +81,7 @@ trait WorkspaceUsage
             'events' => [
                 'used' => $usedEvents,
                 'limit' => $this->plan->max_events,
-                'percent' => $usedEvents === 0 ? 0 : round(($usedEvents / $this->plan->max_events) * 100),
+                'percent' => $this->plan->max_events === 0 ? 0 : round(($usedEvents / $this->plan->max_events) * 100),
                 'remaining' => $this->plan->max_events - $usedEvents,
                 'reached_limit' => $usedEvents >= $this->plan->max_events,
                 'chart' => [

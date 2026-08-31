@@ -18,11 +18,12 @@ class PlanSeeder extends Seeder
             'stripe_id' => null,
             'access_level' => 1,
             'is_private' => false,
-            'max_links' => 100,
-            'max_events' => 1000,
+            'max_links' => 5,
+            'max_events' => 100,
             'max_users' => 1,
-            'max_tags' => 5,
-            'max_domains' => 3,
+            'max_tags' => 1,
+            // Custom domains are a paid feature; the free plan gets none.
+            'max_domains' => 0,
         ]);
 
         // Starter Monthly
