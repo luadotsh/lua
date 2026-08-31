@@ -72,10 +72,14 @@ Route::group(
  * authentication settings screen bounced off the middleware and never arrived.
  */
 Route::middleware('web')->group(function () {
-    Route::get('/{provider}/login', [SocialAuthController::class, 'redirectToProvider'])
+    // Under /auth, which is what config/services.php already told each
+    // provider to redirect to. At the root these took two first-level
+    // segments, so `google` and `github` were reserved as short-link
+    // back-halves for no reason.
+    Route::get('/auth/{provider}/login', [SocialAuthController::class, 'redirectToProvider'])
         ->whereIn('provider', ['google', 'github'])
         ->name('auth.social');
-    Route::get('/{provider}/callback', [SocialAuthController::class, 'handleProviderCallback'])
+    Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'handleProviderCallback'])
         ->whereIn('provider', ['google', 'github'])
         ->name('auth.social.callback');
 });

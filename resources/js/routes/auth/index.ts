@@ -4,7 +4,7 @@ import social15fd52 from './social'
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::social
 * @see app/Http/Controllers/Auth/SocialAuthController.php:26
-* @route '/{provider}/login'
+* @route '/auth/{provider}/login'
 */
 export const social = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: social.url(args, options),
@@ -13,13 +13,13 @@ export const social = (args: { provider: string | number } | [provider: string |
 
 social.definition = {
     methods: ["get","head"],
-    url: '/{provider}/login',
+    url: '/auth/{provider}/login',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::social
 * @see app/Http/Controllers/Auth/SocialAuthController.php:26
-* @route '/{provider}/login'
+* @route '/auth/{provider}/login'
 */
 social.url = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -46,7 +46,7 @@ social.url = (args: { provider: string | number } | [provider: string | number ]
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::social
 * @see app/Http/Controllers/Auth/SocialAuthController.php:26
-* @route '/{provider}/login'
+* @route '/auth/{provider}/login'
 */
 social.get = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: social.url(args, options),
@@ -56,7 +56,7 @@ social.get = (args: { provider: string | number } | [provider: string | number ]
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::social
 * @see app/Http/Controllers/Auth/SocialAuthController.php:26
-* @route '/{provider}/login'
+* @route '/auth/{provider}/login'
 */
 social.head = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: social.url(args, options),
@@ -66,7 +66,7 @@ social.head = (args: { provider: string | number } | [provider: string | number 
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::social
 * @see app/Http/Controllers/Auth/SocialAuthController.php:26
-* @route '/{provider}/login'
+* @route '/auth/{provider}/login'
 */
 const socialForm = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: social.url(args, options),
@@ -76,7 +76,7 @@ const socialForm = (args: { provider: string | number } | [provider: string | nu
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::social
 * @see app/Http/Controllers/Auth/SocialAuthController.php:26
-* @route '/{provider}/login'
+* @route '/auth/{provider}/login'
 */
 socialForm.get = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: social.url(args, options),
@@ -86,7 +86,7 @@ socialForm.get = (args: { provider: string | number } | [provider: string | numb
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::social
 * @see app/Http/Controllers/Auth/SocialAuthController.php:26
-* @route '/{provider}/login'
+* @route '/auth/{provider}/login'
 */
 socialForm.head = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: social.url(args, {

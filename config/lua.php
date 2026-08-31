@@ -22,8 +22,8 @@ return [
     */
 
     'auth' => [
-        'google' => (bool) env('GOOGLE_AUTH_ENABLED', true),
-        'github' => (bool) env('GITHUB_AUTH_ENABLED', true),
+        'google' => (bool) env('GOOGLE_AUTH_ENABLED', false),
+        'github' => (bool) env('GITHUB_AUTH_ENABLED', false),
     ],
 
     /*

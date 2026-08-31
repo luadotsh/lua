@@ -33,26 +33,23 @@ return [
         ],
     ],
 
-
     'posthog' => [
         'enabled' => (bool) env('POSTHOG_ENABLED', false),
         'api_key' => env('POSTHOG_API_KEY'),
         'host' => env('POSTHOG_HOST', 'https://us.i.posthog.com'),
     ],
 
-
     'google' => [
         'client_id' => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-        'redirect' => env('GOOGLE_REDIRECT_URI', '/auth/google/callback'),
+        'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
     'github' => [
         'client_id' => env('GITHUB_CLIENT_ID'),
         'client_secret' => env('GITHUB_CLIENT_SECRET'),
-        'redirect' => env('GITHUB_REDIRECT_URI', '/auth/github/callback'),
+        'redirect' => env('GITHUB_REDIRECT_URI'),
     ],
-
 
     'mapbox' => [
         'token' => env('MAPBOX_TOKEN'),

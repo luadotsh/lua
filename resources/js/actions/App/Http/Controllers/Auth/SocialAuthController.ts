@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::redirectToProvider
 * @see app/Http/Controllers/Auth/SocialAuthController.php:26
-* @route '/{provider}/login'
+* @route '/auth/{provider}/login'
 */
 export const redirectToProvider = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: redirectToProvider.url(args, options),
@@ -11,13 +11,13 @@ export const redirectToProvider = (args: { provider: string | number } | [provid
 
 redirectToProvider.definition = {
     methods: ["get","head"],
-    url: '/{provider}/login',
+    url: '/auth/{provider}/login',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::redirectToProvider
 * @see app/Http/Controllers/Auth/SocialAuthController.php:26
-* @route '/{provider}/login'
+* @route '/auth/{provider}/login'
 */
 redirectToProvider.url = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -44,7 +44,7 @@ redirectToProvider.url = (args: { provider: string | number } | [provider: strin
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::redirectToProvider
 * @see app/Http/Controllers/Auth/SocialAuthController.php:26
-* @route '/{provider}/login'
+* @route '/auth/{provider}/login'
 */
 redirectToProvider.get = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: redirectToProvider.url(args, options),
@@ -54,7 +54,7 @@ redirectToProvider.get = (args: { provider: string | number } | [provider: strin
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::redirectToProvider
 * @see app/Http/Controllers/Auth/SocialAuthController.php:26
-* @route '/{provider}/login'
+* @route '/auth/{provider}/login'
 */
 redirectToProvider.head = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: redirectToProvider.url(args, options),
@@ -64,7 +64,7 @@ redirectToProvider.head = (args: { provider: string | number } | [provider: stri
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::redirectToProvider
 * @see app/Http/Controllers/Auth/SocialAuthController.php:26
-* @route '/{provider}/login'
+* @route '/auth/{provider}/login'
 */
 const redirectToProviderForm = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: redirectToProvider.url(args, options),
@@ -74,7 +74,7 @@ const redirectToProviderForm = (args: { provider: string | number } | [provider:
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::redirectToProvider
 * @see app/Http/Controllers/Auth/SocialAuthController.php:26
-* @route '/{provider}/login'
+* @route '/auth/{provider}/login'
 */
 redirectToProviderForm.get = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: redirectToProvider.url(args, options),
@@ -84,7 +84,7 @@ redirectToProviderForm.get = (args: { provider: string | number } | [provider: s
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::redirectToProvider
 * @see app/Http/Controllers/Auth/SocialAuthController.php:26
-* @route '/{provider}/login'
+* @route '/auth/{provider}/login'
 */
 redirectToProviderForm.head = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: redirectToProvider.url(args, {
@@ -101,7 +101,7 @@ redirectToProvider.form = redirectToProviderForm
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::handleProviderCallback
 * @see app/Http/Controllers/Auth/SocialAuthController.php:43
-* @route '/{provider}/callback'
+* @route '/auth/{provider}/callback'
 */
 export const handleProviderCallback = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: handleProviderCallback.url(args, options),
@@ -110,13 +110,13 @@ export const handleProviderCallback = (args: { provider: string | number } | [pr
 
 handleProviderCallback.definition = {
     methods: ["get","head"],
-    url: '/{provider}/callback',
+    url: '/auth/{provider}/callback',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::handleProviderCallback
 * @see app/Http/Controllers/Auth/SocialAuthController.php:43
-* @route '/{provider}/callback'
+* @route '/auth/{provider}/callback'
 */
 handleProviderCallback.url = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -143,7 +143,7 @@ handleProviderCallback.url = (args: { provider: string | number } | [provider: s
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::handleProviderCallback
 * @see app/Http/Controllers/Auth/SocialAuthController.php:43
-* @route '/{provider}/callback'
+* @route '/auth/{provider}/callback'
 */
 handleProviderCallback.get = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: handleProviderCallback.url(args, options),
@@ -153,7 +153,7 @@ handleProviderCallback.get = (args: { provider: string | number } | [provider: s
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::handleProviderCallback
 * @see app/Http/Controllers/Auth/SocialAuthController.php:43
-* @route '/{provider}/callback'
+* @route '/auth/{provider}/callback'
 */
 handleProviderCallback.head = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: handleProviderCallback.url(args, options),
@@ -163,7 +163,7 @@ handleProviderCallback.head = (args: { provider: string | number } | [provider: 
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::handleProviderCallback
 * @see app/Http/Controllers/Auth/SocialAuthController.php:43
-* @route '/{provider}/callback'
+* @route '/auth/{provider}/callback'
 */
 const handleProviderCallbackForm = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: handleProviderCallback.url(args, options),
@@ -173,7 +173,7 @@ const handleProviderCallbackForm = (args: { provider: string | number } | [provi
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::handleProviderCallback
 * @see app/Http/Controllers/Auth/SocialAuthController.php:43
-* @route '/{provider}/callback'
+* @route '/auth/{provider}/callback'
 */
 handleProviderCallbackForm.get = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: handleProviderCallback.url(args, options),
@@ -183,7 +183,7 @@ handleProviderCallbackForm.get = (args: { provider: string | number } | [provide
 /**
 * @see \App\Http\Controllers\Auth\SocialAuthController::handleProviderCallback
 * @see app/Http/Controllers/Auth/SocialAuthController.php:43
-* @route '/{provider}/callback'
+* @route '/auth/{provider}/callback'
 */
 handleProviderCallbackForm.head = (args: { provider: string | number } | [provider: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: handleProviderCallback.url(args, {
