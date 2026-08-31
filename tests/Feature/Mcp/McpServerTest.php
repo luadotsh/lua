@@ -6,12 +6,17 @@ use App\Actions\Link\ListLinks;
 use App\Mcp\Servers\LuaServer;
 use App\Mcp\Tools\Domain\CreateDomainTool;
 use App\Mcp\Tools\Domain\DeleteDomainTool;
+use App\Mcp\Tools\Domain\ListDomainsTool;
+use App\Mcp\Tools\Domain\UpdateDomainTool;
 use App\Mcp\Tools\Link\CreateLinkTool;
 use App\Mcp\Tools\Link\DeleteLinkTool;
 use App\Mcp\Tools\Link\GetLinkQrCodeTool;
 use App\Mcp\Tools\Link\GetLinkTool;
 use App\Mcp\Tools\Link\ListLinksTool;
+use App\Mcp\Tools\Link\UpdateLinkTool;
 use App\Mcp\Tools\Tag\CreateTagTool;
+use App\Mcp\Tools\Tag\DeleteTagTool;
+use App\Mcp\Tools\Tag\ListTagsTool;
 use App\Mcp\Tools\Tag\UpdateTagTool;
 use App\Mcp\Tools\TeamMember\ListMembersTool;
 use App\Mcp\Tools\Workspace\GetWorkspaceTool;
@@ -165,4 +170,120 @@ it('paginates links through the shared action', function () {
 
     expect(ListLinks::execute($this->user->currentWorkspace, ['per_page' => 5]))
         ->toHaveCount(5);
+});
+
+it('updates a link through the tool', function () {
+    $link = Link::factory()->create([
+        'workspace_id' => $this->user->current_workspace_id,
+        'url' => 'https://before.example',
+    ]);
+
+    LuaServer::actingAs($this->user)
+        ->tool(UpdateLinkTool::class, ['id' => $link->id, 'url' => 'https://after.example'])
+        ->assertOk();
+
+    expect($link->fresh()->url)->toBe('https://after.example');
+});
+
+it('refuses to update a link from another workspace', function () {
+    $other = User::factory()->withWorkspace()->create();
+    $link = Link::factory()->create([
+        'workspace_id' => $other->current_workspace_id,
+        'url' => 'https://theirs.example',
+    ]);
+
+    LuaServer::actingAs($this->user)
+        ->tool(UpdateLinkTool::class, ['id' => $link->id, 'url' => 'https://stolen.example'])
+        ->assertHasErrors();
+
+    expect($link->fresh()->url)->toBe('https://theirs.example');
+});
+
+it('lists only tags belonging to the bound workspace', function () {
+    Tag::factory()->create(['workspace_id' => $this->user->current_workspace_id, 'name' => 'Mine']);
+
+    $other = User::factory()->withWorkspace()->create();
+    Tag::factory()->create(['workspace_id' => $other->current_workspace_id, 'name' => 'Theirs']);
+
+    $response = LuaServer::actingAs($this->user)->tool(ListTagsTool::class, []);
+
+    $response->assertOk()
+        ->assertSee('Mine')
+        ->assertDontSee('Theirs');
+});
+
+it('deletes a tag through the tool', function () {
+    $tag = Tag::factory()->create(['workspace_id' => $this->user->current_workspace_id]);
+
+    LuaServer::actingAs($this->user)
+        ->tool(DeleteTagTool::class, ['id' => $tag->id])
+        ->assertOk();
+
+    expect(Tag::find($tag->id))->toBeNull();
+});
+
+it('refuses to delete a tag from another workspace', function () {
+    $other = User::factory()->withWorkspace()->create();
+    $tag = Tag::factory()->create(['workspace_id' => $other->current_workspace_id]);
+
+    LuaServer::actingAs($this->user)
+        ->tool(DeleteTagTool::class, ['id' => $tag->id])
+        ->assertHasErrors();
+
+    expect(Tag::find($tag->id))->not->toBeNull();
+});
+
+it('lists only domains belonging to the bound workspace', function () {
+    Domain::factory()->create([
+        'workspace_id' => $this->user->current_workspace_id,
+        'domain' => 'mine.example.com',
+    ]);
+
+    $other = User::factory()->withWorkspace()->create();
+    Domain::factory()->create([
+        'workspace_id' => $other->current_workspace_id,
+        'domain' => 'theirs.example.com',
+    ]);
+
+    LuaServer::actingAs($this->user)
+        ->tool(ListDomainsTool::class, [])
+        ->assertOk()
+        ->assertSee('mine.example.com')
+        ->assertDontSee('theirs.example.com');
+});
+
+it('updates a domain through the tool', function () {
+    $domain = Domain::factory()->create([
+        'workspace_id' => $this->user->current_workspace_id,
+    ]);
+
+    LuaServer::actingAs($this->user)
+        ->tool(UpdateDomainTool::class, [
+            'id' => $domain->id,
+            'not_found_url' => 'https://example.com/gone',
+        ])
+        ->assertOk();
+
+    expect($domain->fresh()->not_found_url)->toBe('https://example.com/gone');
+});
+
+it('refuses to update a domain from another workspace', function () {
+    $other = User::factory()->withWorkspace()->create();
+    $domain = Domain::factory()->create(['workspace_id' => $other->current_workspace_id]);
+
+    LuaServer::actingAs($this->user)
+        ->tool(UpdateDomainTool::class, [
+            'id' => $domain->id,
+            'not_found_url' => 'https://stolen.example',
+        ])
+        ->assertHasErrors();
+
+    expect($domain->fresh()->not_found_url)->not->toBe('https://stolen.example');
+});
+
+it('lists the members of the bound workspace', function () {
+    LuaServer::actingAs($this->user)
+        ->tool(ListMembersTool::class, [])
+        ->assertOk()
+        ->assertSee($this->user->email);
 });

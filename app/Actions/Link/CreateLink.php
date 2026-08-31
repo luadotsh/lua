@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Link;
 
 use App\Models\Link;
+use App\Models\Tag;
 use App\Models\User;
 use App\Models\Workspace;
 use Illuminate\Support\Facades\DB;
@@ -73,7 +74,14 @@ class CreateLink
                 'expired_redirect_url' => data_get($data, 'expired_redirect_url'),
             ]);
 
-            $link->tags()->sync(data_get($data, 'tags') ?? []);
+            // Only the workspace's own tags: the rules check `tags` is an
+            // array and nothing more, so unfiltered sync would let a caller
+            // pin another workspace's tag onto its link.
+            $link->tags()->sync(
+                Tag::where('workspace_id', $workspace->id)
+                    ->whereIn('id', data_get($data, 'tags') ?? [])
+                    ->pluck('id'),
+            );
 
             return $link->load('tags');
         });
