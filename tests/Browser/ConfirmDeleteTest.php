@@ -11,6 +11,12 @@ use App\Models\User;
  * Every delete that cannot be undone asks you to type "delete" first. The point
  * is to break the rhythm of clicking through, so it is the same word on every
  * screen rather than a name already sitting beside the button.
+ *
+ * Each test waits on something the browser can see before it looks at the
+ * database. Clicking confirm starts an Inertia request, and asserting the row
+ * is gone straight afterwards races it: the assertion usually wins, which is
+ * how this suite got an intermittent failure that looked like product
+ * flakiness and was a bug in the test.
  */
 test('deleting a tag stays disabled until the keyword is typed', function () {
     $user = User::factory()->withWorkspace()->create();
@@ -38,6 +44,7 @@ test('deleting a tag stays disabled until the keyword is typed', function () {
         ->assertDontSee('Campaign')
         ->assertNoJavaScriptErrors();
 
+    // assertDontSee above already waited for the row to leave the screen.
     expect(Tag::find($tag->id))->toBeNull();
 });
 
@@ -58,6 +65,7 @@ test('deleting a domain asks for the keyword', function () {
 
     $page->type('@confirm-delete-input', 'delete')
         ->click('@confirm-delete-button')
+        ->assertDontSee('links.example.com')
         ->assertNoJavaScriptErrors();
 
     expect(Domain::find($domain->id))->toBeNull();
@@ -79,6 +87,9 @@ test('deleting a link asks for the keyword', function () {
 
     $page->type('@confirm-delete-input', 'delete')
         ->click('@confirm-delete-button')
+        // Deleting a link sends you back to the list, so waiting for that page
+        // is waiting for the request to have finished.
+        ->assertUrlIs(route('links.index'))
         ->assertNoJavaScriptErrors();
 
     expect(Link::find($link->id))->toBeNull();

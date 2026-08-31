@@ -246,3 +246,28 @@ it('creates a link from a url alone', function () {
     // The back-half is generated when the caller does not choose one.
     expect($response->json('key'))->toHaveLength(7);
 });
+
+// The resource once returned `clicks` and `last_click` from columns that had
+// been dropped, so every link in the public API carried two fields that were
+// always null. A field that can only ever be null is worse than an absent one:
+// a consumer builds on it and gets nothing.
+it('returns no field the model cannot fill', function (): void {
+    $link = Link::factory()->create(['workspace_id' => $this->user->current_workspace_id]);
+
+    $payload = $this->withToken($this->token)
+        ->json('GET', route('api.links.show', $link->id))
+        ->assertOk()
+        ->json();
+
+    $alwaysNull = collect($payload)
+        ->filter(fn ($value, string $key): bool => $value === null && ! in_array($key, [
+            // Genuinely optional: these are null until somebody sets them.
+            'ios', 'android', 'password', 'expires_at', 'expired_redirect_url',
+            'external_id', 'utm_source', 'utm_medium', 'utm_campaign',
+            'utm_term', 'utm_content', 'archived_at', 'user_id', 'comments',
+        ], true))
+        ->keys()
+        ->all();
+
+    expect($alwaysNull)->toBe([]);
+});
