@@ -97,3 +97,22 @@ test('the members screen uses the system table', function () {
     rendersSystemTable($page, 'members-scroll');
     $page->assertSee($user->email);
 });
+
+test('the api token dialog picks an expiry with the app date picker', function () {
+    $user = User::factory()->withWorkspace()->create();
+
+    $this->actingAs($user);
+
+    $page = visit(route('setting.api-tokens.index'));
+
+    $page->click('@new-api-token');
+
+    // The native <input type="date"> it replaced rendered the browser's own
+    // control, which looked nothing like the one the link form uses.
+    $page->assertPresent('[data-testid="date-time-picker"]')
+        ->assertScript(
+            "document.querySelectorAll('input[type=\"date\"]').length",
+            0,
+        )
+        ->assertNoJavaScriptErrors();
+});

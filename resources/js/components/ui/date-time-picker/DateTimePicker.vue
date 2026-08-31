@@ -145,6 +145,7 @@ const remove = () => {
     <Popover v-model:open="isOpen">
         <PopoverTrigger as-child>
             <Button
+                data-testid="date-time-picker"
                 variant="outline"
                 :class="cn('w-full justify-start text-left font-normal', !modelValue && 'text-muted-foreground')"
             >

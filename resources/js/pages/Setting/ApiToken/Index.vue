@@ -56,7 +56,7 @@ const confirmDelete = (token: ApiToken) => {
 
     <AppLayout title="API Tokens" :total="tokens.length" full-width>
         <template #header-actions>
-            <Button @click="createModal?.open()">New API Token</Button>
+            <Button data-testid="new-api-token" @click="createModal?.open()">New API Token</Button>
         </template>
 
         <div class="flex min-h-0 min-w-0 flex-1 flex-col">

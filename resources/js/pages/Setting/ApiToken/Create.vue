@@ -9,8 +9,10 @@ import {
     DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import dayjs from "@/dayjs";
 import * as apiTokensRoutes from "@/routes/setting/api-tokens";
 
 const token = computed(() => usePage().props.flash?.token);
@@ -22,10 +24,15 @@ const form = useForm({
     expires_at: "",
 });
 
+// The picker speaks local wall time; the server is given UTC, the same way the
+// link expiry does it.
+const expiresAtDate = ref("");
+
 const show = ref(false);
 
 const open = () => {
     form.reset();
+    expiresAtDate.value = "";
     show.value = true;
 };
 
@@ -34,11 +41,16 @@ defineExpose({
 });
 
 const store = () => {
+    form.expires_at = expiresAtDate.value
+        ? dayjs(expiresAtDate.value).utc().format("YYYY-MM-DD HH:mm:ss")
+        : "";
+
     form.post(apiTokensRoutes.store.url(), {
         preserveScroll: true,
         onSuccess: () => {
             displayToken.value = true;
             form.reset();
+            expiresAtDate.value = "";
             show.value = false;
         },
     });
@@ -65,14 +77,14 @@ const store = () => {
                 </div>
 
                 <div class="sm:col-span-6 grid gap-2">
-                    <Label for="expires_at">Expires on</Label>
-                    <Input
-                        id="expires_at"
-                        type="date"
-                        v-model="form.expires_at"
-                    />
-                    <p class="text-xs text-muted-foreground">Leave empty for a key that never expires.</p>
-                    <p v-if="form.errors.expires_at" class="mt-2 text-sm text-red-600">{{ form.errors.expires_at }}</p>
+                    <Label>Expires on</Label>
+                    <DateTimePicker v-model="expiresAtDate" />
+                    <p class="text-xs text-muted-foreground">
+                        Leave empty for a key that never expires.
+                    </p>
+                    <p v-if="form.errors.expires_at" class="text-sm text-destructive">
+                        {{ form.errors.expires_at }}
+                    </p>
                 </div>
             </div>
 
