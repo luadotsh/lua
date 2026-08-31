@@ -91,13 +91,12 @@ class UserAgentService
     /**
      * Get the language from the request headers.
      *
-     * @param string $acceptLanguage
-     * @return string
+     * @param  string  $acceptLanguage
      */
     public function getLanguage(array $languages): string
     {
         // Check if the array is not empty and return the first preferred language
-        if (!empty($languages)) {
+        if (! empty($languages)) {
             // Trim any white space and return the first element
             return trim($languages[0]);
         }
@@ -108,14 +107,11 @@ class UserAgentService
 
     /**
      * Get the referers from the request headers.
-     *
-     * @param string|null $referers
-     * @return string
      */
     public function getReferer(?string $referers): string
     {
         // Check if referers is present and not empty
-        if ($referers && !empty($referers)) {
+        if ($referers && ! empty($referers)) {
             return $referers;
         }
 
@@ -125,9 +121,7 @@ class UserAgentService
     /**
      * Get a summary of the user details based on the User-Agent.
      *
-     * @param string $userAgent
-     * @param string $languages
-     * @return array
+     * @param  string  $languages
      */
     public function getUserDetails(string $userAgent, array $languages): array
     {

@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Mcp\Tools\Link;
 
-use App\Actions\Link\GetLink;
 use App\Actions\Link\DeleteLink;
+use App\Actions\Link\GetLink;
 use App\Mcp\Concerns\ResolvesWorkspace;
-use App\Models\Link;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;

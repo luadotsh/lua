@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Enums\Domain\Status;
+use App\Models\Domain;
+use App\Models\Workspace;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-use App\Enums\Domain\Status;
-use \App\Models\Workspace;
-
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Domain>
+ * @extends Factory<Domain>
  */
 class DomainFactory extends Factory
 {

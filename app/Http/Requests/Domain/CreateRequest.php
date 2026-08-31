@@ -19,8 +19,8 @@ class CreateRequest extends FormRequest
                 'required',
                 'regex:/^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$/i', // no schema
                 Rule::unique('domains')
-                ->whereNull('deleted_at'),
-                Rule::notIn(config('domains.available'))
+                    ->whereNull('deleted_at'),
+                Rule::notIn(config('domains.available')),
             ],
             'not_found_url' => ['nullable', 'max:255', 'url'],
             'expired_url' => ['nullable', 'max:255', 'url'],

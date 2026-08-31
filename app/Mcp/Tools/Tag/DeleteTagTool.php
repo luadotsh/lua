@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Mcp\Tools\Tag;
 
-use App\Actions\Tag\GetTag;
 use App\Actions\Tag\DeleteTag;
+use App\Actions\Tag\GetTag;
 use App\Mcp\Concerns\ResolvesWorkspace;
-use App\Models\Tag;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
