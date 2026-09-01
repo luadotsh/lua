@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 
 use function Pest\Laravel\actingAs;
-
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
@@ -25,7 +25,7 @@ test('profile information can be updated', function () {
         ->from(route('setting.account.edit'))
         ->post(route('setting.account.update'), [
             'name' => 'Test User',
-            'email' => 'test@example.com'
+            'email' => 'test@example.com',
         ])
         ->assertSessionHasNoErrors()
         ->assertRedirect(route('setting.account.edit'));
@@ -42,7 +42,7 @@ test('email verification status is unchanged when email address is unchanged', f
         ->from(route('setting.account.edit'))
         ->post(route('setting.account.update'), [
             'name' => 'Test User',
-            'email' => $this->user->email
+            'email' => $this->user->email,
         ])
         ->assertSessionHasNoErrors()
         ->assertRedirect(route('setting.account.edit'));
@@ -53,8 +53,8 @@ test('email verification status is unchanged when email address is unchanged', f
 });
 
 it('does not change the password from the profile screen', function () {
-    $user = App\Models\User::factory()->withWorkspace()->create([
-        'password' => Illuminate\Support\Facades\Hash::make('original-password'),
+    $user = User::factory()->withWorkspace()->create([
+        'password' => Hash::make('original-password'),
     ]);
 
     // The profile form used to accept a password without confirming the
@@ -66,5 +66,5 @@ it('does not change the password from the profile screen', function () {
         'password_confirmation' => 'hijacked-password',
     ]);
 
-    expect(Illuminate\Support\Facades\Hash::check('original-password', $user->fresh()->password))->toBeTrue();
+    expect(Hash::check('original-password', $user->fresh()->password))->toBeTrue();
 });

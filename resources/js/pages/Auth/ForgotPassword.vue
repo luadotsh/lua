@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -20,7 +21,10 @@ const submit = () => {
 </script>
 
 <template>
-    <AuthLayout title="Reset your password" description="Enter your email to receive a reset link">
+    <AuthLayout
+        title="Reset your password"
+        description="Enter your email to receive a reset link"
+    >
         <Head title="Forgot Password" />
 
         <div v-if="status" class="text-sm font-medium text-green-600">
@@ -37,7 +41,9 @@ const submit = () => {
                     autocomplete="username"
                     autofocus
                 />
-                <p v-if="form.errors.email" class="text-sm text-destructive">{{ form.errors.email }}</p>
+                <p v-if="form.errors.email" class="text-sm text-destructive">
+                    {{ form.errors.email }}
+                </p>
             </div>
 
             <Button type="submit" class="w-full" :disabled="form.processing">

@@ -2,10 +2,11 @@
 import { Link } from '@inertiajs/vue3';
 import { IconArrowRight, IconCheck } from '@tabler/icons-vue';
 import { computed, ref } from 'vue';
+
 import JsonLd from '@/components/site/JsonLd.vue';
 import Seo from '@/components/site/Seo.vue';
-import SiteLayout from '@/layouts/site/SiteLayout.vue';
 import { Button } from '@/components/ui/button';
+import SiteLayout from '@/layouts/site/SiteLayout.vue';
 import { register } from '@/routes';
 
 /**
@@ -25,25 +26,38 @@ type Tier = {
     max_domains: number;
 };
 
-const props = defineProps<{ tiers: Tier[]; seo: { title: string; description: string } }>();
+const props = defineProps<{
+    tiers: Tier[];
+    seo: { title: string; description: string };
+}>();
 
 const yearly = ref(false);
 
 // Free is not a tier people choose between; it is the way in. It sits under
 // the paid plans so the comparison above it is between the four that are
 // actually comparable.
-const paid = computed(() => props.tiers.filter((tier) => tier.monthly_price > 0));
-const free = computed(() => props.tiers.find((tier) => tier.monthly_price === 0));
+const paid = computed(() =>
+    props.tiers.filter((tier) => tier.monthly_price > 0),
+);
+const free = computed(() =>
+    props.tiers.find((tier) => tier.monthly_price === 0),
+);
 
 const number = new Intl.NumberFormat('en-US');
 
 // "1 tags" and "None custom domains" both read as a bug in the pricing, which
 // is the last place to look careless.
 const count = (value: number, singular: string, plural: string): string =>
-    value === 0 ? `No ${plural}` : `${number.format(value)} ${value === 1 ? singular : plural}`;
+    value === 0
+        ? `No ${plural}`
+        : `${number.format(value)} ${value === 1 ? singular : plural}`;
 
 // The same phrase mid-sentence: "…a month, No custom domains" reads as a typo.
-const countInline = (value: number, singular: string, plural: string): string => {
+const countInline = (
+    value: number,
+    singular: string,
+    plural: string,
+): string => {
     const text = count(value, singular, plural);
 
     return text.charAt(0).toLowerCase() + text.slice(1);
@@ -68,7 +82,9 @@ const monthlyEquivalent = (tier: Tier): number =>
         : tier.monthly_price;
 
 const savingMonths = computed(() => {
-    const tier = paid.value.find((candidate) => candidate.yearly_price !== null);
+    const tier = paid.value.find(
+        (candidate) => candidate.yearly_price !== null,
+    );
 
     if (!tier || tier.yearly_price === null) {
         return 0;
@@ -99,7 +115,10 @@ const groups: Array<{ title: string; rows: ComparisonRow[] }> = [
     {
         title: 'Links',
         rows: [
-            { label: 'Short links', value: (tier) => number.format(tier.max_links) },
+            {
+                label: 'Short links',
+                value: (tier) => number.format(tier.max_links),
+            },
             { label: 'Custom back-half' },
             { label: 'QR code per link' },
             { label: 'Expiry date and fallback URL' },
@@ -110,13 +129,19 @@ const groups: Array<{ title: string; rows: ComparisonRow[] }> = [
     {
         title: 'Analytics',
         rows: [
-            { label: 'Click events /mo', value: (tier) => number.format(tier.max_events) },
+            {
+                label: 'Click events /mo',
+                value: (tier) => number.format(tier.max_events),
+            },
             { label: 'Country, region and city' },
             { label: 'Device, browser and OS' },
             { label: 'Referrer and UTM parameters' },
             { label: 'Language' },
             { label: 'QR scans counted separately' },
-            { label: 'Any date range', note: 'History is kept, not rolled off' },
+            {
+                label: 'Any date range',
+                note: 'History is kept, not rolled off',
+            },
             { label: 'Filter by any dimension' },
         ],
     },
@@ -127,14 +152,20 @@ const groups: Array<{ title: string; rows: ComparisonRow[] }> = [
                 label: 'Custom domains',
                 // A bare 0 in a column of counts reads as a number rather than
                 // as an absence.
-                value: (tier) => (tier.max_domains === 0 ? 'None' : number.format(tier.max_domains)),
+                value: (tier) =>
+                    tier.max_domains === 0
+                        ? 'None'
+                        : number.format(tier.max_domains),
             },
         ],
     },
     {
         title: 'Workspace',
         rows: [
-            { label: 'Team members', value: (tier) => number.format(tier.max_users) },
+            {
+                label: 'Team members',
+                value: (tier) => number.format(tier.max_users),
+            },
             { label: 'Tags', value: (tier) => number.format(tier.max_tags) },
         ],
     },
@@ -148,25 +179,38 @@ const groups: Array<{ title: string; rows: ComparisonRow[] }> = [
     },
     {
         title: 'Hosting',
-        rows: [{ label: 'Self-host it yourself', note: 'Open source, any server' }],
+        rows: [
+            { label: 'Self-host it yourself', note: 'Open source, any server' },
+        ],
     },
 ];
 
 // Free is a column in the table even though it sits below the cards: the table
 // is reference, and leaving it out would be the one place the page hides a
 // number.
-const columns = computed<Tier[]>(() => [...paid.value, ...(free.value ? [free.value] : [])]);
+const columns = computed<Tier[]>(() => [
+    ...paid.value,
+    ...(free.value ? [free.value] : []),
+]);
 </script>
 
 <template>
     <Seo :title="seo.title" :description="seo.description" />
-    <JsonLd :data="{ '@type': 'WebPage', name: seo.title, description: seo.description }" />
+    <JsonLd
+        :data="{
+            '@type': 'WebPage',
+            name: seo.title,
+            description: seo.description,
+        }"
+    />
 
     <SiteLayout>
         <section class="px-6 py-16 sm:px-10 sm:py-24">
             <div class="max-w-2xl">
                 <p class="label">Pricing</p>
-                <h1 class="mt-2 font-display text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
+                <h1
+                    class="mt-2 font-display text-4xl font-semibold tracking-tight text-balance sm:text-5xl"
+                >
                     Every plan sees every click
                 </h1>
                 <p class="mt-4 text-lg text-muted-foreground">
@@ -190,7 +234,11 @@ const columns = computed<Tier[]>(() => [...paid.value, ...(free.value ? [free.va
                         type="button"
                         data-testid="billing-monthly"
                         class="rounded-md px-3 py-1.5 text-sm font-medium transition-colors"
-                        :class="yearly ? 'text-muted-foreground hover:text-foreground' : 'bg-primary text-primary-foreground'"
+                        :class="
+                            yearly
+                                ? 'text-muted-foreground hover:text-foreground'
+                                : 'bg-primary text-primary-foreground'
+                        "
                         :aria-pressed="!yearly"
                         @click="yearly = false"
                     >
@@ -200,7 +248,11 @@ const columns = computed<Tier[]>(() => [...paid.value, ...(free.value ? [free.va
                         type="button"
                         data-testid="billing-yearly"
                         class="rounded-md px-3 py-1.5 text-sm font-medium transition-colors"
-                        :class="yearly ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'"
+                        :class="
+                            yearly
+                                ? 'bg-primary text-primary-foreground'
+                                : 'text-muted-foreground hover:text-foreground'
+                        "
                         :aria-pressed="yearly"
                         @click="yearly = true"
                     >
@@ -208,7 +260,10 @@ const columns = computed<Tier[]>(() => [...paid.value, ...(free.value ? [free.va
                     </button>
                 </div>
 
-                <p v-if="savingMonths > 0" class="text-sm text-muted-foreground">
+                <p
+                    v-if="savingMonths > 0"
+                    class="text-sm text-muted-foreground"
+                >
                     {{ savingMonths }} months free on yearly
                 </p>
             </div>
@@ -219,7 +274,11 @@ const columns = computed<Tier[]>(() => [...paid.value, ...(free.value ? [free.va
                     :key="tier.internal_id"
                     :data-testid="`tier-${tier.internal_id}`"
                     class="site-card flex flex-col p-6"
-                    :class="isFeatured(tier) ? 'border-primary/40 ring-1 ring-primary/20' : 'border-border'"
+                    :class="
+                        isFeatured(tier)
+                            ? 'border-primary/40 ring-1 ring-primary/20'
+                            : 'border-border'
+                    "
                 >
                     <div class="flex items-center justify-between gap-2">
                         <h2 class="font-medium">{{ tier.name }}</h2>
@@ -232,20 +291,29 @@ const columns = computed<Tier[]>(() => [...paid.value, ...(free.value ? [free.va
                     </div>
 
                     <p class="mt-4 flex items-baseline gap-1">
-                        <span class="font-display text-4xl font-semibold tracking-tight tabular-nums">
+                        <span
+                            class="font-display text-4xl font-semibold tracking-tight tabular-nums"
+                        >
                             ${{ number.format(monthlyEquivalent(tier)) }}
                         </span>
                         <span class="text-sm text-muted-foreground">/mo</span>
                     </p>
                     <p class="mt-1 h-4 text-xs text-muted-foreground">
                         <template v-if="yearly && tier.yearly_price !== null">
-                            ${{ number.format(tier.yearly_price) }} billed yearly
+                            ${{ number.format(tier.yearly_price) }} billed
+                            yearly
                         </template>
                     </p>
 
                     <ul class="mt-6 mb-8 space-y-2.5 text-sm">
-                        <li v-for="row in rows(tier)" :key="row" class="flex gap-2.5">
-                            <IconCheck class="mt-0.5 size-4 shrink-0 text-primary-text" />
+                        <li
+                            v-for="row in rows(tier)"
+                            :key="row"
+                            class="flex gap-2.5"
+                        >
+                            <IconCheck
+                                class="mt-0.5 size-4 shrink-0 text-primary-text"
+                            />
                             <span>{{ row }}</span>
                         </li>
                     </ul>
@@ -255,7 +323,9 @@ const columns = computed<Tier[]>(() => [...paid.value, ...(free.value ? [free.va
                         :variant="isFeatured(tier) ? 'default' : 'outline'"
                         as-child
                     >
-                        <Link :href="register.url()">Choose {{ tier.name }}</Link>
+                        <Link :href="register.url()"
+                            >Choose {{ tier.name }}</Link
+                        >
                     </Button>
                 </div>
             </div>
@@ -277,8 +347,13 @@ const columns = computed<Tier[]>(() => [...paid.value, ...(free.value ? [free.va
                     <p class="mt-1 text-sm text-muted-foreground">
                         {{ count(free.max_links, 'link', 'links') }},
                         {{ number.format(free.max_events) }} click events /mo,
-                        {{ countInline(free.max_domains, 'custom domain', 'custom domains') }}.
-                        Every analytics field, same as the paid plans.
+                        {{
+                            countInline(
+                                free.max_domains,
+                                'custom domain',
+                                'custom domains',
+                            )
+                        }}. Every analytics field, same as the paid plans.
                     </p>
                 </div>
 
@@ -287,13 +362,17 @@ const columns = computed<Tier[]>(() => [...paid.value, ...(free.value ? [free.va
                     class="group inline-flex shrink-0 items-center gap-1.5 text-sm font-medium sm:ml-auto"
                 >
                     Start for free
-                    <IconArrowRight class="size-4 transition-transform group-hover:translate-x-0.5" />
+                    <IconArrowRight
+                        class="size-4 transition-transform group-hover:translate-x-0.5"
+                    />
                 </Link>
             </div>
 
             <div class="mt-20 border-t border-border pt-12">
                 <p class="label">Compare</p>
-                <h2 class="mt-2 font-display text-2xl font-semibold tracking-tight sm:text-3xl">
+                <h2
+                    class="mt-2 font-display text-2xl font-semibold tracking-tight sm:text-3xl"
+                >
                     What actually changes between plans
                 </h2>
                 <p class="mt-3 max-w-2xl text-muted-foreground">
@@ -306,16 +385,24 @@ const columns = computed<Tier[]>(() => [...paid.value, ...(free.value ? [free.va
                     and the page body must never scroll sideways.
                 -->
                 <div class="mt-8 overflow-x-auto">
-                    <table class="w-full min-w-[52rem] border-collapse text-left text-sm">
+                    <table
+                        class="w-full min-w-[52rem] border-collapse text-left text-sm"
+                    >
                         <thead>
                             <tr class="border-b border-border">
-                                <th scope="col" class="py-3 pr-4 font-medium">Feature</th>
+                                <th scope="col" class="py-3 pr-4 font-medium">
+                                    Feature
+                                </th>
                                 <th
                                     v-for="tier in columns"
                                     :key="tier.internal_id"
                                     scope="col"
                                     class="w-[13%] px-4 py-3 text-center font-medium"
-                                    :class="tier.monthly_price === 0 ? 'text-muted-foreground' : ''"
+                                    :class="
+                                        tier.monthly_price === 0
+                                            ? 'text-muted-foreground'
+                                            : ''
+                                    "
                                 >
                                     {{ tier.name }}
                                 </th>
@@ -339,7 +426,10 @@ const columns = computed<Tier[]>(() => [...paid.value, ...(free.value ? [free.va
                             >
                                 <th scope="row" class="py-3 pr-4 font-normal">
                                     {{ row.label }}
-                                    <span v-if="row.note" class="block text-xs text-muted-foreground">
+                                    <span
+                                        v-if="row.note"
+                                        class="block text-xs text-muted-foreground"
+                                    >
                                         {{ row.note }}
                                     </span>
                                 </th>
@@ -347,11 +437,19 @@ const columns = computed<Tier[]>(() => [...paid.value, ...(free.value ? [free.va
                                     v-for="tier in columns"
                                     :key="tier.internal_id"
                                     class="px-4 py-3 text-center tabular-nums"
-                                    :class="tier.monthly_price === 0 ? 'text-muted-foreground' : ''"
+                                    :class="
+                                        tier.monthly_price === 0
+                                            ? 'text-muted-foreground'
+                                            : ''
+                                    "
                                 >
-                                    <template v-if="row.value">{{ row.value(tier) }}</template>
+                                    <template v-if="row.value">{{
+                                        row.value(tier)
+                                    }}</template>
                                     <template v-else>
-                                        <IconCheck class="mx-auto size-4 text-primary-text" />
+                                        <IconCheck
+                                            class="mx-auto size-4 text-primary-text"
+                                        />
                                         <span class="sr-only">Included</span>
                                     </template>
                                 </td>
@@ -365,7 +463,6 @@ const columns = computed<Tier[]>(() => [...paid.value, ...(free.value ? [free.va
                     pay for nothing but your own server.
                 </p>
             </div>
-
         </section>
     </SiteLayout>
 </template>

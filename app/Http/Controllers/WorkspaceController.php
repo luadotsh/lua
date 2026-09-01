@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Actions\Workspace\CreateWorkspace;
 use App\Http\Requests\Workspace\StoreRequest;
+use App\Models\Workspace;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-
 use Inertia\Inertia;
 use Inertia\Response;
-
-use App\Actions\Workspace\CreateWorkspace;
-
-use App\Models\Workspace;
 
 class WorkspaceController extends Controller
 {
@@ -35,6 +32,7 @@ class WorkspaceController extends Controller
 
             session()->flash('flash.banner', 'Error creating workspace');
             session()->flash('flash.bannerStyle', 'danger');
+
             return back();
         }
     }
@@ -43,7 +41,7 @@ class WorkspaceController extends Controller
     {
         $workspace = Workspace::findOrFail($request->workspace_id);
 
-        if (!$request->user()->switchWorkspace($workspace)) {
+        if (! $request->user()->switchWorkspace($workspace)) {
             abort(403);
         }
 

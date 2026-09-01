@@ -1,7 +1,14 @@
 <script setup lang="ts">
-import { VisArea, VisAxis, VisGroupedBar, VisLine, VisXYContainer } from '@unovis/vue';
+import {
+    VisArea,
+    VisAxis,
+    VisGroupedBar,
+    VisLine,
+    VisXYContainer,
+} from '@unovis/vue';
 import { useId } from 'reka-ui';
 import { computed, ref } from 'vue';
+
 import {
     ChartContainer,
     ChartCrosshair,
@@ -54,7 +61,9 @@ const chartData = computed(() =>
     })),
 );
 
-const hasData = computed(() => chartData.value.some((point) => point.value > 0));
+const hasData = computed(() =>
+    chartData.value.some((point) => point.value > 0),
+);
 
 const xAccessor = (d: { index: number }) => d.index;
 const yAccessors = [(d: { value: number }) => d.value];
@@ -114,10 +123,14 @@ const tooltipTemplate = (d: { bucket: string; value: number }): string =>
 
 <template>
     <div
-        :class="cn(
-            'bg-card p-4',
-            flush ? 'border-b border-border' : 'rounded-lg border border-border',
-        )"
+        :class="
+            cn(
+                'bg-card p-4',
+                flush
+                    ? 'border-b border-border'
+                    : 'rounded-lg border border-border',
+            )
+        "
     >
         <div class="mb-2 flex items-center justify-between gap-3">
             <h2 class="text-sm font-medium text-foreground">
@@ -133,12 +146,14 @@ const tooltipTemplate = (d: { bucket: string; value: number }): string =>
                     :key="option.value"
                     type="button"
                     :aria-pressed="shape === option.value"
-                    :class="cn(
-                        'cursor-pointer rounded px-2 py-0.5 transition-colors',
-                        shape === option.value
-                            ? 'bg-foreground text-background'
-                            : 'text-muted-foreground hover:text-foreground',
-                    )"
+                    :class="
+                        cn(
+                            'cursor-pointer rounded px-2 py-0.5 transition-colors',
+                            shape === option.value
+                                ? 'bg-foreground text-background'
+                                : 'text-muted-foreground hover:text-foreground',
+                        )
+                    "
                     @click="shape = option.value"
                 >
                     {{ option.label }}
@@ -175,7 +190,11 @@ const tooltipTemplate = (d: { bucket: string; value: number }): string =>
                 bars stayed 2px tall, the line stayed flat on the axis. Drawing
                 straight to the final geometry sidesteps it.
             -->
-            <VisXYContainer :data="chartData" :svg-defs="svgDefs" :y-domain="yDomain">
+            <VisXYContainer
+                :data="chartData"
+                :svg-defs="svgDefs"
+                :y-domain="yDomain"
+            >
                 <template v-if="shape === 'line'">
                     <VisArea
                         :x="xAccessor"

@@ -1,30 +1,30 @@
 <script setup lang="ts">
-import { onMounted, ref, computed } from "vue";
-import { Head, InfiniteScroll, Link, router, useForm } from "@inertiajs/vue3";
+import { Head, InfiniteScroll, Link, router, useForm } from '@inertiajs/vue3';
 import {
+    IconClick,
+    IconCopy,
+    IconExternalLink,
+    IconLink,
+    IconPencil,
+    IconQrcode,
     IconSearch,
     IconTag,
     IconUser,
     IconWorld,
-    IconCopy,
-    IconClick,
-    IconPencil,
-    IconQrcode,
-    IconLink,
-    IconExternalLink,
-} from "@tabler/icons-vue";
+} from '@tabler/icons-vue';
+import { computed, onMounted, ref } from 'vue';
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import AppLayout from "@/layouts/AppLayout.vue";
-import EmptyState from "@/components/EmptyState.vue";
-import Qrcode from "@/components/Qrcode.vue";
-import FilterMenu from "@/components/filters/FilterMenu.vue";
+import EmptyState from '@/components/EmptyState.vue';
 import type {
     FilterCategory,
     FilterSelection,
-} from "@/components/filters/filter-types";
+} from '@/components/filters/filter-types';
+import FilterMenu from '@/components/filters/FilterMenu.vue';
+import LinkStatus from '@/components/links/LinkStatus.vue';
+import Qrcode from '@/components/Qrcode.vue';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
     Table,
     TableBody,
@@ -32,22 +32,20 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table";
-import CreateModal from "./Create.vue";
-import LinkStatus from "@/components/links/LinkStatus.vue";
+} from '@/components/ui/table';
 import {
     Tooltip,
     TooltipContent,
     TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from '@/components/ui/tooltip';
+import date from '@/date';
+import debounce from '@/debounce';
+import AppLayout from '@/layouts/AppLayout.vue';
+import { formatCount, formatNumber } from '@/lib/metrics';
+import { copyToClipboard, favicon } from '@/lib/utils';
+import * as linksRoute from '@/routes/links';
 
-import * as linksRoute from "@/routes/links";
-
-import { copyToClipboard, favicon } from "@/lib/utils";
-import { formatCount, formatNumber } from "@/lib/metrics";
-import date from "@/date";
-import debounce from "@/debounce";
-
+import CreateModal from './Create.vue';
 
 interface Tag {
     id: string | number;
@@ -99,7 +97,7 @@ const qrcodeModal = ref<InstanceType<typeof Qrcode> | null>(null);
 const createModal = ref<InstanceType<typeof CreateModal> | null>(null);
 
 const searchForm = useForm({
-    q: "",
+    q: '',
 });
 
 // Every filter is a query parameter, so a filtered list is a URL you can
@@ -112,8 +110,8 @@ const selection = ref<FilterSelection>({
 
 const categories = computed<FilterCategory[]>(() => [
     {
-        key: "tag",
-        label: "Tag",
+        key: 'tag',
+        label: 'Tag',
         icon: IconTag,
         options: props.tags.map((tag) => ({
             value: String(tag.id),
@@ -122,14 +120,17 @@ const categories = computed<FilterCategory[]>(() => [
         })),
     },
     {
-        key: "domain",
-        label: "Domain",
+        key: 'domain',
+        label: 'Domain',
         icon: IconWorld,
-        options: props.domains.map((domain) => ({ value: domain, label: domain })),
+        options: props.domains.map((domain) => ({
+            value: domain,
+            label: domain,
+        })),
     },
     {
-        key: "user",
-        label: "Created by",
+        key: 'user',
+        label: 'Created by',
         icon: IconUser,
         options: props.members.map((member) => ({
             value: member.id,
@@ -155,10 +156,14 @@ const query = () => {
 };
 
 const applyFilters = () => {
-    router.get(linksRoute.index.url({ query: query() }), {}, {
-        preserveState: true,
-        preserveScroll: true,
-    });
+    router.get(
+        linksRoute.index.url({ query: query() }),
+        {},
+        {
+            preserveState: true,
+            preserveScroll: true,
+        },
+    );
 };
 
 const searchDebounce = debounce(function () {
@@ -168,7 +173,7 @@ const searchDebounce = debounce(function () {
 }, 300);
 
 const title = computed(() =>
-    searchForm.q ? `Search results for "${searchForm.q}"` : "Links",
+    searchForm.q ? `Search results for "${searchForm.q}"` : 'Links',
 );
 
 // The count belongs to the list, not to a search — "Search results (3)" would be
@@ -177,7 +182,7 @@ const total = computed(() => (searchForm.q ? null : props.table.total));
 
 onMounted(() => {
     const url = new URL(window.location.href);
-    const q = url.searchParams.get("q");
+    const q = url.searchParams.get('q');
     if (q) {
         searchForm.q = q;
     }
@@ -194,9 +199,11 @@ onMounted(() => {
         <template #header-actions>
             <div class="flex items-center gap-2">
                 <div class="relative">
-                    <IconSearch class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                    <IconSearch
+                        class="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                    />
                     <Input
-                        class="pl-9 w-64"
+                        class="w-64 pl-9"
                         autocomplete="off"
                         type="text"
                         placeholder="Search links..."
@@ -222,13 +229,16 @@ onMounted(() => {
                      `items-element`. `min-w-0` is what makes the sideways part
                      work — without it the flex child sizes to the table and
                      pushes the overflow back out to the page. -->
-                <div class="min-h-0 min-w-0 flex-1 overflow-auto pb-px" data-testid="links-scroll">
-                <InfiniteScroll
-                    data="table"
-                    items-element="#links-body"
-                    preserve-url
-                    :buffer="300"
+                <div
+                    class="min-h-0 min-w-0 flex-1 overflow-auto pb-px"
+                    data-testid="links-scroll"
                 >
+                    <InfiniteScroll
+                        data="table"
+                        items-element="#links-body"
+                        preserve-url
+                        :buffer="300"
+                    >
                         <Table>
                             <TableHeader sticky>
                                 <!--
@@ -242,17 +252,36 @@ onMounted(() => {
                                     gap.
                                 -->
                                 <TableRow>
-                                    <TableHead class="w-px whitespace-nowrap">Short link</TableHead>
-                                    <TableHead class="w-full whitespace-nowrap">Destination</TableHead>
-                                    <TableHead class="w-px whitespace-nowrap">Tags</TableHead>
-                                    <TableHead class="w-px whitespace-nowrap text-right">Clicks</TableHead>
-                                    <TableHead class="w-px whitespace-nowrap">Created</TableHead>
-                                    <TableHead class="w-px"><span class="sr-only">Actions</span></TableHead>
+                                    <TableHead class="w-px whitespace-nowrap"
+                                        >Short link</TableHead
+                                    >
+                                    <TableHead class="w-full whitespace-nowrap"
+                                        >Destination</TableHead
+                                    >
+                                    <TableHead class="w-px whitespace-nowrap"
+                                        >Tags</TableHead
+                                    >
+                                    <TableHead
+                                        class="w-px text-right whitespace-nowrap"
+                                        >Clicks</TableHead
+                                    >
+                                    <TableHead class="w-px whitespace-nowrap"
+                                        >Created</TableHead
+                                    >
+                                    <TableHead class="w-px"
+                                        ><span class="sr-only"
+                                            >Actions</span
+                                        ></TableHead
+                                    >
                                 </TableRow>
                             </TableHeader>
 
                             <TableBody id="links-body">
-                                <TableRow v-for="data in table.data" :key="data.id" class="group">
+                                <TableRow
+                                    v-for="data in table.data"
+                                    :key="data.id"
+                                    class="group"
+                                >
                                     <TableCell class="w-px whitespace-nowrap">
                                         <span class="flex items-center gap-2">
                                             <img
@@ -262,15 +291,23 @@ onMounted(() => {
                                                 aria-hidden="true"
                                                 class="size-4 shrink-0 rounded-sm"
                                                 loading="lazy"
-                                                @error="faviconFailed[data.id] = true"
+                                                @error="
+                                                    faviconFailed[data.id] =
+                                                        true
+                                                "
                                             />
-                                            <IconLink v-else class="size-4 shrink-0 text-muted-foreground" />
+                                            <IconLink
+                                                v-else
+                                                class="size-4 shrink-0 text-muted-foreground"
+                                            />
 
                                             <!-- The name opens the link's own
                                                  dashboard; the pencil beside the
                                                  row still opens the form. -->
                                             <Link
-                                                :href="linksRoute.show.url(data.id)"
+                                                :href="
+                                                    linksRoute.show.url(data.id)
+                                                "
                                                 class="font-medium hover:underline"
                                                 :data-testid="`link-name-${data.id}`"
                                             >
@@ -282,23 +319,40 @@ onMounted(() => {
                                                     <button
                                                         type="button"
                                                         class="text-muted-foreground transition-colors hover:text-foreground"
-                                                        @click="copyToClipboard(data.link, 'Link copied')"
+                                                        @click="
+                                                            copyToClipboard(
+                                                                data.link,
+                                                                'Link copied',
+                                                            )
+                                                        "
                                                     >
-                                                        <IconCopy class="size-3.5" />
-                                                        <span class="sr-only">Copy short link</span>
+                                                        <IconCopy
+                                                            class="size-3.5"
+                                                        />
+                                                        <span class="sr-only"
+                                                            >Copy short
+                                                            link</span
+                                                        >
                                                     </button>
                                                 </TooltipTrigger>
-                                                <TooltipContent>Copy short link</TooltipContent>
+                                                <TooltipContent
+                                                    >Copy short
+                                                    link</TooltipContent
+                                                >
                                             </Tooltip>
 
                                             <LinkStatus
-                                                :has-password="data.has_password"
+                                                :has-password="
+                                                    data.has_password
+                                                "
                                                 :expires-at="data.expires_at"
                                                 :ios="data.ios"
                                                 :android="data.android"
                                                 :utm-source="data.utm_source"
                                                 :utm-medium="data.utm_medium"
-                                                :utm-campaign="data.utm_campaign"
+                                                :utm-campaign="
+                                                    data.utm_campaign
+                                                "
                                                 :utm-term="data.utm_term"
                                                 :utm-content="data.utm_content"
                                             />
@@ -312,13 +366,20 @@ onMounted(() => {
                                             rel="noopener noreferrer"
                                             class="flex items-center gap-1.5 text-muted-foreground hover:text-foreground hover:underline"
                                         >
-                                            <IconExternalLink class="size-3 shrink-0" />
-                                            <span class="truncate">{{ data.url }}</span>
+                                            <IconExternalLink
+                                                class="size-3 shrink-0"
+                                            />
+                                            <span class="truncate">{{
+                                                data.url
+                                            }}</span>
                                         </a>
                                     </TableCell>
 
                                     <TableCell class="w-px whitespace-nowrap">
-                                        <span v-if="data.tags.length" class="flex items-center gap-1">
+                                        <span
+                                            v-if="data.tags.length"
+                                            class="flex items-center gap-1"
+                                        >
                                             <Badge
                                                 v-for="tag in data.tags"
                                                 :key="tag.id"
@@ -328,44 +389,79 @@ onMounted(() => {
                                                 <span
                                                     v-if="tag.color"
                                                     class="size-1.5 shrink-0 rounded-full"
-                                                    :style="{ backgroundColor: tag.color }"
+                                                    :style="{
+                                                        backgroundColor:
+                                                            tag.color,
+                                                    }"
                                                 />
                                                 {{ tag.name }}
                                             </Badge>
                                         </span>
                                     </TableCell>
 
-                                    <TableCell class="w-px text-right whitespace-nowrap tabular-nums">
+                                    <TableCell
+                                        class="w-px text-right whitespace-nowrap tabular-nums"
+                                    >
                                         <Tooltip>
                                             <TooltipTrigger as-child>
-                                                <span class="inline-flex items-center gap-1">
-                                                    <IconClick class="size-3.5 text-muted-foreground" />
-                                                    {{ formatCount(data.clicks) }}
+                                                <span
+                                                    class="inline-flex items-center gap-1"
+                                                >
+                                                    <IconClick
+                                                        class="size-3.5 text-muted-foreground"
+                                                    />
+                                                    {{
+                                                        formatCount(data.clicks)
+                                                    }}
                                                 </span>
                                             </TooltipTrigger>
                                             <TooltipContent>
                                                 {{ formatNumber(data.clicks) }}
-                                                {{ data.clicks === 1 ? 'click' : 'clicks' }}
-                                                <template v-if="data.last_click">
-                                                    · last click {{ date.diffForHumans(data.last_click) }}
+                                                {{
+                                                    data.clicks === 1
+                                                        ? 'click'
+                                                        : 'clicks'
+                                                }}
+                                                <template
+                                                    v-if="data.last_click"
+                                                >
+                                                    · last click
+                                                    {{
+                                                        date.diffForHumans(
+                                                            data.last_click,
+                                                        )
+                                                    }}
                                                 </template>
                                             </TooltipContent>
                                         </Tooltip>
                                     </TableCell>
 
-                                    <TableCell class="w-px whitespace-nowrap text-muted-foreground">
+                                    <TableCell
+                                        class="w-px whitespace-nowrap text-muted-foreground"
+                                    >
                                         <Tooltip>
                                             <TooltipTrigger as-child>
-                                                <span>{{ date.diffForHumans(data.created_at) }}</span>
+                                                <span>{{
+                                                    date.diffForHumans(
+                                                        data.created_at,
+                                                    )
+                                                }}</span>
                                             </TooltipTrigger>
                                             <TooltipContent>
-                                                Created {{ date.formatDateTime(data.created_at) }}
+                                                Created
+                                                {{
+                                                    date.formatDateTime(
+                                                        data.created_at,
+                                                    )
+                                                }}
                                             </TooltipContent>
                                         </Tooltip>
                                     </TableCell>
 
                                     <TableCell class="w-px">
-                                        <div class="flex items-center justify-end gap-1">
+                                        <div
+                                            class="flex items-center justify-end gap-1"
+                                        >
                                             <Tooltip>
                                                 <TooltipTrigger as-child>
                                                     <Button
@@ -374,13 +470,26 @@ onMounted(() => {
                                                         class="size-7 text-muted-foreground group-hover:text-foreground"
                                                         as-child
                                                     >
-                                                        <Link :href="linksRoute.edit.url(data.id)">
-                                                            <IconPencil class="size-3.5" />
-                                                            <span class="sr-only">Edit link</span>
+                                                        <Link
+                                                            :href="
+                                                                linksRoute.edit.url(
+                                                                    data.id,
+                                                                )
+                                                            "
+                                                        >
+                                                            <IconPencil
+                                                                class="size-3.5"
+                                                            />
+                                                            <span
+                                                                class="sr-only"
+                                                                >Edit link</span
+                                                            >
                                                         </Link>
                                                     </Button>
                                                 </TooltipTrigger>
-                                                <TooltipContent>Edit link</TooltipContent>
+                                                <TooltipContent
+                                                    >Edit link</TooltipContent
+                                                >
                                             </Tooltip>
 
                                             <Tooltip>
@@ -389,21 +498,30 @@ onMounted(() => {
                                                         variant="ghost"
                                                         size="icon"
                                                         class="size-7 text-muted-foreground group-hover:text-foreground"
-                                                        @click="qrcodeModal?.open(data)"
+                                                        @click="
+                                                            qrcodeModal?.open(
+                                                                data,
+                                                            )
+                                                        "
                                                     >
-                                                        <IconQrcode class="size-3.5" />
-                                                        <span class="sr-only">QR code</span>
+                                                        <IconQrcode
+                                                            class="size-3.5"
+                                                        />
+                                                        <span class="sr-only"
+                                                            >QR code</span
+                                                        >
                                                     </Button>
                                                 </TooltipTrigger>
-                                                <TooltipContent>QR code</TooltipContent>
+                                                <TooltipContent
+                                                    >QR code</TooltipContent
+                                                >
                                             </Tooltip>
-
                                         </div>
                                     </TableCell>
                                 </TableRow>
                             </TableBody>
                         </Table>
-                </InfiniteScroll>
+                    </InfiniteScroll>
                 </div>
             </template>
 

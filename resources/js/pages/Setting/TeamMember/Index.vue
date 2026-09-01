@@ -1,13 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { useForm, usePage, Head } from "@inertiajs/vue3";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Head, useForm, usePage } from '@inertiajs/vue3';
+import { IconDots, IconSearch } from '@tabler/icons-vue';
+import { onMounted, ref } from 'vue';
+
 import {
     AlertDialog,
     AlertDialogAction,
@@ -17,7 +12,16 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
 import {
     Table,
     TableBody,
@@ -25,16 +29,14 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { IconSearch, IconDots } from "@tabler/icons-vue";
-import date from "@/date";
-import debounce from "@/debounce";
-import AppLayout from "@/layouts/AppLayout.vue";
-import InviteIndex from "./Invite/Index.vue";
-import InviteCreate from "./Invite/Create.vue";
-import * as teamMembersRoutes from "@/routes/setting/team-members";
+} from '@/components/ui/table';
+import date from '@/date';
+import debounce from '@/debounce';
+import AppLayout from '@/layouts/AppLayout.vue';
+import * as teamMembersRoutes from '@/routes/setting/team-members';
+
+import InviteCreate from './Invite/Create.vue';
+import InviteIndex from './Invite/Index.vue';
 
 const user = usePage().props.auth.user;
 const inviteCreateDialog = ref<InstanceType<typeof InviteCreate> | null>(null);
@@ -59,7 +61,7 @@ defineProps<{
 }>();
 
 const searchForm = useForm({
-    q: "",
+    q: '',
 });
 
 const updateUserForm = useForm({
@@ -87,7 +89,7 @@ const removeFromTeam = () => {
             preserveScroll: true,
             preserveState: true,
             onSuccess: () => (beingRemoveFromTeam.value = null),
-        }
+        },
     );
 };
 
@@ -133,7 +135,9 @@ onMounted(() => {
     <AppLayout title="Members" :total="users.length" full-width>
         <template #header-actions>
             <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div
+                    class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
+                >
                     <IconSearch class="h-4 w-4 text-muted-foreground" />
                 </div>
                 <Input
@@ -150,7 +154,10 @@ onMounted(() => {
         </template>
 
         <div class="flex min-h-0 min-w-0 flex-1 flex-col">
-            <AlertDialog :open="beingLeaving" @update:open="(val) => (beingLeaving = val)">
+            <AlertDialog
+                :open="beingLeaving"
+                @update:open="(val) => (beingLeaving = val)"
+            >
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>Leave Team</AlertDialogTitle>
@@ -159,7 +166,9 @@ onMounted(() => {
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel @click="beingLeaving = false">Cancel</AlertDialogCancel>
+                        <AlertDialogCancel @click="beingLeaving = false"
+                            >Cancel</AlertDialogCancel
+                        >
                         <AlertDialogAction
                             @click="leaveTeam"
                             class="bg-red-600 hover:bg-red-700"
@@ -171,20 +180,28 @@ onMounted(() => {
                 </AlertDialogContent>
             </AlertDialog>
 
-            <AlertDialog :open="beingRemoveFromTeam != null" @update:open="(val) => !val && (beingRemoveFromTeam = null)">
+            <AlertDialog
+                :open="beingRemoveFromTeam != null"
+                @update:open="(val) => !val && (beingRemoveFromTeam = null)"
+            >
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>Remove From Team</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Are you sure you want to remove this user from the team?
+                            Are you sure you want to remove this user from the
+                            team?
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel @click="beingRemoveFromTeam = null">Cancel</AlertDialogCancel>
+                        <AlertDialogCancel @click="beingRemoveFromTeam = null"
+                            >Cancel</AlertDialogCancel
+                        >
                         <AlertDialogAction
                             @click="removeFromTeam"
                             class="bg-red-600 hover:bg-red-700"
-                            :class="{ 'opacity-25': removeFromTeamForm.processing }"
+                            :class="{
+                                'opacity-25': removeFromTeamForm.processing,
+                            }"
                         >
                             Remove
                         </AlertDialogAction>
@@ -203,7 +220,9 @@ onMounted(() => {
                             <TableHead>E-mail</TableHead>
                             <TableHead>Role</TableHead>
                             <TableHead>Sign up</TableHead>
-                            <TableHead><span class="sr-only">Actions</span></TableHead>
+                            <TableHead
+                                ><span class="sr-only">Actions</span></TableHead
+                            >
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -211,7 +230,9 @@ onMounted(() => {
                             <TableCell>{{ member.name }}</TableCell>
                             <TableCell>{{ member.email }}</TableCell>
                             <TableCell>{{ member.membership.role }}</TableCell>
-                            <TableCell>{{ date.formatDateTime(member.created_at) }}</TableCell>
+                            <TableCell>{{
+                                date.formatDateTime(member.created_at)
+                            }}</TableCell>
                             <TableCell>
                                 <DropdownMenu
                                     v-if="
@@ -221,38 +242,53 @@ onMounted(() => {
                                 >
                                     <DropdownMenuTrigger as-child>
                                         <Button variant="ghost" size="icon">
-                                            <IconDots class="h-4 w-4 text-zinc-500" />
+                                            <IconDots
+                                                class="h-4 w-4 text-zinc-500"
+                                            />
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
                                         <DropdownMenuItem
                                             v-if="
                                                 member.id !== user.id &&
-                                                user.current_workspace?.role !== 'USER' &&
+                                                user.current_workspace?.role !==
+                                                    'USER' &&
                                                 !member.is_owner
                                             "
-                                            @click="changeUserRole(member, member.membership.role == 'USER' ? 'ADMIN' : 'USER')"
+                                            @click="
+                                                changeUserRole(
+                                                    member,
+                                                    member.membership.role ==
+                                                        'USER'
+                                                        ? 'ADMIN'
+                                                        : 'USER',
+                                                )
+                                            "
                                         >
                                             {{
-                                                member.membership.role == "USER"
-                                                    ? "Change Role to Admin"
-                                                    : "Change Role to User"
+                                                member.membership.role == 'USER'
+                                                    ? 'Change Role to Admin'
+                                                    : 'Change Role to User'
                                             }}
                                         </DropdownMenuItem>
                                         <DropdownMenuSeparator
                                             v-if="
                                                 member.id !== user.id &&
-                                                user.current_workspace?.role !== 'USER' &&
+                                                user.current_workspace?.role !==
+                                                    'USER' &&
                                                 !member.is_owner
                                             "
                                         />
                                         <DropdownMenuItem
                                             v-if="
-                                                user.current_workspace?.role !== 'USER' &&
+                                                user.current_workspace?.role !==
+                                                    'USER' &&
                                                 member.id !== user.id
                                             "
                                             class="text-red-600 focus:text-red-600"
-                                            @click="confirmRemoveFromTeam(member.id)"
+                                            @click="
+                                                confirmRemoveFromTeam(member.id)
+                                            "
                                         >
                                             Remove From Team
                                         </DropdownMenuItem>

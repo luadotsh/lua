@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Auth;
 
 use App\Actions\Auth\UpdatePassword;
-use App\Http\Requests\Auth\UpdatePasswordRequest;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\UpdatePasswordRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
 class PasswordController extends Controller

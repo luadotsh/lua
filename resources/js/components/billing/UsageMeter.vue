@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Component } from 'vue';
+
 import { formatNumber } from '@/lib/metrics';
 
 /**
@@ -20,12 +21,14 @@ defineProps<{
     <div class="flex flex-col gap-3 bg-card p-4">
         <div class="flex items-center gap-2">
             <component :is="icon" class="size-4 text-muted-foreground" />
-            <span class="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+            <span
+                class="text-xs font-medium tracking-wide text-muted-foreground uppercase"
+            >
                 {{ label }}
             </span>
         </div>
 
-        <span class="text-2xl font-semibold tabular-nums text-foreground">
+        <span class="text-2xl font-semibold text-foreground tabular-nums">
             {{ formatNumber(used) }}
         </span>
 
@@ -36,8 +39,9 @@ defineProps<{
                     :style="{ width: `${Math.min(percent, 100)}%` }"
                 />
             </div>
-            <span class="text-xs tabular-nums text-muted-foreground">
-                {{ formatNumber(remaining) }} remaining of {{ formatNumber(limit) }}
+            <span class="text-xs text-muted-foreground tabular-nums">
+                {{ formatNumber(remaining) }} remaining of
+                {{ formatNumber(limit) }}
             </span>
         </div>
     </div>

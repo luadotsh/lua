@@ -1,4 +1,4 @@
-import dayjs from "@/dayjs";
+import dayjs from '@/dayjs';
 
 type DateInput = string | number | Date | null | undefined;
 
@@ -8,15 +8,15 @@ export default {
     },
 
     formatDate(date: DateInput) {
-        return dayjs(date).format("MMM D, YYYY");
+        return dayjs(date).format('MMM D, YYYY');
     },
 
     formatDateTime(date: DateInput) {
-        return dayjs.utc(date).format("MMM D, YYYY h:mm A");
+        return dayjs.utc(date).format('MMM D, YYYY h:mm A');
     },
 
     formatDateTimeForApi(date: DateInput) {
-        return dayjs.utc(date).tz("utc").format("YYYY-MM-DD HH:mm:ss");
+        return dayjs.utc(date).tz('utc').format('YYYY-MM-DD HH:mm:ss');
     },
 
     /**
@@ -25,10 +25,10 @@ export default {
      */
     getTimezoneAbbr(): string {
         const parts = new Intl.DateTimeFormat(undefined, {
-            timeZoneName: "short",
+            timeZoneName: 'short',
         }).formatToParts(new Date());
 
-        return parts.find((part) => part.type === "timeZoneName")?.value ?? "";
+        return parts.find((part) => part.type === 'timeZoneName')?.value ?? '';
     },
 
     diffForHumans(date: DateInput) {

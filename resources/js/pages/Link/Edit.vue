@@ -1,17 +1,19 @@
 <script setup lang="ts">
-import { Head, router, useForm } from "@inertiajs/vue3";
-import { IconQrcode, IconTrash } from "@tabler/icons-vue";
-import { ref } from "vue";
+import { Head, router, useForm } from '@inertiajs/vue3';
+import { IconQrcode, IconTrash } from '@tabler/icons-vue';
+import { ref } from 'vue';
+
 import ConfirmDeleteModal, {
     DELETE_KEYWORD,
-} from "@/components/ConfirmDeleteModal.vue";
-import Qrcode from "@/components/Qrcode.vue";
-import { Button } from "@/components/ui/button";
-import AppLayout from "@/layouts/AppLayout.vue";
-import dayjs from "@/dayjs";
-import * as linksRoute from "@/routes/links";
-import type { BreadcrumbItem } from "@/types";
-import LinkForm from "./LinkForm.vue";
+} from '@/components/ConfirmDeleteModal.vue';
+import Qrcode from '@/components/Qrcode.vue';
+import { Button } from '@/components/ui/button';
+import dayjs from '@/dayjs';
+import AppLayout from '@/layouts/AppLayout.vue';
+import * as linksRoute from '@/routes/links';
+import type { BreadcrumbItem } from '@/types';
+
+import LinkForm from './LinkForm.vue';
 
 interface Tag {
     id: string | number;
@@ -43,7 +45,7 @@ const { link } = defineProps<{ link: LinkData }>();
 
 // The model hands over null for every column left unset, but the inputs bind to
 // strings — an unfilled field would otherwise render the word "null".
-const text = (value: string | null | undefined): string => value ?? "";
+const text = (value: string | null | undefined): string => value ?? '';
 
 const form = useForm({
     ...link,
@@ -61,23 +63,25 @@ const form = useForm({
 });
 
 const expiresAtDate = ref(
-    link.expires_at ? dayjs(link.expires_at).format("YYYY-MM-DDTHH:mm") : "",
+    link.expires_at ? dayjs(link.expires_at).format('YYYY-MM-DDTHH:mm') : '',
 );
 
 // The link itself is the leaf: it says which one you are editing, which the
 // word "Edit" on its own does not.
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: "Links", href: linksRoute.index.url() },
+    { title: 'Links', href: linksRoute.index.url() },
     { title: link.link },
 ];
 
 const qrcodeModal = ref<InstanceType<typeof Qrcode> | null>(null);
-const confirmDeleteModal = ref<InstanceType<typeof ConfirmDeleteModal> | null>(null);
+const confirmDeleteModal = ref<InstanceType<typeof ConfirmDeleteModal> | null>(
+    null,
+);
 
 const update = () => {
     form.expires_at = expiresAtDate.value
-        ? dayjs(expiresAtDate.value).utc().format("YYYY-MM-DD HH:mm:ss")
-        : "";
+        ? dayjs(expiresAtDate.value).utc().format('YYYY-MM-DD HH:mm:ss')
+        : '';
 
     form.put(linksRoute.update.url(link.id));
 };
@@ -96,7 +100,11 @@ const update = () => {
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <template #header-actions>
-            <Button variant="ghost" size="icon" @click="qrcodeModal?.open(link)">
+            <Button
+                variant="ghost"
+                size="icon"
+                @click="qrcodeModal?.open(link)"
+            >
                 <IconQrcode class="size-4" />
                 <span class="sr-only">QR code</span>
             </Button>
@@ -115,7 +123,9 @@ const update = () => {
                 <IconTrash class="size-4" />
                 <span class="sr-only">Delete link</span>
             </Button>
-            <Button :disabled="form.processing" @click="update">Save changes</Button>
+            <Button :disabled="form.processing" @click="update"
+                >Save changes</Button
+            >
         </template>
 
         <div class="mx-auto w-full max-w-3xl p-4 sm:p-6">

@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\Domain\Status;
+use App\Observers\DomainObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
-use App\Observers\DomainObserver;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-
-use App\Enums\Domain\Status;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[ObservedBy([DomainObserver::class])]
 class Domain extends Model

@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-
 use App\Models\Domain;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
@@ -20,7 +19,7 @@ it('can validate a domain', function () {
 
     $response->assertStatus(200)
         ->assertJson([
-            'valid' => true
+            'valid' => true,
         ]);
 });
 
@@ -30,7 +29,7 @@ it('cannot validate a invalid domain', function () {
 
     $response->assertStatus(404)
         ->assertJson([
-            'valid' => false
+            'valid' => false,
         ]);
 });
 

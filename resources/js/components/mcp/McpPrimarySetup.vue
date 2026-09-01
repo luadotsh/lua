@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { IconCopy, IconLink } from '@tabler/icons-vue';
+
 import { Button } from '@/components/ui/button';
 import { mcpClients } from '@/lib/mcpClients';
 import { copyToClipboard } from '@/lib/utils';
@@ -22,7 +23,10 @@ const copyMcpUrl = (): void => {
             >
                 <div class="flex min-w-0 flex-1 items-center gap-2 px-2">
                     <IconLink class="size-4 shrink-0 text-muted-foreground" />
-                    <code dir="ltr" class="min-w-0 flex-1 truncate text-left text-sm">
+                    <code
+                        dir="ltr"
+                        class="min-w-0 flex-1 truncate text-left text-sm"
+                    >
                         {{ mcpUrl }}
                     </code>
                 </div>
@@ -65,7 +69,9 @@ const copyMcpUrl = (): void => {
                         </span>
                         <div class="min-w-0 flex-1">
                             <h3 class="font-bold">{{ client.label }}</h3>
-                            <p class="mt-1 text-xs leading-relaxed text-muted-foreground">
+                            <p
+                                class="mt-1 text-xs leading-relaxed text-muted-foreground"
+                            >
                                 {{ client.description }}
                             </p>
                         </div>

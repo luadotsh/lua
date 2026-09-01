@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import {
-    IconChevronRight,
-    IconChartBar,
-    IconClick,
     IconCalendarEvent,
+    IconChartBar,
+    IconChevronRight,
+    IconClick,
     IconKey,
-    IconPlugConnected,
     IconLink,
+    IconPlugConnected,
     IconTag,
     IconUsers,
     IconWorld,
 } from '@tabler/icons-vue';
 import { computed } from 'vue';
+
 import NavMain from '@/components/NavMain.vue';
-import WorkspaceMenuContent from '@/components/WorkspaceMenuContent.vue';
 import { Avatar } from '@/components/ui/avatar';
 import {
     DropdownMenu,
@@ -29,16 +29,20 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import WorkspaceMenuContent from '@/components/WorkspaceMenuContent.vue';
+import { formatNumber } from '@/lib/metrics';
 import { index as analyticsIndex } from '@/routes/analytics';
-import { index as linksIndex } from '@/routes/links';
 import { index as eventsIndex } from '@/routes/events';
-import { index as billingIndex, upgrade as billingUpgrade } from '@/routes/setting/billing';
+import { index as linksIndex } from '@/routes/links';
 import { index as apiTokensIndex } from '@/routes/setting/api-tokens';
+import {
+    index as billingIndex,
+    upgrade as billingUpgrade,
+} from '@/routes/setting/billing';
 import { index as domainsIndex } from '@/routes/setting/domains';
 import { index as mcpIndex } from '@/routes/setting/mcp';
 import { index as tagsIndex } from '@/routes/setting/tags';
 import { index as teamMembersIndex } from '@/routes/setting/team-members';
-import { formatNumber } from '@/lib/metrics';
 import { type NavItem } from '@/types';
 
 const page = usePage();
@@ -107,14 +111,24 @@ const workspaceNavItems: NavItem[] = [
                                 class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                             >
                                 <Avatar
-                                    :src="auth.user?.current_workspace?.logo_url"
-                                    :name="auth.user?.current_workspace?.name ?? '?'"
+                                    :src="
+                                        auth.user?.current_workspace?.logo_url
+                                    "
+                                    :name="
+                                        auth.user?.current_workspace?.name ??
+                                        '?'
+                                    "
                                     class="h-8 w-8 shrink-0 rounded-lg"
                                     fallback-class="bg-violet-100 font-bold text-violet-700"
                                 />
-                                <div class="grid flex-1 text-left text-sm leading-tight">
+                                <div
+                                    class="grid flex-1 text-left text-sm leading-tight"
+                                >
                                     <span class="truncate font-semibold">
-                                        {{ auth.user?.current_workspace?.name ?? 'Select workspace' }}
+                                        {{
+                                            auth.user?.current_workspace
+                                                ?.name ?? 'Select workspace'
+                                        }}
                                     </span>
                                 </div>
                                 <IconChevronRight class="ml-auto size-4" />
@@ -138,10 +152,13 @@ const workspaceNavItems: NavItem[] = [
             <NavMain :items="workspaceNavItems" label="Workspace" />
         </SidebarContent>
 
-        <div v-if="usage" class="px-3 py-3 group-data-[collapsible=icon]:hidden">
+        <div
+            v-if="usage"
+            class="px-3 py-3 group-data-[collapsible=icon]:hidden"
+        >
             <Link
                 :href="billingIndex().url"
-                class="flex items-center gap-x-0.5 text-sidebar-foreground/60 hover:text-sidebar-foreground transition-colors"
+                class="flex items-center gap-x-0.5 text-sidebar-foreground/60 transition-colors hover:text-sidebar-foreground"
             >
                 <span class="text-xs">Usage</span>
                 <IconChevronRight class="size-3.5" />
@@ -149,12 +166,21 @@ const workspaceNavItems: NavItem[] = [
 
             <div class="mt-3 flex flex-col gap-3">
                 <div>
-                    <div class="flex items-center justify-between gap-2 mb-1.5">
+                    <div class="mb-1.5 flex items-center justify-between gap-2">
                         <div class="flex items-center gap-1.5">
-                            <IconLink class="size-3.5 text-sidebar-foreground/60" />
-                            <span class="text-xs font-medium text-sidebar-foreground/60">Links</span>
+                            <IconLink
+                                class="size-3.5 text-sidebar-foreground/60"
+                            />
+                            <span
+                                class="text-xs font-medium text-sidebar-foreground/60"
+                                >Links</span
+                            >
                         </div>
-                        <span class="text-xs font-medium text-sidebar-foreground/60">{{ formatNumber(usage.links.used) }} of {{ formatNumber(usage.links.limit) }}</span>
+                        <span
+                            class="text-xs font-medium text-sidebar-foreground/60"
+                            >{{ formatNumber(usage.links.used) }} of
+                            {{ formatNumber(usage.links.limit) }}</span
+                        >
                     </div>
                     <div class="overflow-hidden rounded-full bg-sidebar-accent">
                         <div
@@ -165,12 +191,21 @@ const workspaceNavItems: NavItem[] = [
                 </div>
 
                 <div>
-                    <div class="flex items-center justify-between gap-2 mb-1.5">
+                    <div class="mb-1.5 flex items-center justify-between gap-2">
                         <div class="flex items-center gap-1.5">
-                            <IconClick class="size-3.5 text-sidebar-foreground/60" />
-                            <span class="text-xs font-medium text-sidebar-foreground/60">Events</span>
+                            <IconClick
+                                class="size-3.5 text-sidebar-foreground/60"
+                            />
+                            <span
+                                class="text-xs font-medium text-sidebar-foreground/60"
+                                >Events</span
+                            >
                         </div>
-                        <span class="text-xs font-medium text-sidebar-foreground/60">{{ formatNumber(usage.events.used) }} of {{ formatNumber(usage.events.limit) }}</span>
+                        <span
+                            class="text-xs font-medium text-sidebar-foreground/60"
+                            >{{ formatNumber(usage.events.used) }} of
+                            {{ formatNumber(usage.events.limit) }}</span
+                        >
                     </div>
                     <div class="overflow-hidden rounded-full bg-sidebar-accent">
                         <div
@@ -187,12 +222,11 @@ const workspaceNavItems: NavItem[] = [
 
             <Link
                 :href="billingUpgrade().url"
-                class="flex w-full items-center justify-center rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+                class="flex w-full items-center justify-center rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             >
                 Upgrade
             </Link>
         </div>
-
     </Sidebar>
     <slot />
 </template>

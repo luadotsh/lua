@@ -13,11 +13,13 @@ import { IconArrowNarrowRight, IconCheck, IconLink } from '@tabler/icons-vue';
 <template>
     <div
         data-testid="shorten-mockup"
-        class="overflow-hidden site-card shadow-sm"
+        class="site-card overflow-hidden shadow-sm"
     >
         <div class="space-y-5 p-6">
             <div>
-                <p class="text-xs font-medium text-muted-foreground">Destination</p>
+                <p class="text-xs font-medium text-muted-foreground">
+                    Destination
+                </p>
                 <p
                     class="mt-2 truncate rounded-lg border border-border bg-muted/40 px-3 py-2.5 font-mono text-sm text-muted-foreground"
                 >
@@ -26,16 +28,22 @@ import { IconArrowNarrowRight, IconCheck, IconLink } from '@tabler/icons-vue';
             </div>
 
             <div class="flex justify-center" aria-hidden="true">
-                <IconArrowNarrowRight class="size-5 rotate-90 text-muted-foreground" />
+                <IconArrowNarrowRight
+                    class="size-5 rotate-90 text-muted-foreground"
+                />
             </div>
 
             <div>
-                <p class="text-xs font-medium text-muted-foreground">Short link</p>
+                <p class="text-xs font-medium text-muted-foreground">
+                    Short link
+                </p>
                 <div
                     class="mt-2 flex items-center gap-2 rounded-lg border border-foreground/20 bg-background px-3 py-2.5"
                 >
                     <IconLink class="size-4 shrink-0 text-muted-foreground" />
-                    <p class="truncate font-mono text-sm">go.example.com/spring</p>
+                    <p class="truncate font-mono text-sm">
+                        go.example.com/spring
+                    </p>
                     <span
                         class="ml-auto inline-flex shrink-0 items-center gap-1 text-xs text-emerald-600"
                     >
@@ -59,13 +67,9 @@ import { IconArrowNarrowRight, IconCheck, IconLink } from '@tabler/icons-vue';
             >
                 <span
                     v-for="(filled, index) in [
-                        1,1,1,0,1,1,1,
-                        1,0,1,0,1,0,1,
-                        1,1,1,0,1,1,1,
-                        0,0,0,1,0,0,0,
-                        1,1,1,0,1,0,1,
-                        1,0,1,1,0,1,1,
-                        1,1,1,0,1,1,0,
+                        1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1,
+                        1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1,
+                        1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0,
                     ]"
                     :key="index"
                     class="size-1.5 rounded-[1px]"

@@ -15,6 +15,12 @@ ARG NODE_VERSION=22
 # ----------------------------------------------------------------------------
 FROM php:${PHP_VERSION}-fpm-alpine AS system-base
 
+# opcache is deliberately not in the docker-php-ext-install list below. It is
+# already compiled into php:8.5-fpm-alpine — `php -m` reports it under Zend
+# Modules — and asking to install it again fails the build outright:
+#   cp: can't stat 'modules/*': No such file or directory
+# It only needs configuring, which php.prod.ini does.
+
 RUN apk add --no-cache \
         nginx \
         supervisor \
@@ -24,6 +30,12 @@ RUN apk add --no-cache \
         unzip \
         shadow \
         tzdata \
+        # tzdata is for the system clock, not for PHP: this image reports
+        # "Timezone Database => internal", so DateTimeZone resolves deprecated
+        # aliases (Asia/Calcutta, Brazil/East) even with /usr/share/zoneinfo
+        # removed — verified. On a Debian base PHP is built --with-system-tzdata
+        # and those aliases live in a separate `tzdata-legacy` package, which
+        # would have to be installed or browser-reported zones start failing.
         postgresql-client \
         postgresql-dev \
         mysql-client \
@@ -44,7 +56,6 @@ RUN apk add --no-cache \
         pdo_mysql \
         gd \
         zip \
-        opcache \
         bcmath \
         exif \
         pcntl \
@@ -180,6 +191,13 @@ FROM system-base AS production
 # php-fpm runs as www-data (Alpine default pool config) — that's the user
 # storage and bootstrap/cache must be owned by, so Laravel can write logs,
 # session files, view cache, etc.
+
+# Node is a runtime dependency here, not just a build one: supervisord runs
+# `artisan inertia:start-ssr`, and that command executes bootstrap/ssr/app.js
+# with node. Without it the SSR process exits immediately and supervisord
+# gives up, which is invisible from outside — Inertia falls back to client
+# rendering and every page still looks correct. npm is not needed at runtime.
+RUN apk add --no-cache nodejs
 
 COPY docker/nginx.conf /etc/nginx/http.d/default.conf
 COPY docker/php.prod.ini /usr/local/etc/php/conf.d/99-lua.ini

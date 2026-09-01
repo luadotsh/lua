@@ -405,6 +405,8 @@ A globe sat beside the headline first and it was wrong at every size: a pale bal
 - ALWAYS use Wayfinder-generated route helpers in Vue pages (e.g. `register()`, `login()`, `dashboard()`). NEVER hardcode URL strings like `href="/register"`.
 - After creating or modifying PHP routes/controllers, run `php artisan wayfinder:generate` to regenerate the TypeScript route helpers.
 - Import routes from `@/routes/...` (e.g. `import { store } from '@/routes/login'`).
+- **The generated output is not in the repository.** `resources/js/actions`, `resources/js/routes` and `resources/js/wayfinder` are gitignored, as Wayfinder's own README instructs — the Vite plugin rebuilds them on every `npm run build`, and tracking them meant a route change churning dozens of TS files in every diff. They are excluded from Prettier, ESLint and Docker for the same reason: the generator and the formatters otherwise undo each other forever. A fresh clone has none of them until it builds once.
+- **A route pointing at a method that does not exist registers and boots fine**, and only fails as a 500 when someone requests it. `tests/Feature/RouteTargetTest.php` asserts every `App\` route resolves to a real action, because that is exactly how `setting.billing.swap-free-plan` stayed broken unnoticed.
 
 ## Pagination
 
@@ -430,9 +432,9 @@ A globe sat beside the headline first and it was wrong at every size: a pale bal
 
 ## Database engines (PostgreSQL + MySQL)
 
-TryPost runs on **both PostgreSQL and MySQL**. Cloud runs PostgreSQL; a self-hosted install may pick either. Every query, migration, and test must work on both — the suite is expected to be green on each.
+Lua runs on **both PostgreSQL and MySQL**. Cloud runs PostgreSQL; a self-hosted install may pick either. Every query, migration, and test must work on both — the suite is expected to be green on each.
 
-- **What the app supports is the intersection of the two engines, never the superset of one.** When they differ, take the narrower behaviour — a feature that only holds on PostgreSQL is a feature TryPost does not have.
+- **What the app supports is the intersection of the two engines, never the superset of one.** When they differ, take the narrower behaviour — a feature that only holds on PostgreSQL is a feature Lua does not have.
 - Never use an engine-specific operator or function. Search uses `whereLike()` (Laravel handles the case-insensitive form per driver), never `ilike` or a raw `LOWER(...)` comparison.
 - Traps that only surface on MySQL:
     - **JSON object key order is not preserved.** MySQL reorders object keys on storage (by length, then lexicographically); PostgreSQL keeps insertion order. Assert JSON read back from the database with `toEqual` (recursive, order-independent), never `toBe`/`assertSame`. Array *element* order is preserved on both.
@@ -441,8 +443,56 @@ TryPost runs on **both PostgreSQL and MySQL**. Cloud runs PostgreSQL; a self-hos
     - **Identifier quoting differs** — PostgreSQL emits `"post_platforms"`, MySQL emits backticks. Never match logged SQL (`DB::listen`) against a quoted identifier.
     - **MySQL refuses to drop the only index backing a foreign key** (SQLSTATE `1553`). A migration `down()` that drops a unique whose leftmost prefix is an FK column must create a standalone index for that column first.
     - **DDL implicitly commits**, which defeats `RefreshDatabase`'s rollback: schema changes made inside a test leak into the tests that follow. Keep them idempotent.
-- **Aggregates and date maths are where this bites hardest.** `count(*) filter (where ...)` is PostgreSQL-only — write `count(case when ... then 1 end)`, which both engines accept. `date_trunc` and `AT TIME ZONE` are PostgreSQL-only too, and MySQL's `DATE_FORMAT`/`CONVERT_TZ` are the other half of the same problem: neither is portable, so an expression that needs them lives behind a `match (DB::connection()->getDriverName())` and throws on a driver it has no expression for. See `GetTimeseries::bucketExpression()`. A self-hosted MySQL needs its timezone tables loaded (`mysql_tzinfo_to_sql`) for `CONVERT_TZ` to resolve a named zone.
+- **Aggregates and date maths are where this bites hardest.** `count(*) filter (where ...)` is PostgreSQL-only — write `count(case when ... then 1 end)`, which both engines accept. `date_trunc` and `AT TIME ZONE` are PostgreSQL-only too, and MySQL's `DATE_FORMAT`/`CONVERT_TZ` are the other half of the same problem: neither is portable, so an expression that needs them lives behind a `match (DB::connection()->getDriverName())` and throws on a driver it has no expression for. See `GetTimeseries::bucketExpression()`. **A MySQL server with empty timezone tables silently zeroes every analytics chart.** `CONVERT_TZ` returns `NULL` — not an error — for a *named* zone until `mysql_tzinfo_to_sql` has been loaded, so the bucket is null, no row matches, and the series sums to zero. `GetTimeseries` is already correct; the server is what is missing. The CI loads the tables in the MySQL leg, and `docker/.env.docker.example` says so for self-hosters. Verify with `SELECT COUNT(*) FROM mysql.time_zone_name;` — it must be greater than zero.
 - Group by the **output alias**, not by a repeat of the raw expression: both engines accept `group by bucket`, and repeating a parameterised expression makes PostgreSQL treat the two as different and reject the query.
+
+## CI
+
+Three workflows, and the arrangement matters more than it looks.
+
+- `tests.yml` runs the suite as a **matrix over PostgreSQL and MySQL**, with `DB_CONNECTION` coming from the matrix. That last part is load-bearing: `phpunit.xml` pins `pgsql`, so a job that starts only MySQL and never sets `DB_CONNECTION` has the Postgres driver talking to the MySQL port. That was the state for a long time — **510 of 535 tests failed on every PR** and merges over red became normal.
+- The **`backend` job is the gate**: it fails unless every matrix leg passed, and it is the check to mark required on `main`. Marking it is a repository setting, not something a PR can do.
+- `e2e` runs the browser suite on its own. It has to **serve the app as `lua.test`**, because `routes/site.php` is scoped with `Route::domain(config('domains.main'))` and `route()` therefore emits absolute URLs on that host, ignoring whatever ephemeral port pest-plugin-browser binds. Locally Herd answers there, which means **the marketing browser tests exercise the development app, not the test instance**. A runner has no such host, so the job starts one — with its own database, since `RefreshDatabase` owns `lua_test` and would truncate seeded rows mid-run, and `/pricing` reads real rows from `plans`.
+- That server also runs `inertia:start-ssr` and overrides `SESSION_DRIVER`/`CACHE_STORE` back to `file`. The job env sets them to `array` for the test process, which is right there and wrong for a long-lived server: an array session lasts one request, so the CSRF token rendered into the page is gone by the time a form posts and every submission comes back 419.
+- **`phpunit.xml` pins `APP_URL`, `DOMAIN_MAIN` and `DOMAIN_CNAME`** next to `DB_CONNECTION`. Link fixtures hardcode `lua.test`, and a local `.env` carries `DOMAIN_MAIN=lua.test` that CI did not have — so the suite passed on every developer machine and failed in CI. A real environment variable still beats phpunit's `<env>`, so `.env.ci` matches.
+- `lint.yml` runs Pint, `format:check` and `eslint` in **check mode, never write mode**. A job that repairs files it never commits reports success on a dirty tree — and `eslint --fix` exits 0 after fixing, which hid every auto-fixable violation among 101 error-level rules.
+
+## Lint and formatting
+
+`npm run lint` reports; `npm run lint:fix` repairs. Keep that split — the CI gate uses the first.
+
+Three separate times, a formatting problem turned out to be **two tools owning the same thing** and undoing each other, with `format:check` failing on whichever ran last:
+
+- `import/order` versus `prettier-plugin-organize-imports` → ordering belongs to the formatter, the ESLint rule is off, and `eslint-plugin-import` was removed since nothing else used it.
+- Prettier versus Wayfinder → the generated directories are ignored by both.
+- `eslint --fix` versus the gate itself → see above.
+
+If a formatting fight reappears, look for the second owner before adjusting either tool.
+
+`vue/no-mutating-props` is **off deliberately**. `LinkForm.vue` takes an Inertia `useForm` as a prop and `v-model`s onto it in nine places; it works, but it is what the rule exists to catch. Moving it to `defineModel` is a refactor of the main form and should be its own change — the `off` is a stay of execution, not approval.
+
+## Docker and releases
+
+`docker/` builds `dev` and `production` targets; a `v*.*.*` tag triggers `release-docker.yml`, which builds amd64 and arm64 on native runners and pushes one multi-arch manifest to GHCR. `/release` (`.claude/commands/release.md`) cuts the tag.
+
+Things that are easy to break here, all of which were:
+
+- **The production stage needs `node` at runtime**, not just at build time — supervisord runs `inertia:start-ssr`, which executes `bootstrap/ssr/app.js` with node. Without it the process exits instantly, supervisord gives up, and nothing shows it: the container is healthy, `/up` answers 200, and every page quietly falls back to client rendering.
+- **Do not add `opcache` to `docker-php-ext-install`.** It is already compiled into `php:8.5-fpm-alpine`, and asking for it again fails the build with `cp: can't stat 'modules/*'`. It only needs configuring, which `php.prod.ini` does.
+- The entrypoint **refuses to start in production without `PASSPORT_PRIVATE_KEY` and `PASSPORT_PUBLIC_KEY`**, because `storage/` is not a persisted volume and regenerating them on each boot would invalidate every API token.
+- The image is large (~2.2GB) because the production stage carries `node_modules`. They cannot simply be dropped: the SSR bundle imports `vue` at runtime and `vue` sits in `devDependencies`.
+
+## Reverb
+
+Broadcasting is wired and **nothing publishes yet** — no events, no `ShouldBroadcast`, an empty `routes/channels.php`, and `BROADCAST_CONNECTION=log`. This is deliberate: real-time work is planned, and the plumbing stays. Do not remove `laravel/reverb`, `laravel-echo` or `@laravel/echo-vue` on the grounds that they look unused.
+
+## Timezones
+
+The analytics timezone comes from the browser and is handed to the database as the argument to `at time zone` / `CONVERT_TZ`, so it is untrusted input that reaches SQL.
+
+- Validate it with **`timezone:all_with_bc`**, never the plain `timezone` rule and never nothing at all. Browsers still report deprecated IANA aliases — Indian clients send `Asia/Calcutta`, not `Asia/Kolkata` — and the plain rule rejects them, which breaks those users outright. Unvalidated is worse: an unknown zone raises an SQL error on PostgreSQL and returns `NULL` on MySQL, which zeroes the chart with no error anywhere.
+- `AnalyticsTest` covers both directions, so neither mistake can come back quietly.
+- **PHP resolves those aliases from its own bundled database**, not the system's: the image reports `Timezone Database => internal` and works with `/usr/share/zoneinfo` deleted. This is a property of the Alpine base — Debian builds PHP `--with-system-tzdata`, where the deprecated names live in a separate `tzdata-legacy` package. Changing the image's base means installing that package.
 
 ## Pest / Feature Tests
 
@@ -457,12 +507,13 @@ Browser tests live in `tests/Browser` and run on `pestphp/pest-plugin-browser` d
 - ALWAYS use named routes via `route()`. NEVER hardcode URLs like `'https://lua.test/login'`.
 - **`visit()` returns a *pending* page, and every call made on it materialises a fresh one.** Splitting a chain into separate statements (`$page = visit(...); $page->click(...); $page->script(...)`) silently reloads between steps, so state set in one call is gone by the next and the assertion measures a page that never saw the click. Keep everything an assertion depends on in a single chain.
 - **After a click, assert with something that retries.** `assertSee` and `assertDontSee` wait for the text; `assertScript` evaluates once, immediately, and races the re-render the click triggered. The same applies to reading the database after a click that starts an Inertia request: wait for a visible outcome first. Two intermittent failures in this suite were this exact bug, both looking like product flakiness and neither being it.
+- **A click on a server-rendered page can land before hydration.** The markup is there, so Playwright happily clicks it, but Vue has not attached a listener yet: the click does nothing and the assertion after it times out waiting for a change nothing triggered. This is not the same as the re-render race above — the click itself is lost. It only shows up where the app is served with SSR, which is why it appeared in CI and not locally.
 - **A headless browser is a backgrounded one, and Chrome does not animate a smooth scroll in a backgrounded tab** — the position simply never changes. To assert where a scroll lands, first set `document.documentElement.style.scrollBehavior = 'auto'`; that measures the same jump and is the path a `prefers-reduced-motion` reader gets anyway.
     - Example: `visit(route('login'))`.
 - ALWAYS target elements by `data-testid`. NEVER use CSS classes (`.text-red-600`), tag names, or text strings.
     - `@my-element` resolves to `[data-testid="my-element"]`, so add `data-testid="my-element"` in the Vue component and use `$page->click('@my-element')`.
     - Bind it for repeated elements: `:data-testid="`connect-${platform.value}`"`.
-- `click()`, `type()` and friends go through Playwright locators, which wait for the target to become actionable — a drill-down of clicks needs no manual waiting between steps. `waitForFunction()` does not exist here; the waits available are `wait()`, `waitForText()`, `waitForKey()` and `waitForEvent()`.
+- `click()`, `type()` and friends go through Playwright locators, which wait for the target to become actionable — a drill-down of clicks needs no manual waiting between steps. The waits available are `wait()`, `waitForText()`, `waitForKey()` and `waitForEvent()`. `waitForFunction()` exists on `Playwright\Page` but is **not surfaced on the `Webpage` API the tests use**, so there is no predicate wait — where hydration has to be waited for, `wait()` is the honest tool and should say so in a comment.
 - `BrowserTestCase` sets `$fakesVite = false` on purpose: these tests load real built assets, so faking Vite blanks the app. Run `npm run build` before running them locally after a frontend change.
 - End page assertions with `->assertNoJavaScriptErrors()`.
 - `tests/Browser` is NOT a `phpunit.xml` testsuite, so `php artisan test` and `vendor/bin/pest` skip it. Run it explicitly: `php artisan test tests/Browser --compact`. CI does the same, in its own step after `npm run build`.
@@ -500,6 +551,7 @@ Browser tests live in `tests/Browser` and run on `pestphp/pest-plugin-browser` d
 
 ## Git
 
+- There are **no git hooks**. Husky and commitlint were removed, so nothing validates a commit message locally — the `chore:` / `fix:` / `feat:` convention is a habit now, not an enforced rule.
 - NEVER add `Co-Authored-By` lines to commit messages.
 - NEVER commit, push, or open PRs unless explicitly asked by the user.
 - Always create a new branch for feature work before making changes.

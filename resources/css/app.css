@@ -6,7 +6,7 @@
 @source '../../storage/framework/views/*.php';
 @custom-variant dark (&:is(.dark *));
 
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -331,8 +331,6 @@ html {
     color: var(--foreground);
 }
 
-
-
 /*
  * Headline face. Schibsted Grotesk is set heavy and tight on purpose: the
  * headline has to carry the page on its own now that the palette is restrained
@@ -420,6 +418,10 @@ html {
  * paper rather than as a pattern.
  */
 .site-grid {
-    background-image: radial-gradient(circle, var(--border) 1px, transparent 1px);
+    background-image: radial-gradient(
+        circle,
+        var(--border) 1px,
+        transparent 1px
+    );
     background-size: 28px 28px;
 }

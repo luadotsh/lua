@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { IconFilter } from '@tabler/icons-vue';
 import { computed, ref } from 'vue';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
@@ -12,6 +12,7 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { formatCount } from '@/lib/metrics';
+import { cn } from '@/lib/utils';
 
 export type BreakdownRow = {
     value: string;
@@ -80,10 +81,9 @@ const showTabList = computed(() => props.tabs.length > 1);
 
 <template>
     <Card
-        :class="cn(
-            'gap-0 py-3',
-            flush && 'rounded-none border-0 py-4 shadow-none',
-        )"
+        :class="
+            cn('gap-0 py-3', flush && 'rounded-none border-0 py-4 shadow-none')
+        "
     >
         <!-- With tabs visible the list plays the title's role, so the heading
              only stays for screen readers. -->
@@ -111,7 +111,11 @@ const showTabList = computed(() => props.tabs.length > 1);
                     </TabsList>
                 </div>
 
-                <TabsContent v-for="tab in tabs" :key="tab.key" :value="tab.key">
+                <TabsContent
+                    v-for="tab in tabs"
+                    :key="tab.key"
+                    :value="tab.key"
+                >
                     <slot
                         v-if="$slots[`content-${tab.key}`]"
                         :name="`content-${tab.key}`"
@@ -145,9 +149,13 @@ const showTabList = computed(() => props.tabs.length > 1);
                                 aria-hidden="true"
                             />
 
-                            <span class="relative z-10 flex min-w-0 items-center gap-2">
+                            <span
+                                class="relative z-10 flex min-w-0 items-center gap-2"
+                            >
                                 <slot name="row" :row="row" :tab="tab.key">
-                                    <span class="truncate">{{ row.value }}</span>
+                                    <span class="truncate">{{
+                                        row.value
+                                    }}</span>
                                 </slot>
                             </span>
 
@@ -159,7 +167,7 @@ const showTabList = computed(() => props.tabs.length > 1);
                                         <TooltipTrigger as-child>
                                             <button
                                                 type="button"
-                                                class="mr-1 flex size-5 shrink-0 cursor-pointer items-center justify-center rounded border border-border text-muted-foreground opacity-0 transition-opacity hover:text-foreground focus-visible:opacity-100 focus-visible:outline-none group-hover:opacity-100"
+                                                class="mr-1 flex size-5 shrink-0 cursor-pointer items-center justify-center rounded border border-border text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 hover:text-foreground focus-visible:opacity-100 focus-visible:outline-none"
                                                 :aria-label="`Filter by ${row.value}`"
                                                 @click="applyFilter(tab, row)"
                                             >

@@ -19,7 +19,12 @@ withDefaults(
 </script>
 
 <template>
-    <div :class="['mx-auto space-y-8 px-6 py-8', wide ? 'max-w-6xl' : 'max-w-4xl']">
+    <div
+        :class="[
+            'mx-auto space-y-8 px-6 py-8',
+            wide ? 'max-w-6xl' : 'max-w-4xl',
+        ]"
+    >
         <PageHeader :title="title" :description="description" />
 
         <section class="space-y-12">

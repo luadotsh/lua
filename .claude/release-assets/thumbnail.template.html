@@ -1,12 +1,15 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
-<style>
-  /* Lua release thumbnail — built on the marketing site's own devices rather
+    <head>
+        <meta charset="utf-8" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            /* Lua release thumbnail — built on the marketing site's own devices rather
      than a separate look: the ruled column (two hairlines at the container
      edges), the masked dot grid, Schibsted Grotesk set heavy and tight, and
      Heat used as a mark, never as running text.
@@ -17,124 +20,225 @@
                                  and fails; this clears it)
        --foreground    #000000   pure black, matching full-black.svg's fill
      The site is light always, so there is no dark variant here either. */
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { width: 1200px; height: 630px; }
-  body {
-    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
-    position: relative;
-    overflow: hidden;
-    background: #ffffff;
-    color: #000000;
-    -webkit-font-smoothing: antialiased;
-  }
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            html,
+            body {
+                width: 1200px;
+                height: 630px;
+            }
+            body {
+                font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+                position: relative;
+                overflow: hidden;
+                background: #ffffff;
+                color: #000000;
+                -webkit-font-smoothing: antialiased;
+            }
 
-  /* Drawing sheet, not wallpaper: the dot grid is masked so it fades out
+            /* Drawing sheet, not wallpaper: the dot grid is masked so it fades out
      before it reaches the type. */
-  .grid {
-    position: absolute; inset: 0; pointer-events: none; opacity: 0.5;
-    background-image: radial-gradient(circle, #000000 1px, transparent 1px);
-    background-size: 26px 26px;
-    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 78% 18%, #000 0%, transparent 72%);
-    mask-image: radial-gradient(ellipse 70% 60% at 78% 18%, #000 0%, transparent 72%);
-  }
+            .grid {
+                position: absolute;
+                inset: 0;
+                pointer-events: none;
+                opacity: 0.5;
+                background-image: radial-gradient(
+                    circle,
+                    #000000 1px,
+                    transparent 1px
+                );
+                background-size: 26px 26px;
+                -webkit-mask-image: radial-gradient(
+                    ellipse 70% 60% at 78% 18%,
+                    #000 0%,
+                    transparent 72%
+                );
+                mask-image: radial-gradient(
+                    ellipse 70% 60% at 78% 18%,
+                    #000 0%,
+                    transparent 72%
+                );
+            }
 
-  /* A single warm bloom off the accent, kept faint — structure comes from
+            /* A single warm bloom off the accent, kept faint — structure comes from
      borders here, not from glow. */
-  .bloom {
-    position: absolute; top: -220px; right: -160px;
-    width: 620px; height: 620px; border-radius: 999px;
-    pointer-events: none; filter: blur(40px);
-    background: radial-gradient(circle, rgba(250,93,25,0.16) 0%, rgba(250,93,25,0) 70%);
-  }
+            .bloom {
+                position: absolute;
+                top: -220px;
+                right: -160px;
+                width: 620px;
+                height: 620px;
+                border-radius: 999px;
+                pointer-events: none;
+                filter: blur(40px);
+                background: radial-gradient(
+                    circle,
+                    rgba(250, 93, 25, 0.16) 0%,
+                    rgba(250, 93, 25, 0) 70%
+                );
+            }
 
-  /* The ruled column: two hairlines at the container edges, running the full
+            /* The ruled column: two hairlines at the container edges, running the full
      height. This is the site's structural device and the reason the image
      reads as a drawing rather than as a card. */
-  .rail { position: absolute; top: 0; bottom: 0; width: 1px; background: #e7e2df; }
-  .rail-left { left: 84px; }
-  .rail-right { right: 84px; }
+            .rail {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                width: 1px;
+                background: #e7e2df;
+            }
+            .rail-left {
+                left: 84px;
+            }
+            .rail-right {
+                right: 84px;
+            }
 
-  .frame {
-    position: relative; z-index: 1;
-    height: 100%; padding: 68px 84px;
-    display: flex; flex-direction: column; justify-content: space-between;
-  }
+            .frame {
+                position: relative;
+                z-index: 1;
+                height: 100%;
+                padding: 68px 84px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
 
-  .top { display: flex; align-items: center; justify-content: space-between; }
-  .logo { height: 34px; width: auto; display: block; }
+            .top {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .logo {
+                height: 34px;
+                width: auto;
+                display: block;
+            }
 
-  /* The badge sits in the .label register — small mono, uppercase, tracked —
+            /* The badge sits in the .label register — small mono, uppercase, tracked —
      with the version as a second segment. Hairline border, no sticker shadow:
      the site's cards are border-first. */
-  .badge {
-    display: inline-flex; align-items: stretch;
-    border: 1px solid #000000; border-radius: 8px; overflow: hidden;
-  }
-  .badge .label {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: #fa5d19; color: #1a0c04;
-    padding: 9px 15px;
-    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
-    font-size: 13px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.14em;
-  }
-  .badge .star { width: 14px; height: 14px; display: block; }
-  .badge .ver {
-    display: inline-flex; align-items: center;
-    background: #ffffff; color: #000000;
-    padding: 9px 14px;
-    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
-    font-size: 13px; font-weight: 500; letter-spacing: 0.02em;
-    border-left: 1px solid #000000;
-  }
+            .badge {
+                display: inline-flex;
+                align-items: stretch;
+                border: 1px solid #000000;
+                border-radius: 8px;
+                overflow: hidden;
+            }
+            .badge .label {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                background: #fa5d19;
+                color: #1a0c04;
+                padding: 9px 15px;
+                font-family:
+                    'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+                font-size: 13px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.14em;
+            }
+            .badge .star {
+                width: 14px;
+                height: 14px;
+                display: block;
+            }
+            .badge .ver {
+                display: inline-flex;
+                align-items: center;
+                background: #ffffff;
+                color: #000000;
+                padding: 9px 14px;
+                font-family:
+                    'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+                font-size: 13px;
+                font-weight: 500;
+                letter-spacing: 0.02em;
+                border-left: 1px solid #000000;
+            }
 
-  .body { max-width: 900px; }
-  h1 {
-    font-family: 'Schibsted Grotesk', ui-sans-serif, system-ui, sans-serif;
-    font-weight: 700; font-size: 82px; line-height: 1.02;
-    letter-spacing: -0.032em; color: #000000; text-wrap: balance;
-  }
+            .body {
+                max-width: 900px;
+            }
+            h1 {
+                font-family:
+                    'Schibsted Grotesk', ui-sans-serif, system-ui, sans-serif;
+                font-weight: 700;
+                font-size: 82px;
+                line-height: 1.02;
+                letter-spacing: -0.032em;
+                color: #000000;
+                text-wrap: balance;
+            }
 
-  /* Emphasis phrase carrying the hand-drawn squiggle, in Heat. */
-  .ul { position: relative; display: inline-block; white-space: nowrap; }
-  .ul > .squiggle {
-    position: absolute; left: 0; right: 0; bottom: -0.14em;
-    width: 100%; height: 0.30em; color: #fa5d19;
-  }
+            /* Emphasis phrase carrying the hand-drawn squiggle, in Heat. */
+            .ul {
+                position: relative;
+                display: inline-block;
+                white-space: nowrap;
+            }
+            .ul > .squiggle {
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: -0.14em;
+                width: 100%;
+                height: 0.3em;
+                color: #fa5d19;
+            }
 
-  /* Chips name where the work landed. They are the one place a bare area
+            /* Chips name where the work landed. They are the one place a bare area
      label is right, so they stay in the quiet .label register and let the
      headline carry the image. */
-  .themes { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-  .chip {
-    padding: 9px 15px; border-radius: 999px;
-    background: #ffffff; color: #000000;
-    border: 1px solid #e7e2df;
-    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
-    font-size: 13px; font-weight: 500;
-    text-transform: uppercase; letter-spacing: 0.12em;
-  }
-  /* The first chip is the release's widest-reaching theme, so it alone
+            .themes {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+                align-items: center;
+            }
+            .chip {
+                padding: 9px 15px;
+                border-radius: 999px;
+                background: #ffffff;
+                color: #000000;
+                border: 1px solid #e7e2df;
+                font-family:
+                    'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+                font-size: 13px;
+                font-weight: 500;
+                text-transform: uppercase;
+                letter-spacing: 0.12em;
+            }
+            /* The first chip is the release's widest-reaching theme, so it alone
      carries the accent — one mark, not five competing ones. */
-  .chip:nth-child(1) { border-color: #fa5d19; color: #be3c04; }
-</style>
-</head>
-<body>
-  <div class="bloom"></div>
-  <div class="grid"></div>
-  <div class="rail rail-left"></div>
-  <div class="rail rail-right"></div>
-  <div class="frame">
-    <div class="top">
-      <img class="logo" src="{{LOGO}}" alt="Lua" />
-      <span class="badge">{{BADGE_INNER}}</span>
-    </div>
+            .chip:nth-child(1) {
+                border-color: #fa5d19;
+                color: #be3c04;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="bloom"></div>
+        <div class="grid"></div>
+        <div class="rail rail-left"></div>
+        <div class="rail rail-right"></div>
+        <div class="frame">
+            <div class="top">
+                <img class="logo" src="{{LOGO}}" alt="Lua" />
+                <span class="badge">{{BADGE_INNER}}</span>
+            </div>
 
-    <div class="body">
-      <h1>{{HEADLINE}}</h1>
-    </div>
+            <div class="body">
+                <h1>{{HEADLINE}}</h1>
+            </div>
 
-    <div class="themes">{{CHIPS}}</div>
-  </div>
-</body>
+            <div class="themes">{{CHIPS}}</div>
+        </div>
+    </body>
 </html>

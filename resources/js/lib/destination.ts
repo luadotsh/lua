@@ -6,7 +6,9 @@ const PARAMETERS = [
     'utm_content',
 ] as const;
 
-export type UtmParameters = Partial<Record<(typeof PARAMETERS)[number], string | null>>;
+export type UtmParameters = Partial<
+    Record<(typeof PARAMETERS)[number], string | null>
+>;
 
 /**
  * Where a visitor actually lands, once the link's UTM parameters are put on the
@@ -47,6 +49,10 @@ export const buildDestination = (
 
     return {
         base: parsed.toString(),
-        added: query === '' ? '' : (parsed.search === '' ? '?' : '&') + decodeURIComponent(query),
+        added:
+            query === ''
+                ? ''
+                : (parsed.search === '' ? '?' : '&') +
+                  decodeURIComponent(query),
     };
 };

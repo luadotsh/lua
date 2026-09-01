@@ -1,0 +1,10 @@
+resources/js/components/ui/*
+resources/views/mail/*
+
+# Wayfinder rewrites these on every build, unformatted. Formatting them means
+# the generator and the formatter undo each other forever, and format:check
+# fails on whichever ran last. eslint.config.js ignores them for the same
+# reason.
+resources/js/actions/**
+resources/js/routes/**
+resources/js/wayfinder/**

@@ -4,28 +4,6 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
-use Illuminate\Database\Eloquent\Relations\Relation;
-
-use Laravel\Cashier\Cashier;
-
-use Illuminate\Auth\Notifications\VerifyEmail;
-use Illuminate\Notifications\Messages\MailMessage;
-
-use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\Facades\Vite;
-use Illuminate\Support\ServiceProvider;
-
-use PostHog\PostHog;
-
-use App\Services\PostHogService;
-
-use App\Policies\WorkspacePolicy;
-
-use App\Models\Workspace;
-use App\Models\User;
 use App\Models\Domain;
 use App\Models\Invite;
 use App\Models\Link;
@@ -33,7 +11,21 @@ use App\Models\LinkStat;
 use App\Models\Media;
 use App\Models\Plan;
 use App\Models\Tag;
-
+use App\Models\User;
+use App\Models\Workspace;
+use App\Policies\WorkspacePolicy;
+use App\Services\PostHogService;
+use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Http\Request;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Vite;
+use Illuminate\Support\ServiceProvider;
+use Laravel\Cashier\Cashier;
+use PostHog\PostHog;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -75,7 +67,7 @@ class AppServiceProvider extends ServiceProvider
                     'title' => 'Confirm your email address',
                     'previewText' => 'Please confirm your email address.',
                     'user' => $user,
-                    'url' => $url
+                    'url' => $url,
                 ]);
         });
 

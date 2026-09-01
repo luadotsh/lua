@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
+
 import JsonLd from '@/components/site/JsonLd.vue';
 import PageHeader from '@/components/site/PageHeader.vue';
 import Seo from '@/components/site/Seo.vue';
@@ -16,7 +17,13 @@ defineProps<{
 
 <template>
     <Seo :title="seo.title" :description="seo.description" />
-    <JsonLd :data="{ '@type': 'CollectionPage', name: seo.title, description: seo.description }" />
+    <JsonLd
+        :data="{
+            '@type': 'CollectionPage',
+            name: seo.title,
+            description: seo.description,
+        }"
+    />
 
     <SiteLayout>
         <section class="px-6 py-16 sm:px-10 sm:py-24">
@@ -45,11 +52,15 @@ defineProps<{
                     :key="group.letter"
                     class="scroll-mt-24 lg:grid lg:grid-cols-[6rem_minmax(0,1fr)] lg:gap-8"
                 >
-                    <h2 class="font-display text-3xl font-semibold text-primary-text">
+                    <h2
+                        class="font-display text-3xl font-semibold text-primary-text"
+                    >
                         {{ group.letter }}
                     </h2>
 
-                    <dl class="mt-6 divide-y divide-border border-t border-border lg:mt-0 lg:border-t-0">
+                    <dl
+                        class="mt-6 divide-y divide-border border-t border-border lg:mt-0 lg:border-t-0"
+                    >
                         <div
                             v-for="term in group.terms"
                             :key="term.slug"
@@ -64,7 +75,9 @@ defineProps<{
                                     {{ term.term }}
                                 </Link>
                             </dt>
-                            <dd class="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                            <dd
+                                class="mt-1.5 text-sm leading-relaxed text-muted-foreground"
+                            >
                                 {{ term.short }}
                             </dd>
                         </div>

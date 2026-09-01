@@ -13,20 +13,24 @@ import {
     IconWorld,
     IconX,
 } from '@tabler/icons-vue';
+
 import AnalyticsMockup from '@/components/site/AnalyticsMockup.vue';
 import ApiSample from '@/components/site/ApiSample.vue';
 import FaqList from '@/components/site/FaqList.vue';
 import JsonLd from '@/components/site/JsonLd.vue';
 import Seo from '@/components/site/Seo.vue';
 import ShortenMockup from '@/components/site/ShortenMockup.vue';
-import SiteLayout from '@/layouts/site/SiteLayout.vue';
 import { Button } from '@/components/ui/button';
+import SiteLayout from '@/layouts/site/SiteLayout.vue';
 import { register } from '@/routes';
 import site from '@/routes/site';
 
 defineProps<{
     alternatives: Array<{ slug: string; name: string }>;
-    faq: Array<{ title: string; items: Array<{ question: string; answer: string }> }>;
+    faq: Array<{
+        title: string;
+        items: Array<{ question: string; answer: string }>;
+    }>;
     seo: { title: string; description: string };
 }>();
 
@@ -201,7 +205,9 @@ const features = [
             />
 
             <div class="relative px-6 pt-20 sm:px-10 sm:pt-28">
-                <div class="lg:grid lg:grid-cols-[minmax(0,1fr)_14rem] lg:gap-12">
+                <div
+                    class="lg:grid lg:grid-cols-[minmax(0,1fr)_14rem] lg:gap-12"
+                >
                     <div>
                         <h1
                             class="max-w-3xl font-display text-[2.75rem] leading-[0.98] font-semibold tracking-[-0.035em] text-balance sm:text-6xl lg:text-7xl"
@@ -209,7 +215,9 @@ const features = [
                             Short links, and the story of every click
                         </h1>
 
-                        <p class="mt-8 max-w-xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
+                        <p
+                            class="mt-8 max-w-xl text-lg leading-relaxed text-muted-foreground sm:text-xl"
+                        >
                             Put a link on your own domain, then see what
                             happened after it: country, device, referrer,
                             campaign. Kept for as long as the link exists.
@@ -217,10 +225,14 @@ const features = [
 
                         <div class="mt-9 flex flex-col gap-3 sm:flex-row">
                             <Button size="lg" as-child>
-                                <Link :href="register.url()">Start for free</Link>
+                                <Link :href="register.url()"
+                                    >Start for free</Link
+                                >
                             </Button>
                             <Button size="lg" variant="outline" as-child>
-                                <Link :href="site.pricing.url()">See pricing</Link>
+                                <Link :href="site.pricing.url()"
+                                    >See pricing</Link
+                                >
                             </Button>
                         </div>
 
@@ -239,7 +251,9 @@ const features = [
                     >
                         <div v-for="fact in facts" :key="fact.label">
                             <dt class="label">{{ fact.label }}</dt>
-                            <dd class="mt-1.5 font-mono text-sm">{{ fact.value }}</dd>
+                            <dd class="mt-1.5 font-mono text-sm">
+                                {{ fact.value }}
+                            </dd>
                         </div>
                     </dl>
                 </div>
@@ -264,9 +278,14 @@ const features = [
                         :href="pillar.href"
                         class="site-card group p-6 transition-shadow hover:shadow-md"
                     >
-                        <component :is="pillar.icon" class="size-5 text-muted-foreground" />
+                        <component
+                            :is="pillar.icon"
+                            class="size-5 text-muted-foreground"
+                        />
                         <h2 class="mt-3 font-medium">{{ pillar.title }}</h2>
-                        <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
+                        <p
+                            class="mt-2 text-sm leading-relaxed text-muted-foreground"
+                        >
                             {{ pillar.description }}
                         </p>
                         <span
@@ -291,7 +310,9 @@ const features = [
             <div class="px-6 py-16 sm:px-10 sm:py-24">
                 <div class="max-w-2xl">
                     <p class="label">How it works</p>
-                    <h2 class="mt-2 font-display text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+                    <h2
+                        class="mt-2 font-display text-3xl font-semibold tracking-tight text-balance sm:text-4xl"
+                    >
                         Three steps, and the third is the point
                     </h2>
                 </div>
@@ -300,15 +321,19 @@ const features = [
                     <li
                         v-for="(step, index) in steps"
                         :key="step.title"
-                        class="md:px-8 md:first:pl-0 md:last:pr-0 md:not-first:border-l md:not-first:border-border"
+                        class="md:px-8 md:not-first:border-l md:not-first:border-border md:first:pl-0 md:last:pr-0"
                     >
                         <span
                             class="font-display text-5xl leading-none font-semibold text-border tabular-nums select-none"
                         >
                             {{ String(index + 1).padStart(2, '0') }}
                         </span>
-                        <h3 class="mt-5 text-lg font-medium">{{ step.title }}</h3>
-                        <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
+                        <h3 class="mt-5 text-lg font-medium">
+                            {{ step.title }}
+                        </h3>
+                        <p
+                            class="mt-2 text-sm leading-relaxed text-muted-foreground"
+                        >
                             {{ step.description }}
                         </p>
                     </li>
@@ -322,13 +347,15 @@ const features = [
             >
                 <div>
                     <p class="label">Shorten</p>
-                    <h2 class="mt-2 font-display text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+                    <h2
+                        class="mt-2 font-display text-3xl font-semibold tracking-tight text-balance sm:text-4xl"
+                    >
                         A link people will actually click
                     </h2>
                     <p class="mt-4 text-lg text-muted-foreground">
                         A short link hides its destination, so the domain is the
-                        only signal the reader gets. Yours says who is asking;
-                        a stranger's says nothing, and gets filtered as a
+                        only signal the reader gets. Yours says who is asking; a
+                        stranger's says nothing, and gets filtered as a
                         category.
                     </p>
                     <Link
@@ -347,16 +374,25 @@ const features = [
             <div class="px-6 py-16 sm:px-10 sm:py-24">
                 <div class="max-w-2xl">
                     <p class="label">What you get</p>
-                    <h2 class="mt-2 font-display text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+                    <h2
+                        class="mt-2 font-display text-3xl font-semibold tracking-tight text-balance sm:text-4xl"
+                    >
                         The whole product, not a trial of it
                     </h2>
                 </div>
 
-                <div class="mt-12 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+                <div
+                    class="mt-12 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4"
+                >
                     <div v-for="feature in features" :key="feature.title">
-                        <component :is="feature.icon" class="size-5 text-muted-foreground" />
+                        <component
+                            :is="feature.icon"
+                            class="size-5 text-muted-foreground"
+                        />
                         <h3 class="mt-3 font-medium">{{ feature.title }}</h3>
-                        <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
+                        <p
+                            class="mt-2 text-sm leading-relaxed text-muted-foreground"
+                        >
                             {{ feature.description }}
                         </p>
                     </div>
@@ -370,14 +406,16 @@ const features = [
             >
                 <div>
                     <p class="label">Build on it</p>
-                    <h2 class="mt-2 font-display text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+                    <h2
+                        class="mt-2 font-display text-3xl font-semibold tracking-tight text-balance sm:text-4xl"
+                    >
                         Nothing is dashboard-only
                     </h2>
                     <p class="mt-4 text-lg text-muted-foreground">
                         The REST API reaches every action the screens do,
                         because both call the same code underneath. An MCP
-                        server ships with it, so an assistant can do the same
-                        in words.
+                        server ships with it, so an assistant can do the same in
+                        words.
                     </p>
                     <Link
                         :href="site.useCases.show.url('developers')"
@@ -395,7 +433,9 @@ const features = [
             <div class="px-6 py-16 sm:px-10 sm:py-24">
                 <div class="max-w-2xl">
                     <p class="label">The difference</p>
-                    <h2 class="mt-2 font-display text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+                    <h2
+                        class="mt-2 font-display text-3xl font-semibold tracking-tight text-balance sm:text-4xl"
+                    >
                         Rented links, or links you own
                     </h2>
                     <p class="mt-4 text-lg text-muted-foreground">
@@ -405,8 +445,12 @@ const features = [
                 </div>
 
                 <div class="mt-12 grid gap-4 md:grid-cols-2">
-                    <div class="rounded-xl border border-border bg-muted/30 p-6 sm:p-8">
-                        <h3 class="font-medium text-muted-foreground">On somebody else's domain</h3>
+                    <div
+                        class="rounded-xl border border-border bg-muted/30 p-6 sm:p-8"
+                    >
+                        <h3 class="font-medium text-muted-foreground">
+                            On somebody else's domain
+                        </h3>
                         <ul class="mt-6 space-y-4">
                             <li
                                 v-for="item in rented"
@@ -419,11 +463,19 @@ const features = [
                         </ul>
                     </div>
 
-                    <div class="rounded-xl border border-primary/30 bg-card p-6 sm:p-8">
+                    <div
+                        class="rounded-xl border border-primary/30 bg-card p-6 sm:p-8"
+                    >
                         <h3 class="font-medium">On yours, with Lua</h3>
                         <ul class="mt-6 space-y-4">
-                            <li v-for="item in owned" :key="item" class="flex gap-3 text-sm leading-relaxed">
-                                <IconCheck class="mt-0.5 size-4 shrink-0 text-primary-text" />
+                            <li
+                                v-for="item in owned"
+                                :key="item"
+                                class="flex gap-3 text-sm leading-relaxed"
+                            >
+                                <IconCheck
+                                    class="mt-0.5 size-4 shrink-0 text-primary-text"
+                                />
                                 <span>{{ item }}</span>
                             </li>
                         </ul>
@@ -438,7 +490,9 @@ const features = [
             >
                 <div>
                     <p class="label">Questions</p>
-                    <h2 class="mt-2 font-display text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+                    <h2
+                        class="mt-2 font-display text-3xl font-semibold tracking-tight text-balance sm:text-4xl"
+                    >
                         The ones asked before signing up
                     </h2>
                     <Link
@@ -463,8 +517,12 @@ const features = [
 
         <section class="border-b border-border">
             <div class="px-6 py-12 sm:px-10">
-                <div class="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
-                    <span class="text-muted-foreground">Comparing options?</span>
+                <div
+                    class="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm"
+                >
+                    <span class="text-muted-foreground"
+                        >Comparing options?</span
+                    >
                     <Link
                         v-for="alternative in alternatives"
                         :key="alternative.slug"
@@ -480,14 +538,18 @@ const features = [
         <section>
             <div class="px-6 py-16 sm:px-10 sm:py-24">
                 <div class="site-card px-6 py-16 text-center">
-                    <h2 class="font-display text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+                    <h2
+                        class="font-display text-3xl font-semibold tracking-tight text-balance sm:text-4xl"
+                    >
                         Make your first link in a minute
                     </h2>
                     <p class="mx-auto mt-4 max-w-md text-muted-foreground">
                         Sign up, paste a URL, and watch the clicks arrive. Bring
                         a domain whenever you are ready.
                     </p>
-                    <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+                    <div
+                        class="mt-8 flex flex-col justify-center gap-3 sm:flex-row"
+                    >
                         <Button size="lg" as-child>
                             <Link :href="register.url()">Start for free</Link>
                         </Button>

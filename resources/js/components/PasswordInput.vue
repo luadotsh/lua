@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { IconEye, IconEyeOff } from '@tabler/icons-vue';
 import type { HTMLAttributes } from 'vue';
 import { ref } from 'vue';
-import { IconEye, IconEyeOff } from '@tabler/icons-vue';
+
 import { Input } from '@/components/ui/input';
 import {
     Tooltip,
@@ -43,7 +44,9 @@ const showPassword = ref(false);
                         <button
                             type="button"
                             :tabindex="-1"
-                            :aria-label="showPassword ? 'Hide password' : 'Show password'"
+                            :aria-label="
+                                showPassword ? 'Hide password' : 'Show password'
+                            "
                             class="cursor-pointer text-muted-foreground hover:text-foreground"
                             @click="showPassword = !showPassword"
                         >
@@ -52,7 +55,11 @@ const showPassword = ref(false);
                         </button>
                     </TooltipTrigger>
                     <TooltipContent>
-                        <p>{{ showPassword ? 'Hide password' : 'Show password' }}</p>
+                        <p>
+                            {{
+                                showPassword ? 'Hide password' : 'Show password'
+                            }}
+                        </p>
                     </TooltipContent>
                 </Tooltip>
             </TooltipProvider>

@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
+
+import PasswordInput from '@/components/PasswordInput.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import PasswordInput from '@/components/PasswordInput.vue';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/AuthLayout.vue';
-import { login as loginRoute, register as registerRoute } from '@/routes';
 import Social from '@/pages/Auth/Partial/Social.vue';
+import { login as loginRoute, register as registerRoute } from '@/routes';
 
 const form = useForm({
     name: '',
@@ -22,7 +23,11 @@ const submit = () => {
 </script>
 
 <template>
-    <AuthLayout title="Create an account" description="Enter your details to get started" :show-terms="true">
+    <AuthLayout
+        title="Create an account"
+        description="Enter your details to get started"
+        :show-terms="true"
+    >
         <Head title="Register" />
 
         <Social />
@@ -38,7 +43,9 @@ const submit = () => {
                     autofocus
                     placeholder="Your name"
                 />
-                <p v-if="form.errors.name" class="text-sm text-destructive">{{ form.errors.name }}</p>
+                <p v-if="form.errors.name" class="text-sm text-destructive">
+                    {{ form.errors.name }}
+                </p>
             </div>
 
             <div class="grid gap-2">
@@ -50,7 +57,9 @@ const submit = () => {
                     autocomplete="email"
                     placeholder="Your email"
                 />
-                <p v-if="form.errors.email" class="text-sm text-destructive">{{ form.errors.email }}</p>
+                <p v-if="form.errors.email" class="text-sm text-destructive">
+                    {{ form.errors.email }}
+                </p>
             </div>
 
             <div class="grid gap-2">
@@ -61,7 +70,9 @@ const submit = () => {
                     autocomplete="new-password"
                     placeholder="Min. 8 characters"
                 />
-                <p v-if="form.errors.password" class="text-sm text-destructive">{{ form.errors.password }}</p>
+                <p v-if="form.errors.password" class="text-sm text-destructive">
+                    {{ form.errors.password }}
+                </p>
             </div>
 
             <Button

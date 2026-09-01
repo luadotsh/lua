@@ -18,7 +18,12 @@ withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-    <AppLayout :breadcrumbs="breadcrumbs" :full-width="fullWidth" :title="title" :total="total">
+    <AppLayout
+        :breadcrumbs="breadcrumbs"
+        :full-width="fullWidth"
+        :title="title"
+        :total="total"
+    >
         <template v-if="$slots.header" #header>
             <slot name="header" />
         </template>

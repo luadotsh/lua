@@ -11,6 +11,7 @@ export const DELETE_KEYWORD = 'delete';
 import { router } from '@inertiajs/vue3';
 import { IconCopy, IconX } from '@tabler/icons-vue';
 import { computed, ref } from 'vue';
+
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -90,10 +91,8 @@ const remove = () => {
     const method = props.method as 'delete' | 'get' | 'post' | 'put' | 'patch';
 
     if (method === 'delete' || method === 'get') {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         router[method](url.value, options as any);
     } else {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         router[method](url.value, {}, options as any);
     }
 };
@@ -128,7 +127,10 @@ defineExpose({
 
 <template>
     <Dialog :open="isOpen" @update:open="onOpenChange">
-        <DialogContent :show-close-button="false" data-testid="confirm-delete-modal">
+        <DialogContent
+            :show-close-button="false"
+            data-testid="confirm-delete-modal"
+        >
             <Button
                 variant="ghost"
                 size="icon"

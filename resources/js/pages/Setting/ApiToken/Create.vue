@@ -1,40 +1,41 @@
 <script setup lang="ts">
-import { useForm, usePage } from "@inertiajs/vue3";
-import { ref, computed } from "vue";
+import { useForm, usePage } from '@inertiajs/vue3';
+import { IconCopy } from '@tabler/icons-vue';
+import { computed, ref } from 'vue';
+
+import { Button } from '@/components/ui/button';
+import { DateTimePicker } from '@/components/ui/date-time-picker';
 import {
     Dialog,
     DialogContent,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogFooter,
-} from "@/components/ui/dialog";
-import { IconCopy } from "@tabler/icons-vue";
-import { Button } from "@/components/ui/button";
-import { DateTimePicker } from "@/components/ui/date-time-picker";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import dayjs from "@/dayjs";
-import { copyToClipboard } from "@/lib/utils";
-import * as apiTokensRoutes from "@/routes/setting/api-tokens";
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import dayjs from '@/dayjs';
+import { copyToClipboard } from '@/lib/utils';
+import * as apiTokensRoutes from '@/routes/setting/api-tokens';
 
 const token = computed(() => usePage().props.flash?.token);
 const displayToken = ref(false);
 
 const form = useForm({
-    name: "",
+    name: '',
     // Empty means the key never expires.
-    expires_at: "",
+    expires_at: '',
 });
 
 // The picker speaks local wall time; the server is given UTC, the same way the
 // link expiry does it.
-const expiresAtDate = ref("");
+const expiresAtDate = ref('');
 
 const show = ref(false);
 
 const open = () => {
     form.reset();
-    expiresAtDate.value = "";
+    expiresAtDate.value = '';
     show.value = true;
 };
 
@@ -46,21 +47,21 @@ defineExpose({
 // not a reasonable way to be asked.
 const copyToken = () => {
     if (token.value) {
-        copyToClipboard(String(token.value), "API token copied");
+        copyToClipboard(String(token.value), 'API token copied');
     }
 };
 
 const store = () => {
     form.expires_at = expiresAtDate.value
-        ? dayjs(expiresAtDate.value).utc().format("YYYY-MM-DD HH:mm:ss")
-        : "";
+        ? dayjs(expiresAtDate.value).utc().format('YYYY-MM-DD HH:mm:ss')
+        : '';
 
     form.post(apiTokensRoutes.store.url(), {
         preserveScroll: true,
         onSuccess: () => {
             displayToken.value = true;
             form.reset();
-            expiresAtDate.value = "";
+            expiresAtDate.value = '';
             show.value = false;
         },
     });
@@ -74,25 +75,35 @@ const store = () => {
                 <DialogTitle>New API Token</DialogTitle>
             </DialogHeader>
 
-            <div class="mt-4 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-                <div class="sm:col-span-6 grid gap-2">
-                    <Label for="name">Name <span class="text-red-500">*</span></Label>
+            <div class="mt-4 grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-6">
+                <div class="grid gap-2 sm:col-span-6">
+                    <Label for="name"
+                        >Name <span class="text-red-500">*</span></Label
+                    >
                     <Input
                         id="name"
                         type="text"
                         v-model="form.name"
                         placeholder=""
                     />
-                    <p v-if="form.errors.name" class="mt-2 text-sm text-red-600">{{ form.errors.name }}</p>
+                    <p
+                        v-if="form.errors.name"
+                        class="mt-2 text-sm text-red-600"
+                    >
+                        {{ form.errors.name }}
+                    </p>
                 </div>
 
-                <div class="sm:col-span-6 grid gap-2">
+                <div class="grid gap-2 sm:col-span-6">
                     <Label>Expires on</Label>
                     <DateTimePicker v-model="expiresAtDate" />
                     <p class="text-xs text-muted-foreground">
                         Leave empty for a key that never expires.
                     </p>
-                    <p v-if="form.errors.expires_at" class="text-sm text-destructive">
+                    <p
+                        v-if="form.errors.expires_at"
+                        class="text-sm text-destructive"
+                    >
                         {{ form.errors.expires_at }}
                     </p>
                 </div>
@@ -137,10 +148,7 @@ const store = () => {
             </div>
 
             <DialogFooter>
-                <Button
-                    data-testid="copy-api-token"
-                    @click="copyToken"
-                >
+                <Button data-testid="copy-api-token" @click="copyToken">
                     <IconCopy class="size-4" />
                     Copy token
                 </Button>

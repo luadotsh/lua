@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { IconX } from '@tabler/icons-vue';
 import { computed } from 'vue';
+
 import { countryFor } from '@/lib/countries';
 import { languageLabel } from '@/lib/languages';
 
@@ -67,9 +68,15 @@ const showClearAll = computed(() => props.filters.length > 1);
             class="inline-flex items-stretch overflow-hidden rounded-md border border-border bg-secondary text-sm"
             :data-testid="`analytics-filter-${filter.dimension}`"
         >
-            <span class="px-2 py-1 text-muted-foreground">{{ label(filter.dimension) }}</span>
+            <span class="px-2 py-1 text-muted-foreground">{{
+                label(filter.dimension)
+            }}</span>
             <span class="border-l border-border px-2 py-1 text-foreground">
-                {{ filter.values.map((value) => display(filter.dimension, value)).join(', ') }}
+                {{
+                    filter.values
+                        .map((value) => display(filter.dimension, value))
+                        .join(', ')
+                }}
             </span>
             <button
                 type="button"

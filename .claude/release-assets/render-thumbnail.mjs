@@ -16,11 +16,11 @@
 // Playwright is resolved from the repo's node_modules, so the script works
 // regardless of where it is invoked.
 
+import { readFileSync, unlinkSync, writeFileSync } from 'fs';
 import { createRequire } from 'module';
-import { readFileSync, writeFileSync, unlinkSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
 import { tmpdir } from 'os';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(here, '..', '..');
@@ -33,7 +33,9 @@ for (let i = 2; i < process.argv.length; i += 2) {
 }
 
 if (!args.headline || !args.out) {
-    console.error('usage: render-thumbnail.mjs --headline "..." --themes "a,b,c" --out path.png [--version "v1.0.6"] [--underline "phrase"] [--badge "Changelog"]');
+    console.error(
+        'usage: render-thumbnail.mjs --headline "..." --themes "a,b,c" --out path.png [--version "v1.0.6"] [--underline "phrase"] [--badge "Changelog"]',
+    );
     process.exit(1);
 }
 
@@ -52,7 +54,10 @@ let headlineHtml = escapeHtml(args.headline);
 if (args.underline) {
     const escapedPhrase = escapeHtml(args.underline);
     if (headlineHtml.includes(escapedPhrase)) {
-        headlineHtml = headlineHtml.replace(escapedPhrase, squiggle(escapedPhrase));
+        headlineHtml = headlineHtml.replace(
+            escapedPhrase,
+            squiggle(escapedPhrase),
+        );
     }
 }
 

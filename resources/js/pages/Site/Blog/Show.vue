@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import { IconArrowLeft } from '@tabler/icons-vue';
+
 import BlogToc from '@/components/site/BlogToc.vue';
 import JsonLd from '@/components/site/JsonLd.vue';
 import Seo from '@/components/site/Seo.vue';
-import SiteLayout from '@/layouts/site/SiteLayout.vue';
 import date from '@/date';
+import SiteLayout from '@/layouts/site/SiteLayout.vue';
 import site from '@/routes/site';
 
 /**
@@ -65,7 +66,9 @@ defineProps<{
                     <span v-if="post.date"> · </span>
                     {{ post.reading_time }} min read
                 </p>
-                <h1 class="mt-3 font-display text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
+                <h1
+                    class="mt-3 font-display text-4xl font-semibold tracking-tight text-balance sm:text-5xl"
+                >
                     {{ post.title }}
                 </h1>
                 <p class="mt-4 text-lg text-balance text-muted-foreground">
@@ -80,20 +83,16 @@ defineProps<{
                 class="mt-10 aspect-[16/9] w-full rounded-xl border border-border object-cover"
             />
 
-            <div class="mt-12 lg:grid lg:grid-cols-[minmax(0,1fr)_15rem] lg:gap-14">
+            <div
+                class="mt-12 lg:grid lg:grid-cols-[minmax(0,1fr)_15rem] lg:gap-14"
+            >
                 <!--
                     `prose` comes from @tailwindcss/typography, which is what
                     styles markup the server generated and this file never sees.
                 -->
                 <article
                     data-testid="blog-body"
-                    class="
-                        prose prose-neutral max-w-3xl min-w-0
-                        prose-headings:scroll-mt-24 prose-headings:tracking-tight
-                        prose-a:underline-offset-4
-                        prose-code:rounded prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:font-normal
-                        prose-code:before:content-none prose-code:after:content-none
-                    "
+                    class="prose max-w-3xl min-w-0 prose-neutral prose-headings:scroll-mt-24 prose-headings:tracking-tight prose-a:underline-offset-4 prose-code:rounded prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:font-normal prose-code:before:content-none prose-code:after:content-none"
                     v-html="post.html"
                 />
 

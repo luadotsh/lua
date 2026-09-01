@@ -4,22 +4,19 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\Domain\CreateDomain;
+use App\Actions\Domain\DeleteDomain;
 use App\Actions\Domain\GetDomain;
 use App\Actions\Domain\ListDomains;
 use App\Actions\Domain\UpdateDomain;
-use App\Actions\Domain\DeleteDomain;
-use App\Actions\Domain\CreateDomain;
-use App\Http\Requests\Domain\ValidateRequest;
-use App\Http\Resources\Api\DomainResource;
-
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Http\Request;
-
+use App\Enums\Domain\Status;
 use App\Http\Requests\Domain\CreateRequest;
 use App\Http\Requests\Domain\UpdateRequest;
-
+use App\Http\Requests\Domain\ValidateRequest;
+use App\Http\Resources\Api\DomainResource;
 use App\Models\Domain;
-use App\Enums\Domain\Status;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class DomainController extends Controller
 {
@@ -47,7 +44,7 @@ class DomainController extends Controller
     public function store(CreateRequest $request)
     {
         $response = Gate::inspect('reached-domain-limit', $request->workspace);
-        if (!$response->allowed()) {
+        if (! $response->allowed()) {
             return response()->json(['message' => 'You have reached the domain limit'], 403);
         }
 
@@ -59,7 +56,7 @@ class DomainController extends Controller
     public function update($id, UpdateRequest $request)
     {
         $domain = GetDomain::execute($request->workspace, $id);
-        if (!$domain) {
+        if (! $domain) {
             return response()->json(['message' => 'Domain not found'], 404);
         }
 
@@ -71,7 +68,7 @@ class DomainController extends Controller
     public function destroy($id, Request $request)
     {
         $domain = GetDomain::execute($request->workspace, $id);
-        if (!$domain) {
+        if (! $domain) {
             return response()->json(['message' => 'Domain not found'], 404);
         }
 

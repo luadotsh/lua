@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -29,7 +30,10 @@ const submit = () => {
 </script>
 
 <template>
-    <AuthLayout title="Accept Invitation" description="Create your account to join the workspace">
+    <AuthLayout
+        title="Accept Invitation"
+        description="Create your account to join the workspace"
+    >
         <Head title="Invite" />
 
         <div v-if="status" class="text-sm font-medium text-green-600">
@@ -46,7 +50,9 @@ const submit = () => {
                     autofocus
                     autocomplete="off"
                 />
-                <p v-if="form.errors.name" class="text-sm text-destructive">{{ form.errors.name }}</p>
+                <p v-if="form.errors.name" class="text-sm text-destructive">
+                    {{ form.errors.name }}
+                </p>
             </div>
 
             <div class="grid gap-2">
@@ -69,7 +75,9 @@ const submit = () => {
                     placeholder="Create your password"
                     autocomplete="off"
                 />
-                <p v-if="form.errors.password" class="text-sm text-destructive">{{ form.errors.password }}</p>
+                <p v-if="form.errors.password" class="text-sm text-destructive">
+                    {{ form.errors.password }}
+                </p>
             </div>
 
             <div class="grid gap-2">
@@ -81,7 +89,12 @@ const submit = () => {
                     placeholder="Repeat your password"
                     autocomplete="off"
                 />
-                <p v-if="form.errors.password_confirmation" class="text-sm text-destructive">{{ form.errors.password_confirmation }}</p>
+                <p
+                    v-if="form.errors.password_confirmation"
+                    class="text-sm text-destructive"
+                >
+                    {{ form.errors.password_confirmation }}
+                </p>
             </div>
 
             <Button type="submit" class="w-full" :disabled="form.processing">

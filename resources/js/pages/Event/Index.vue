@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import axios from "axios";
-import { onMounted, ref, watch } from "vue";
-import { InfiniteScroll, router } from "@inertiajs/vue3";
-import AppLayout from "@/layouts/AppLayout.vue";
-import date from "@/date";
-
-import * as eventsRoute from "@/routes/events";
+import { InfiniteScroll, router } from '@inertiajs/vue3';
+import axios from 'axios';
+import { onMounted, ref, watch } from 'vue';
 
 import EventsTable, {
     type EventData,
-} from "@/components/analytics/EventsTable.vue";
-import StatHeader from "@/components/analytics/StatHeader.vue";
+} from '@/components/analytics/EventsTable.vue';
+import StatHeader from '@/components/analytics/StatHeader.vue';
 import TimeseriesChart, {
     type TimeseriesPoint,
-} from "@/components/analytics/TimeseriesChart.vue";
-import { Skeleton } from "@/components/ui/skeleton";
-import type { MetricKey, Overview } from "@/lib/metrics";
-import { statistics } from "@/routes/analytics";
-import Header from "./Header.vue";
+} from '@/components/analytics/TimeseriesChart.vue';
+import { Skeleton } from '@/components/ui/skeleton';
+import date from '@/date';
+import AppLayout from '@/layouts/AppLayout.vue';
+import type { MetricKey, Overview } from '@/lib/metrics';
+import { statistics } from '@/routes/analytics';
+import * as eventsRoute from '@/routes/events';
+
+import Header from './Header.vue';
 
 interface Table {
     data: EventData[];
@@ -35,12 +35,12 @@ const range = ref({
     start: props.start,
     end: props.end,
     timezone: date.getUserTimezone(),
-    group: "day",
+    group: 'day',
 });
 
 // The same endpoint the analytics screen reads, so the two never disagree
 // about what a click or a scan is.
-const metric = ref<MetricKey>("events");
+const metric = ref<MetricKey>('events');
 const overview = ref<Overview | null>(null);
 const timeseries = ref<TimeseriesPoint[]>([]);
 
@@ -67,9 +67,9 @@ const refresh = (value: typeof range.value) => {
             },
         }),
         {
-            method: "get",
+            method: 'get',
             preserveState: true,
-        }
+        },
     );
 };
 </script>
@@ -111,14 +111,17 @@ const refresh = (value: typeof range.value) => {
                 `items-element` is required — without it Inertia has nowhere to
                 append the next page and it replaces the rows instead.
             -->
-            <div class="min-h-0 min-w-0 flex-1 overflow-auto pb-px" data-testid="events-scroll">
+            <div
+                class="min-h-0 min-w-0 flex-1 overflow-auto pb-px"
+                data-testid="events-scroll"
+            >
                 <InfiniteScroll
                     data="table"
                     items-element="#events-body"
                     preserve-url
                     :buffer="300"
                 >
-                <EventsTable :rows="table.data" items-id="events-body" />
+                    <EventsTable :rows="table.data" items-id="events-body" />
                 </InfiniteScroll>
             </div>
         </div>

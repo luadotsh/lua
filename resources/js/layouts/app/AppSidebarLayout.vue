@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { usePage } from '@inertiajs/vue3';
 import { computed, useSlots } from 'vue';
+
 import AppSidebar from '@/components/AppSidebar.vue';
 import AppSidebarHeader from '@/components/AppSidebarHeader.vue';
 import Toast from '@/components/Toast.vue';
-import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import {
+    SidebarInset,
+    SidebarProvider,
+    SidebarTrigger,
+} from '@/components/ui/sidebar';
 import type { BreadcrumbItem } from '@/types';
 
 const page = usePage();
@@ -67,7 +72,7 @@ const hasHeader = computed(
             </AppSidebarHeader>
             <SidebarTrigger
                 v-else
-                class="absolute left-4 top-3 z-30 size-9 rounded-md border border-border bg-card text-foreground shadow-xs md:hidden"
+                class="absolute top-3 left-4 z-30 size-9 rounded-md border border-border bg-card text-foreground shadow-xs md:hidden"
             />
             <!--
                 A full-width screen scrolls nothing here: its table owns both

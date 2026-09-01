@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+
 import { browserIconUrl } from '@/lib/browsers';
 import { countryFlagUrl, countryFor } from '@/lib/countries';
 
@@ -78,7 +79,7 @@ const number = new Intl.NumberFormat('en-US');
 <template>
     <div
         data-testid="analytics-mockup"
-        class="overflow-hidden site-card shadow-sm"
+        class="site-card overflow-hidden shadow-sm"
     >
         <!-- Window chrome: enough to read as an application, not so much that
              it competes with what is inside it. -->
@@ -98,17 +99,23 @@ const number = new Intl.NumberFormat('en-US');
                     <span
                         class="absolute inset-0 inline-flex animate-ping rounded-full bg-emerald-500 opacity-75 motion-reduce:animate-none"
                     />
-                    <span class="relative inline-flex size-1.5 rounded-full bg-emerald-500" />
+                    <span
+                        class="relative inline-flex size-1.5 rounded-full bg-emerald-500"
+                    />
                 </span>
                 Live
             </span>
         </div>
 
         <!-- Metric row. `tabular-nums` so the digits stay in their columns. -->
-        <div class="grid grid-cols-2 divide-x divide-y divide-border sm:grid-cols-4 sm:divide-y-0">
+        <div
+            class="grid grid-cols-2 divide-x divide-y divide-border sm:grid-cols-4 sm:divide-y-0"
+        >
             <div v-for="metric in metrics" :key="metric.key" class="px-4 py-4">
                 <p class="text-xs text-muted-foreground">{{ metric.label }}</p>
-                <p class="mt-1 text-2xl font-semibold tracking-tight tabular-nums">
+                <p
+                    class="mt-1 text-2xl font-semibold tracking-tight tabular-nums"
+                >
                     {{ metric.value }}
                 </p>
             </div>
@@ -122,13 +129,31 @@ const number = new Intl.NumberFormat('en-US');
                 aria-hidden="true"
             >
                 <defs>
-                    <linearGradient id="lua-chart-fill" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="currentColor" stop-opacity="0.18" />
-                        <stop offset="100%" stop-color="currentColor" stop-opacity="0" />
+                    <linearGradient
+                        id="lua-chart-fill"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                    >
+                        <stop
+                            offset="0%"
+                            stop-color="currentColor"
+                            stop-opacity="0.18"
+                        />
+                        <stop
+                            offset="100%"
+                            stop-color="currentColor"
+                            stop-opacity="0"
+                        />
                     </linearGradient>
                 </defs>
 
-                <path :d="chart.area" fill="url(#lua-chart-fill)" class="text-primary-text" />
+                <path
+                    :d="chart.area"
+                    fill="url(#lua-chart-fill)"
+                    class="text-primary-text"
+                />
                 <path
                     :d="chart.line"
                     fill="none"
@@ -142,13 +167,17 @@ const number = new Intl.NumberFormat('en-US');
             </svg>
         </div>
 
-        <div class="grid divide-y divide-border border-t border-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+        <div
+            class="grid divide-y divide-border border-t border-border sm:grid-cols-3 sm:divide-x sm:divide-y-0"
+        >
             <!--
                 Each row carries a bar behind the label rather than beside it,
                 which is what makes a list of numbers readable at a glance.
             -->
             <div class="p-4">
-                <p class="text-xs font-medium text-muted-foreground">Countries</p>
+                <p class="text-xs font-medium text-muted-foreground">
+                    Countries
+                </p>
                 <ul class="mt-3 space-y-1">
                     <li
                         v-for="country in countries"
@@ -167,8 +196,12 @@ const number = new Intl.NumberFormat('en-US');
                             class="relative h-3 w-[18px] shrink-0 rounded-[2px] object-cover"
                             loading="lazy"
                         />
-                        <span class="relative truncate">{{ countryFor(country.code).name }}</span>
-                        <span class="relative ml-auto shrink-0 text-xs text-muted-foreground tabular-nums">
+                        <span class="relative truncate">{{
+                            countryFor(country.code).name
+                        }}</span>
+                        <span
+                            class="relative ml-auto shrink-0 text-xs text-muted-foreground tabular-nums"
+                        >
                             {{ number.format(country.value) }}
                         </span>
                     </li>
@@ -176,7 +209,9 @@ const number = new Intl.NumberFormat('en-US');
             </div>
 
             <div class="p-4">
-                <p class="text-xs font-medium text-muted-foreground">Referrers</p>
+                <p class="text-xs font-medium text-muted-foreground">
+                    Referrers
+                </p>
                 <ul class="mt-3 space-y-1">
                     <li
                         v-for="referrer in referrers"
@@ -188,8 +223,12 @@ const number = new Intl.NumberFormat('en-US');
                             :style="{ width: `${referrer.share}%` }"
                             aria-hidden="true"
                         />
-                        <span class="relative truncate">{{ referrer.name }}</span>
-                        <span class="relative ml-auto shrink-0 text-xs text-muted-foreground tabular-nums">
+                        <span class="relative truncate">{{
+                            referrer.name
+                        }}</span>
+                        <span
+                            class="relative ml-auto shrink-0 text-xs text-muted-foreground tabular-nums"
+                        >
                             {{ number.format(referrer.value) }}
                         </span>
                     </li>
@@ -197,7 +236,9 @@ const number = new Intl.NumberFormat('en-US');
             </div>
 
             <div class="p-4">
-                <p class="text-xs font-medium text-muted-foreground">Browsers</p>
+                <p class="text-xs font-medium text-muted-foreground">
+                    Browsers
+                </p>
                 <ul class="mt-3 space-y-1">
                     <li
                         v-for="browser in browsers"
@@ -216,8 +257,12 @@ const number = new Intl.NumberFormat('en-US');
                             class="relative size-4 shrink-0"
                             loading="lazy"
                         />
-                        <span class="relative truncate">{{ browser.label }}</span>
-                        <span class="relative ml-auto shrink-0 text-xs text-muted-foreground tabular-nums">
+                        <span class="relative truncate">{{
+                            browser.label
+                        }}</span>
+                        <span
+                            class="relative ml-auto shrink-0 text-xs text-muted-foreground tabular-nums"
+                        >
                             {{ number.format(browser.value) }}
                         </span>
                     </li>

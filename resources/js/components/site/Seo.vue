@@ -35,7 +35,9 @@ const canonicalUrl = computed(
     () => props.canonical ?? `${origin.value}${page.url.split('?')[0]}`,
 );
 
-const imageUrl = computed(() => `${origin.value}${props.image ?? '/images/lua/full-color.svg'}`);
+const imageUrl = computed(
+    () => `${origin.value}${props.image ?? '/images/lua/full-color.svg'}`,
+);
 </script>
 
 <template>

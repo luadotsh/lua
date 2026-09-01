@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import { IconArrowLeft } from '@tabler/icons-vue';
+
 import JsonLd from '@/components/site/JsonLd.vue';
 import Seo from '@/components/site/Seo.vue';
 import SiteLayout from '@/layouts/site/SiteLayout.vue';
@@ -21,7 +22,10 @@ defineProps<{
             '@type': 'DefinedTerm',
             name: entry.term,
             description: entry.short,
-            inDefinedTermSet: { '@type': 'DefinedTermSet', name: 'Lua glossary' },
+            inDefinedTermSet: {
+                '@type': 'DefinedTermSet',
+                name: 'Lua glossary',
+            },
         }"
     />
 
@@ -37,14 +41,18 @@ defineProps<{
             </Link>
 
             <header class="mt-8">
-                <h1 class="font-display text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
+                <h1
+                    class="font-display text-4xl font-semibold tracking-tight text-balance sm:text-5xl"
+                >
                     {{ entry.term }}
                 </h1>
                 <!--
                     The one-sentence definition is the answer somebody arrived
                     for, so it sits above the explanation rather than inside it.
                 -->
-                <p class="mt-6 border-l-2 border-primary/40 pl-6 text-lg leading-relaxed">
+                <p
+                    class="mt-6 border-l-2 border-primary/40 pl-6 text-lg leading-relaxed"
+                >
                     {{ entry.short }}
                 </p>
             </header>
@@ -59,7 +67,10 @@ defineProps<{
                 </p>
             </div>
 
-            <nav v-if="related.length" class="mt-16 border-t border-border pt-8">
+            <nav
+                v-if="related.length"
+                class="mt-16 border-t border-border pt-8"
+            >
                 <h2 class="label">Related</h2>
                 <dl class="mt-4 space-y-4">
                     <div v-for="item in related" :key="item.slug">
@@ -71,7 +82,9 @@ defineProps<{
                                 {{ item.term }}
                             </Link>
                         </dt>
-                        <dd class="mt-1 text-sm text-muted-foreground">{{ item.short }}</dd>
+                        <dd class="mt-1 text-sm text-muted-foreground">
+                            {{ item.short }}
+                        </dd>
                     </div>
                 </dl>
             </nav>
