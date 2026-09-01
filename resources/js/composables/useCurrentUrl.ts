@@ -19,30 +19,17 @@ export type UseCurrentUrlReturn = {
 };
 
 /**
- * The application's own origin, taken from APP_URL and inlined by Vite at
- * build time. `new URL()` needs a base to resolve a relative path, and this is
- * the configured one rather than an invented placeholder.
+ * `new URL()` needs a base to resolve a relative path, and VITE_APP_URL is it:
+ * APP_URL, inlined by Vite at build time. It is required — without it a href
+ * carrying a query or fragment keeps them, so `/links?page=2` never matches
+ * `/links` and the nav item stops highlighting.
  *
- * Note this is fixed when the bundle is built, so an image built once and run
- * elsewhere carries the origin of whoever built it. That is fine here: only
- * `.pathname` is ever read and an absolute URL ignores the base entirely, so
- * the origin never reaches the comparison. In the browser the live origin is
- * preferred anyway.
+ * Only `.pathname` is read and an absolute URL ignores the base, so the value
+ * only has to be a valid origin, not the one actually being served.
  */
-const configuredOrigin = (): string | undefined => {
-    const configured = import.meta.env.VITE_APP_URL;
-
-    if (typeof configured === 'string' && configured !== '') {
-        return configured;
-    }
-
-    // Nothing configured: the browser knows its own origin, the server does not.
-    return typeof window !== 'undefined' ? window.location.origin : undefined;
-};
-
 const toPathname = (url: string): string => {
     try {
-        return new URL(url, configuredOrigin()).pathname;
+        return new URL(url, import.meta.env.VITE_APP_URL).pathname;
     } catch {
         return url;
     }

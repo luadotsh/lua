@@ -65,10 +65,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             VITE_APP_NAME=Lua
-            # Left empty on purpose: the published image is run on domains
-            # this build cannot know. The frontend falls back to the browser's
-            # own origin, which is always correct there.
-            VITE_APP_URL=
             VITE_REVERB_APP_KEY=lua-reverb-key
           cache-from: type=gha,scope=${{ env.PLATFORM_PAIR }}
           cache-to: type=gha,mode=max,scope=${{ env.PLATFORM_PAIR }}
