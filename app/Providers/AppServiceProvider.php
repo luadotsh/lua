@@ -94,29 +94,14 @@ class AppServiceProvider extends ServiceProvider
      * nothing is sent rather than anything failing.
      */
     /**
-     * Force the URL scheme to match APP_URL.
-     *
-     * Wayfinder writes an absolute URL for any route scoped with
-     * Route::domain(), and the marketing site is: routes/site.php is bound to
-     * config('domains.main'). Without a forced scheme it emits the
-     * protocol-relative form — `//lua.sh/pricing` — because nothing has told
-     * it which scheme applies (see Wayfinder's Route::uri()).
-     *
-     * Inertia then resolves that href against different bases on each side:
-     * `http://localhost` on the server, window.location in the browser. On an
-     * https site every link hydrates with a mismatch, one console warning per
-     * link, because the server said http and the client says https.
-     *
-     * Deriving it from APP_URL fixes both ends at once and keeps http working
-     * locally and in CI, where the app really is served over http.
+     * Wayfinder writes absolute URLs for the domain-scoped marketing routes,
+     * and omits the scheme unless one is forced — leaving `//lua.sh/pricing`.
+     * Inertia then resolves that against http://localhost on the server and
+     * window.location in the browser, so every link hydrates mismatched.
      */
     protected function configureUrlScheme(): void
     {
-        $scheme = parse_url((string) config('app.url'), PHP_URL_SCHEME);
-
-        if (is_string($scheme) && $scheme !== '') {
-            URL::forceScheme($scheme);
-        }
+        URL::forceScheme(parse_url((string) config('app.url'), PHP_URL_SCHEME));
     }
 
     protected function configurePostHog(): void
