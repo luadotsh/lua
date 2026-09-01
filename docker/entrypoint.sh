@@ -104,7 +104,9 @@ if [ -n "${PASSPORT_PRIVATE_KEY:-}" ] && [ -n "${PASSPORT_PUBLIC_KEY:-}" ]; then
     echo "[entrypoint] using Passport keys from environment"
 elif [ "${LUA_TARGET:-}" = "production" ] || [ "${APP_ENV:-}" = "production" ]; then
     echo "[entrypoint] ERROR: PASSPORT_PRIVATE_KEY and PASSPORT_PUBLIC_KEY must be set in production." >&2
-    echo "[entrypoint] Generate once with: php artisan passport:keys --show" >&2
+    echo "[entrypoint] Generate a pair once, on any machine, and copy them in:" >&2
+    echo "[entrypoint]   docker run --rm <image> sh -c 'php artisan passport:keys --force -q && cat storage/oauth-private.key'" >&2
+    echo "[entrypoint]   docker run --rm <image> sh -c 'php artisan passport:keys --force -q && cat storage/oauth-public.key'" >&2
     exit 1
 elif [ ! -f storage/oauth-private.key ] || [ ! -f storage/oauth-public.key ]; then
     echo "[entrypoint] generating Passport keys (dev fallback)"
