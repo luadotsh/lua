@@ -4,9 +4,10 @@
     "scripts": {
         "build": "vite build && vite build --ssr",
         "dev": "vite",
-        "format": "prettier --write resources/",
-        "format:check": "prettier --check resources/",
-        "lint": "eslint . --fix"
+        "format": "prettier --write resources/ vite.config.ts eslint.config.js .claude/release-assets/",
+        "format:check": "prettier --check resources/ vite.config.ts eslint.config.js .claude/release-assets/",
+        "lint": "eslint .",
+        "lint:fix": "eslint . --fix"
     },
     "devDependencies": {
         "@eslint/js": "^9.39.5",
@@ -21,8 +22,6 @@
         "concurrently": "^10.0.5",
         "eslint": "^9.39.5",
         "eslint-config-prettier": "^10.1.8",
-        "eslint-import-resolver-typescript": "^4.4.5",
-        "eslint-plugin-import": "^2.32.0",
         "eslint-plugin-vue": "^9.33.0",
         "laravel-echo": "^2.4.0",
         "laravel-vite-plugin": "^3.2.0",
