@@ -186,7 +186,15 @@ jobs:
           # artisan serve is single-process by default, so an XHR queues behind
           # the page that issued it and the tools' short waits expire. The
           # workers count matches .env.example.
+          #
+          # SESSION_DRIVER and CACHE_STORE are overridden back to file: the job
+          # env sets them to `array` for the test process, which is right there
+          # and wrong here. An array session lives for one request, so the CSRF
+          # token issued with the page is gone by the time the form posts and
+          # every submission comes back 419 — which the UI reports as
+          # "Something went wrong on our side".
           sudo -E env "PATH=$PATH" DB_DATABASE=lua PHP_CLI_SERVER_WORKERS=4 \
+            SESSION_DRIVER=file CACHE_STORE=file \
             php artisan serve --host=127.0.0.1 --port=80 > /tmp/serve.log 2>&1 &
 
           for i in $(seq 1 30); do
