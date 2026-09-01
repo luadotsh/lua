@@ -29,3 +29,7 @@ yarn-error.log
 /storage/oauth-private.key
 /storage/oauth-public.key
 /bootstrap/ssr
+
+# Design docs and implementation plans stay local: they are working
+# material for whoever is mid-task, not part of the shipped repo.
+/docs
