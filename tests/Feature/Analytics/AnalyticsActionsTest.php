@@ -36,6 +36,13 @@ function hit(Workspace $workspace, Link $link, array $attributes = []): LinkStat
 }
 
 beforeEach(function () {
+    // Every window in this file is measured back from "now", so a real clock
+    // makes the bucketing assertions depend on when the suite runs: in the
+    // first three hours of the 1st, the three-hour window straddles a month
+    // boundary and the "month" grouping yields two buckets instead of one.
+    // Freeze mid-month and mid-day, where no bucket boundary is in reach.
+    $this->travelTo(CarbonImmutable::parse('2026-06-15 12:00:00', 'UTC'));
+
     $this->workspace = Workspace::factory()->create();
     $this->link = Link::factory()->create(['workspace_id' => $this->workspace->id]);
     $this->end = CarbonImmutable::now();

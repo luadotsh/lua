@@ -1,0 +1,83 @@
+services:
+    app:
+        build:
+            context: .
+            dockerfile: docker/Dockerfile
+            target: dev
+            args:
+                UID: ${UID:-1000}
+                GID: ${GID:-1000}
+        image: lua-app:dev
+        ports:
+            - '${APP_PORT:-8000}:80'
+            - '${REVERB_PORT:-8080}:8080'
+            - '${VITE_PORT:-5173}:5173'
+        environment:
+            LUA_DOCKER_BOOTSTRAP: '1'
+            UID: ${UID:-1000}
+            GID: ${GID:-1000}
+            # Real env vars take precedence over .env.testing (which pins
+            # DB_HOST=127.0.0.1, DB_USERNAME=root). Without these, the test
+            # suite can't see Postgres / Redis from inside the container.
+            DB_HOST: pgsql
+            DB_USERNAME: postgres
+            REDIS_HOST: redis
+        volumes:
+            - .:/var/www/html
+            - app-vendor:/var/www/html/vendor
+            - app-node-modules:/var/www/html/node_modules
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        depends_on:
+            pgsql:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+        healthcheck:
+            test: ['CMD', 'curl', '-fsS', 'http://127.0.0.1/up']
+            interval: 30s
+            timeout: 5s
+            retries: 5
+            start_period: 90s
+
+    pgsql:
+        image: postgres:16-alpine
+        environment:
+            POSTGRES_DB: ${DB_DATABASE:-lua}
+            POSTGRES_USER: ${DB_USERNAME:-postgres}
+            POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+            - ./docker/postgres-init.sh:/docker-entrypoint-initdb.d/10-create-test-db.sh:ro
+        ports:
+            - '${FORWARD_DB_PORT:-5432}:5432'
+        healthcheck:
+            test: ['CMD-SHELL', 'pg_isready -U ${DB_USERNAME:-postgres} -d ${DB_DATABASE:-lua}']
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
+    redis:
+        image: redis:7-alpine
+        command: redis-server --appendonly yes
+        volumes:
+            - redisdata:/data
+        ports:
+            - '${FORWARD_REDIS_PORT:-6379}:6379'
+        healthcheck:
+            test: ['CMD', 'redis-cli', 'ping']
+            interval: 10s
+            timeout: 3s
+            retries: 5
+
+    mailpit:
+        image: axllent/mailpit:latest
+        ports:
+            - '${FORWARD_MAILPIT_SMTP_PORT:-1025}:1025'
+            - '${FORWARD_MAILPIT_UI_PORT:-8025}:8025'
+
+volumes:
+    pgdata:
+    redisdata:
+    app-vendor:
+    app-node-modules:

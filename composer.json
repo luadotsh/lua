@@ -25,12 +25,14 @@
         "laravel/socialite": "5.30.0",
         "laravel/tinker": "^3.0",
         "laravel/wayfinder": "^0.1.15",
+        "league/commonmark": "^2.8",
         "league/flysystem-aws-s3-v3": "^3.0",
         "posthog/posthog-php": "^4.13",
         "sendkit/sendkit-laravel": "^1.1",
         "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/color": "^2.1",
-        "stevebauman/location": "^7.0"
+        "stevebauman/location": "^7.0",
+        "symfony/yaml": "^8.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -63,8 +65,7 @@
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi",
-            "@php -r \"if (shell_exec('command -v git')) { shell_exec('git config core.hooksPath .husky'); }\""
+            "@php artisan package:discover --ansi"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"

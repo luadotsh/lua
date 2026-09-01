@@ -13,9 +13,10 @@ it('builds a tagged url as you type', function (): void {
             "function () { return document.querySelector('[data-testid=\"utm-result\"]').textContent.includes('utm_source=newsletter'); }",
         )
         ->fill('@utm-utm_source', 'partner-blog')
-        ->assertScript(
-            "function () { return document.querySelector('[data-testid=\"utm-result\"]').textContent.includes('utm_source=partner-blog'); }",
-        )
+        // assertSee waits for the text; assertScript evaluates once and races
+        // the re-render the keystroke triggers. Asserting the typed value with
+        // assertScript was an intermittent failure, not a product bug.
+        ->assertSee('utm_source=partner-blog')
         ->assertNoJavaScriptErrors();
 });
 
@@ -43,11 +44,15 @@ it('renders a QR code in the browser', function (): void {
 it('reports a refusal rather than failing silently', function (): void {
     visit(route('site.tools.link-checker'))
         ->on()->desktop()
+        // The page is server-rendered, so the field exists in the HTML before
+        // hydration attaches the submit handler. Waiting for copy the component
+        // renders means the click lands on a live button rather than on markup.
+        ->assertSee('What this will not do')
         ->fill('@check-url', 'http://127.0.0.1/admin')
         ->click('@check-submit')
-        ->wait(2)
-        ->assertScript(
-            "function () { return document.querySelector('[data-testid=\"check-hops\"]') !== null; }",
-        )
+        // assertSee retries; a fixed wait plus assertScript reads the DOM once
+        // and races the request. The refusal is the assertion: the checker says
+        // why it stopped instead of returning an empty result.
+        ->assertSee('That address is on a private network and will not be fetched.')
         ->assertNoJavaScriptErrors();
 });

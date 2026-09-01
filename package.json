@@ -3,12 +3,9 @@
     "type": "module",
     "scripts": {
         "build": "vite build && vite build --ssr",
-        "dev": "vite",
-        "prepare": "husky"
+        "dev": "vite"
     },
     "devDependencies": {
-        "@commitlint/cli": "^19.5.0",
-        "@commitlint/config-conventional": "^19.5.0",
         "@inertiajs/vite": "^3.7.0",
         "@inertiajs/vue3": "^3.7.0",
         "@laravel/echo-vue": "^2.4.0",
@@ -17,7 +14,6 @@
         "@vitejs/plugin-vue": "^6.0.8",
         "axios": "^1.20.0",
         "concurrently": "^10.0.5",
-        "husky": "^9.1.6",
         "laravel-echo": "^2.4.0",
         "laravel-vite-plugin": "^3.2.0",
         "playwright": "^1.62.1",
