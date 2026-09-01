@@ -22,6 +22,7 @@ use Illuminate\Http\Request;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Cashier\Cashier;
@@ -45,6 +46,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->configureUrlScheme();
+
         // Cashier configuration
         Cashier::useCustomerModel(Workspace::class);
 
@@ -90,6 +93,32 @@ class AppServiceProvider extends ServiceProvider
      * call site is already gated on PostHogService, so a missing key means
      * nothing is sent rather than anything failing.
      */
+    /**
+     * Force the URL scheme to match APP_URL.
+     *
+     * Wayfinder writes an absolute URL for any route scoped with
+     * Route::domain(), and the marketing site is: routes/site.php is bound to
+     * config('domains.main'). Without a forced scheme it emits the
+     * protocol-relative form — `//lua.sh/pricing` — because nothing has told
+     * it which scheme applies (see Wayfinder's Route::uri()).
+     *
+     * Inertia then resolves that href against different bases on each side:
+     * `http://localhost` on the server, window.location in the browser. On an
+     * https site every link hydrates with a mismatch, one console warning per
+     * link, because the server said http and the client says https.
+     *
+     * Deriving it from APP_URL fixes both ends at once and keeps http working
+     * locally and in CI, where the app really is served over http.
+     */
+    protected function configureUrlScheme(): void
+    {
+        $scheme = parse_url((string) config('app.url'), PHP_URL_SCHEME);
+
+        if (is_string($scheme) && $scheme !== '') {
+            URL::forceScheme($scheme);
+        }
+    }
+
     protected function configurePostHog(): void
     {
         if (! PostHogService::isEnabled()) {
