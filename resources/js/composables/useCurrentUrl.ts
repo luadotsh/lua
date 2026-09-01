@@ -19,29 +19,30 @@ export type UseCurrentUrlReturn = {
 };
 
 /**
- * `new URL()` needs a base to resolve a relative path. This one is a
- * placeholder, not configuration — `.invalid` is reserved by RFC 2606 exactly
- * so it can never be a real host.
+ * The application's own origin, taken from APP_URL and inlined by Vite at
+ * build time. `new URL()` needs a base to resolve a relative path, and this is
+ * the configured one rather than an invented placeholder.
  *
- * It deliberately does not come from APP_URL over VITE_. Two reasons, the
- * first decisive:
- *
- *  - Vite inlines VITE_* at build time. The published image is built once and
- *    run by every self-hoster, so a domain baked in there is whichever one the
- *    release runner had, not theirs.
- *  - Links can carry a customer's own domain (Link has a `domain` column), so
- *    there is no single correct host to compare against in the first place.
- *
- * None of which costs anything, because the base never reaches the result:
- * only `.pathname` is read, and an absolute URL ignores the base outright.
- * Checked against a real domain over percent-encoded paths, dot segments,
- * credentials, ports, punycode hosts and non-http schemes — identical output.
+ * Note this is fixed when the bundle is built, so an image built once and run
+ * elsewhere carries the origin of whoever built it. That is fine here: only
+ * `.pathname` is ever read and an absolute URL ignores the base entirely, so
+ * the origin never reaches the comparison. In the browser the live origin is
+ * preferred anyway.
  */
-const PATH_ONLY_BASE = 'http://placeholder.invalid';
+const configuredOrigin = (): string | undefined => {
+    const configured = import.meta.env.VITE_APP_URL;
+
+    if (typeof configured === 'string' && configured !== '') {
+        return configured;
+    }
+
+    // Nothing configured: the browser knows its own origin, the server does not.
+    return typeof window !== 'undefined' ? window.location.origin : undefined;
+};
 
 const toPathname = (url: string): string => {
     try {
-        return new URL(url, PATH_ONLY_BASE).pathname;
+        return new URL(url, configuredOrigin()).pathname;
     } catch {
         return url;
     }
