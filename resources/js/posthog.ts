@@ -41,6 +41,17 @@ const load = async (): Promise<PostHog | null> => {
         capture_pageview: false,
         capture_pageleave: true,
         cross_subdomain_cookie: true,
+        // PostHog lazily fetches Chrome's web-vitals library and it throws on
+        // every page load — `Cannot read properties of undefined (reading
+        // 'startTime')` inside reportAllChanges, from a requestIdleCallback.
+        // The script is loaded at runtime, so it shows up as an anonymous VM
+        // frame rather than anything in our bundle, and it only appears where
+        // PostHog is actually enabled. Nothing here reads web vitals, so the
+        // collector is switched off rather than left throwing in every
+        // visitor's console. Network timing is unrelated and stays on.
+        capture_performance: {
+            web_vitals: false,
+        },
         session_recording: {
             maskAllInputs: true,
             maskTextSelector: '.ph-no-capture',
