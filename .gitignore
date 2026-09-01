@@ -33,3 +33,6 @@ yarn-error.log
 # Design docs and implementation plans stay local: they are working
 # material for whoever is mid-task, not part of the shipped repo.
 /docs
+
+# Local Herd integration config — carries Forge server and site ids.
+/herd.yml

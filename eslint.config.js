@@ -1,6 +1,8 @@
-import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript';
+import {
+    defineConfigWithVueTs,
+    vueTsConfigs,
+} from '@vue/eslint-config-typescript';
 import prettier from 'eslint-config-prettier';
-import importPlugin from 'eslint-plugin-import';
 import vue from 'eslint-plugin-vue';
 
 export default defineConfigWithVueTs(
@@ -22,20 +24,10 @@ export default defineConfigWithVueTs(
             // a perpetual fight between the generator and import/order.
             'resources/js/actions/**',
             'resources/js/routes/**',
+            'resources/js/wayfinder/**',
         ],
     },
     {
-        plugins: {
-            import: importPlugin,
-        },
-        settings: {
-            'import/resolver': {
-                typescript: {
-                    alwaysTryTypes: true,
-                    project: './tsconfig.json',
-                },
-            },
-        },
         rules: {
             'vue/multi-word-component-names': 'off',
             '@typescript-eslint/no-explicit-any': 'off',
@@ -47,12 +39,6 @@ export default defineConfigWithVueTs(
             // defineModel is a refactor of the main form and belongs in its
             // own change, not in a CI/CD one.
             'vue/no-mutating-props': 'off',
-            // Import order has exactly one owner: prettier-plugin-organize-imports.
-            // Running import/order alongside it makes the two fix each other in
-            // a loop — `eslint --fix` reorders, `prettier --write` puts it back,
-            // and `format:check` then fails on whatever ran last. Ordering is a
-            // formatting concern, so it stays with the formatter.
-            'import/order': 'off',
         },
     },
     prettier,
