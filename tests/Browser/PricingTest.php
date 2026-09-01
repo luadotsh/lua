@@ -19,6 +19,11 @@ it('swaps to the monthly equivalent of the yearly price', function (): void {
     visit(route('site.pricing'))
         ->on()->desktop()
         ->assertSee('$'.number_format((float) $pro->price))
+        // Server-rendered: the control is in the markup before Vue attaches a
+        // listener, so a click landing in that window does nothing and the
+        // assertion after it times out. The Webpage API exposes no predicate
+        // wait, so this is an explicit margin for hydration.
+        ->wait(1)
         ->click('@billing-yearly')
         ->assertSee('$'.number_format($perMonth))
         ->assertSee('$'.number_format((float) $proYearly->price).' billed yearly')
