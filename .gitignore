@@ -36,3 +36,10 @@ yarn-error.log
 
 # Local Herd integration config — carries Forge server and site ids.
 /herd.yml
+
+# Wayfinder output. Regenerated on every build by the Vite plugin, so keeping
+# it in the repository only means every route change churns dozens of TS files
+# in the diff. The package's own README says to ignore these three.
+/resources/js/actions
+/resources/js/routes
+/resources/js/wayfinder
