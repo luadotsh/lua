@@ -30,6 +30,12 @@ RUN apk add --no-cache \
         unzip \
         shadow \
         tzdata \
+        # tzdata is for the system clock, not for PHP: this image reports
+        # "Timezone Database => internal", so DateTimeZone resolves deprecated
+        # aliases (Asia/Calcutta, Brazil/East) even with /usr/share/zoneinfo
+        # removed — verified. On a Debian base PHP is built --with-system-tzdata
+        # and those aliases live in a separate `tzdata-legacy` package, which
+        # would have to be installed or browser-reported zones start failing.
         postgresql-client \
         postgresql-dev \
         mysql-client \

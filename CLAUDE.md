@@ -486,6 +486,14 @@ Things that are easy to break here, all of which were:
 
 Broadcasting is wired and **nothing publishes yet** — no events, no `ShouldBroadcast`, an empty `routes/channels.php`, and `BROADCAST_CONNECTION=log`. This is deliberate: real-time work is planned, and the plumbing stays. Do not remove `laravel/reverb`, `laravel-echo` or `@laravel/echo-vue` on the grounds that they look unused.
 
+## Timezones
+
+The analytics timezone comes from the browser and is handed to the database as the argument to `at time zone` / `CONVERT_TZ`, so it is untrusted input that reaches SQL.
+
+- Validate it with **`timezone:all_with_bc`**, never the plain `timezone` rule and never nothing at all. Browsers still report deprecated IANA aliases — Indian clients send `Asia/Calcutta`, not `Asia/Kolkata` — and the plain rule rejects them, which breaks those users outright. Unvalidated is worse: an unknown zone raises an SQL error on PostgreSQL and returns `NULL` on MySQL, which zeroes the chart with no error anywhere.
+- `AnalyticsTest` covers both directions, so neither mistake can come back quietly.
+- **PHP resolves those aliases from its own bundled database**, not the system's: the image reports `Timezone Database => internal` and works with `/usr/share/zoneinfo` deleted. This is a property of the Alpine base — Debian builds PHP `--with-system-tzdata`, where the deprecated names live in a separate `tzdata-legacy` package. Changing the image's base means installing that package.
+
 ## Pest / Feature Tests
 
 - ALWAYS use named routes via the `route()` helper in feature tests. NEVER hardcode URL strings like `'/links/store'`.
