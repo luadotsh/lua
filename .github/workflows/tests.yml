@@ -187,7 +187,7 @@ jobs:
           # the page that issued it and the tools' short waits expire. The
           # workers count matches .env.example.
           sudo -E env "PATH=$PATH" DB_DATABASE=lua PHP_CLI_SERVER_WORKERS=4 \
-            php artisan serve --host=127.0.0.1 --port=80 &
+            php artisan serve --host=127.0.0.1 --port=80 > /tmp/serve.log 2>&1 &
 
           for i in $(seq 1 30); do
             curl -fsS http://lua.test/up > /dev/null && break
@@ -212,8 +212,11 @@ jobs:
       - name: Dump application log
         if: failure()
         run: |
+          echo "--- serve.log (requests and PHP errors) ---"
+          sudo tail -n 80 /tmp/serve.log 2>/dev/null || echo "(no serve log)"
           echo "--- laravel.log ---"
-          tail -n 120 storage/logs/laravel.log 2>/dev/null || echo "(no log)"
+          # The server runs under sudo, so the log it writes is root-owned.
+          sudo tail -n 120 storage/logs/laravel.log 2>/dev/null || echo "(no log)"
           echo "--- ssr.log ---"
           tail -n 40 /tmp/ssr.log 2>/dev/null || echo "(no ssr log)"
 
