@@ -16,6 +16,13 @@ it('switches between language samples', function (): void {
     visit(route('site.home'))
         ->on()->desktop()
         ->assertSee('curl -X POST')
+        // The page is server-rendered, so every tab is in the markup before Vue
+        // has attached a single listener. A click inside that window hits inert
+        // HTML and does nothing, and the assertion after it times out looking
+        // for a change that was never triggered. The plugin's Webpage API
+        // exposes only wait/waitForText/waitForEvent/waitForKey — no predicate
+        // wait — so this is a margin for hydration, not a poll.
+        ->wait(1)
         ->click('@api-tab-php')
         ->assertSee('Http::withToken')
         ->assertDontSee('curl -X POST')
