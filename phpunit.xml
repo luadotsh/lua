@@ -29,6 +29,13 @@
     </source>
     <php>
         <env name="APP_ENV" value="testing"/>
+        <!-- Fixtures hardcode lua.test as the link domain, and route()
+             builds its host from APP_URL, so the suite has to agree with
+             them wherever it runs. Left to .env, it passes locally and
+             404s in CI. -->
+        <env name="APP_URL" value="http://lua.test"/>
+        <env name="DOMAIN_MAIN" value="lua.test"/>
+        <env name="DOMAIN_CNAME" value="cname.lua.test"/>
         <!-- Pinned off so a run does not depend on whether an SSR server
              happens to be up: with it on and nothing listening, Inertia falls
              back to client rendering silently and the suite passes either way,
