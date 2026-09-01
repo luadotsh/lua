@@ -113,6 +113,9 @@ FROM composer-deps AS asset-build
 RUN apk add --no-cache nodejs npm
 
 ARG VITE_APP_NAME=Lua
+# Defaults to the same stub origin APP_URL uses below. Only the path is read
+# from it, so it does not need to be the domain the image is finally served on.
+ARG VITE_APP_URL=http://localhost
 ARG VITE_REVERB_APP_KEY=
 ARG VITE_REVERB_HOST=localhost
 ARG VITE_REVERB_PORT=8080
@@ -127,6 +130,7 @@ ENV APP_KEY=base64:c3R1Yi13YXlmaW5kZXItZ2VuLWtleS1mb3ItYnVpbGRpbmctYXNzZXRzMA== 
     APP_DEBUG=false \
     APP_URL=http://localhost \
     VITE_APP_NAME=${VITE_APP_NAME} \
+    VITE_APP_URL=${VITE_APP_URL} \
     VITE_REVERB_APP_KEY=${VITE_REVERB_APP_KEY} \
     VITE_REVERB_HOST=${VITE_REVERB_HOST} \
     VITE_REVERB_PORT=${VITE_REVERB_PORT} \

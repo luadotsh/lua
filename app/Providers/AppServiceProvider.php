@@ -22,6 +22,7 @@ use Illuminate\Http\Request;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Cashier\Cashier;
@@ -45,6 +46,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->configureUrlScheme();
+
         // Cashier configuration
         Cashier::useCustomerModel(Workspace::class);
 
@@ -90,6 +93,17 @@ class AppServiceProvider extends ServiceProvider
      * call site is already gated on PostHogService, so a missing key means
      * nothing is sent rather than anything failing.
      */
+    /**
+     * Wayfinder writes absolute URLs for the domain-scoped marketing routes,
+     * and omits the scheme unless one is forced — leaving `//lua.sh/pricing`.
+     * Inertia then resolves that against http://localhost on the server and
+     * window.location in the browser, so every link hydrates mismatched.
+     */
+    protected function configureUrlScheme(): void
+    {
+        URL::forceScheme(parse_url((string) config('app.url'), PHP_URL_SCHEME));
+    }
+
     protected function configurePostHog(): void
     {
         if (! PostHogService::isEnabled()) {
