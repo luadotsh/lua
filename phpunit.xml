@@ -29,11 +29,6 @@
     </source>
     <php>
         <env name="APP_ENV" value="testing"/>
-        <!-- APP_URL is NOT pinned here: it is legitimately per-environment.
-             Herd serves lua.test over https, while CI serves it over plain
-             http from artisan serve, so no single value is right for both.
-             The host is what has to agree with the fixtures, and DOMAIN_MAIN
-             below pins that. .env.ci sets the CI scheme. -->
         <env name="DOMAIN_MAIN" value="lua.test"/>
         <env name="DOMAIN_CNAME" value="cname.lua.test"/>
         <!-- Pinned off so a run does not depend on whether an SSR server
