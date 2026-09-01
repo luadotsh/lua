@@ -175,14 +175,31 @@ jobs:
           PGPASSWORD=password psql -h 127.0.0.1 -p "$DB_PORT" -U postgres \
             -c "CREATE DATABASE lua;"
           DB_DATABASE=lua php artisan migrate --force --seed
-          sudo -E env "PATH=$PATH" DB_DATABASE=lua \
+
+          # SSR must actually run. Inertia falls back to client rendering when
+          # it cannot reach the SSR process, silently, and the pages still look
+          # right — but head content rendered server-side (the FAQPage JSON-LD,
+          # for one) is then absent until hydration, which the browser tests
+          # read too early to see.
+          php artisan inertia:start-ssr > /tmp/ssr.log 2>&1 &
+
+          # artisan serve is single-process by default, so an XHR queues behind
+          # the page that issued it and the tools' short waits expire. The
+          # workers count matches .env.example.
+          sudo -E env "PATH=$PATH" DB_DATABASE=lua PHP_CLI_SERVER_WORKERS=4 \
             php artisan serve --host=127.0.0.1 --port=80 &
+
           for i in $(seq 1 30); do
             curl -fsS http://lua.test/up > /dev/null && break
             sleep 1
           done
           curl -fsS http://lua.test/up > /dev/null \
             || { echo "lua.test never came up"; exit 1; }
+
+          # Prove SSR is serving, rather than trusting that it started: the
+          # marketing home must arrive with its content already in the HTML.
+          curl -fsS http://lua.test/ | grep -q 'data-page' \
+            || { echo "no inertia payload"; cat /tmp/ssr.log; exit 1; }
 
       - name: Run browser tests
         env:
