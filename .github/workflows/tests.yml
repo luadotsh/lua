@@ -207,6 +207,16 @@ jobs:
           REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
         run: php artisan test tests/Browser --compact
 
+      # The browser only ever shows "Something went wrong on our side", so the
+      # server's own log is the only place the cause is written down.
+      - name: Dump application log
+        if: failure()
+        run: |
+          echo "--- laravel.log ---"
+          tail -n 120 storage/logs/laravel.log 2>/dev/null || echo "(no log)"
+          echo "--- ssr.log ---"
+          tail -n 40 /tmp/ssr.log 2>/dev/null || echo "(no ssr log)"
+
       - name: Upload Playwright artifacts
         if: failure()
         uses: actions/upload-artifact@v7
