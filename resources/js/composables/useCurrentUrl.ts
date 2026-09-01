@@ -18,25 +18,51 @@ export type UseCurrentUrlReturn = {
     ) => T | F;
 };
 
-const page = usePage();
-const currentUrlReactive = computed(
-    () => new URL(page.url, window?.location.origin).pathname,
-);
+/**
+ * Reduce a href to the path used for comparison.
+ *
+ * Deliberately does not use `new URL()`. That needs a base to resolve relative
+ * paths, and there is no honest one to give: `window.location` does not exist
+ * on the server, and any hardcoded host would be a lie — links can point at a
+ * customer's own domain. Only the path is ever compared, so the origin is
+ * dropped whether it is present or not.
+ *
+ * The first replace strips `scheme://host` and the protocol-relative `//host`;
+ * a single leading slash is a path and is left alone.
+ */
+const toPathname = (value: string): string => {
+    const withoutOrigin = value.replace(
+        /^([a-z][a-z0-9+.-]*:)?\/\/[^/?#]*/i,
+        '',
+    );
+    const path = withoutOrigin.split('#')[0].split('?')[0];
 
-const toPathname = (url: string): string => {
-    try {
-        return new URL(url, window.location.origin).pathname;
-    } catch {
-        return url;
+    if (path === '') {
+        return '/';
     }
+
+    return path.startsWith('/') ? path : `/${path}`;
 };
 
 export const useCurrentUrl = (): UseCurrentUrlReturn => {
+    /**
+     * Called per component rather than once at module scope. A module is
+     * evaluated a single time in the SSR process and shared by every request
+     * it serves, so a page object captured up there belongs to whichever
+     * request happened to load the module first — and a computed built on it
+     * caches that request's URL for all the others.
+     */
+    const page = usePage();
+
+    // page.url is absent while Inertia is still resolving a visit, and a
+    // missing value used to reach `.startsWith()` as undefined.
+    const currentUrl = computed(() => toPathname(page.url ?? '/'));
+
     const isCurrentUrl = (
         urlToCheck: NonNullable<InertiaLinkProps['href']>,
-        currentUrl?: string,
+        currentUrlOverride?: string,
     ) => {
-        const current = currentUrl ?? currentUrlReactive.value;
+        const current = currentUrlOverride ?? currentUrl.value;
         const pathname = toPathname(toUrl(urlToCheck));
 
         return (
@@ -45,16 +71,16 @@ export const useCurrentUrl = (): UseCurrentUrlReturn => {
         );
     };
 
-    const whenCurrentUrl = (
+    const whenCurrentUrl = <T, F = null>(
         urlToCheck: NonNullable<InertiaLinkProps['href']>,
-        ifTrue: any,
-        ifFalse: any = null,
+        ifTrue: T,
+        ifFalse?: F,
     ) => {
-        return isCurrentUrl(urlToCheck) ? ifTrue : ifFalse;
+        return isCurrentUrl(urlToCheck) ? ifTrue : (ifFalse as F);
     };
 
     return {
-        currentUrl: readonly(currentUrlReactive),
+        currentUrl: readonly(currentUrl),
         isCurrentUrl,
         whenCurrentUrl,
     };
