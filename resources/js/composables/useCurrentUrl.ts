@@ -19,29 +19,32 @@ export type UseCurrentUrlReturn = {
 };
 
 /**
- * Reduce a href to the path used for comparison.
+ * `new URL()` needs a base to resolve a relative path. This one is a
+ * placeholder, not configuration — `.invalid` is reserved by RFC 2606 exactly
+ * so it can never be a real host.
  *
- * Deliberately does not use `new URL()`. That needs a base to resolve relative
- * paths, and there is no honest one to give: `window.location` does not exist
- * on the server, and any hardcoded host would be a lie — links can point at a
- * customer's own domain. Only the path is ever compared, so the origin is
- * dropped whether it is present or not.
+ * It deliberately does not come from APP_URL over VITE_. Two reasons, the
+ * first decisive:
  *
- * The first replace strips `scheme://host` and the protocol-relative `//host`;
- * a single leading slash is a path and is left alone.
+ *  - Vite inlines VITE_* at build time. The published image is built once and
+ *    run by every self-hoster, so a domain baked in there is whichever one the
+ *    release runner had, not theirs.
+ *  - Links can carry a customer's own domain (Link has a `domain` column), so
+ *    there is no single correct host to compare against in the first place.
+ *
+ * None of which costs anything, because the base never reaches the result:
+ * only `.pathname` is read, and an absolute URL ignores the base outright.
+ * Checked against a real domain over percent-encoded paths, dot segments,
+ * credentials, ports, punycode hosts and non-http schemes — identical output.
  */
-const toPathname = (value: string): string => {
-    const withoutOrigin = value.replace(
-        /^([a-z][a-z0-9+.-]*:)?\/\/[^/?#]*/i,
-        '',
-    );
-    const path = withoutOrigin.split('#')[0].split('?')[0];
+const PATH_ONLY_BASE = 'http://placeholder.invalid';
 
-    if (path === '') {
-        return '/';
+const toPathname = (url: string): string => {
+    try {
+        return new URL(url, PATH_ONLY_BASE).pathname;
+    } catch {
+        return url;
     }
-
-    return path.startsWith('/') ? path : `/${path}`;
 };
 
 export const useCurrentUrl = (): UseCurrentUrlReturn => {
