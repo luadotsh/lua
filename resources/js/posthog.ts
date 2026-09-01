@@ -20,36 +20,49 @@ const enabled = import.meta.env.VITE_POSTHOG_ENABLED === 'true' && !!apiKey;
  *
  * Only the type is imported statically, which erases at compile time.
  */
-let client: PostHog | null = null;
+let loading: Promise<PostHog | null> | null = null;
 
-const load = async (): Promise<PostHog | null> => {
+const load = (): Promise<PostHog | null> => {
     if (!enabled) {
-        return null;
+        return Promise.resolve(null);
     }
 
-    if (client) {
-        return client;
-    }
+    // The promise is cached, not the resolved client. Caching the client left
+    // a window between the first call and the import resolving, and every
+    // caller that arrived inside it saw a null cache and started its own
+    // init() — three of them do fire at boot, which PostHog answered with
+    // "You have already initialized PostHog!" for each one after the first.
+    loading ??= import('posthog-js').then(({ default: posthog }) => {
+        posthog.init(apiKey as string, {
+            api_host: host || 'https://us.i.posthog.com',
+            ui_host: 'https://us.posthog.com',
+            // Inertia never reloads the document, so autocapture would only
+            // ever see the first page. capturePageview() is called per
+            // navigation.
+            capture_pageview: false,
+            capture_pageleave: true,
+            cross_subdomain_cookie: true,
+            // PostHog fetches Chrome's web-vitals library at runtime and it
+            // throws on load — "Cannot read properties of undefined (reading
+            // 'startTime')" inside reportAllChanges, off a
+            // requestIdleCallback. It arrives as an anonymous VM frame rather
+            // than anything in our bundle, and only where PostHog is enabled.
+            // Nothing here reads web vitals, so the collector is off rather
+            // than throwing in every visitor's console. network_timing is a
+            // separate flag, belongs to session replay, and stays on.
+            capture_performance: {
+                web_vitals: false,
+            },
+            session_recording: {
+                maskAllInputs: true,
+                maskTextSelector: '.ph-no-capture',
+            },
+        });
 
-    const { default: posthog } = await import('posthog-js');
-
-    posthog.init(apiKey as string, {
-        api_host: host || 'https://us.i.posthog.com',
-        ui_host: 'https://us.posthog.com',
-        // Inertia never reloads the document, so autocapture would only ever
-        // see the first page. capturePageview() is called per navigation.
-        capture_pageview: false,
-        capture_pageleave: true,
-        cross_subdomain_cookie: true,
-        session_recording: {
-            maskAllInputs: true,
-            maskTextSelector: '.ph-no-capture',
-        },
+        return posthog;
     });
 
-    client = posthog;
-
-    return client;
+    return loading;
 };
 
 export const initializePostHog = (): void => {
