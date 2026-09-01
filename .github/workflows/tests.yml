@@ -157,6 +157,33 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
+      # routes/site.php is scoped with Route::domain(config('domains.main')), so
+      # route() emits http://lua.test/... no matter which ephemeral port
+      # pest-plugin-browser binds to — the marketing pages are never served by
+      # that server. Locally Herd answers on lua.test and the tests pass without
+      # anyone noticing; a runner has no such host.
+      #
+      # So serve the app under that name here, the way Herd does. It gets its own
+      # database: the suite's RefreshDatabase owns lua_test and would truncate
+      # anything seeded there mid-run, and /pricing reads real rows from `plans`.
+      - name: Serve the marketing site as lua.test
+        env:
+          DB_PORT: ${{ job.services.postgres.ports['5432'] }}
+          REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
+        run: |
+          echo "127.0.0.1 lua.test" | sudo tee -a /etc/hosts > /dev/null
+          PGPASSWORD=password psql -h 127.0.0.1 -p "$DB_PORT" -U postgres \
+            -c "CREATE DATABASE lua;"
+          DB_DATABASE=lua php artisan migrate --force --seed
+          sudo -E env "PATH=$PATH" DB_DATABASE=lua \
+            php artisan serve --host=127.0.0.1 --port=80 &
+          for i in $(seq 1 30); do
+            curl -fsS http://lua.test/up > /dev/null && break
+            sleep 1
+          done
+          curl -fsS http://lua.test/up > /dev/null \
+            || { echo "lua.test never came up"; exit 1; }
+
       - name: Run browser tests
         env:
           DB_PORT: ${{ job.services.postgres.ports['5432'] }}
