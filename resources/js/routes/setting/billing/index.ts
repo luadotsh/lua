@@ -342,87 +342,6 @@ portalForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 portal.form = portalForm
 
 /**
-* @see \App\Http\Controllers\Setting\BillingController::swapFreePlan
-* @see app/Http/Controllers/Setting/BillingController.php:0
-* @route '/settings/billing/swap-free-plan'
-*/
-export const swapFreePlan = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: swapFreePlan.url(options),
-    method: 'get',
-})
-
-swapFreePlan.definition = {
-    methods: ["get","head"],
-    url: '/settings/billing/swap-free-plan',
-} satisfies RouteDefinition<["get","head"]>
-
-/**
-* @see \App\Http\Controllers\Setting\BillingController::swapFreePlan
-* @see app/Http/Controllers/Setting/BillingController.php:0
-* @route '/settings/billing/swap-free-plan'
-*/
-swapFreePlan.url = (options?: RouteQueryOptions) => {
-    return swapFreePlan.definition.url + queryParams(options)
-}
-
-/**
-* @see \App\Http\Controllers\Setting\BillingController::swapFreePlan
-* @see app/Http/Controllers/Setting/BillingController.php:0
-* @route '/settings/billing/swap-free-plan'
-*/
-swapFreePlan.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: swapFreePlan.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\Setting\BillingController::swapFreePlan
-* @see app/Http/Controllers/Setting/BillingController.php:0
-* @route '/settings/billing/swap-free-plan'
-*/
-swapFreePlan.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: swapFreePlan.url(options),
-    method: 'head',
-})
-
-/**
-* @see \App\Http\Controllers\Setting\BillingController::swapFreePlan
-* @see app/Http/Controllers/Setting/BillingController.php:0
-* @route '/settings/billing/swap-free-plan'
-*/
-const swapFreePlanForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: swapFreePlan.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\Setting\BillingController::swapFreePlan
-* @see app/Http/Controllers/Setting/BillingController.php:0
-* @route '/settings/billing/swap-free-plan'
-*/
-swapFreePlanForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: swapFreePlan.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\Setting\BillingController::swapFreePlan
-* @see app/Http/Controllers/Setting/BillingController.php:0
-* @route '/settings/billing/swap-free-plan'
-*/
-swapFreePlanForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: swapFreePlan.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-swapFreePlan.form = swapFreePlanForm
-
-/**
 * @see \Inertia\Controller::__invoke
 * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
 * @route '/settings/billing/checkout-success'
@@ -508,7 +427,6 @@ const billing = {
     upgrade: Object.assign(upgrade, upgrade),
     checkout: Object.assign(checkout, checkout),
     portal: Object.assign(portal, portal),
-    swapFreePlan: Object.assign(swapFreePlan, swapFreePlan),
     checkoutSuccess: Object.assign(checkoutSuccess, checkoutSuccess),
 }
 
