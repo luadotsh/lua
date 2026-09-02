@@ -41,9 +41,9 @@ it('sends the main domain root to the marketing site', function () {
 });
 
 it('sends a secondary lua domain without a key to the site', function () {
-    // A domain we own but do not serve the site from: the site routes are
-    // scoped to the main domain, so this one does fall through to the
-    // middleware.
+    // A domain we own that is not the main one: a bare request here has
+    // nothing of its own to resolve to, so it falls through to the
+    // middleware, same as the main domain does.
     config(['domains.available' => ['go.lua.test']]);
 
     $this->get('https://go.lua.test')
