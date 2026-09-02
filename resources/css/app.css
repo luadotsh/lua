@@ -58,9 +58,6 @@
         'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
-    --font-display:
-        'Schibsted Grotesk', 'Inter', ui-sans-serif, system-ui, -apple-system,
-        sans-serif;
     --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
     --font-mono:
         'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
@@ -132,9 +129,6 @@
         'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
-    --font-display:
-        'Schibsted Grotesk', 'Inter', ui-sans-serif, system-ui, -apple-system,
-        sans-serif;
     --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
     --font-mono:
         'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
@@ -202,7 +196,6 @@
     --color-accent-color: var(--accent-color);
 
     --font-sans: var(--font-sans);
-    --font-display: var(--font-display);
     --font-mono: var(--font-mono);
     --font-serif: var(--font-serif);
 
@@ -254,174 +247,13 @@ html {
 }
 
 /*
- * The hero carries the brand's own ground in both themes rather than following
- * the page. Two reasons, and the first is not taste: the wash is pale, so as
- * text it is invisible on white, and a second darker gradient invented for the
- * light theme would be a different mark. The second is that the globe is a
- * night sky and reads better on one.
+ * The marketing site's own structural device used to live here — the ruled
+ * rails (`.site-rail`), the cards (`.site-card`), the dark footer panel
+ * (`.brand-panel`), the light-mode token scope (`.site-light`), the label
+ * register (`.label`), the dot grid (`.site-grid`) — plus the `--font-display`
+ * display face. The site is a separate Nuxt deployment now, and none of it
+ * had a usage left in resources/js, so it's gone. The app's own palette
+ * (--primary and its ink label, --primary-text, --destructive moved off the
+ * stock red, the radius scale, the warm neutrals, chart-1..5, Inter) is
+ * defined above and is untouched.
  */
-/*
- * The marketing site is light, always, whatever the app's theme is set to.
- *
- * That is a decision rather than an omission. A marketing page has one job and
- * a reader passes through it once, so a second palette doubles the design work
- * and halves the attention each version gets. The signed-in app, which people
- * stare at for hours, keeps its dark mode.
- *
- * Implemented as a token scope rather than by stripping `.dark` off <html>,
- * because the class belongs to the app and navigating between the two must not
- * fight over it.
- */
-.site-light {
-    --background: #ffffff;
-    --foreground: #000000;
-    --card: #ffffff;
-    --card-foreground: #000000;
-    --popover: #ffffff;
-    --popover-foreground: #000000;
-    --primary: #fa5d19;
-    --primary-foreground: #1a0c04;
-    --primary-text: #be3c04;
-    --secondary: #f3f1ee;
-    --secondary-foreground: #000000;
-    --muted: #f8f7f5;
-    --muted-foreground: #6f6b66;
-    --accent: #fef0e9;
-    --accent-foreground: #7a2703;
-    --destructive: #be123c;
-    --destructive-foreground: #fafafa;
-    --border: #e9e6e3;
-    --input: #dcd7d2;
-    --ring: #fa5d19;
-    --chart-1: #7a2703;
-    --chart-2: #be3c04;
-    --chart-3: #fa5d19;
-    --chart-4: #fd9a6b;
-    --chart-5: #fed5c2;
-
-    background-color: var(--background);
-    color: var(--foreground);
-}
-
-.brand-panel {
-    /*
-     * The one dark surface on the site: the footer, which anchors the bottom of
-     * a white page.
-     *
-     * A token scope, not a set of colours. Redefining the tokens here is what
-     * lets an unmodified <Button> or <Link> work inside it. Writing the hexes
-     * onto the components instead is how the header's button once drifted from
-     * every other primary button on the site.
-     */
-    --background: #000000;
-    --foreground: #ffffff;
-    --card: #0d0d0d;
-    --card-foreground: #ffffff;
-    --muted: #131313;
-    --muted-foreground: #a3a3a3;
-    --border: rgb(255 255 255 / 0.14);
-    --input: rgb(255 255 255 / 0.2);
-    --accent: rgb(255 255 255 / 0.08);
-    --accent-foreground: #ffffff;
-    --secondary: rgb(255 255 255 / 0.06);
-    --secondary-foreground: #ffffff;
-    --primary-text: #fd9a6b;
-
-    background-color: var(--background);
-    color: var(--foreground);
-}
-
-/*
- * Headline face. Schibsted Grotesk is set heavy and tight on purpose: the
- * headline has to carry the page on its own now that the palette is restrained
- * to one accent, and a grotesque at 700 with negative tracking is what makes a
- * short line read as a statement rather than as a label.
- */
-.font-display {
-    font-weight: 700;
-    letter-spacing: -0.032em;
-}
-
-/*
- * Cards, the way a well-built marketing page does them: a hairline border for
- * structure and a soft shadow for depth, so the block reads as an object on
- * the page rather than as an outlined box. Border-only at a tight radius is
- * what made the earlier passes look flat and drawn.
- */
-.site-card {
-    border: 1px solid var(--border);
-    border-radius: 1.25rem;
-    background-color: var(--card);
-    box-shadow:
-        0 1px 2px 0 rgb(10 10 10 / 0.04),
-        0 4px 12px -2px rgb(10 10 10 / 0.05);
-}
-
-.site-card-flat {
-    border: 1px solid var(--border);
-    border-radius: 1.25rem;
-    background-color: var(--card);
-}
-
-/*
- * The site's one structural device: a ruled column.
- *
- * Two hairlines run the full height of the page at the container edges, and
- * every section divider crosses them. It reads as a drawing rather than as a
- * stack of blocks, which is the right register for a product whose whole
- * subject is measurement. Sections inside supply their own padding and their
- * own bottom rule; the rails belong to the layout.
- */
-.site-rail {
-    border-left: 1px solid var(--border);
-    border-right: 1px solid var(--border);
-}
-
-/*
- * Ticks on the rail, at the top of the page only. Small, and doing the same
- * job the numerals do: saying this page was set out rather than assembled.
- */
-.site-rail-ticks::before,
-.site-rail-ticks::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    width: 9px;
-    height: 1px;
-    background-color: var(--border);
-}
-
-.site-rail-ticks::before {
-    left: -5px;
-}
-
-.site-rail-ticks::after {
-    right: -5px;
-}
-
-/*
- * A label register the display face cannot do: small, mono, tracked out. It is
- * what separates a section marker from a heading, and it is the reason the
- * eyebrows no longer need the accent to be noticed.
- */
-.label {
-    font-family: var(--font-mono);
-    font-size: 0.6875rem;
-    font-weight: 500;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--muted-foreground);
-}
-
-/*
- * Drawing-sheet dot grid. Behind the hero only, and faint enough to read as
- * paper rather than as a pattern.
- */
-.site-grid {
-    background-image: radial-gradient(
-        circle,
-        var(--border) 1px,
-        transparent 1px
-    );
-    background-size: 28px 28px;
-}
