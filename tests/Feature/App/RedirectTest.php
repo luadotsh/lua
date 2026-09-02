@@ -49,13 +49,13 @@ it('sends a secondary lua domain without a key to the site', function () {
     config(['domains.available' => ['go.lua.test']]);
 
     $this->get('https://go.lua.test')
-        ->assertRedirect(route('site.home'));
+        ->assertRedirect(config('app.website'));
 });
 
 it('an unknown domain without key is redirected to the site', function () {
     // Host is neither a default domain nor a registered custom domain.
     $this->get('https://not-ours.example.com')
-        ->assertRedirect(route('site.home'));
+        ->assertRedirect(config('app.website'));
 });
 
 it('redirects to the iOS URL if the user is on iOS', function () {
@@ -295,7 +295,7 @@ it('sends the root of a custom domain with no fallback to the website', function
     ]);
 
     $this->get('https://links.example.com')
-        ->assertRedirect(route('site.home'));
+        ->assertRedirect(config('app.website'));
 });
 
 it('shows the password gate before a protected link resolves', function () {

@@ -30,7 +30,7 @@ class CustomDomain
 
         // If the domain is provided by lua, we redirect to the website.
         if (in_array($host, config('domains.available'))) {
-            return Inertia::location(route('site.home'));
+            return Inertia::location(config('app.website'));
         }
 
         // Check if the domain exists in the database and is active.
@@ -40,7 +40,7 @@ class CustomDomain
 
         // If the domain is not found, we redirect to the website.
         if (! $domain) {
-            return Inertia::location(route('site.home'));
+            return Inertia::location(config('app.website'));
         }
 
         // if domain provides a not found url, we redirect to that url.
@@ -49,6 +49,6 @@ class CustomDomain
         }
 
         // default route
-        return Inertia::location(route('site.home'));
+        return Inertia::location(config('app.website'));
     }
 }
