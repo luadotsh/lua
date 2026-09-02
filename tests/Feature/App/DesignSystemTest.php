@@ -35,15 +35,41 @@ function contrast(string $a, string $b): float
     return (max($one, $two) + 0.05) / (min($one, $two) + 0.05);
 }
 
+/**
+ * The block for one top-level selector (`:root` or `.dark`), so a variable
+ * can be read from the theme that actually declares it rather than assumed.
+ */
+function cssBlock(string $selector): string
+{
+    preg_match('/(?:^|\n)'.preg_quote($selector, '/').'\s*\{(.*?)\n\}/s', css(), $matches);
+
+    return $matches[1] ?? '';
+}
+
+function cssVariable(string $block, string $name): string
+{
+    preg_match('/--'.preg_quote($name, '/').':\s*(#[0-9a-fA-F]{3,8});/', $block, $matches);
+
+    return $matches[1] ?? '';
+}
+
 it('uses the accent the brand settled on', function (): void {
     expect(css())->toContain('--primary: #fa5d19;');
 });
 
-it('keeps both themes readable on their own primary', function (string $primary, string $foreground): void {
-    // AA for normal-size text. A brand colour that fails this is a brand
-    // colour no button can use.
-    expect(contrast($primary, $foreground))->toBeGreaterThanOrEqual(4.5);
+it('keeps a theme readable on its own primary', function (string $selector): void {
+    $block = cssBlock($selector);
+    $primary = cssVariable($block, 'primary');
+    $foreground = cssVariable($block, 'primary-foreground');
+
+    // Read from the CSS rather than hardcoded, so a change to either token
+    // that fails AA fails this test instead of passing silently.
+    expect($primary)->not->toBeEmpty()
+        ->and($foreground)->not->toBeEmpty()
+        // AA for normal-size text. A brand colour that fails this is a brand
+        // colour no button can use.
+        ->and(contrast($primary, $foreground))->toBeGreaterThanOrEqual(4.5);
 })->with([
-    'light' => ['#fa5d19', '#1a0c04'],
-    'dark' => ['#fa5d19', '#1a0c04'],
+    'light' => [':root'],
+    'dark' => ['.dark'],
 ]);
