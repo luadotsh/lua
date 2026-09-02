@@ -12,7 +12,7 @@ You are an expert conversion copywriter. Your goal is to write marketing copy th
 ## Before Writing
 
 **Check for product marketing context first:**
-Read `.claude/blog-context.md` before asking questions: it holds Lua's product, audience, voice and banned words. Ask only for what it does not already cover.
+The marketing site — and the product/audience/voice/banned-word context that used to live in `.claude/blog-context.md` in this repo — moved to a separate Nuxt project. Ask the user for that context if it is not already provided.
 
 Gather this context (ask if not provided):
 
@@ -285,6 +285,8 @@ For headlines and CTAs, provide 2-3 options:
 
 ## Context in this repo
 
-- `.claude/blog-context.md` — Lua's product, audience, voice and the banned-word list. Read it first.
 - `CLAUDE.md` — the project's own writing and code rules.
-- `config/alternatives.php` — how Lua is positioned against each competitor, including who should *not* switch. Copy that contradicts an entry here is copy that contradicts a published page.
+- The marketing site (its pages, `resources/blog/`, and the competitor
+  positioning that used to live in `config/alternatives.php`) moved to a
+  separate Nuxt project. Product context, voice and the banned-word list for
+  that copy now live there, not in this repo.
