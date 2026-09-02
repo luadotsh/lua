@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
+
 withDefaults(
     defineProps<{
         title?: string;
@@ -9,6 +12,8 @@ withDefaults(
         showTerms: false,
     },
 );
+
+const website = computed(() => usePage().props.website);
 </script>
 
 <template>
@@ -52,9 +57,13 @@ withDefaults(
                 class="text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary"
             >
                 By continuing, you agree to our
-                <a href="/terms" target="_blank">Terms of Service</a>
+                <a :href="`${website}/terms`" target="_blank"
+                    >Terms of Service</a
+                >
                 and
-                <a href="/privacy" target="_blank">Privacy Policy</a>.
+                <a :href="`${website}/privacy`" target="_blank"
+                    >Privacy Policy</a
+                >.
             </div>
         </div>
 
