@@ -22,48 +22,6 @@ use App\Http\Controllers\Setting\WorkspaceController as SettingWorkspaceControll
 use App\Http\Controllers\WorkspaceController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Marketing site redirects
-|--------------------------------------------------------------------------
-|
-| The marketing site is a separate deployment now (see config('app.website')),
-| but these paths carried real content and real search ranking. Redirecting
-| rather than 404ing keeps that; a customer's own domain is unaffected since
-| this group is scoped to the main domain only.
-|
-| Registered before the {key?} catch-all at the bottom of this file, exactly
-| as routes/site.php was: Laravel matches in registration order, so this has
-| to come first or the catch-all wins and these redirects never run.
-|
-| This also reserves the words again: CreateLink::reservedKeys() derives its
-| list from every GET route on the main domain, so registering them here is
-| enough — no hand-kept list to keep in sync.
-|
-*/
-Route::domain((string) config('domains.main'))->group(function (): void {
-    $website = rtrim((string) config('app.website'), '/');
-
-    foreach (['pricing', 'faq', 'terms', 'privacy', 'blog', 'use-cases', 'glossary', 'tools', 'alternatives'] as $path) {
-        Route::redirect("/{$path}", "{$website}/{$path}", 301);
-    }
-
-    // These carried real content, so the slug has to travel with the redirect
-    // rather than landing everyone on the section index.
-    foreach (['blog', 'use-cases', 'glossary', 'alternatives'] as $section) {
-        Route::redirect("/{$section}/{slug}", "{$website}/{$section}/{slug}", 301)
-            ->where('slug', '[a-z0-9-]+');
-    }
-
-    // routes/site.php registered these three tools as explicit top-level
-    // routes rather than a tools/{slug} pattern, and the set is closed and
-    // known — a pattern would also 301 /tools/anything, inventing
-    // destinations that do not exist.
-    foreach (['tools/utm-builder', 'tools/qr-generator', 'tools/link-checker'] as $path) {
-        Route::redirect("/{$path}", "{$website}/{$path}", 301);
-    }
-});
-
 Route::group(
     [
         'middleware' => [
