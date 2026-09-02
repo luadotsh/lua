@@ -210,7 +210,7 @@ Vue components must have a single root element.
 
 ## Inertia SSR
 
-- **SSR is on**, in development and in production alike, so a bug that only appears server-side is caught while you are working rather than in someone's search results.
+- **SSR is off by default.** `config/inertia.php` defaults `INERTIA_SSR_ENABLED` to `false`, so it stays off unless an environment turns it on. The wiring below is all still in place and correct — it is the default that changed, not the setup.
 - There is **no `ssr.ts`**. Since Inertia 3 the `@inertiajs/vite` plugin builds the server bundle from `resources/js/app.ts`, so there is one entrypoint that cannot drift from the other. `npm run build` runs both passes and writes the server bundle to `bootstrap/ssr/app.js`, which `config/inertia.php` points at.
 - `npm run dev` serves SSR itself — no second process. In production run `php artisan inertia:start-ssr` alongside the app.
 - **`app.ts` runs in Node as well as the browser.** Anything touching `window`, `document`, `localStorage` or a WebSocket has to be behind `typeof window !== 'undefined'` or it throws at import time and every page falls back to client rendering. `resources/js/bootstrap.ts` is the pattern: axios on the window and the Echo connection are both guarded, and Echo is a dynamic import so the client is never loaded server-side.
