@@ -54,6 +54,14 @@ Route::domain((string) config('domains.main'))->group(function (): void {
         Route::redirect("/{$section}/{slug}", "{$website}/{$section}/{slug}", 301)
             ->where('slug', '[a-z0-9-]+');
     }
+
+    // routes/site.php registered these three tools as explicit top-level
+    // routes rather than a tools/{slug} pattern, and the set is closed and
+    // known — a pattern would also 301 /tools/anything, inventing
+    // destinations that do not exist.
+    foreach (['tools/utm-builder', 'tools/qr-generator', 'tools/link-checker'] as $path) {
+        Route::redirect("/{$path}", "{$website}/{$path}", 301);
+    }
 });
 
 Route::group(

@@ -16,6 +16,16 @@ it('redirects a marketing slug path preserving the slug', function (): void {
         ->assertStatus(301);
 });
 
+it('redirects a tool path, which routes/site.php registered as an explicit top-level route rather than a slug', function (string $path): void {
+    $this->get('https://'.config('domains.main')."/{$path}")
+        ->assertRedirect(rtrim((string) config('app.website'), '/')."/{$path}")
+        ->assertStatus(301);
+})->with([
+    'tools/utm-builder',
+    'tools/qr-generator',
+    'tools/link-checker',
+]);
+
 it('does not redirect a marketing path on a customer domain', function (): void {
     // The redirect group is scoped to the main domain; a customer's own
     // domain is free to use these words as short-link keys.
