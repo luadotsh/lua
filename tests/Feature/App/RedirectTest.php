@@ -8,7 +8,6 @@ use App\Models\Link;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
-use Inertia\Testing\AssertableInertia;
 
 uses(RefreshDatabase::class);
 
@@ -33,13 +32,12 @@ it('invalid link will return 404', function () {
     $response->assertNotFound();
 });
 
-it('serves the marketing site on the main domain, not a redirect', function () {
-    // The main domain's root is the marketing home now: routes/site.php is
-    // registered before the `{key?}` catch-all, so it never reaches the
-    // middleware at all.
+it('sends the main domain root to the marketing site', function () {
+    // The site is a separate deployment now. A request to the bare domain
+    // carries no key, so it falls through to the middleware, which forwards
+    // it to config('app.website').
     $this->get(route('links.redirect'))
-        ->assertOk()
-        ->assertInertia(fn (AssertableInertia $page) => $page->component('Site/Home'));
+        ->assertRedirect(config('app.website'));
 });
 
 it('sends a secondary lua domain without a key to the site', function () {
