@@ -2,7 +2,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build && vite build --ssr",
+        "build": "vite build",
         "dev": "vite",
         "format": "prettier --write resources/ vite.config.ts eslint.config.js .claude/release-assets/",
         "format:check": "prettier --check resources/ vite.config.ts eslint.config.js .claude/release-assets/",
