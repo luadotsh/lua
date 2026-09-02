@@ -157,76 +157,26 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      # routes/site.php is scoped with Route::domain(config('domains.main')), so
-      # route() emits http://lua.test/... no matter which ephemeral port
-      # pest-plugin-browser binds to — the marketing pages are never served by
-      # that server. Locally Herd answers on lua.test and the tests pass without
-      # anyone noticing; a runner has no such host.
-      #
-      # So serve the app under that name here, the way Herd does. It gets its own
-      # database: the suite's RefreshDatabase owns lua_test and would truncate
-      # anything seeded there mid-run, and /pricing reads real rows from `plans`.
-      - name: Serve the marketing site as lua.test
-        env:
-          DB_PORT: ${{ job.services.postgres.ports['5432'] }}
-          REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
-        run: |
-          echo "127.0.0.1 lua.test" | sudo tee -a /etc/hosts > /dev/null
-          PGPASSWORD=password psql -h 127.0.0.1 -p "$DB_PORT" -U postgres \
-            -c "CREATE DATABASE lua;"
-          DB_DATABASE=lua php artisan migrate --force --seed
-
-          # SSR must actually run. Inertia falls back to client rendering when
-          # it cannot reach the SSR process, silently, and the pages still look
-          # right — but head content rendered server-side (the FAQPage JSON-LD,
-          # for one) is then absent until hydration, which the browser tests
-          # read too early to see.
-          php artisan inertia:start-ssr > /tmp/ssr.log 2>&1 &
-
-          # artisan serve is single-process by default, so an XHR queues behind
-          # the page that issued it and the tools' short waits expire. The
-          # workers count matches .env.example.
-          #
-          # SESSION_DRIVER and CACHE_STORE are overridden back to file: the job
-          # env sets them to `array` for the test process, which is right there
-          # and wrong here. An array session lives for one request, so the CSRF
-          # token issued with the page is gone by the time the form posts and
-          # every submission comes back 419 — which the UI reports as
-          # "Something went wrong on our side".
-          sudo -E env "PATH=$PATH" DB_DATABASE=lua PHP_CLI_SERVER_WORKERS=4 \
-            SESSION_DRIVER=file CACHE_STORE=file \
-            php artisan serve --host=127.0.0.1 --port=80 > /tmp/serve.log 2>&1 &
-
-          for i in $(seq 1 30); do
-            curl -fsS http://lua.test/up > /dev/null && break
-            sleep 1
-          done
-          curl -fsS http://lua.test/up > /dev/null \
-            || { echo "lua.test never came up"; exit 1; }
-
-          # Prove SSR is serving, rather than trusting that it started: the
-          # marketing home must arrive with its content already in the HTML.
-          curl -fsS http://lua.test/ | grep -q 'data-page' \
-            || { echo "no inertia payload"; cat /tmp/ssr.log; exit 1; }
-
+      # pest-plugin-browser serves the app itself: it runs the Laravel HTTP
+      # kernel in-process and binds it to its own ephemeral host and port, then
+      # points route()'s URL generator at that address (Pest\Browser\Drivers\
+      # LaravelHttpServer::bootstrap()). That's enough for every route left in
+      # this app, none of which is domain-scoped — routes/site.php was the one
+      # exception, forcing route() to emit config('domains.main') regardless of
+      # what pest-plugin-browser bound to, which is why a real lua.test server,
+      # its own database and a manually started SSR process used to be needed
+      # here. All three went with the site in Task 17: no route left is
+      # domain-scoped, none of the remaining browser tests read seeded rows,
+      # and none depend on server-rendered head content.
       - name: Run browser tests
         env:
           DB_PORT: ${{ job.services.postgres.ports['5432'] }}
           REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
         run: php artisan test tests/Browser --compact
 
-      # The browser only ever shows "Something went wrong on our side", so the
-      # server's own log is the only place the cause is written down.
       - name: Dump application log
         if: failure()
-        run: |
-          echo "--- serve.log (requests and PHP errors) ---"
-          sudo tail -n 80 /tmp/serve.log 2>/dev/null || echo "(no serve log)"
-          echo "--- laravel.log ---"
-          # The server runs under sudo, so the log it writes is root-owned.
-          sudo tail -n 120 storage/logs/laravel.log 2>/dev/null || echo "(no log)"
-          echo "--- ssr.log ---"
-          tail -n 40 /tmp/ssr.log 2>/dev/null || echo "(no ssr log)"
+        run: tail -n 120 storage/logs/laravel.log 2>/dev/null || echo "(no log)"
 
       - name: Upload Playwright artifacts
         if: failure()
