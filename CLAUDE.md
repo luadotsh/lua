@@ -210,15 +210,15 @@ Vue components must have a single root element.
 
 ## Inertia SSR
 
-- **SSR is off by default.** `config/inertia.php` defaults `INERTIA_SSR_ENABLED` to `false`, so it stays off unless an environment turns it on. The wiring below is all still in place and correct — it is the default that changed, not the setup.
+- **SSR is off.** `config/inertia.php` defaults `INERTIA_SSR_ENABLED` to `false`.
+- **The reason is that the marketing site left.** Server rendering was carrying the public pages — a search engine reading `/pricing` or a blog post needs markup in the response, not an empty `#app`. Everything this application still serves sits behind a login, where nothing crawls and nobody shares a link for its preview, so server rendering costs a second process and a whole class of silent failure and buys nothing.
+- **The wiring is intact and still correct**, so turning it back on is one environment variable and a running `php artisan inertia:start-ssr`. What follows describes that wiring, and is the reason the switch is cheap. It is also why none of it should be ripped out on the grounds that it looks unused.
 - There is **no `ssr.ts`**. Since Inertia 3 the `@inertiajs/vite` plugin builds the server bundle from `resources/js/app.ts`, so there is one entrypoint that cannot drift from the other. `npm run build` runs both passes and writes the server bundle to `bootstrap/ssr/app.js`, which `config/inertia.php` points at.
-- `npm run dev` serves SSR itself — no second process. In production run `php artisan inertia:start-ssr` alongside the app.
-- **`app.ts` runs in Node as well as the browser.** Anything touching `window`, `document`, `localStorage` or a WebSocket has to be behind `typeof window !== 'undefined'` or it throws at import time and every page falls back to client rendering. `resources/js/bootstrap.ts` is the pattern: axios on the window and the Echo connection are both guarded, and Echo is a dynamic import so the client is never loaded server-side.
+- **`app.ts` runs in Node as well as the browser** whenever SSR is on. Anything touching `window`, `document`, `localStorage` or a WebSocket has to be behind `typeof window !== 'undefined'` or it throws at import time and every page falls back to client rendering. `resources/js/bootstrap.ts` is the pattern: axios on the window and the Echo connection are both guarded, and Echo is a dynamic import so the client is never loaded server-side. **Keep writing code that way** — the guards cost nothing while SSR is off and are what make turning it on a switch rather than a project.
 - `createSSRApp` on both sides, not `createApp`: it is what lets the browser hydrate the markup the server sent instead of throwing it away and rendering again.
 - **`app.blade.php` carries no `<title>`.** `@inertiaHead` renders it; a static one comes through as a second tag. The default title comes from the `title` callback in `app.ts`.
-- **The SSR server holds the bundle in memory.** After `npm run build`, restart it (`php artisan inertia:stop-ssr && php artisan inertia:start-ssr`) or you are debugging the previous build. The symptom is markup that looks a version behind while the client-side app is current.
-- **A crash in the SSR process is silent.** Inertia falls back to client rendering and the page still looks fine, so the only sign is server-rendered markup going missing. Check the process output. A plugin that reads a browser global at install time is the usual culprit — `laravel-vue-i18n` is passed an explicit `lang` from the shared `locale` prop for exactly this reason, because it otherwise reads `document`.
-- Tests pin `INERTIA_SSR_ENABLED=false` in `phpunit.xml`. With it on and nothing listening, Inertia falls back to client rendering silently, so the suite would pass either way — a difference no test would report, and the run would depend on whether a server happened to be up.
+- **A crash in the SSR process is silent.** Inertia falls back to client rendering and the page still looks fine, so the only sign is server-rendered markup going missing. That failure mode is why leaving SSR on for an application nobody crawls was a liability rather than a safety net.
+- Tests pin `INERTIA_SSR_ENABLED=false` in `phpunit.xml`, which now matches the default rather than overriding it.
 
 ## The marketing site lives elsewhere
 
@@ -369,7 +369,7 @@ If a formatting fight reappears, look for the second owner before adjusting eith
 
 Things that are easy to break here, all of which were:
 
-- **The production stage needs `node` at runtime**, not just at build time — supervisord runs `inertia:start-ssr`, which executes `bootstrap/ssr/app.js` with node. Without it the process exits instantly, supervisord gives up, and nothing shows it: the container is healthy, `/up` answers 200, and every page quietly falls back to client rendering.
+- **The production stage carries `node` at runtime** so `inertia:start-ssr` can execute `bootstrap/ssr/app.js`. SSR is off by default now and the supervisord program does not autostart, so nothing runs it today — but it stays installed, because removing it would turn re-enabling SSR from an environment variable into an image rebuild. When it was needed and missing, the failure was invisible: the container stayed healthy, `/up` answered 200, and every page quietly fell back to client rendering.
 - **Do not add `opcache` to `docker-php-ext-install`.** It is already compiled into `php:8.5-fpm-alpine`, and asking for it again fails the build with `cp: can't stat 'modules/*'`. It only needs configuring, which `php.prod.ini` does.
 - The entrypoint **refuses to start in production without `PASSPORT_PRIVATE_KEY` and `PASSPORT_PUBLIC_KEY`**, because `storage/` is not a persisted volume and regenerating them on each boot would invalidate every API token.
 - The image is large (~2.2GB) because the production stage carries `node_modules`. They cannot simply be dropped: the SSR bundle imports `vue` at runtime and `vue` sits in `devDependencies`.
