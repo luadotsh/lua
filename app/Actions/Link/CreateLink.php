@@ -93,17 +93,17 @@ class CreateLink
      * answers on that path.
      *
      * Short links resolve through a `/{key?}` catch-all registered last, so
-     * anything registered before it wins: `/pricing` reaches the marketing
-     * page and `/login` reaches the form, whatever link claims that key. The
-     * link would save and then never resolve.
+     * anything registered before it wins: `/pricing` redirects to the
+     * marketing site and `/login` reaches the form, whatever link claims
+     * that key. The link would save and then never resolve.
      *
      * Read off the router rather than kept as a list, so adding a route also
      * reserves it — a hand-maintained list is one that goes stale the first
      * time someone adds a page and does not think of this method.
      *
-     * Only the main domain is affected: the marketing and app routes are
-     * scoped to it, so on a customer's own domain `pricing` is a perfectly
-     * good back-half.
+     * Only the main domain is affected: the app's own routes and the
+     * redirects to the marketing site are scoped to it, so on a customer's
+     * own domain `pricing` is a perfectly good back-half.
      *
      * @return list<string>
      */

@@ -22,10 +22,6 @@ use App\Http\Controllers\Setting\WorkspaceController as SettingWorkspaceControll
 use App\Http\Controllers\WorkspaceController;
 use Illuminate\Support\Facades\Route;
 
-// First: these paths have to win over the {key?} catch-all at the bottom of
-// this file, and Laravel matches in registration order.
-require __DIR__.'/site.php';
-
 Route::group(
     [
         'middleware' => [
