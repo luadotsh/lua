@@ -8,7 +8,6 @@ use App\Models\Link;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
-use Inertia\Testing\AssertableInertia;
 
 uses(RefreshDatabase::class);
 
@@ -33,29 +32,28 @@ it('invalid link will return 404', function () {
     $response->assertNotFound();
 });
 
-it('serves the marketing site on the main domain, not a redirect', function () {
-    // The main domain's root is the marketing home now: routes/site.php is
-    // registered before the `{key?}` catch-all, so it never reaches the
-    // middleware at all.
+it('sends the main domain root to the marketing site', function () {
+    // The site is a separate deployment now. A request to the bare domain
+    // carries no key, so it falls through to the middleware, which forwards
+    // it to config('app.website').
     $this->get(route('links.redirect'))
-        ->assertOk()
-        ->assertInertia(fn (AssertableInertia $page) => $page->component('Site/Home'));
+        ->assertRedirect(config('app.website'));
 });
 
 it('sends a secondary lua domain without a key to the site', function () {
-    // A domain we own but do not serve the site from: the site routes are
-    // scoped to the main domain, so this one does fall through to the
-    // middleware.
+    // A domain we own that is not the main one: a bare request here has
+    // nothing of its own to resolve to, so it falls through to the
+    // middleware, same as the main domain does.
     config(['domains.available' => ['go.lua.test']]);
 
     $this->get('https://go.lua.test')
-        ->assertRedirect(route('site.home'));
+        ->assertRedirect(config('app.website'));
 });
 
 it('an unknown domain without key is redirected to the site', function () {
     // Host is neither a default domain nor a registered custom domain.
     $this->get('https://not-ours.example.com')
-        ->assertRedirect(route('site.home'));
+        ->assertRedirect(config('app.website'));
 });
 
 it('redirects to the iOS URL if the user is on iOS', function () {
@@ -295,7 +293,7 @@ it('sends the root of a custom domain with no fallback to the website', function
     ]);
 
     $this->get('https://links.example.com')
-        ->assertRedirect(route('site.home'));
+        ->assertRedirect(config('app.website'));
 });
 
 it('shows the password gate before a protected link resolves', function () {

@@ -94,10 +94,12 @@ class AppServiceProvider extends ServiceProvider
      * nothing is sent rather than anything failing.
      */
     /**
-     * Wayfinder writes absolute URLs for the domain-scoped marketing routes,
-     * and omits the scheme unless one is forced — leaving `//lua.sh/pricing`.
-     * Inertia then resolves that against http://localhost on the server and
-     * window.location in the browser, so every link hydrates mismatched.
+     * Laravel omits the scheme on an absolute URL unless one is forced,
+     * leaving `//lua.sh/...` — Inertia then resolves that against
+     * http://localhost on the server and window.location in the browser, so
+     * the same link hydrates mismatched between the two. This now matters
+     * for the domain-scoped redirect routes in `web.php` rather than the
+     * marketing routes that used to carry the justification.
      */
     protected function configureUrlScheme(): void
     {

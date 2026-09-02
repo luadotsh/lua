@@ -12,7 +12,7 @@ beforeEach(function (): void {
     $this->workspace = $this->user->currentWorkspace;
 });
 
-it('refuses a back-half that a real route already answers', function (string $key): void {
+it('refuses a back-half that one of the app\'s own routes already answers', function (string $key): void {
     $this->actingAs($this->user)
         ->postJson(route('links.store'), [
             'key' => $key,
@@ -20,11 +20,11 @@ it('refuses a back-half that a real route already answers', function (string $ke
             'domain' => config('domains.main'),
         ])
         ->assertJsonValidationErrors('key');
-})->with(['pricing', 'terms', 'privacy', 'alternatives', 'login', 'register', 'links', 'analytics']);
+})->with(['login', 'links', 'analytics']);
 
 it('allows a reserved word as a back-half on a custom domain', function (): void {
-    // The site and app routes are scoped to the main domain, so nothing on a
-    // customer's own domain shadows `pricing`.
+    // The app's own routes are scoped to the main domain, so nothing on a
+    // customer's own domain shadows `login`.
     Domain::factory()->create([
         'workspace_id' => $this->workspace->id,
         'domain' => 'links.example.com',
@@ -33,13 +33,13 @@ it('allows a reserved word as a back-half on a custom domain', function (): void
 
     $this->actingAs($this->user)
         ->postJson(route('links.store'), [
-            'key' => 'pricing',
+            'key' => 'login',
             'url' => 'https://example.com',
             'domain' => 'links.example.com',
         ])
         ->assertSessionHasNoErrors();
 
-    $this->assertDatabaseHas('links', ['key' => 'pricing', 'domain' => 'links.example.com']);
+    $this->assertDatabaseHas('links', ['key' => 'login', 'domain' => 'links.example.com']);
 });
 
 it('still allows an ordinary back-half on the main domain', function (): void {
@@ -54,10 +54,11 @@ it('still allows an ordinary back-half on the main domain', function (): void {
     $this->assertDatabaseHas('links', ['key' => 'launch', 'domain' => config('domains.main')]);
 });
 
-// A hand-written list would go stale; this is what proves it is derived.
+// A hand-written list would go stale; this is what proves it is derived. The
+// marketing site is gone, so the app's own routes are what has to show up.
 it('derives the reserved list from the registered routes', function (): void {
     expect(CreateLink::reservedKeys())
-        ->toContain('pricing', 'alternatives', 'login', 'links')
+        ->toContain('login', 'links', 'analytics')
         ->not->toContain('')
         ->and(collect(CreateLink::reservedKeys())->filter(fn (string $key): bool => str_starts_with($key, '{')))
         ->toBeEmpty();

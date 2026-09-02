@@ -73,6 +73,9 @@ class HandleInertiaRequests extends Middleware
             // The marketing pages build canonical and OG urls from this, and
             // a relative one is no use to a crawler or a link preview.
             'appUrl' => rtrim((string) config('app.url'), '/'),
+            // The marketing site now lives in a separate project; this is
+            // how the signed-in app links out to it (e.g. terms, privacy).
+            'website' => rtrim((string) config('app.website'), '/'),
             'locale' => app()->getLocale(),
         ];
     }

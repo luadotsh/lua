@@ -33,6 +33,7 @@ declare module '@inertiajs/core' {
             sidebarOpen: boolean;
             env: string;
             locale: string;
+            website: string;
             [key: string]: unknown;
         };
     }

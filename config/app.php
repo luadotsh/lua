@@ -58,6 +58,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Marketing Site URL
+    |--------------------------------------------------------------------------
+    |
+    | The marketing site. It is a separate deployment (Nuxt, on Cloudflare)
+    | rather than part of this app: the app answers on the bare domain and a
+    | request with no short-link key belongs to the site. Self-hosted installs
+    | point this wherever their own site lives.
+    |
+    */
+
+    'website' => env('APP_WEBSITE', 'https://www.lua.sh'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |
