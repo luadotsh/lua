@@ -32,10 +32,7 @@ defineProps<{
                     >
                         {{ title }}
                     </h1>
-                    <p
-                        v-if="description"
-                        class="text-sm text-muted-foreground"
-                    >
+                    <p v-if="description" class="text-sm text-muted-foreground">
                         {{ description }}
                     </p>
                 </div>
