@@ -141,8 +141,9 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(120)->by($request->user()?->id ?: $request->ip());
         });
 
-        RateLimiter::for('mcp-oauth-registration', function (Request $request) {
-            return Limit::perMinute(10)->by($request->ip());
-        });
+        RateLimiter::for(
+            'mcp-oauth-registration',
+            fn (Request $request): Limit => Limit::perMinute(30)->by($request->ip()),
+        );
     }
 }

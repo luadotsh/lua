@@ -12,9 +12,10 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -22,10 +23,6 @@ return Application::configure(basePath: dirname(__DIR__))
         api: __DIR__.'/../routes/api.php',
         apiPrefix: '/api',
         commands: __DIR__.'/../routes/console.php',
-        then: function () {
-            // MCP server + its OAuth endpoints.
-            Route::middleware('web')->group(base_path('routes/ai.php'));
-        },
         channels: __DIR__.'/../routes/channels.php',
         health: 'up',
     )
@@ -54,6 +51,24 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
+        $exceptions->dontReportWhen(function (Throwable $e) {
+            return $e instanceof OAuthServerException && $e->getHttpStatusCode() < 500;
+        });
+
+        $exceptions->renderable(function (TooManyRequestsHttpException $e, Request $request) {
+            if ($request->expectsJson()) {
+                $retryAfter = $e->getHeaders()['Retry-After'] ?? null;
+                $message = $retryAfter
+                    ? "Rate limit exceeded. Please retry after {$retryAfter} seconds."
+                    : 'Rate limit exceeded. Please try again later.';
+
+                return response()->json([
+                    'name' => 'rate_limit_exceeded',
+                    'message' => $message,
+                ], 429)->withHeaders($e->getHeaders());
+            }
+        });
+
         // Handle 500 Internal Server Error, 503 Service Unavailable, etc.
         $exceptions->render(function (NotFoundHttpException $e, Request $request) {
             if (in_array($e->getStatusCode(), [500, 503, 403, 404])) {
