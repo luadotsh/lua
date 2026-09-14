@@ -28,6 +28,27 @@ it('renders the authentication screen', function () {
     actingAs($this->user)->get(route('setting.authentication.edit'))->assertOk();
 });
 
+it('tells the screen which social providers can be connected', function () {
+    config([
+        'lua.auth.google' => true,
+        'lua.auth.github' => false,
+        'services.google.client_id' => 'id',
+        'services.google.client_secret' => 'secret',
+    ]);
+
+    actingAs($this->user)
+        ->get(route('setting.authentication.edit'))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->has('connectedAccounts', 2)
+            ->where('connectedAccounts.0.provider', 'google')
+            ->where('connectedAccounts.0.enabled', true)
+            ->where('connectedAccounts.1.provider', 'github')
+            ->where('connectedAccounts.1.enabled', false)
+            ->etc()
+        );
+});
+
 it('updates the password when the current one is right', function () {
     actingAs($this->user)
         ->put(route('setting.authentication.password'), [

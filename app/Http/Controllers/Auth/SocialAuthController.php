@@ -11,6 +11,7 @@ use App\Enums\Auth\SocialAuthProvider;
 use App\Http\Controllers\Auth\Concerns\PreservesAttributionParameters;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Laravel\Socialite\Facades\Socialite;
@@ -30,11 +31,6 @@ class SocialAuthController extends Controller
         // Carry campaign parameters across the bounce out to the provider.
         $this->storeAttributionParameters($request);
 
-        // An authenticated user is linking, not signing in.
-        if ($request->user()) {
-            $request->session()->put('social_connect', $socialProvider->value);
-        }
-
         return Inertia::location(
             Socialite::driver($socialProvider->value)->redirect()->getTargetUrl(),
         );
@@ -52,21 +48,10 @@ class SocialAuthController extends Controller
 
         $column = $socialProvider->column();
 
-        // Linking an extra provider to the account already signed in.
-        if ($request->session()->pull('social_connect') === $socialProvider->value && $request->user()) {
-            if (LinkSocialAccount::isTaken($socialProvider, $socialUser->getId(), $request->user())) {
-                session()->flash('flash.banner', "That {$socialProvider->label()} account is already linked to another user.");
-                session()->flash('flash.bannerStyle', 'danger');
-
-                return redirect(route('setting.authentication.edit'));
-            }
-
-            LinkSocialAccount::execute($request->user(), $socialProvider, $socialUser->getId());
-
-            session()->flash('flash.banner', "{$socialProvider->label()} connected.");
-            session()->flash('flash.bannerStyle', 'success');
-
-            return redirect(route('setting.authentication.edit'));
+        // `guest` middleware gates login/signup; `auth` gates the settings
+        // connect flow. The callback is reachable by both and branches here.
+        if ($request->user()) {
+            return $this->connectToCurrentUser($request->user(), $socialProvider, $socialUser->getId());
         }
 
         $existingUser = User::where($column, $socialUser->getId())
@@ -97,6 +82,25 @@ class SocialAuthController extends Controller
         LoginUser::forUser($request, $user);
 
         return redirect(route('links.index'));
+    }
+
+    private function connectToCurrentUser(User $user, SocialAuthProvider $socialProvider, string $providerId): RedirectResponse
+    {
+        if (LinkSocialAccount::isTaken($socialProvider, $providerId, $user)) {
+            session()->flash('flash.banner', "That {$socialProvider->label()} account is already linked to another user.");
+            session()->flash('flash.bannerStyle', 'danger');
+
+            return redirect(route('setting.authentication.edit'));
+        }
+
+        if ($user->{$socialProvider->column()} !== $providerId) {
+            LinkSocialAccount::execute($user, $socialProvider, $providerId);
+        }
+
+        session()->flash('flash.banner', "{$socialProvider->label()} connected.");
+        session()->flash('flash.bannerStyle', 'success');
+
+        return redirect(route('setting.authentication.edit'));
     }
 
     private function provider(string $provider): SocialAuthProvider

@@ -70,6 +70,10 @@ Route::group(
             Route::get('/authentication', [AuthenticationController::class, 'edit'])->name('setting.authentication.edit')->withoutMiddleware(['set-store']);
             Route::put('/authentication/password', [AuthenticationController::class, 'updatePassword'])->name('setting.authentication.password')->withoutMiddleware(['set-store']);
             Route::delete('/authentication/sessions', [AuthenticationController::class, 'destroyOtherSessions'])->name('setting.authentication.sessions.destroy')->withoutMiddleware(['set-store']);
+            Route::get('/authentication/providers/{provider}/connect', [AuthenticationController::class, 'connectProvider'])
+                ->whereIn('provider', ['google', 'github'])
+                ->name('setting.authentication.providers.connect')
+                ->withoutMiddleware(['set-store']);
             Route::delete('/authentication/providers/{provider}', [AuthenticationController::class, 'disconnectProvider'])->name('setting.authentication.providers.destroy')->withoutMiddleware(['set-store']);
 
             // mcp

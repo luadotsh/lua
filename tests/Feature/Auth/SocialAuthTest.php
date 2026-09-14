@@ -47,15 +47,10 @@ it('bounces you out to the provider', function () {
     $this->get(route('auth.social', 'google'))->assertRedirect();
 });
 
-it('remembers you were linking when you were already signed in', function () {
-    fakeSocialite(fakeSocialUser('g-1', 'ada@example.com'));
-
-    // The Connect button on the authentication screen used to bounce off the
-    // guest middleware and never reach this at all.
+it('sends a signed-in user away from the guest login start', function () {
     $this->actingAs(User::factory()->withWorkspace()->create())
         ->get(route('auth.social', 'google'))
-        ->assertRedirect()
-        ->assertSessionHas('social_connect', 'google');
+        ->assertRedirect('/links');
 });
 
 it('refuses a provider we do not offer', function () {
@@ -117,7 +112,6 @@ it('links a provider to the account already signed in', function () {
     fakeSocialite(fakeSocialUser('g-1', 'someone@example.com'));
 
     $this->actingAs($user)
-        ->withSession(['social_connect' => 'google'])
         ->get(route('auth.social.callback', 'google'))
         ->assertRedirect(route('setting.authentication.edit'));
 
@@ -131,11 +125,26 @@ it('refuses to link a provider account someone else already has', function () {
     fakeSocialite(fakeSocialUser('g-1', 'someone@example.com'));
 
     $this->actingAs($user)
-        ->withSession(['social_connect' => 'google'])
         ->get(route('auth.social.callback', 'google'))
         ->assertRedirect(route('setting.authentication.edit'));
 
     expect($user->fresh()->google_id)->toBeNull();
+});
+
+it('links the provider to the signed-in user even when the emails differ', function () {
+    $user = User::factory()->withWorkspace()->create([
+        'email' => 'work@example.com',
+        'google_id' => null,
+    ]);
+
+    fakeSocialite(fakeSocialUser('g-personal', 'personal@example.com'));
+
+    $this->actingAs($user)
+        ->get(route('auth.social.callback', 'google'))
+        ->assertRedirect(route('setting.authentication.edit'));
+
+    expect($user->fresh()->google_id)->toBe('g-personal')
+        ->and(User::where('email', 'personal@example.com')->exists())->toBeFalse();
 });
 
 it('falls back to the nickname when the provider has no name', function () {

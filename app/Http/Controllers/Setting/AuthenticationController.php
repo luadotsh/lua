@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthenticationController extends Controller
 {
@@ -53,6 +54,15 @@ class AuthenticationController extends Controller
         return back();
     }
 
+    public function connectProvider(string $provider): RedirectResponse
+    {
+        $socialProvider = SocialAuthProvider::tryFrom($provider);
+
+        abort_unless($socialProvider?->isEnabled(), 404);
+
+        return Socialite::driver($socialProvider->value)->redirect();
+    }
+
     public function disconnectProvider(Request $request, string $provider): RedirectResponse
     {
         $socialProvider = SocialAuthProvider::tryFrom($provider);
@@ -75,7 +85,7 @@ class AuthenticationController extends Controller
     }
 
     /**
-     * @return array<int, array{provider: string, label: string, connected: bool}>
+     * @return array<int, array{provider: string, label: string, connected: bool, enabled: bool}>
      */
     private function connectedAccounts(User $user): array
     {
@@ -84,6 +94,7 @@ class AuthenticationController extends Controller
                 'provider' => $provider->value,
                 'label' => $provider->label(),
                 'connected' => filled($user->{"{$provider->value}_id"}),
+                'enabled' => $provider->isEnabled(),
             ])->values()->all();
     }
 
