@@ -10,7 +10,7 @@
         "lint:fix": "eslint . --fix"
     },
     "devDependencies": {
-        "@eslint/js": "^9.39.5",
+        "@eslint/js": "^10.0.1",
         "@inertiajs/vite": "^3.7.0",
         "@inertiajs/vue3": "^3.7.0",
         "@laravel/echo-vue": "^2.4.0",
