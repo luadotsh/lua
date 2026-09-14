@@ -96,23 +96,16 @@ it('honours an expiry date given at creation', function () {
         ->and($expiring->expires_at->isFuture())->toBeTrue();
 });
 
-it('stamps an unbound grant with the workspace current at first use, then keeps it', function () {
+it('refuses an unbound grant instead of inferring the current workspace', function () {
     $token = apiTokenFor($this->user);
-    $original = $this->user->current_workspace_id;
 
-    // Simulate an MCP grant, which arrives without a workspace of its own.
     AccessToken::query()->personalAccessApiKey()->first()
         ->forceFill(['workspace_id' => null])->saveQuietly();
 
-    $this->withToken($token)->json('GET', route('api.links.index'))->assertOk();
+    $this->withToken($token)
+        ->json('GET', route('api.links.index'))
+        ->assertStatus(401)
+        ->assertJson(['message' => 'No workspace selected.']);
 
-    expect(AccessToken::query()->personalAccessApiKey()->first()->workspace_id)->toBe($original);
-
-    // Switching workspace in the browser must not move the token.
-    $other = User::factory()->withWorkspace()->create();
-    $this->user->forceFill(['current_workspace_id' => $other->current_workspace_id])->save();
-
-    $this->withToken($token)->json('GET', route('api.links.index'))->assertOk();
-
-    expect(AccessToken::query()->personalAccessApiKey()->first()->workspace_id)->toBe($original);
+    expect(AccessToken::query()->personalAccessApiKey()->first()->workspace_id)->toBeNull();
 });
