@@ -29,6 +29,7 @@
         "prettier": "^3.9.6",
         "prettier-plugin-organize-imports": "^4.3.0",
         "prettier-plugin-tailwindcss": "^0.6.14",
+        "pusher-js": "^8.6.0",
         "tailwindcss": "^4.3.3",
         "typescript": "^5.9.3",
         "typescript-eslint": "^8.69.0",
