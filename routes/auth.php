@@ -42,6 +42,12 @@ Route::group(
         Route::get('/invites/{id}', [InviteController::class, 'show'])->name('auth.invites.show');
         Route::post('/invites/{id}', [InviteController::class, 'accept'])->name('auth.invites.accept');
 
+        // Sign-in / register only. Connecting a provider to an account that
+        // is already signed in goes through settings (see connectProvider).
+        Route::get('/auth/{provider}/login', [SocialAuthController::class, 'redirectToProvider'])
+            ->whereIn('provider', ['google', 'github'])
+            ->name('auth.social');
+
     }
 );
 
@@ -66,20 +72,14 @@ Route::group(
 );
 
 /**
- * Social sign-in, reachable signed in as well as out: signed out it signs you
- * in or registers you, signed in it links the provider to the account you are
- * already using. These sat inside the guest group, so the Connect button on the
- * authentication settings screen bounced off the middleware and never arrived.
+ * Callbacks must be reachable by both guests (signup/login) and authenticated
+ * users (connect-from-settings). The routes that start the OAuth round-trip
+ * enforce the right middleware, so the callback can branch on Auth::check().
+ *
+ * Under /auth, which is what config/services.php already told each provider
+ * to redirect to. At the root these took two first-level segments, so
+ * `google` and `github` were reserved as short-link back-halves for no reason.
  */
-Route::middleware('web')->group(function () {
-    // Under /auth, which is what config/services.php already told each
-    // provider to redirect to. At the root these took two first-level
-    // segments, so `google` and `github` were reserved as short-link
-    // back-halves for no reason.
-    Route::get('/auth/{provider}/login', [SocialAuthController::class, 'redirectToProvider'])
-        ->whereIn('provider', ['google', 'github'])
-        ->name('auth.social');
-    Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'handleProviderCallback'])
-        ->whereIn('provider', ['google', 'github'])
-        ->name('auth.social.callback');
-});
+Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'handleProviderCallback'])
+    ->whereIn('provider', ['google', 'github'])
+    ->name('auth.social.callback');

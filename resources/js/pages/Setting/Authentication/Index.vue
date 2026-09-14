@@ -9,15 +9,18 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
-import { social } from '@/routes/auth';
 import { password as passwordRoute } from '@/routes/setting/authentication';
-import { destroy as destroyProvider } from '@/routes/setting/authentication/providers';
+import {
+    connect as connectProvider,
+    destroy as destroyProvider,
+} from '@/routes/setting/authentication/providers';
 import { destroy as destroySessions } from '@/routes/setting/authentication/sessions';
 
 type ConnectedAccount = {
     provider: string;
     label: string;
     connected: boolean;
+    enabled: boolean;
 };
 
 type Session = {
@@ -213,8 +216,15 @@ const disconnect = (provider: string) => {
                         >
                             Disconnect
                         </Button>
-                        <Button v-else variant="outline" size="sm" as-child>
-                            <a :href="social(account.provider).url">Connect</a>
+                        <Button
+                            v-else-if="account.enabled"
+                            variant="outline"
+                            size="sm"
+                            as-child
+                        >
+                            <a :href="connectProvider.url(account.provider)"
+                                >Connect</a
+                            >
                         </Button>
                     </div>
                 </div>
